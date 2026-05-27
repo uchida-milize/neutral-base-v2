@@ -7,15 +7,15 @@ import { Badge } from "@/components/ui/badge";
 export const metadata: Metadata = {
   title: "Components | Design System",
   description:
-    "汎用デザインシステムのコンポーネントカタログ。Buttons / Forms / Tables / Tabs を Figma Variables ベースの shadcn/ui で描画。各テナントは tdf-scope の中で同じカタログを使い回す。",
+    "汎用デザインシステムのコンポーネントカタログ。Buttons / Forms / Tables / Tabs を Figma Variables ベースの shadcn/ui で描画。各テナントは xxx-scope の中で同じカタログを使い回す。",
 };
 
 /**
  * /components — 汎用 Components カタログ。
  *
  * 共有の <UikitCatalog /> を、ブランド固有色を載せないニュートラルな
- * セマンティック層のまま描画する。同じカタログは /tdf/components でも使われ、
- * そちらは tdf-scope で navy primary に切り替わる。
+ * セマンティック層のまま描画する。同じカタログは /xxx/components でも使われ、
+ * そちらは xxx-scope で navy primary に切り替わる。
  */
 export default function UikitPage() {
   return (

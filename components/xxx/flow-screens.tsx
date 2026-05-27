@@ -2,10 +2,10 @@
 
 import * as React from "react";
 
-import { FLOW_META } from "@/components/tdf/flow-meta";
+import { FLOW_META } from "@/components/xxx/flow-meta";
 
 /**
- * TDF Embedded Insurance Flow — モバイル 11 画面の TSX 移植。
+ * XXX Embedded Insurance Flow — モバイル 11 画面の TSX 移植。
  *
  * 一次ソース:
  *   uploads/MILIZE UIUX Design System (Bundle).zip
@@ -15,8 +15,8 @@ import { FLOW_META } from "@/components/tdf/flow-meta";
  *     │                              Payment / Complete)
  *     └── screens.css          (本ファイルが参照するスタイル定義)
  *
- * スタイルは `components/tdf/flow.css` を `.tdf-flow` でスコープ化。
- * 全画面の最上位ラッパー `<div className="phone">` の親に `tdf-flow` を
+ * スタイルは `components/xxx/flow.css` を `.xxx-flow` でスコープ化。
+ * 全画面の最上位ラッパー `<div className="phone">` の親に `xxx-flow` を
  * 付けることで、`.card` `.btn` 等のクラスが他所に漏れないようにしている。
  */
 
@@ -109,7 +109,7 @@ function AppHeader({ step, total = 8 }: { step?: number; total?: number }) {
             lineHeight: "18px",
           }}
         >
-          TDF Financial
+          XXX Financial
         </span>
         {step != null ? (
           <span className="step-count">
@@ -147,28 +147,28 @@ function GuidanceIllustration() {
   return (
     <svg className="illust" viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="86" width="350" height="24" fill="#f3e6d2" opacity="0.5" />
-      <g stroke="#1b3157" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
+      <g stroke="#0f766e" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
         <rect x="30" y="34" width="64" height="80" rx="4" />
         <path d="M40 50h44M40 60h44M40 70h32M40 80h28" stroke="#8590a8" />
-        <circle cx="79" cy="100" r="8" fill="#c8242f" stroke="none" />
+        <circle cx="79" cy="100" r="8" fill="#d97706" stroke="none" />
       </g>
-      <g stroke="#1b3157" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
+      <g stroke="#0f766e" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
         <rect x="125" y="26" width="60" height="92" rx="8" />
         <rect x="132" y="38" width="46" height="60" rx="2" fill="#f3f5f8" stroke="none" />
         <circle cx="155" cy="106" r="2" />
         <path d="M141 56h28M141 64h22M141 72h28" stroke="#8590a8" />
       </g>
-      <g stroke="#1b3157" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
+      <g stroke="#0f766e" strokeWidth="1.6" fill="#fff" strokeLinejoin="round" strokeLinecap="round">
         <circle cx="240" cy="44" r="11" />
         <path d="M222 96c0-12 8-22 18-22s18 10 18 22" />
       </g>
-      <g stroke="#1b3157" strokeWidth="1.6" fill="#fdfaf6" strokeLinejoin="round" strokeLinecap="round">
+      <g stroke="#0f766e" strokeWidth="1.6" fill="#fafaf9" strokeLinejoin="round" strokeLinecap="round">
         <path d="M298 38l16 6v14c0 11-7 19-16 22-9-3-16-11-16-22V44l16-6z" />
-        <path d="M298 70c-4-2-6-5-6-8a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 3-2 6-6 8z" fill="#c8242f" stroke="#c8242f" />
+        <path d="M298 70c-4-2-6-5-6-8a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 3-2 6-6 8z" fill="#d97706" stroke="#d97706" />
       </g>
-      <path d="M100 70 C 110 70, 120 70, 125 70" stroke="#c8242f" strokeWidth="1.2" strokeDasharray="2 3" />
-      <path d="M188 70 C 198 70, 208 70, 218 70" stroke="#c8242f" strokeWidth="1.2" strokeDasharray="2 3" />
-      <path d="M262 70 C 272 70, 278 60, 282 56" stroke="#c8242f" strokeWidth="1.2" strokeDasharray="2 3" />
+      <path d="M100 70 C 110 70, 120 70, 125 70" stroke="#d97706" strokeWidth="1.2" strokeDasharray="2 3" />
+      <path d="M188 70 C 198 70, 208 70, 218 70" stroke="#d97706" strokeWidth="1.2" strokeDasharray="2 3" />
+      <path d="M262 70 C 272 70, 278 60, 282 56" stroke="#d97706" strokeWidth="1.2" strokeDasharray="2 3" />
     </svg>
   );
 }
@@ -447,7 +447,7 @@ export function PlanScreen({ onNext }: ScreenProps) {
           <div className="lede">
             死亡 ＋ 障害・介護に対応した、ご家族の生活をサポートする定期保険です。
           </div>
-          <div className="underwriter">引受会社: TDFフィナンシャル生命</div>
+          <div className="underwriter">引受会社: XXXフィナンシャル生命</div>
 
           <div className="accordion">
             <div className="row">
@@ -493,7 +493,7 @@ export function PlanScreen({ onNext }: ScreenProps) {
           <div className="lede">
             死亡・介護に加え、<strong>三大疾病 (がん・心疾患・脳卒中)</strong> までを一貫して保障するプランです。
           </div>
-          <div className="underwriter">引受会社: TDFフィナンシャル生命</div>
+          <div className="underwriter">引受会社: XXXフィナンシャル生命</div>
           <div className="accordion">
             <div className="row">
               保障内容（三大疾病対応モデル）
@@ -1042,7 +1042,7 @@ export function ConfirmScreen({ onNext, onBack }: ScreenProps) {
             <p style={{ margin: 0 }}>
               【電子署名および約定承諾】
               <br />
-              本お申込みは TDF 保険グループ契約交付に基づく重要な電磁約款です。ご提供いただいたお客様氏名「<strong>山田 太郎</strong>」が、スマホカメラ撮影の eKYC 本人確認システムにより厳密に検証され、本契約に同意したとみなされます。約款の主要条項は別途交付書面でもご確認いただけます。
+              本お申込みは XXX 保険グループ契約交付に基づく重要な電磁約款です。ご提供いただいたお客様氏名「<strong>山田 太郎</strong>」が、スマホカメラ撮影の eKYC 本人確認システムにより厳密に検証され、本契約に同意したとみなされます。約款の主要条項は別途交付書面でもご確認いただけます。
             </p>
           </div>
           <div className="checkbox-row">

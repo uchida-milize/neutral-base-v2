@@ -2,10 +2,10 @@
 
 import * as React from "react";
 
-import { FLOW } from "@/components/tdf/flow-screens";
+import { FLOW } from "@/components/xxx/flow-screens";
 
-// `.tdf-flow` でスコープされた screen のスタイル。
-import "@/components/tdf/flow.css";
+// `.xxx-flow` でスコープされた screen のスタイル。
+import "@/components/xxx/flow.css";
 
 /* =================================================================
  * iPhone ベゼル — flow-prototype.jsx 由来。
@@ -108,8 +108,8 @@ function IPhoneBezel({
               </span>
             </div>
           </div>
-          {/* `.tdf-flow` でスコープした CSS を効かせる */}
-          <div className="tdf-flow">{children}</div>
+          {/* `.xxx-flow` でスコープした CSS を効かせる */}
+          <div className="xxx-flow">{children}</div>
           {/* Home indicator bottom space */}
           <div style={{ height: 40 * scale }} />
         </div>
@@ -170,7 +170,7 @@ export function TdfFlowScreenStatic({ index }: { index: number }) {
   const Comp = step.Component;
   return (
     <div
-      className="tdf-flow"
+      className="xxx-flow"
       style={{
         // .phone が 390px 幅なのに合わせて見やすく整える
         borderRadius: 18,
@@ -223,7 +223,7 @@ export function TdfFlowPrototype() {
         gap: 24,
         padding: "32px 24px 48px",
         background:
-          "linear-gradient(180deg, var(--background-warm, #fdfaf6) 0%, #fff 100%)",
+          "linear-gradient(180deg, var(--background-warm, #fafaf9) 0%, #fff 100%)",
         borderRadius: 24,
         border: "1px solid var(--border-warm, #f3e6d2)",
       }}
@@ -250,10 +250,10 @@ export function TdfFlowPrototype() {
               borderRadius: 999,
               border:
                 i === idx
-                  ? "1.5px solid var(--navigation-navy-500, #1b3157)"
+                  ? "1.5px solid var(--navigation-navy-500, #0f766e)"
                   : "1px solid var(--border-default, #e0e4ec)",
               background:
-                i === idx ? "var(--navigation-navy-500, #1b3157)" : "#fff",
+                i === idx ? "var(--navigation-navy-500, #0f766e)" : "#fff",
               color: i === idx ? "#fff" : "var(--text-sub, #475569)",
               fontSize: 11,
               fontWeight: 600,
@@ -378,7 +378,7 @@ export function TdfFlowPrototype() {
             background:
               idx >= FLOW.length - 1
                 ? "var(--background-2, #f3f5f8)"
-                : "var(--cta-red-500, #c8242f)",
+                : "var(--cta-amber-500, #d97706)",
             color:
               idx >= FLOW.length - 1
                 ? "var(--text-disabled, #c4cad8)"
@@ -409,7 +409,7 @@ export function TdfFlowPrototype() {
         }}
       >
         画面内の{" "}
-        <strong style={{ color: "var(--cta-red-500, #c8242f)" }}>
+        <strong style={{ color: "var(--cta-amber-500, #d97706)" }}>
           赤いボタン
         </strong>{" "}
         をタップすると次画面へ進みます。

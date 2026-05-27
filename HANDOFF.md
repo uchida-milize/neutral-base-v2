@@ -1,4 +1,4 @@
-# Handoff — TDF デザインシステム × 顧客 UI/UX 構築フロー
+# Handoff — XXX デザインシステム × 顧客 UI/UX 構築フロー
 
 最終更新: 2026年5月27日
 
@@ -44,9 +44,9 @@
         │
         ↓
 [7] neutral-base.vercel.app/<tenant> が顧客レビュー Space
-        ├ 顧客 (TDF 担当者など) はこの URL だけを案内される
-        ├ /tdf/prototype で iPhone フレーム単画面遷移
-        └ /tdf/windows で 2×2 グリッド俯瞰
+        ├ 顧客 (XXX 担当者など) はこの URL だけを案内される
+        ├ /xxx/prototype で iPhone フレーム単画面遷移
+        └ /xxx/windows で 2×2 グリッド俯瞰
         │
         │  最終承認後
         ↓
@@ -73,7 +73,7 @@ Upload/
 ├── .env.local                              VERCEL_TOKEN
 ├── neutral-base-v2/                        メインプロジェクト (git管理)
 ├── _handoffs/                              Claude Design 出力の保管庫
-│   └── tdf-claude-design-20260603.zip
+│   └── xxx-claude-design-20260603.zip
 │   └── aaa-claude-design-20260615.zip
 └── _brand-assets/                          顧客提供素材の保管庫（任意）
     └── aaa/
@@ -93,15 +93,15 @@ Upload/
 | **Vercel** | GitHub Integration による自動デプロイ + 顧客プレビューホスティング |
 | **Figma** | デザインシステム Variables のソース・オブ・トゥルース、最終 FB の格納先 |
 
-### テナント設計方針 — TDF は架空のサンプルテナント
+### テナント設計方針 — XXX は架空のサンプルテナント
 
 このリポジトリは複数顧客向けの汎用テンプレートとして運用するため、**特定の実在企業名は表に出さない方針**。
 
-- `/tdf/` 配下に並んでいるのは **架空企業「TDF」（Sample Tenant）** のデモコンテンツ
-- 申込フロー・カラー設計（navy primary / vermilion CTA）は「サンプル企業ならこういう作りになる」という見本
-- 新規顧客が来たら `/tdf/` をテンプレートとして `/aaa/`・`/bbb/` 等の実顧客テナントを派生
-- TDF 自体は永続的に「お手本テナント」として残す（テンプレート参照用）
-- ロゴ: `public/assets/logo_tdf.svg` (フル), `public/assets/logo_tdf_mark.svg` (マークのみ) — どちらもダミー
+- `/xxx/` 配下に並んでいるのは **架空企業「XXX」（Sample Tenant）** のデモコンテンツ
+- 申込フロー・カラー設計（teal primary / amber CTA）は「サンプル企業ならこういう作りになる」という見本
+- 新規顧客が来たら `/xxx/` をテンプレートとして `/aaa/`・`/bbb/` 等の実顧客テナントを派生
+- XXX 自体は永続的に「お手本テナント」として残す（テンプレート参照用）
+- ロゴ: `public/assets/logo_xxx.svg` (フル), `public/assets/logo_xxx_mark.svg` (マークのみ) — どちらもダミー
 - 旧 `logo_td_financial.png` は実在企業のロゴだったため、削除推奨（ローカルから `rm` 必要）
 
 この方針により、リポジトリ全体を顧客に見せても問題ない透明性を確保しつつ、デモとしての説得力（実機さながらの申込フロー画面など）も維持できる。
@@ -126,12 +126,12 @@ Upload/
 - `/guidelines` — Guidelines（汎用のデザインルール）
 - `/components` — Components（25 セクションの shadcn/ui カタログ）
 
-TDF テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
-- `/tdf` — TOP（TDF ポータル入口）
-- `/tdf/guidelines` — Guidelines（TDF ブランド固有ルール）
-- `/tdf/components` — Components（同じ UikitCatalog が navy で表示）
-- `/tdf/prototype` — Prototype（iPhone フレームの画面遷移）
-- `/tdf/windows` — Windows（2×2 グリッドで俯瞰）
+XXX テナント (5 ページ, `.xxx-scope` で teal 系に自動切替):
+- `/xxx` — TOP（XXX ポータル入口）
+- `/xxx/guidelines` — Guidelines（XXX ブランド固有ルール）
+- `/xxx/components` — Components（同じ UikitCatalog が teal で表示）
+- `/xxx/prototype` — Prototype（iPhone フレームの画面遷移）
+- `/xxx/windows` — Windows（2×2 グリッドで俯瞰）
 
 ### ヘッダーナビゲーション
 
@@ -140,7 +140,7 @@ TDF テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
 | エリア | メニュー |
 |-------|---------|
 | 汎用 | TOP / Guidelines / Components |
-| TDF | TOP / Guidelines / Components / Prototype / Windows |
+| XXX | TOP / Guidelines / Components / Prototype / Windows |
 
 新規テナントの追加は `TENANTS` 配列に 1 エントリ追加 + `app/<tenant>/` 配下にディレクトリを作るだけで成立する設計。
 
@@ -163,7 +163,7 @@ TDF テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
 
 **デザイナー側** — `app/globals.css` の CSS Variables を編集
 - 162 color tokens + 13 size tokens
-- `.tdf-scope` で TDF 用オーバーライド
+- `.xxx-scope` で XXX 用オーバーライド
 
 **開発者側** — JSX で Tailwind utility を直接書く
 - `className="rounded-md bg-primary text-primary-foreground"` のような可読性高い記法
@@ -180,14 +180,14 @@ neutral-base-v2/
 ├── app/
 │   ├── page.tsx                    (206行)  汎用 TOP
 │   ├── layout.tsx                  (geist フォント設定)
-│   ├── globals.css                 (162 トークン + .tdf-scope)
+│   ├── globals.css                 (162 トークン + .xxx-scope)
 │   ├── guidelines/page.tsx         (610行)  汎用 Guidelines
 │   ├── components/page.tsx         (49行)   汎用 Components → UikitCatalog
-│   └── tdf/
-│       ├── layout.tsx              (.tdf-scope を当てる)
-│       ├── page.tsx                TDF TOP
-│       ├── guidelines/page.tsx     TDF Guidelines (968行)
-│       ├── components/page.tsx     TDF Components → UikitCatalog
+│   └── xxx/
+│       ├── layout.tsx              (.xxx-scope を当てる)
+│       ├── page.tsx                XXX TOP
+│       ├── guidelines/page.tsx     XXX Guidelines (968行)
+│       ├── components/page.tsx     XXX Components → UikitCatalog
 │       ├── prototype/page.tsx      iPhone 画面遷移
 │       └── windows/page.tsx        2×2 俯瞰
 ├── components/
@@ -197,9 +197,9 @@ neutral-base-v2/
 │   ├── mock-viewer/
 │   │   ├── iphone-frame.tsx        iPhone フレーム
 │   │   └── canvas-grid.tsx         俯瞰グリッド
-│   ├── td-portal-mock.tsx
-│   ├── tdf/
-│   │   ├── tokens.css              TDF 用 CSS Variables オーバーライド
+│   ├── xxx-portal-mock.tsx
+│   ├── xxx/
+│   │   ├── tokens.css              XXX 用 CSS Variables オーバーライド
 │   │   ├── flow.css
 │   │   ├── flow-meta.ts            申込フロー11画面のメタ情報
 │   │   ├── flow-prototype.tsx      iPhone フレームでの遷移実装
@@ -272,7 +272,7 @@ Vercel Hobby プランは「team member 以外の author の commit は自動デ
 入力: 顧客名（例: `aaa`）
 
 実行内容:
-1. `app/<tenant>/` ディレクトリを `app/tdf/` の構造を雛形に複製
+1. `app/<tenant>/` ディレクトリを `app/xxx/` の構造を雛形に複製
 2. `components/<tenant>/tokens.css` を作成（暫定でデフォルト値）
 3. `components/site-header.tsx` の `TENANTS` 配列に新エントリ追加
 4. README に新テナントエントリを追記
@@ -301,7 +301,7 @@ Vercel Hobby プランは「team member 以外の author の commit は自動デ
 
 実行内容:
 1. バンドルを解析し、ページ単位に分割
-2. テナント名（`tdf`, `aaa` 等）を指定された場合、`app/<tenant>/<page>/` に配置
+2. テナント名（`xxx`, `aaa` 等）を指定された場合、`app/<tenant>/<page>/` に配置
 3. `tokens.css` との衝突がないかチェック（Claude Design 側のトークン名と本リポジトリのトークン名のマッピング）
 4. import 文の解決（`@/components/ui/*` のパスに置き換え）
 5. `iphone-frame` や `canvas-grid` で wrap が必要なら自動で挿入
@@ -348,7 +348,7 @@ Vercel Hobby プランは「team member 以外の author の commit は自動デ
 Org 化後の運用ベストプラクティス:
 
 - **Branch protection rules**: `main` への直接 push を禁止 → PR 必須化
-- **CODEOWNERS**: ファイル別レビュアー自動アサイン (例: `/app/tdf/* @td-team`)
+- **CODEOWNERS**: ファイル別レビュアー自動アサイン (例: `/app/xxx/* @td-team`)
 - **GitHub Actions**: テスト・lint・PR ごとの preview deploy 自動化
 - **顧客別リポジトリ戦略**: `design-milize/neutral-base`（基盤）と `design-milize/customer-aaa`（顧客固有）の派生方針を確定
 

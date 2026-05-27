@@ -11,12 +11,12 @@
 - `/guidelines` — Guidelines（デザインの土台ルール）
 - `/components` — Components（共有 UI Kit カタログ）
 
-TDF テナント (5 ページ):
-- `/tdf` — TOP（TDF 向けポータル入口）
-- `/tdf/guidelines` — Guidelines（TDF ブランド固有のルール）
-- `/tdf/components` — Components（`.tdf-scope` で navy 系に切替）
-- `/tdf/prototype` — Prototype（iPhone フレームの画面遷移ビュー）
-- `/tdf/windows` — Windows（同じ画面を 2×2 グリッドで俯瞰）
+XXX テナント (5 ページ):
+- `/xxx` — TOP（XXX 向けポータル入口）
+- `/xxx/guidelines` — Guidelines（XXX ブランド固有のルール）
+- `/xxx/components` — Components（`.xxx-scope` で teal 系に切替）
+- `/xxx/prototype` — Prototype（iPhone フレームの画面遷移ビュー）
+- `/xxx/windows` — Windows（同じ画面を 2×2 グリッドで俯瞰）
 
 ### ヘッダーナビゲーション
 
@@ -25,7 +25,7 @@ TDF テナント (5 ページ):
 | エリア | メニュー |
 |-------|---------|
 | 汎用 (`/`, `/guidelines`, `/components`) | TOP / Guidelines / Components |
-| TDF (`/tdf/*`) | TOP / Guidelines / Components / Prototype / Windows |
+| XXX (`/xxx/*`) | TOP / Guidelines / Components / Prototype / Windows |
 
 新しいテナント（例: AAA社）を追加する場合は、`site-header.tsx` の `TENANTS` 配列に1エントリ追加し、`app/aaa/` 配下に同じ構造でページを作るだけで成立します。
 
@@ -75,11 +75,11 @@ git status --short
 
 # 全部ステージング → コミット → push
 git add -A
-git commit -m "feat: 汎用 + TDF テナントのページ構造を導入
+git commit -m "feat: 汎用 + XXX テナントのページ構造を導入
 
 - 汎用エリア: TOP / Guidelines / Components (3 ページ)
-- TDF テナント: TOP / Guidelines / Components / Prototype / Windows (5 ページ)
-- /tdf/ 配下で .tdf-scope CSS が自動で navy 系に切替
+- XXX テナント: TOP / Guidelines / Components / Prototype / Windows (5 ページ)
+- /xxx/ 配下で .xxx-scope CSS が自動で teal 系に切替
 - site-header.tsx でテナント別ナビセットを動的描画
 - iPhone フレーム (mock-viewer/iphone-frame.tsx) と俯瞰グリッド (canvas-grid.tsx) を導入
 - next/font/google → geist パッケージへ移行（セルフホスト）
@@ -104,7 +104,7 @@ npm install
 npm run dev
 ```
 
-ブラウザで http://localhost:3000 にアクセス。`/tdf` を見れば TDF テナント版が見えます。
+ブラウザで http://localhost:3000 にアクセス。`/xxx` を見れば XXX テナント版が見えます。
 
 ## トラブルシューティング
 
@@ -163,6 +163,6 @@ rm -rf design-system
 
 1. **テナントテーマレイヤーの設計** — `--primary-blue-*` / `--navigation-navy-*` を顧客ごとに差し替える仕組みの整備
 2. **ブランド色自動抽出スキル** — 顧客サイト URL から色を抽出し `tokens.css` に流し込むスキル化
-3. **テンプレートからの新規テナント生成スキル** — `/tdf/` をテンプレートとして `app/aaa/` を生成するスキル
+3. **テンプレートからの新規テナント生成スキル** — `/xxx/` をテンプレートとして `app/aaa/` を生成するスキル
 
 これらは Cowork のスキルとして整備していくと、顧客追加が数分で済むようになります。

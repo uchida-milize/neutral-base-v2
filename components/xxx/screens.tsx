@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 
 /**
- * iPhone 内に描画する「TDF Portal」モバイルモック。
+ * iPhone 内に描画する「XXX Portal」モバイルモック。
  *
  * uploads/MILIZE UIUX Design System (Bundle).zip のソース (App / Sidebar / TopBar /
  * Dashboard / Contracts / ContractDetail / Settings) を 375×812 のモバイル
@@ -32,10 +32,10 @@ import {
  * 元コードと td-tokens.css を一次ソースとし、そのまま採用しています。
  *
  * 色トークン (td-tokens.css 由来 — テナント差し替えポイント):
- *   --navigation-navy-500 #1b3157  ブランド/Primary ボタン/Active nav
- *   --primary-blue-500    #2f66c2  Info / リンク / セカンダリ
- *   --cta-red-500         #c8242f  申込/前進 CTA (positive forward action)
- *   --warm-50             #fdfaf6  featured / premium surface
+ *   --navigation-navy-500 #0f766e  ブランド/Primary ボタン/Active nav
+ *   --primary-blue-500    #0891b2  Info / リンク / セカンダリ
+ *   --cta-amber-500         #d97706  申込/前進 CTA (positive forward action)
+ *   --warm-50             #fafaf9  featured / premium surface
  *
  * dark mode 時は portal.css に従い sidebar / bottom-nav を無彩色 #222 系、
  * その他は zinc に寄せる。アプリ全体の ThemeToggle に追従するよう
@@ -154,8 +154,8 @@ function TopAppBar({ page }: { page: Page }) {
       className="
         sticky top-0 z-10
         border-b border-[#e0e4ec]
-        bg-[#1b3157] text-white
-        dark:bg-[#0c1d36] dark:border-zinc-800
+        bg-[#0f766e] text-white
+        dark:bg-[#134e4a] dark:border-zinc-800
         px-4 pt-3 pb-3
         transition-colors duration-300
       "
@@ -163,11 +163,11 @@ function TopAppBar({ page }: { page: Page }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="grid size-7 place-items-center rounded-md bg-white/10 text-[11px] font-bold tracking-tight">
-            TDF
+            XXX
           </span>
           <div className="leading-tight">
             <p className="text-[10px] text-white/60">
-              TDFフィナンシャル生命
+              XXXフィナンシャル生命
             </p>
             <p className="text-[13px] font-semibold">{title}</p>
           </div>
@@ -179,7 +179,7 @@ function TopAppBar({ page }: { page: Page }) {
             className="relative grid size-8 place-items-center rounded-md hover:bg-white/10"
           >
             <Bell className="size-4" />
-            <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-[#c8242f] ring-2 ring-[#1b3157] dark:ring-[#0c1d36]" />
+            <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-[#d97706] ring-2 ring-[#0f766e] dark:ring-[#134e4a]" />
           </button>
           <span className="grid size-8 place-items-center rounded-full bg-white/15 text-[11px] font-semibold">
             U
@@ -224,7 +224,7 @@ function BottomNav({
               onClick={onClick}
               className={`flex flex-col items-center gap-0.5 rounded-md py-1 transition-colors ${
                 isActive
-                  ? "text-[#1b3157] dark:text-white"
+                  ? "text-[#0f766e] dark:text-white"
                   : "text-[#6b7280] dark:text-zinc-500"
               }`}
             >
@@ -289,8 +289,8 @@ function DashboardScreen({
                 key={i}
                 className={`flex-1 rounded-t-sm ${
                   i === bars.length - 1
-                    ? "bg-[#c8242f]"
-                    : "bg-[#1b3157] dark:bg-[#4d7fcf]"
+                    ? "bg-[#d97706]"
+                    : "bg-[#0f766e] dark:bg-[#2dd4bf]"
                 }`}
                 style={{ height: `${(v / max) * 100}%` }}
               />
@@ -397,7 +397,7 @@ function ContractsScreen({ onOpen }: { onOpen: (c: Contract) => void }) {
           className="
             w-full rounded-[10px] border border-[#e0e4ec] bg-white px-9 py-2 text-[13px]
             text-[#0f172a] placeholder:text-[#a3a8b8]
-            focus:outline-none focus:ring-2 focus:ring-[#1b3157]/30
+            focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30
             dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500
             transition-colors duration-300
           "
@@ -483,7 +483,7 @@ function ContractDetailScreen({
         onClick={onBack}
         className="
           inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px]
-          text-[#1b3157] hover:bg-[#1b3157]/10
+          text-[#0f766e] hover:bg-[#0f766e]/10
           dark:text-zinc-200 dark:hover:bg-white/10
         "
       >
@@ -526,7 +526,7 @@ function ContractDetailScreen({
               className="
                 mt-1 h-16 w-full resize-none rounded-[10px] border border-[#e0e4ec]
                 bg-white px-2.5 py-2 text-[12px] leading-relaxed text-[#0f172a]
-                focus:outline-none focus:ring-2 focus:ring-[#1b3157]/30
+                focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30
                 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100
                 transition-colors duration-300
               "
@@ -665,7 +665,7 @@ function Kpi({
           className={`mt-1 inline-flex items-center gap-0.5 text-[10px] font-medium ${
             up
               ? "text-[#0f8a36] dark:text-[#7be096]"
-              : "text-[#c8242f] dark:text-[#ea7077]"
+              : "text-[#d97706] dark:text-[#ea7077]"
           }`}
         >
           {up ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
@@ -721,7 +721,7 @@ function FeedItem({
       ? "bg-[#e7f6ec] text-[#0f8a36] dark:bg-[#0f8a36]/20 dark:text-[#7be096]"
       : kind === "warning"
         ? "bg-[#fff5e0] text-[#b06d00] dark:bg-[#f0a818]/20 dark:text-[#f0c674]"
-        : "bg-[#eff5ff] text-[#2f66c2] dark:bg-[#2f66c2]/20 dark:text-[#9abae7]";
+        : "bg-[#eff5ff] text-[#0891b2] dark:bg-[#0891b2]/20 dark:text-[#9abae7]";
   const Icon = kind === "success" ? Check : kind === "warning" ? AlertTriangle : Info;
   return (
     <div className="flex items-start gap-2 px-3 py-2">
@@ -790,11 +790,11 @@ function StatusPill({ status }: { status: Status }) {
     pending:
       "bg-[#fff5e0] text-[#b06d00] dark:bg-[#f0a818]/20 dark:text-[#f0c674]",
     trial:
-      "bg-[#eff5ff] text-[#2f66c2] dark:bg-[#2f66c2]/20 dark:text-[#9abae7]",
+      "bg-[#eff5ff] text-[#0891b2] dark:bg-[#0891b2]/20 dark:text-[#9abae7]",
     suspended:
-      "bg-[#fdebec] text-[#c8242f] dark:bg-[#c8242f]/20 dark:text-[#ea7077]",
+      "bg-[#fdebec] text-[#d97706] dark:bg-[#d97706]/20 dark:text-[#ea7077]",
     completed:
-      "bg-[#eef0f6] text-[#1b3157] dark:bg-[#1b3157]/30 dark:text-[#b3bbcd]",
+      "bg-[#eef0f6] text-[#0f766e] dark:bg-[#0f766e]/30 dark:text-[#b3bbcd]",
   };
   return (
     <span
@@ -820,7 +820,7 @@ function PillTab({
       onClick={onClick}
       className={`whitespace-nowrap rounded-full border px-2.5 py-1 text-[10px] font-medium transition-colors duration-150 ${
         active
-          ? "border-[#1b3157] bg-[#1b3157] text-white dark:border-[#4d7fcf] dark:bg-[#4d7fcf]"
+          ? "border-[#0f766e] bg-[#0f766e] text-white dark:border-[#2dd4bf] dark:bg-[#2dd4bf]"
           : "border-[#e0e4ec] bg-white text-[#475569] hover:bg-[#f3f5f8] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
       }`}
     >
@@ -841,7 +841,7 @@ function PageButton({
       type="button"
       className={`grid size-6 place-items-center rounded text-[11px] ${
         active
-          ? "bg-[#1b3157] text-white dark:bg-[#4d7fcf]"
+          ? "bg-[#0f766e] text-white dark:bg-[#2dd4bf]"
           : "text-[#475569] hover:bg-[#f3f5f8] dark:text-zinc-400 dark:hover:bg-zinc-800"
       }`}
     >
@@ -861,12 +861,12 @@ function InfoAlert({
 }) {
   const tone =
     variant === "info"
-      ? "border-[#dde9fb] bg-[#eff5ff] text-[#1b3157] dark:border-[#2f66c2]/40 dark:bg-[#2f66c2]/15 dark:text-[#cfddf6]"
+      ? "border-[#dde9fb] bg-[#eff5ff] text-[#0f766e] dark:border-[#0891b2]/40 dark:bg-[#0891b2]/15 dark:text-[#cfddf6]"
       : variant === "warning"
         ? "border-[#f0a818]/30 bg-[#fff5e0] text-[#b06d00] dark:border-[#f0a818]/40 dark:bg-[#f0a818]/15 dark:text-[#f0c674]"
         : variant === "success"
           ? "border-[#cdebd6] bg-[#e7f6ec] text-[#0f8a36] dark:border-[#0f8a36]/40 dark:bg-[#0f8a36]/15 dark:text-[#7be096]"
-          : "border-[#fbd0d3] bg-[#fdebec] text-[#c8242f] dark:border-[#c8242f]/40 dark:bg-[#c8242f]/15 dark:text-[#ea7077]";
+          : "border-[#fbd0d3] bg-[#fdebec] text-[#d97706] dark:border-[#d97706]/40 dark:bg-[#d97706]/15 dark:text-[#ea7077]";
   const Icon =
     variant === "info" ? Info : variant === "warning" ? AlertTriangle : variant === "success" ? Check : AlertTriangle;
   return (
@@ -904,7 +904,7 @@ function Field({
         readOnly={value !== undefined}
         className={`
           mt-1 w-full rounded-[10px] border px-2.5 py-1.5 text-[12px]
-          focus:outline-none focus:ring-2 focus:ring-[#1b3157]/30
+          focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30
           transition-colors duration-300
           ${disabled
             ? "cursor-not-allowed border-[#e0e4ec] bg-[#f3f5f8] text-[#94a3b8] dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-500"
@@ -944,7 +944,7 @@ function SwitchRow({
         onClick={() => setOn((v) => !v)}
         className={`relative mt-0.5 inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${
           on
-            ? "bg-[#1b3157] dark:bg-[#4d7fcf]"
+            ? "bg-[#0f766e] dark:bg-[#2dd4bf]"
             : "bg-[#c9d0dd] dark:bg-zinc-700"
         }`}
       >
@@ -959,8 +959,8 @@ function SwitchRow({
 }
 
 /* ---- ボタン -----------------------------------------------------
- * cta:         #c8242f 申込/前進 (positive forward action) — 1 画面 1 つまで
- * primary:     #1b3157 通常の確定
+ * cta:         #d97706 申込/前進 (positive forward action) — 1 画面 1 つまで
+ * primary:     #0f766e 通常の確定
  * outline:     白 + ボーダー (サブ操作)
  * destructive: 削除 (small サイズ限定)
  * ---------------------------------------------------------------- */
@@ -975,19 +975,19 @@ function PortalButton({
     "inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[10px] text-[12px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
   const variantCls =
     variant === "cta"
-      ? "bg-[#c8242f] text-white shadow-[0_8px_20px_-8px_rgba(200,36,47,0.5)] hover:bg-[#ab1e28] focus-visible:ring-[#c8242f]/40"
+      ? "bg-[#d97706] text-white shadow-[0_8px_20px_-8px_rgba(217, 119, 6, 0.5)] hover:bg-[#b45309] focus-visible:ring-[#d97706]/40"
       : variant === "primary"
-        ? "bg-[#1b3157] text-white hover:bg-[#142849] focus-visible:ring-[#1b3157]/40 dark:bg-[#4d7fcf] dark:hover:bg-[#2f66c2]"
+        ? "bg-[#0f766e] text-white hover:bg-[#115e59] focus-visible:ring-[#0f766e]/40 dark:bg-[#2dd4bf] dark:hover:bg-[#0891b2]"
         : variant === "outline"
-          ? "border border-[#c9d0dd] bg-white text-[#0f172a] hover:bg-[#f9fafc] focus-visible:ring-[#1b3157]/30 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
-          : "bg-[#c8242f] text-white hover:bg-[#ab1e28] focus-visible:ring-[#c8242f]/40 dark:bg-[#b04545]";
+          ? "border border-[#c9d0dd] bg-white text-[#0f172a] hover:bg-[#f9fafc] focus-visible:ring-[#0f766e]/30 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          : "bg-[#d97706] text-white hover:bg-[#b45309] focus-visible:ring-[#d97706]/40 dark:bg-[#b04545]";
   return <button type="button" className={`${base} ${variantCls}`}>{children}</button>;
 }
 
 /* =================================================================
  * Canvas (俯瞰) 用: 単一画面を非インタラクティブに描画
  *
- * /tdf/windows で iPhone フレーム × 4 を 2×2 に並べる際に使用。
+ * /xxx/windows で iPhone フレーム × 4 を 2×2 に並べる際に使用。
  * インタラクション (onOpen / onBack / onNav) は no-op にし、
  * 見た目は TdPortalMock と完全一致させて「この画面はどう見えるか?」を
  * 並列比較できるようにする。

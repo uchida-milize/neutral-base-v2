@@ -32,8 +32,8 @@ import {
 /* =================================================================
  * /guidelines — 共通デザインガイドライン (ベース)
  *
- * このページはどの導入先 (TDF / 他社) にも共通する基本原則をまとめる「土台」。
- * 各社固有のブランド・運用は別ルート (例: /tdf/guidelines) に分離する。
+ * このページはどの導入先 (XXX / 他社) にも共通する基本原則をまとめる「土台」。
+ * 各社固有のブランド・運用は別ルート (例: /xxx/guidelines) に分離する。
  *
  * 章立て:
  *  1. ヒーロー (このガイドラインの位置づけ)
@@ -125,11 +125,7 @@ function Section({
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 text-card-foreground transition-colors duration-300 sm:p-12">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,theme(colors.primary/12),transparent_60%)]"
-      />
+    <section className="relative p-8 transition-colors duration-300 sm:p-12">
       <Badge variant="secondary" className="gap-1.5">
         <LayersIcon className="size-3" />
         Common Design Guidelines
@@ -139,9 +135,9 @@ function Hero() {
       </h1>
       <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
         デザインシステムの「ベース原則」を定義するページです。
-        TDF など各導入先のブランドルールは、ここを土台にした上で
+        XXX など各導入先のブランドルールは、ここを土台にした上で
         <Link
-          href="/tdf/guidelines"
+          href="/xxx/guidelines"
           className="font-medium text-primary underline-offset-4 hover:underline"
         >
           子ルート
@@ -153,7 +149,7 @@ function Hero() {
           <a href="#principles">設計原則を見る</a>
         </Button>
         <Button asChild variant="outline">
-          <Link href="/tdf/guidelines">TDF 専用ルールへ</Link>
+          <Link href="/xxx/guidelines">XXX 専用ルールへ</Link>
         </Button>
       </div>
     </section>
@@ -555,15 +551,15 @@ function BrandSatellites() {
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Link
-          href="/tdf/guidelines"
+          href="/xxx/guidelines"
           className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
         >
           <div className="flex items-center justify-between">
-            <Badge variant="secondary">TDF</Badge>
+            <Badge variant="secondary">XXX</Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
           <h3 className="mt-3 text-h7 font-semibold">
-            TDF 専用ガイドライン
+            XXX 専用ガイドライン
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
             信頼・誠実・モダン・クリーンを 4 本柱に、Primary Blue の 60:30:10
@@ -601,7 +597,7 @@ function Footer() {
             <Link href="/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/tdf/guidelines">TDF ルールへ</Link>
+            <Link href="/xxx/guidelines">XXX ルールへ</Link>
           </Button>
         </div>
       </div>

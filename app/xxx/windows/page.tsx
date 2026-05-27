@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
-import { TdfFlowScreenStatic } from "@/components/tdf/flow-prototype";
-import { FLOW_META } from "@/components/tdf/flow-meta";
+import { TdfFlowScreenStatic } from "@/components/xxx/flow-prototype";
+import { FLOW_META } from "@/components/xxx/flow-meta";
 
 export const metadata: Metadata = {
-  title: "Prototype · 俯瞰 | TDF Design System",
+  title: "Prototype · 俯瞰 | XXX Design System",
   description:
-    "TDF Embedded Insurance 申込フローの 11 画面を 390px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
+    "XXX Embedded Insurance 申込フローの 11 画面を 390px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
 };
 
 /**
- * /tdf/windows
+ * /xxx/windows
  *
  * iPhone フレームは外し、各画面の `.phone` (幅 390px) を高さ可変のまま
  * 左から右に並べる。複数列でラップしてもよいので、画面解像度に応じて
@@ -30,7 +30,7 @@ export default function TdfPrototypeCanvasPage() {
           各画面は <strong className="text-foreground">390px 幅</strong> · 高さは内容に応じて可変。
           画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
           <a
-            href="/tdf/prototype"
+            href="/xxx/prototype"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
             画面遷移ビュー

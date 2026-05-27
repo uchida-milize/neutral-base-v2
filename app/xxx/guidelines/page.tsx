@@ -28,27 +28,27 @@ import {
 } from "@/components/ui/table";
 
 /* =================================================================
- * /guidelines/td — TDF 社専用デザインガイドライン
+ * /guidelines/td — XXX 社専用デザインガイドライン
  *
  * このページは uploads/MILIZE UIUX Design System (Bundle).zip 内の `td-tokens.css` と
  * `ui_kits/portal/*` の運用ルールを一次ソースとして書き起こしたものです。
  *
  * テナント差し替えポイント (色トークン):
- *   --navigation-navy-500 #1b3157 — primary navy (ブランド基調)
- *   --primary-blue-500    #2f66c2 — info / link / secondary
- *   --cta-red-500         #c8242f — submit-CTA red (申込確定/前進)
- *   --warm-50             #fdfaf6 — premium / featured surface
+ *   --navigation-navy-500 #0f766e — primary navy (ブランド基調)
+ *   --primary-blue-500    #0891b2 — info / link / secondary
+ *   --cta-amber-500         #d97706 — submit-CTA red (申込確定/前進)
+ *   --warm-50             #fafaf9 — premium / featured surface
  *
  * 設計の特徴:
- *   - Primary は赤ではなく "ネイビー"。ブランド基調を担うのは深い紺。
- *   - 申込/前進だけは "朱色 (vermilion)" を採用。danger とは別物として運用。
+ *   - Primary は赤ではなく "ティール"。ブランド基調を担うのは深い紺。
+ *   - 申込/前進だけは "アンバー (amber)" を採用。danger とは別物として運用。
  *   - dark mode の surface は無彩色 (zinc) — ブランド色の影響を受けない汎用設計。
  * ================================================================= */
 
 export const metadata: Metadata = {
-  title: "TDF ガイドライン | Design System",
+  title: "XXX ガイドライン | Design System",
   description:
-    "TDF (サンプル架空企業)のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
+    "XXX社 (サンプル架空企業)のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
 };
 
 export default function TdGuidelinesPage() {
@@ -120,34 +120,27 @@ function Section({
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border bg-[#1b3157] p-8 text-white transition-colors duration-300 sm:p-12">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(200,36,47,0.35),transparent_55%)]"
-      />
-      <Badge
-        variant="secondary"
-        className="gap-1.5 bg-white/10 text-caption text-white"
-      >
+    <section className="relative p-8 transition-colors duration-300 sm:p-12">
+      <Badge variant="secondary" className="gap-1.5 text-caption">
         <ShieldCheck className="size-3" />
-        TDF · Embedded Insurance
+        XXX · Embedded Insurance
       </Badge>
       <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
         信頼を、もっと触れる距離に。
       </h1>
-      <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
-        TDF 社のデジタル体験は、金融・保険領域で求められる
-        <strong className="text-white">「誠実さ」</strong>と、
+      <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+        XXX 社のデジタル体験は、金融・保険領域で求められる
+        <strong className="text-foreground">「誠実さ」</strong>と、
         現代の Web / アプリに求められる
-        <strong className="text-white">「クリーンさ」</strong>を両立させます。
-        本ガイドラインは <code className="text-white/90">td-tokens.css</code> と
+        <strong className="text-foreground">「クリーンさ」</strong>を両立させます。
+        本ガイドラインは <code>tokens.css</code> と
         Portal UI Kit の運用を、実装に落とすための公式ルールです。
       </p>
       <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild className="bg-[#c8242f] text-white hover:bg-[#ab1e28]">
+        <Button asChild>
           <a href="#color">カラー運用を見る</a>
         </Button>
-        <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white">
+        <Button asChild variant="outline">
           <a href="#a11y">アクセシビリティ方針</a>
         </Button>
       </div>
@@ -163,12 +156,12 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: "信頼 (Trust)",
-    body: "Primary はネイビー (#1b3157)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
+    body: "Primary はティール (#0f766e)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
   },
   {
     icon: SparklesIcon,
     title: "誠実 (Sincerity)",
-    body: "誇張・煽り表現は使わない。CTA の朱色 (#c8242f) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
+    body: "誇張・煽り表現は使わない。CTA のアンバー (#d97706) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
   },
   {
     icon: PaletteIcon,
@@ -178,7 +171,7 @@ const PILLARS = [
   {
     icon: EyeIcon,
     title: "クリーン (Clean)",
-    body: "余白とグレースケールで階層を作る。warm (#fdfaf6) は premium 面に限定し、装飾色は持ち込まない。",
+    body: "余白とグレースケールで階層を作る。warm (#fafaf9) は premium 面に限定し、装飾色は持ち込まない。",
   },
 ];
 
@@ -220,8 +213,8 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="ネイビー基調 + 朱色 CTA + 控えめなウォーム"
-        description="TDF のカラーは 4 つのスケールで構成されます。テナント差し替え点は navy と blue のみで、semantic 層は固定です。直接 hex を書かず、必ず var(--text-main) / var(--button-primary) 等を経由します。"
+        title="ティール基調 + アンバー CTA + 控えめなウォーム"
+        description="XXX のカラーは 4 つのスケールで構成されます。テナント差し替え点は navy と blue のみで、semantic 層は固定です。直接 hex を書かず、必ず var(--text-main) / var(--button-primary) 等を経由します。"
       />
 
       {/* スウォッチ群 — 4 スケール */}
@@ -236,9 +229,9 @@ function ColorRules() {
             { name: "200", hex: "#8590a8", inv: false },
             { name: "300", hex: "#5e6a86", inv: true },
             { name: "400", hex: "#364866", inv: true },
-            { name: "500", hex: "#1b3157", inv: true, primary: true },
-            { name: "600", hex: "#142849", inv: true },
-            { name: "700", hex: "#0c1d36", inv: true },
+            { name: "500", hex: "#0f766e", inv: true, primary: true },
+            { name: "600", hex: "#115e59", inv: true },
+            { name: "700", hex: "#134e4a", inv: true },
           ]}
         />
         <ScaleBlock
@@ -250,14 +243,14 @@ function ColorRules() {
             { name: "100", hex: "#c1d5f3", inv: false },
             { name: "200", hex: "#9abae7", inv: false },
             { name: "300", hex: "#6e9adc", inv: true },
-            { name: "400", hex: "#4d7fcf", inv: true },
-            { name: "500", hex: "#2f66c2", inv: true, primary: true },
-            { name: "600", hex: "#2553a3", inv: true },
+            { name: "400", hex: "#2dd4bf", inv: true },
+            { name: "500", hex: "#0891b2", inv: true, primary: true },
+            { name: "600", hex: "#0e7490", inv: true },
             { name: "700", hex: "#1a3f80", inv: true },
           ]}
         />
         <ScaleBlock
-          title="cta-red (vermilion)"
+          title="cta-amber (amber)"
           subtitle="申込/前進 PRIMARY ACTION ONLY · danger とは別物"
           stops={[
             { name: "50", hex: "#fdebec", inv: false },
@@ -265,17 +258,17 @@ function ColorRules() {
             { name: "200", hex: "#f4a4a9", inv: false },
             { name: "300", hex: "#ea7077", inv: true },
             { name: "400", hex: "#d94852", inv: true },
-            { name: "500", hex: "#c8242f", inv: true, primary: true },
-            { name: "600", hex: "#ab1e28", inv: true },
-            { name: "700", hex: "#861820", inv: true },
+            { name: "500", hex: "#d97706", inv: true, primary: true },
+            { name: "600", hex: "#b45309", inv: true },
+            { name: "700", hex: "#92400e", inv: true },
           ]}
         />
         <ScaleBlock
           title="warm"
           subtitle="Premium / featured surface only · 大面積禁止"
           stops={[
-            { name: "50", hex: "#fdfaf6", inv: false, primary: true },
-            { name: "100", hex: "#faf3e8", inv: false },
+            { name: "50", hex: "#fafaf9", inv: false, primary: true },
+            { name: "100", hex: "#f5f5f4", inv: false },
             { name: "200", hex: "#f3e6d2", inv: false },
             { name: "300", hex: "#e6d2b3", inv: false },
           ]}
@@ -324,12 +317,12 @@ function ColorRules() {
                 <TableRow>
                   <TableCell>Eyebrow アクセント</TableCell>
                   <TableCell><code>--text-accent</code></TableCell>
-                  <TableCell className="font-mono text-caption">cta-red-500</TableCell>
+                  <TableCell className="font-mono text-caption">cta-amber-500</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>エラーテキスト</TableCell>
                   <TableCell><code>--text-error</code></TableCell>
-                  <TableCell className="font-mono text-caption">cta-red-600</TableCell>
+                  <TableCell className="font-mono text-caption">cta-amber-600</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>border default / strong</TableCell>
@@ -339,7 +332,7 @@ function ColorRules() {
                 <TableRow>
                   <TableCell>danger ボーダー</TableCell>
                   <TableCell><code>--border-danger</code></TableCell>
-                  <TableCell className="font-mono text-caption">cta-red-500</TableCell>
+                  <TableCell className="font-mono text-caption">cta-amber-500</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -403,7 +396,7 @@ function ScaleBlock({
 }
 
 /* ---------------------------------------------------------------- */
-/* 4. ボタン運用 (TDF の核)                                            */
+/* 4. ボタン運用 (XXX の核)                                            */
 /* ---------------------------------------------------------------- */
 
 function ButtonRules() {
@@ -412,7 +405,7 @@ function ButtonRules() {
       <SectionHeading
         eyebrow="Buttons"
         title="5 種類のボタンを意味で使い分ける"
-        description="TDF 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ネイビー = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
+        description="XXX 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ティール = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
       />
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -422,12 +415,12 @@ function ButtonRules() {
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#c8242f] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(200,36,47,0.5)] hover:bg-[#ab1e28]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#d97706] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(217, 119, 6, 0.5)] hover:bg-[#b45309]"
             >
               申込を確定する
             </button>
           }
-          token="--button-cta · #c8242f"
+          token="--button-cta · #d97706"
         />
         <ButtonRow
           name="primary"
@@ -435,12 +428,12 @@ function ButtonRules() {
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#1b3157] px-4 py-2 text-sm font-semibold text-white hover:bg-[#142849]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#0f766e] px-4 py-2 text-sm font-semibold text-white hover:bg-[#115e59]"
             >
               変更を保存
             </button>
           }
-          token="--button-primary · #1b3157"
+          token="--button-primary · #0f766e"
         />
         <ButtonRow
           name="neutral"
@@ -474,7 +467,7 @@ function ButtonRules() {
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#c8242f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#ab1e28]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#d97706] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#b45309]"
             >
               アカウントを削除
             </button>
@@ -487,7 +480,7 @@ function ButtonRules() {
         <CardHeader>
           <CardTitle className="text-h7">1 画面 1 つだけ、の規律</CardTitle>
           <CardDescription>
-            赤 (cta) とネイビー (primary) が同一画面に並ぶのは原則禁止。並べる場合は赤を 1 つに絞り、ネイビーは neutral / outline に降格させること。
+            赤 (cta) とティール (primary) が同一画面に並ぶのは原則禁止。並べる場合は赤を 1 つに絞り、ティールは neutral / outline に降格させること。
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -512,7 +505,7 @@ function ButtonRules() {
                   <TableCell className="text-muted-foreground">cta + neutral の主従関係</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>cta 赤 と primary ネイビーを同列</TableCell>
+                  <TableCell>cta 赤 と primary ティールを同列</TableCell>
                   <TableCell><Badge variant="destructive">NG</Badge></TableCell>
                   <TableCell className="text-muted-foreground">どちらが主か判断できなくなる</TableCell>
                 </TableRow>
@@ -669,7 +662,7 @@ function AccessibilityRules() {
       <SectionHeading
         eyebrow="Accessibility"
         title="20 代から 70 代までを一枚の UI で支える"
-        description="TDF のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        description="XXX のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -691,8 +684,8 @@ function AccessibilityRules() {
               UI コンポーネント (ボタンの外周線、フォームの境界): 3 : 1 以上。
             </p>
             <p>
-              ネイビー <code>#1b3157</code> on 白 = <strong>11.6 : 1</strong>、
-              cta-red <code>#c8242f</code> on 白 = <strong>5.4 : 1</strong>。
+              ティール <code>#0f766e</code> on 白 = <strong>11.6 : 1</strong>、
+              cta-amber <code>#d97706</code> on 白 = <strong>5.4 : 1</strong>。
               いずれも本文しきい値を超える設計。
             </p>
           </CardContent>
@@ -756,7 +749,7 @@ function AccessibilityRules() {
       {/* 視認性プレビュー */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">サイズ感の比較 (TDF 推奨)</CardTitle>
+          <CardTitle className="text-h7">サイズ感の比較 (XXX 推奨)</CardTitle>
           <CardDescription>
             60 代以上の主要導線は左の body-lg を既定としてください。
           </CardDescription>
@@ -775,7 +768,7 @@ function AccessibilityRules() {
             </p>
           </div>
           <div className="rounded-md border border-border p-4 transition-colors duration-300">
-            <p className="text-caption font-medium" style={{ color: "#c8242f" }}>
+            <p className="text-caption font-medium" style={{ color: "#d97706" }}>
               非推奨 (caption 12px)
             </p>
             <p className="mt-2" style={{ fontSize: 12 }}>
@@ -844,7 +837,7 @@ function RadiusBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-2">
       <div
-        className="h-16 border border-border bg-[#1b3157]/10 transition-colors duration-300 dark:bg-[#4d7fcf]/15"
+        className="h-16 border border-border bg-[#0f766e]/10 transition-colors duration-300 dark:bg-[#2dd4bf]/15"
         style={{ borderRadius: radius }}
       />
       <p className="text-body font-medium">{label}</p>
@@ -863,7 +856,7 @@ function ContentRules() {
       <SectionHeading
         eyebrow="Voice & Content"
         title="コピーは事実から、語尾は『です・ます』"
-        description="TDF のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        description="XXX のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -948,18 +941,18 @@ function Footer() {
     <footer className="mt-20 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © TDF Design System · 一次ソース:{" "}
+          © XXX Design System · 一次ソース:{" "}
           <code>td-tokens.css</code> + <code>ui_kits/portal/*</code>
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
-            <Link href="/tdf/components">Components を見る</Link>
+            <Link href="/xxx/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/tdf/prototype">Prototype を試す</Link>
+            <Link href="/xxx/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/tdf">TDF 入口へ</Link>
+            <Link href="/xxx">XXX 入口へ</Link>
           </Button>
         </div>
       </div>
