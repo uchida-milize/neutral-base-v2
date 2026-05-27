@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { TdfFlowPrototype } from "@/components/tdf/flow-prototype";
 
 export const metadata: Metadata = {
-  title: "Prototype · 画面遷移 | T&D Design System",
+  title: "Prototype · 画面遷移 | TDF Design System",
   description:
-    "T&D Embedded Insurance 申込フロー (Guidance → Product → Plan → 情報入力 → 入力確認 → eKYC → 健康告知 → 申込確認 → 決済 → 完了) を iPhone フレーム内でタップ操作できる本物さながらのプロトタイプ。",
+    "TDF Embedded Insurance 申込フロー (Guidance → Product → Plan → 情報入力 → 入力確認 → eKYC → 健康告知 → 申込確認 → 決済 → 完了) を iPhone フレーム内でタップ操作できる本物さながらのプロトタイプ。",
 };
 
 /**
@@ -22,7 +22,7 @@ export default function TdfPrototypeSinglePage() {
           Prototype · 画面遷移
         </p>
         <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
-          実機さながらの T&amp;D 申込フロー
+          実機さながらの TDF 申込フロー
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
           画面内の{" "}

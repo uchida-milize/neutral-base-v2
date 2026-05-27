@@ -24,9 +24,9 @@ import {
 } from "lucide-react";
 
 /**
- * iPhone 内に描画する「T&D Financial Life Portal」モバイルモック。
+ * iPhone 内に描画する「TDF Portal」モバイルモック。
  *
- * uploads/T&D UIUX Design System.zip のソース (App / Sidebar / TopBar /
+ * uploads/MILIZE UIUX Design System (Bundle).zip のソース (App / Sidebar / TopBar /
  * Dashboard / Contracts / ContractDetail / Settings) を 375×812 のモバイル
  * 縦画面に向けて再構成。テキスト・KPI 値・契約レコード・通知文・色トークンは
  * 元コードと td-tokens.css を一次ソースとし、そのまま採用しています。
@@ -163,11 +163,11 @@ function TopAppBar({ page }: { page: Page }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="grid size-7 place-items-center rounded-md bg-white/10 text-[11px] font-bold tracking-tight">
-            T&amp;D
+            TDF
           </span>
           <div className="leading-tight">
             <p className="text-[10px] text-white/60">
-              T&amp;Dフィナンシャル生命
+              TDFフィナンシャル生命
             </p>
             <p className="text-[13px] font-semibold">{title}</p>
           </div>

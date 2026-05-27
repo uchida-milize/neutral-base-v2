@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="TDF Mark">
+  <rect x="0" y="0" width="48" height="48" rx="10" fill="#1b3157"/>
+  <path d="M11 12 H37 V18 H27 V40 H21 V18 H11 Z" fill="#ffffff"/>
+  <circle cx="42" cy="8" r="3" fill="#c8242f"/>
+</svg>

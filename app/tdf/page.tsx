@@ -13,14 +13,14 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "T&D Design System",
+  title: "TDF Design System",
   description:
-    "T&D フィナンシャル生命の Embedded Insurance プロダクト向けデザインシステム。TOP / Guidelines / Components を一望できるポータル。",
+    "TDF (サンプル架空企業)の Embedded Insurance プロダクト向けデザインシステム。TOP / Guidelines / Components を一望できるポータル。",
 };
 
 /**
- * /tdf — T&D 専用デザインシステムの入口。
- * 顧客 (T&D 担当者) はこの URL から下の 4 ページにアクセスする。
+ * /tdf — TDF 専用デザインシステムの入口。
+ * 顧客 (TDF 担当者) はこの URL から下の 4 ページにアクセスする。
  */
 export default function TdfHome() {
   return (
@@ -36,7 +36,7 @@ export default function TdfHome() {
           className="gap-1.5 bg-white/10 text-caption text-white"
         >
           <ShieldCheck className="size-3" />
-          T&amp;D Financial Life · Embedded Insurance
+          TDF · Embedded Insurance
         </Badge>
         <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
           信頼を、もっと触れる距離に。
@@ -44,7 +44,7 @@ export default function TdfHome() {
         <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
           金融・保険領域に求められる<strong className="text-white">「誠実さ」</strong>と、
           現代の Web / アプリに求められる<strong className="text-white">「クリーンさ」</strong>を両立する、
-          T&amp;D 専用のデザインシステムです。
+          TDF 専用のデザインシステムです。
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           <Button asChild className="bg-[#c8242f] text-white hover:bg-[#ab1e28]">
@@ -76,7 +76,7 @@ export default function TdfHome() {
             href="/tdf/components"
             icon={LayoutGrid}
             title="Components"
-            desc="T&D 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
+            desc="TDF 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
           />
           <NavCard
             href="/tdf/guidelines"

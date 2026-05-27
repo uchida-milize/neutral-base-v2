@@ -4,9 +4,9 @@ import { TdfFlowScreenStatic } from "@/components/tdf/flow-prototype";
 import { FLOW_META } from "@/components/tdf/flow-meta";
 
 export const metadata: Metadata = {
-  title: "Prototype · 俯瞰 | T&D Design System",
+  title: "Prototype · 俯瞰 | TDF Design System",
   description:
-    "T&D Embedded Insurance 申込フローの 11 画面を 390px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
+    "TDF Embedded Insurance 申込フローの 11 画面を 390px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
 };
 
 /**

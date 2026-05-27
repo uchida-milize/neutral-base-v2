@@ -1,15 +1,15 @@
 /* =================================================================
- * T&D Financial Life — tenant tokens (scoped)
+ * TDF — tenant tokens (scoped)
  *
- * .tdf-scope の中だけ shadcn セマンティック層が T&D 仕様で上書きされる。
+ * .tdf-scope の中だけ shadcn セマンティック層が TDF 仕様で上書きされる。
  * /tdf/layout.tsx で全 /tdf/* ページをこのクラスでラップして適用する。
  *
  * 上書きするのは "primary / cta / 追加 primitives" の 3 種類:
  *   1. tenant override primitives  navigation-navy / primary-blue
- *   2. T&D 固有 primitives          cta-red / warm
+ *   2. TDF 固有 primitives          cta-red / warm
  *   3. semantic shortcuts           --primary を navy に切り替え
  *
- * 一次ソース: uploads/T&D UIUX Design System.zip の td-tokens.css
+ * 一次ソース: uploads/MILIZE UIUX Design System (Bundle).zip の td-tokens.css
  * ================================================================= */
 
 .tdf-scope {
@@ -34,7 +34,7 @@
   --navigation-navy-600: #142849;
   --navigation-navy-700: #0c1d36;
 
-  /* ---- 2. T&D 固有 primitives ---- */
+  /* ---- 2. TDF 固有 primitives ---- */
   --cta-red-50: #fdebec;
   --cta-red-100: #fbd0d3;
   --cta-red-200: #f4a4a9;
@@ -50,7 +50,7 @@
   --warm-300: #e6d2b3;
 
   /* ---- 3. semantic shortcuts (shadcn primitives が自動追従) ---- */
-  --primary: var(--navigation-navy-500); /* T&D primary は navy */
+  --primary: var(--navigation-navy-500); /* TDF primary は navy */
   --primary-foreground: #ffffff;
   --ring: var(--navigation-navy-500);
   --accent: var(--navigation-navy-10);

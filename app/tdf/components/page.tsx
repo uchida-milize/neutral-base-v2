@@ -4,16 +4,16 @@ import { UikitCatalog } from "@/components/uikit-catalog";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "Components | T&D Design System",
+  title: "Components | TDF Design System",
   description:
-    "T&D 仕様 (navy primary / cta-red / warm) で描画されたコンポーネントカタログ。同じカタログを汎用版と比較すると、テナント差し替え点が一目で分かる。",
+    "TDF 仕様 (navy primary / cta-red / warm) で描画されたコンポーネントカタログ。同じカタログを汎用版と比較すると、テナント差し替え点が一目で分かる。",
 };
 
 /**
- * /tdf/components — T&D 専用 Components カタログ。
+ * /tdf/components — TDF 専用 Components カタログ。
  *
  * 汎用版 (/components) と同じ <UikitCatalog /> を使い、tdf-scope (layout で適用済み)
- * の中で描画することで shadcn セマンティック層が自動で T&D 色に切り替わる。
+ * の中で描画することで shadcn セマンティック層が自動で TDF 色に切り替わる。
  */
 export default function TdfUikitPage() {
   return (
@@ -21,15 +21,15 @@ export default function TdfUikitPage() {
       {/* ページヘッダー */}
       <header className="mb-8 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-          T&amp;D Components
+          TDF Components
         </p>
         <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
-          T&amp;D 仕様のコンポーネント
+          TDF 仕様のコンポーネント
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
           ここに並ぶ shadcn コンポーネントは <code>.tdf-scope</code> 配下にあるため、
           primary は navy <code>#1b3157</code>、accent は navy-50、ring も navy となります。
-          汎用 Components と比較すると、T&amp;D のブランドに合わせて自動的に色だけが差し替わっていることが分かります。
+          汎用 Components と比較すると、TDF のブランドに合わせて自動的に色だけが差し替わっていることが分かります。
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Badge variant="secondary">primary = navy</Badge>

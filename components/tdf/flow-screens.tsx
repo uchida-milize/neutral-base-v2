@@ -5,10 +5,10 @@ import * as React from "react";
 import { FLOW_META } from "@/components/tdf/flow-meta";
 
 /**
- * T&D Embedded Insurance Flow — モバイル 11 画面の TSX 移植。
+ * TDF Embedded Insurance Flow — モバイル 11 画面の TSX 移植。
  *
  * 一次ソース:
- *   uploads/T&D UIUX Design System.zip
+ *   uploads/MILIZE UIUX Design System (Bundle).zip
  *     ├── screens.jsx          (4 画面: Guidance / Product / Plan / Confirm)
  *     ├── screens-extra.jsx    (7 画面: CustomerInfo / CustomerInfoConfirm /
  *     │                              EkycSelect / EkycCapture / Health /
@@ -109,7 +109,7 @@ function AppHeader({ step, total = 8 }: { step?: number; total?: number }) {
             lineHeight: "18px",
           }}
         >
-          T&amp;D Financial
+          TDF Financial
         </span>
         {step != null ? (
           <span className="step-count">
@@ -447,7 +447,7 @@ export function PlanScreen({ onNext }: ScreenProps) {
           <div className="lede">
             死亡 ＋ 障害・介護に対応した、ご家族の生活をサポートする定期保険です。
           </div>
-          <div className="underwriter">引受会社: T&amp;Dフィナンシャル生命</div>
+          <div className="underwriter">引受会社: TDFフィナンシャル生命</div>
 
           <div className="accordion">
             <div className="row">
@@ -493,7 +493,7 @@ export function PlanScreen({ onNext }: ScreenProps) {
           <div className="lede">
             死亡・介護に加え、<strong>三大疾病 (がん・心疾患・脳卒中)</strong> までを一貫して保障するプランです。
           </div>
-          <div className="underwriter">引受会社: T&amp;Dフィナンシャル生命</div>
+          <div className="underwriter">引受会社: TDFフィナンシャル生命</div>
           <div className="accordion">
             <div className="row">
               保障内容（三大疾病対応モデル）
@@ -1042,7 +1042,7 @@ export function ConfirmScreen({ onNext, onBack }: ScreenProps) {
             <p style={{ margin: 0 }}>
               【電子署名および約定承諾】
               <br />
-              本お申込みは T&amp;D 保険グループ契約交付に基づく重要な電磁約款です。ご提供いただいたお客様氏名「<strong>山田 太郎</strong>」が、スマホカメラ撮影の eKYC 本人確認システムにより厳密に検証され、本契約に同意したとみなされます。約款の主要条項は別途交付書面でもご確認いただけます。
+              本お申込みは TDF 保険グループ契約交付に基づく重要な電磁約款です。ご提供いただいたお客様氏名「<strong>山田 太郎</strong>」が、スマホカメラ撮影の eKYC 本人確認システムにより厳密に検証され、本契約に同意したとみなされます。約款の主要条項は別途交付書面でもご確認いただけます。
             </p>
           </div>
           <div className="checkbox-row">

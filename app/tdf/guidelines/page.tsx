@@ -28,9 +28,9 @@ import {
 } from "@/components/ui/table";
 
 /* =================================================================
- * /guidelines/td — T&D 社専用デザインガイドライン
+ * /guidelines/td — TDF 社専用デザインガイドライン
  *
- * このページは uploads/T&D UIUX Design System.zip 内の `td-tokens.css` と
+ * このページは uploads/MILIZE UIUX Design System (Bundle).zip 内の `td-tokens.css` と
  * `ui_kits/portal/*` の運用ルールを一次ソースとして書き起こしたものです。
  *
  * テナント差し替えポイント (色トークン):
@@ -46,9 +46,9 @@ import {
  * ================================================================= */
 
 export const metadata: Metadata = {
-  title: "T&D ガイドライン | Design System",
+  title: "TDF ガイドライン | Design System",
   description:
-    "T&D フィナンシャル生命のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
+    "TDF (サンプル架空企業)のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
 };
 
 export default function TdGuidelinesPage() {
@@ -130,13 +130,13 @@ function HeroSection() {
         className="gap-1.5 bg-white/10 text-caption text-white"
       >
         <ShieldCheck className="size-3" />
-        T&amp;D Financial Life · Embedded Insurance
+        TDF · Embedded Insurance
       </Badge>
       <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
         信頼を、もっと触れる距離に。
       </h1>
       <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
-        T&amp;D 社のデジタル体験は、金融・保険領域で求められる
+        TDF 社のデジタル体験は、金融・保険領域で求められる
         <strong className="text-white">「誠実さ」</strong>と、
         現代の Web / アプリに求められる
         <strong className="text-white">「クリーンさ」</strong>を両立させます。
@@ -221,7 +221,7 @@ function ColorRules() {
       <SectionHeading
         eyebrow="Color"
         title="ネイビー基調 + 朱色 CTA + 控えめなウォーム"
-        description="T&D のカラーは 4 つのスケールで構成されます。テナント差し替え点は navy と blue のみで、semantic 層は固定です。直接 hex を書かず、必ず var(--text-main) / var(--button-primary) 等を経由します。"
+        description="TDF のカラーは 4 つのスケールで構成されます。テナント差し替え点は navy と blue のみで、semantic 層は固定です。直接 hex を書かず、必ず var(--text-main) / var(--button-primary) 等を経由します。"
       />
 
       {/* スウォッチ群 — 4 スケール */}
@@ -403,7 +403,7 @@ function ScaleBlock({
 }
 
 /* ---------------------------------------------------------------- */
-/* 4. ボタン運用 (T&D の核)                                            */
+/* 4. ボタン運用 (TDF の核)                                            */
 /* ---------------------------------------------------------------- */
 
 function ButtonRules() {
@@ -412,7 +412,7 @@ function ButtonRules() {
       <SectionHeading
         eyebrow="Buttons"
         title="5 種類のボタンを意味で使い分ける"
-        description="T&D 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ネイビー = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
+        description="TDF 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ネイビー = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
       />
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -669,7 +669,7 @@ function AccessibilityRules() {
       <SectionHeading
         eyebrow="Accessibility"
         title="20 代から 70 代までを一枚の UI で支える"
-        description="T&D のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        description="TDF のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -756,7 +756,7 @@ function AccessibilityRules() {
       {/* 視認性プレビュー */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">サイズ感の比較 (T&D 推奨)</CardTitle>
+          <CardTitle className="text-h7">サイズ感の比較 (TDF 推奨)</CardTitle>
           <CardDescription>
             60 代以上の主要導線は左の body-lg を既定としてください。
           </CardDescription>
@@ -863,7 +863,7 @@ function ContentRules() {
       <SectionHeading
         eyebrow="Voice & Content"
         title="コピーは事実から、語尾は『です・ます』"
-        description="T&D のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        description="TDF のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -948,7 +948,7 @@ function Footer() {
     <footer className="mt-20 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © T&amp;D Design System · 一次ソース:{" "}
+          © TDF Design System · 一次ソース:{" "}
           <code>td-tokens.css</code> + <code>ui_kits/portal/*</code>
         </p>
         <div className="flex flex-wrap gap-2">
@@ -959,7 +959,7 @@ function Footer() {
             <Link href="/tdf/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/tdf">T&amp;D 入口へ</Link>
+            <Link href="/tdf">TDF 入口へ</Link>
           </Button>
         </div>
       </div>

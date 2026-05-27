@@ -32,7 +32,7 @@ import {
 /* =================================================================
  * /guidelines — 共通デザインガイドライン (ベース)
  *
- * このページはどの導入先 (T&D / 他社) にも共通する基本原則をまとめる「土台」。
+ * このページはどの導入先 (TDF / 他社) にも共通する基本原則をまとめる「土台」。
  * 各社固有のブランド・運用は別ルート (例: /tdf/guidelines) に分離する。
  *
  * 章立て:
@@ -139,7 +139,7 @@ function Hero() {
       </h1>
       <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
         デザインシステムの「ベース原則」を定義するページです。
-        T&amp;D など各導入先のブランドルールは、ここを土台にした上で
+        TDF など各導入先のブランドルールは、ここを土台にした上で
         <Link
           href="/tdf/guidelines"
           className="font-medium text-primary underline-offset-4 hover:underline"
@@ -153,7 +153,7 @@ function Hero() {
           <a href="#principles">設計原則を見る</a>
         </Button>
         <Button asChild variant="outline">
-          <Link href="/tdf/guidelines">T&amp;D 専用ルールへ</Link>
+          <Link href="/tdf/guidelines">TDF 専用ルールへ</Link>
         </Button>
       </div>
     </section>
@@ -559,11 +559,11 @@ function BrandSatellites() {
           className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
         >
           <div className="flex items-center justify-between">
-            <Badge variant="secondary">T&amp;D</Badge>
+            <Badge variant="secondary">TDF</Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
           <h3 className="mt-3 text-h7 font-semibold">
-            T&amp;D 専用ガイドライン
+            TDF 専用ガイドライン
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
             信頼・誠実・モダン・クリーンを 4 本柱に、Primary Blue の 60:30:10
@@ -601,7 +601,7 @@ function Footer() {
             <Link href="/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/tdf/guidelines">T&amp;D ルールへ</Link>
+            <Link href="/tdf/guidelines">TDF ルールへ</Link>
           </Button>
         </div>
       </div>

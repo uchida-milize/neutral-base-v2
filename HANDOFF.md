@@ -1,4 +1,4 @@
-# Handoff — T&D デザインシステム × 顧客 UI/UX 構築フロー
+# Handoff — TDF デザインシステム × 顧客 UI/UX 構築フロー
 
 最終更新: 2026年5月27日
 
@@ -44,7 +44,7 @@
         │
         ↓
 [7] neutral-base.vercel.app/<tenant> が顧客レビュー Space
-        ├ 顧客 (T&D 担当者など) はこの URL だけを案内される
+        ├ 顧客 (TDF 担当者など) はこの URL だけを案内される
         ├ /tdf/prototype で iPhone フレーム単画面遷移
         └ /tdf/windows で 2×2 グリッド俯瞰
         │
@@ -93,6 +93,19 @@ Upload/
 | **Vercel** | GitHub Integration による自動デプロイ + 顧客プレビューホスティング |
 | **Figma** | デザインシステム Variables のソース・オブ・トゥルース、最終 FB の格納先 |
 
+### テナント設計方針 — TDF は架空のサンプルテナント
+
+このリポジトリは複数顧客向けの汎用テンプレートとして運用するため、**特定の実在企業名は表に出さない方針**。
+
+- `/tdf/` 配下に並んでいるのは **架空企業「TDF」（Sample Tenant）** のデモコンテンツ
+- 申込フロー・カラー設計（navy primary / vermilion CTA）は「サンプル企業ならこういう作りになる」という見本
+- 新規顧客が来たら `/tdf/` をテンプレートとして `/aaa/`・`/bbb/` 等の実顧客テナントを派生
+- TDF 自体は永続的に「お手本テナント」として残す（テンプレート参照用）
+- ロゴ: `public/assets/logo_tdf.svg` (フル), `public/assets/logo_tdf_mark.svg` (マークのみ) — どちらもダミー
+- 旧 `logo_td_financial.png` は実在企業のロゴだったため、削除推奨（ローカルから `rm` 必要）
+
+この方針により、リポジトリ全体を顧客に見せても問題ない透明性を確保しつつ、デモとしての説得力（実機さながらの申込フロー画面など）も維持できる。
+
 ---
 
 ## 2. 現在の構築状態
@@ -113,9 +126,9 @@ Upload/
 - `/guidelines` — Guidelines（汎用のデザインルール）
 - `/components` — Components（25 セクションの shadcn/ui カタログ）
 
-T&D テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
-- `/tdf` — TOP（T&D ポータル入口）
-- `/tdf/guidelines` — Guidelines（T&D ブランド固有ルール）
+TDF テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
+- `/tdf` — TOP（TDF ポータル入口）
+- `/tdf/guidelines` — Guidelines（TDF ブランド固有ルール）
 - `/tdf/components` — Components（同じ UikitCatalog が navy で表示）
 - `/tdf/prototype` — Prototype（iPhone フレームの画面遷移）
 - `/tdf/windows` — Windows（2×2 グリッドで俯瞰）
@@ -127,7 +140,7 @@ T&D テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
 | エリア | メニュー |
 |-------|---------|
 | 汎用 | TOP / Guidelines / Components |
-| T&D | TOP / Guidelines / Components / Prototype / Windows |
+| TDF | TOP / Guidelines / Components / Prototype / Windows |
 
 新規テナントの追加は `TENANTS` 配列に 1 エントリ追加 + `app/<tenant>/` 配下にディレクトリを作るだけで成立する設計。
 
@@ -150,7 +163,7 @@ T&D テナント (5 ページ, `.tdf-scope` で navy 系に自動切替):
 
 **デザイナー側** — `app/globals.css` の CSS Variables を編集
 - 162 color tokens + 13 size tokens
-- `.tdf-scope` で T&D 用オーバーライド
+- `.tdf-scope` で TDF 用オーバーライド
 
 **開発者側** — JSX で Tailwind utility を直接書く
 - `className="rounded-md bg-primary text-primary-foreground"` のような可読性高い記法
@@ -172,9 +185,9 @@ neutral-base-v2/
 │   ├── components/page.tsx         (49行)   汎用 Components → UikitCatalog
 │   └── tdf/
 │       ├── layout.tsx              (.tdf-scope を当てる)
-│       ├── page.tsx                T&D TOP
-│       ├── guidelines/page.tsx     T&D Guidelines (968行)
-│       ├── components/page.tsx     T&D Components → UikitCatalog
+│       ├── page.tsx                TDF TOP
+│       ├── guidelines/page.tsx     TDF Guidelines (968行)
+│       ├── components/page.tsx     TDF Components → UikitCatalog
 │       ├── prototype/page.tsx      iPhone 画面遷移
 │       └── windows/page.tsx        2×2 俯瞰
 ├── components/
@@ -186,7 +199,7 @@ neutral-base-v2/
 │   │   └── canvas-grid.tsx         俯瞰グリッド
 │   ├── td-portal-mock.tsx
 │   ├── tdf/
-│   │   ├── tokens.css              T&D 用 CSS Variables オーバーライド
+│   │   ├── tokens.css              TDF 用 CSS Variables オーバーライド
 │   │   ├── flow.css
 │   │   ├── flow-meta.ts            申込フロー11画面のメタ情報
 │   │   ├── flow-prototype.tsx      iPhone フレームでの遷移実装

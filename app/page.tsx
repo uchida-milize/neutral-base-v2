@@ -16,15 +16,15 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Design System",
   description:
-    "Figma Variables (162 colors / 13 sizes) を反映した shadcn/ui ベースの汎用デザインシステム。各テナント (T&D など) は本システムを土台に、tenant override で色とロゴだけを差し替えて運用する。",
+    "Figma Variables (162 colors / 13 sizes) を反映した shadcn/ui ベースの汎用デザインシステム。各テナント (TDF など) は本システムを土台に、tenant override で色とロゴだけを差し替えて運用する。",
 };
 
 /**
  * / — 汎用デザインシステムの入口ランディング。
  *
  * - 役割: デザインシステムの "土台" の意義を説明し、TOP / Guidelines / Components の 3 ページに案内する
- * - 同時に「テナント別の運用」が存在することも示し、T&D など各社向けの入口リンクを掲示する
- *   (顧客 T&D 担当者には /tdf/ URL を直接渡す前提なので、この入口を経由する想定はしない)
+ * - 同時に「テナント別の運用」が存在することも示し、TDF など各社向けの入口リンクを掲示する
+ *   (顧客 TDF 担当者には /tdf/ URL を直接渡す前提なので、この入口を経由する想定はしない)
  */
 export default function Home() {
   return (
@@ -61,7 +61,7 @@ function Hero() {
       <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
         Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、
         shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。
-        各導入先 (T&amp;D など) はここを土台に、{" "}
+        各導入先 (TDF など) はここを土台に、{" "}
         <code>--primary-blue-*</code> と <code>--navigation-navy-*</code> の{" "}
         2 系統 + ロゴだけを差し替えて運用します。
       </p>
@@ -176,12 +176,12 @@ function TenantsSection() {
           <div className="flex items-center justify-between">
             <Badge variant="secondary" className="gap-1.5">
               <Building2 className="size-3" />
-              T&amp;D
+              TDF
             </Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
           <h3 className="mt-3 text-h7 font-semibold">
-            T&amp;D フィナンシャル生命
+            TDF (サンプル架空企業)
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
             primary を navy <code>#1b3157</code> に差し替え、CTA に朱色 <code>#c8242f</code> を追加。

@@ -11,7 +11,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
  *
  * - 現在のパスが `/<テナント名>/` 配下なら、そのテナントのナビだけを描画
  * - それ以外 (汎用エリア) なら、汎用のナビを描画
- * - 顧客視点: T&D 担当者は /tdf/* だけを見るため、汎用への動線は出さない
+ * - 顧客視点: TDF 担当者は /tdf/* だけを見るため、汎用への動線は出さない
  *
  * テナント追加は TENANTS 配列に 1 エントリ加えるだけ。pages 配下にも
  * 同名のディレクトリ (例: app/aaa/) を作れば成立する。
@@ -45,7 +45,7 @@ type Tenant = {
 const TENANTS: Tenant[] = [
   {
     pathPrefix: "/tdf",
-    brandLabel: "T&D Design System",
+    brandLabel: "TDF Design System",
     brandInitial: "T",
     brandHref: "/tdf",
     items: [

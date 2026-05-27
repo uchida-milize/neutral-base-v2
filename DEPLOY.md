@@ -11,9 +11,9 @@
 - `/guidelines` — Guidelines（デザインの土台ルール）
 - `/components` — Components（共有 UI Kit カタログ）
 
-T&D テナント (5 ページ):
-- `/tdf` — TOP（T&D 向けポータル入口）
-- `/tdf/guidelines` — Guidelines（T&D ブランド固有のルール）
+TDF テナント (5 ページ):
+- `/tdf` — TOP（TDF 向けポータル入口）
+- `/tdf/guidelines` — Guidelines（TDF ブランド固有のルール）
 - `/tdf/components` — Components（`.tdf-scope` で navy 系に切替）
 - `/tdf/prototype` — Prototype（iPhone フレームの画面遷移ビュー）
 - `/tdf/windows` — Windows（同じ画面を 2×2 グリッドで俯瞰）
@@ -25,7 +25,7 @@ T&D テナント (5 ページ):
 | エリア | メニュー |
 |-------|---------|
 | 汎用 (`/`, `/guidelines`, `/components`) | TOP / Guidelines / Components |
-| T&D (`/tdf/*`) | TOP / Guidelines / Components / Prototype / Windows |
+| TDF (`/tdf/*`) | TOP / Guidelines / Components / Prototype / Windows |
 
 新しいテナント（例: AAA社）を追加する場合は、`site-header.tsx` の `TENANTS` 配列に1エントリ追加し、`app/aaa/` 配下に同じ構造でページを作るだけで成立します。
 
@@ -75,10 +75,10 @@ git status --short
 
 # 全部ステージング → コミット → push
 git add -A
-git commit -m "feat: 汎用 + T&D テナントのページ構造を導入
+git commit -m "feat: 汎用 + TDF テナントのページ構造を導入
 
 - 汎用エリア: TOP / Guidelines / Components (3 ページ)
-- T&D テナント: TOP / Guidelines / Components / Prototype / Windows (5 ページ)
+- TDF テナント: TOP / Guidelines / Components / Prototype / Windows (5 ページ)
 - /tdf/ 配下で .tdf-scope CSS が自動で navy 系に切替
 - site-header.tsx でテナント別ナビセットを動的描画
 - iPhone フレーム (mock-viewer/iphone-frame.tsx) と俯瞰グリッド (canvas-grid.tsx) を導入
@@ -104,7 +104,7 @@ npm install
 npm run dev
 ```
 
-ブラウザで http://localhost:3000 にアクセス。`/tdf` を見れば T&D テナント版が見えます。
+ブラウザで http://localhost:3000 にアクセス。`/tdf` を見れば TDF テナント版が見えます。
 
 ## トラブルシューティング
 
