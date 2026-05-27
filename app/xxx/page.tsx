@@ -66,27 +66,27 @@ export default function XxxHome() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <NavCard
-              href="/xxx/components"
-              icon={LayoutGrid}
-              title="Components"
-              desc="XXX 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
-            />
-            <NavCard
               href="/xxx/guidelines"
               icon={BookOpen}
               title="Guidelines"
               desc="ブランドの 4 つの柱、カラー運用 (navy / cta-amber / warm)、ボタン 5 種類、タイポグラフィ、アクセシビリティ方針。"
             />
             <NavCard
+              href="/xxx/components"
+              icon={LayoutGrid}
+              title="Components"
+              desc="XXX 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
+            />
+            <NavCard
               href="/xxx/prototype"
               icon={Smartphone}
-              title="Prototype · 画面遷移"
+              title="Prototype"
               desc="iPhone フレーム内で Portal の 4 画面 (Dashboard / Contracts / 詳細 / Settings) をタップ操作で遷移。"
             />
             <NavCard
               href="/xxx/windows"
               icon={Grid3x3}
-              title="Prototype · 俯瞰"
+              title="Windows"
               desc="同じ 4 画面を iPhone フレームに入れたまま 2×2 グリッドで並列表示。Figma キャンバス風。"
             />
           </div>

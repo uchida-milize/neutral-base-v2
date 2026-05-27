@@ -96,16 +96,16 @@ function CoreSection() {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <CoreCard
-          href="/components"
-          icon={LayoutGrid}
-          title="Components"
-          desc="Buttons / Forms / Tables / Tabs などのコンポーネントカタログ。"
-        />
-        <CoreCard
           href="/guidelines"
           icon={BookOpen}
           title="Guidelines"
           desc="設計原則 4 つ、セマンティックトークン、タイポ 11 段、WCAG 2.2 AA 最低ライン。"
+        />
+        <CoreCard
+          href="/components"
+          icon={LayoutGrid}
+          title="Components"
+          desc="Buttons / Forms / Tables / Tabs などのコンポーネントカタログ。"
         />
       </div>
     </section>

@@ -25,7 +25,7 @@ export default function XxxComponentsPage() {
           Components
         </p>
         <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
-          コンポーネントセット
+          XXX 仕様のコンポーネント
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
           ここに並ぶ shadcn コンポーネントは <code>.xxx-scope</code> 配下にあるため、

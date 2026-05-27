@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { TdfFlowPrototype } from "@/components/xxx/flow-prototype";
 
 export const metadata: Metadata = {
-  title: "Prototype | XXX Design System",
+  title: "Prototype · 画面遷移 | XXX Design System",
   description:
     "XXX Embedded Insurance 申込フロー (Guidance → Product → Plan → 情報入力 → 入力確認 → eKYC → 健康告知 → 申込確認 → 決済 → 完了) を iPhone フレーム内でタップ操作できる本物さながらのプロトタイプ。",
 };
@@ -19,10 +19,10 @@ export default function TdfPrototypeSinglePage() {
     <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       <header className="mb-8 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-          Prototype
+          Prototype · 画面遷移
         </p>
         <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
-          プロトタイプ
+          実機さながらの XXX 申込フロー
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
           画面内の{" "}
