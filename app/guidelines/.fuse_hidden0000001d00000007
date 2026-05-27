@@ -90,7 +90,7 @@ function SectionHeading({
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+      <h2 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
         {title}
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -129,7 +129,7 @@ function Hero() {
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         Guidelines
       </p>
-      <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+      <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
         デザインガイドライン
       </h1>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">

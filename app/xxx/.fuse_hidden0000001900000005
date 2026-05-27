@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ShieldCheck, LayoutGrid, BookOpen, Smartphone, Grid3x3 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -37,7 +38,7 @@ export default function XxxHome() {
           <ShieldCheck className="size-3" />
           XXX · Embedded Insurance
         </Badge>
-        <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+        <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
           信頼を、もっと触れる距離に。
         </h1>
         <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
@@ -45,6 +46,18 @@ export default function XxxHome() {
           現代の Web / アプリに求められる<strong className="text-white">「クリーンさ」</strong>を両立する、
           XXX 専用のデザインシステムです。
         </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Button asChild className="bg-[#d97706] text-white hover:bg-[#b45309]">
+            <Link href="/xxx/components">Components を見る</Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
+          >
+            <Link href="/xxx/guidelines">ガイドラインを開く</Link>
+          </Button>
+        </div>
       </section>
 
       {/* 4 ページのナビゲーション */}

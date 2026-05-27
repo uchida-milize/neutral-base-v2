@@ -3,14 +3,15 @@ import Link from "next/link";
 import {
   LayoutGrid,
   BookOpen,
+  Sparkles,
   Building2,
   ArrowRight,
-  FileTextIcon,
   LayersIcon,
 } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -54,7 +55,7 @@ function Hero() {
         <LayersIcon className="size-3" />
         Common Design System
       </Badge>
-      <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+      <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
         どのブランドにも先に通すべき、共通の土台。
       </h1>
       <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
@@ -64,6 +65,14 @@ function Hero() {
         <code>--primary-blue-*</code> と <code>--navigation-navy-*</code> の{" "}
         2 系統 + ロゴだけを差し替えて運用します。
       </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button asChild>
+          <Link href="/components">Components を見る</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/prototype">Prototype を開く</Link>
+        </Button>
+      </div>
     </section>
   );
 }
@@ -80,13 +89,13 @@ function CoreSection() {
           Pages
         </p>
         <h2 className="mt-2 text-h5 font-semibold tracking-tight">
-          汎用システムの 2 ページ
+          汎用システムの 3 ページ
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
           ブランド固有色を載せる前の「ニュートラルな」デザインシステム本体。
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <CoreCard
           href="/components"
           icon={LayoutGrid}
@@ -98,6 +107,12 @@ function CoreSection() {
           icon={BookOpen}
           title="Guidelines"
           desc="設計原則 4 つ、セマンティックトークン、タイポ 11 段、WCAG 2.2 AA 最低ライン。"
+        />
+        <CoreCard
+          href="/prototype"
+          icon={Sparkles}
+          title="Prototype"
+          desc="全コンポーネントを縦長 1 ページで眺める、汎用ショーケース。"
         />
       </div>
     </section>
@@ -175,31 +190,16 @@ function TenantsSection() {
           <p className="mt-3 font-mono text-caption text-primary">/xxx/</p>
         </Link>
 
-        <a
-          href="https://github.com/uchida-milize/neutral-base/blob/main/HANDOFF.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block rounded-lg border border-dashed border-border p-6 text-muted-foreground transition-colors duration-300 hover:border-primary hover:text-foreground"
-        >
-          <div className="flex items-center justify-between">
-            <Badge variant="outline" className="gap-1.5">
-              <FileTextIcon className="size-3" />
-              HANDOFF.md
-            </Badge>
-            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-          </div>
+        <div className="rounded-lg border border-dashed border-border p-6 text-muted-foreground transition-colors duration-300">
+          <Badge variant="outline">Coming soon</Badge>
           <h3 className="mt-3 text-h7 font-semibold text-foreground">
-            他社テナントの追加方法
+            他社テナント
           </h3>
           <p className="mt-2 text-body">
             新しい導入先が増えるたびに、<code>app/&lt;会社名&gt;/</code> と{" "}
             <code>components/&lt;会社名&gt;/</code> をテンプレートから複製して追加します。
-            手順は HANDOFF.md を参照してください。
           </p>
-          <p className="mt-3 font-mono text-caption text-primary">
-            github.com/.../HANDOFF.md
-          </p>
-        </a>
+        </div>
       </div>
     </section>
   );

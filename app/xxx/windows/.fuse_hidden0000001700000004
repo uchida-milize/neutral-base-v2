@@ -25,7 +25,7 @@ export default function TdfPrototypeCanvasPage() {
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Prototype · 俯瞰
           </p>
-          <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+          <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
             申込フロー 11 画面を一望するキャンバス
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">

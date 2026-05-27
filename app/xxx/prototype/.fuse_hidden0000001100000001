@@ -21,7 +21,7 @@ export default function TdfPrototypeSinglePage() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Prototype · 画面遷移
         </p>
-        <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+        <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
           実機さながらの XXX 申込フロー
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
