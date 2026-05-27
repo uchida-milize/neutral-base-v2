@@ -50,9 +50,10 @@ export default function Home() {
 function Hero() {
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-colors duration-300">
+      {/* かなり薄いブルー → 微かに薄いブルー の横方向グラデーション */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,theme(colors.primary/12),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#bfdbfe,#f0f9ff)] dark:bg-[linear-gradient(to_right,rgba(96,165,250,0.18),rgba(96,165,250,0.04))]"
       />
       {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
       <div className="relative mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
@@ -163,6 +164,8 @@ function TenantsSection() {
       <div className="grid gap-4 md:grid-cols-2">
         <Link
           href="/xxx"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
         >
           <div className="flex items-center justify-between">

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 /**
  * /xxx/windows
  *
- * iPhone フレームは外し、各画面の `.phone` (幅px) を高さ可変のまま
+ * iPhone フレームは外し、各画面の `.phone` (幅 390px) を高さ可変のまま
  * 左から右に並べる。複数列でラップしてもよいので、画面解像度に応じて
  * flex-wrap で自然に折り返す。
  */

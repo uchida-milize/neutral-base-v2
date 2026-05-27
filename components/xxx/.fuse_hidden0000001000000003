@@ -1,11 +1,11 @@
 /* =====================================================================
  * Screen-level UI primitives + mobile screen mockups
  * All components reference tokens from td-tokens.css.
- * One-screen-per-Artboard. Width fixed topx (iPhone 14 logical).
+ * One-screen-per-Artboard. Width fixed to 390px (iPhone 14 logical).
  * ===================================================================== */
 
 .xxx-flow .phone {
-  width: 375px;
+  width: 390px;
   background: var(--background-1);
   color: var(--text-main);
   font-family: var(--font-sans);

@@ -11,7 +11,7 @@ import "@/components/xxx/flow.css";
  * iPhone ベゼル — flow-prototype.jsx 由来。
  *
  * 単独でも使えるが、本ファイルでは FlowPrototype の中だけで使用。
- * 外側 401 × 860 / 内側 375 × 834 (Dynamic Island モデル準拠)。
+ * 外側 416 × 860 / 内側 390 × 834 (Dynamic Island モデル準拠)。
  * ================================================================= */
 
 function IPhoneBezel({
@@ -160,7 +160,7 @@ export function TdfFlowStaticFrame({
 }
 
 /**
- * フレームなしの素の画面。`.phone` はpx 幅 / 高さは中身に追従。
+ * フレームなしの素の画面。`.phone` は 390px 幅 / 高さは中身に追従。
  * 左右に並べるキャンバスで使う想定。
  */
 export function TdfFlowScreenStatic({ index }: { index: number }) {
@@ -172,7 +172,7 @@ export function TdfFlowScreenStatic({ index }: { index: number }) {
     <div
       className="xxx-flow"
       style={{
-        // .phone がpx 幅なのに合わせて見やすく整える
+        // .phone が 390px 幅なのに合わせて見やすく整える
         borderRadius: 18,
         overflow: "hidden",
         border: "1px solid var(--border-default, #e0e4ec)",

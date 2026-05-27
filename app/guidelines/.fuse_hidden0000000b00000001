@@ -90,7 +90,7 @@ function SectionHeading({
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-h5 font-semibold tracking-tight">
+      <h2 className="mt-2 text-h4 font-semibold tracking-tight sm:text-h3">
         {title}
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -143,6 +143,12 @@ function Hero() {
         </Link>
         として個別に運用します。
       </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Badge variant="secondary" className="gap-1.5">
+          <LayersIcon className="size-3" />
+          Common Design Guidelines
+        </Badge>
+      </div>
     </header>
   );
 }

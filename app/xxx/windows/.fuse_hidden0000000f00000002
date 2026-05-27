@@ -6,13 +6,13 @@ import { FLOW_META } from "@/components/xxx/flow-meta";
 export const metadata: Metadata = {
   title: "Prototype · 俯瞰 | XXX Design System",
   description:
-    "XXX Embedded Insurance 申込フローの 11 画面を 375px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
+    "XXX Embedded Insurance 申込フローの 11 画面を 390px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
 };
 
 /**
  * /xxx/windows
  *
- * iPhone フレームは外し、各画面の `.phone` (幅px) を高さ可変のまま
+ * iPhone フレームは外し、各画面の `.phone` (幅 390px) を高さ可変のまま
  * 左から右に並べる。複数列でラップしてもよいので、画面解像度に応じて
  * flex-wrap で自然に折り返す。
  */
@@ -29,7 +29,7 @@ export default function TdfPrototypeCanvasPage() {
             申込フロー 11 画面を一望するキャンバス
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-            各画面は <strong className="text-foreground">375px 幅</strong> · 高さは内容に応じて可変。
+            各画面は <strong className="text-foreground">390px 幅</strong> · 高さは内容に応じて可変。
             画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
             <a
               href="/xxx/prototype"
@@ -48,7 +48,7 @@ export default function TdfPrototypeCanvasPage() {
           <figure
             key={step.id}
             className="flex flex-col items-start gap-3"
-            style={{ width: 375 }}
+            style={{ width: 390 }}
           >
             <figcaption>
               <p className="font-mono text-caption text-muted-foreground">
