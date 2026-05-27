@@ -13,27 +13,75 @@
 ### 構想全体フロー
 
 ```
-[Google AI Studio で作ったワイヤーフレーム]
+[1] Google AI Studio でワイヤーフレーム作成
+        │
+        │  お客様が直接アップロード（Upload フォルダは経由しない）
         ↓
-[Claude Design で各顧客向けにページデザイン化]
-   ・Figma UI Kit を読み込ませて反映
-   ・顧客ブランドのテーマカラー・コーポレートカラーを適用
-   ・iOS 風枠でも確認できるよう出力
+[2] claude.ai/design (Claude Design) でページデザイン化
+        ├ Figma UI Kit を読み込ませて反映
+        ├ 顧客ブランドのテーマカラー・コーポレートカラーを適用
+        ├ iOS 風枠でも確認できるよう出力
+        ├ Tailwind ベースの React コンポーネントを生成
+        └ トークン整合性が保たれた状態
+        │
+        │  お客様が "Hand off to Claude Code" / "Export" で zip ダウンロード
         ↓
-[Claude Code で開発側に渡す Handoff バンドル]
-   ・Tailwind ベースの React コンポーネント
-   ・トークン整合性が保たれた状態
+[3] Upload フォルダに handoff バンドル（zip）を配置
+        │
+        │  Cowork が /import-claude-design スキルで読み込む
         ↓
-[Cowork が neutral-base リポジトリの該当テナント配下に配置]
-   ・app/<tenant>/ に Claude Design 出力を置く
-   ・テナント tokens.css でブランドカラーを上書き
+[4] Cowork が neutral-base リポジトリの該当テナント配下に配置
+        ├ app/<tenant>/<page>/ に Claude Design 出力を整形して置く
+        ├ components/<tenant>/tokens.css でブランドカラーを上書き
+        ├ site-header.tsx の TENANTS 配列にエントリ追加（新規テナントの場合）
+        └ import 文・コンポーネント参照を本リポジトリの構造に合わせて調整
+        │
         ↓
-[GitHub push → Vercel 自動デプロイ]
+[5] お客様がローカルで git add / commit / push
+        │
         ↓
-[neutral-base.vercel.app の <tenant> 配下が顧客レビュー Space]
+[6] Vercel が自動デプロイ
+        │
         ↓
-[最終承認後、Figma に各ページのデザイン + リンク構造を FB]
+[7] neutral-base.vercel.app/<tenant> が顧客レビュー Space
+        ├ 顧客 (T&D 担当者など) はこの URL だけを案内される
+        ├ /tdf/prototype で iPhone フレーム単画面遷移
+        └ /tdf/windows で 2×2 グリッド俯瞰
+        │
+        │  最終承認後
+        ↓
+[8] Figma に各ページのデザイン + リンク構造を FB
+        │  /feedback-to-figma スキル (Priority 5) で自動化予定
 ```
+
+### Upload フォルダのファイル区分
+
+`Upload/` 直下に置くべきもの・置かないものを明確化:
+
+| 種別 | Upload に置く？ | 理由 |
+|------|--------------|------|
+| **Google AI Studio ワイヤーフレーム zip** | ❌ 置かない | 直接 claude.ai/design にアップロード（Claude Design 内部で使う） |
+| **Claude Design の handoff バンドル zip** | ✅ 置く | Cowork が読み込んで `app/<tenant>/` に展開する |
+| **顧客提供素材（ロゴ・PDF・ブランドガイドライン等）** | ✅ 置く | `/init-brand-tokens` スキルが参照 |
+| **`.env.local`** | ✅ 置く（既存） | VERCEL_TOKEN 等、git管理外の機密情報 |
+| **作業中の neutral-base-v2/** | ✅ 置く（既存） | git管理されたメインプロジェクト |
+
+ファイル整理の運用イメージ:
+
+```
+Upload/
+├── .env.local                              VERCEL_TOKEN
+├── neutral-base-v2/                        メインプロジェクト (git管理)
+├── _handoffs/                              Claude Design 出力の保管庫
+│   └── tdf-claude-design-20260603.zip
+│   └── aaa-claude-design-20260615.zip
+└── _brand-assets/                          顧客提供素材の保管庫（任意）
+    └── aaa/
+        ├── logo.svg
+        └── brand-guidelines.pdf
+```
+
+`_handoffs/` と `_brand-assets/` は **作る必要は今すぐない** ですが、複数顧客を並行運用する時にこの構成にしておくと整理しやすいです。
 
 ### 役割分担
 
