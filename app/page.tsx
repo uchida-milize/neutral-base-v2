@@ -30,8 +30,12 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 ease-out">
       <SiteHeader />
 
-      <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+      {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
+      <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
         <Hero />
+      </div>
+
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
         <CoreSection />
         <TenantsSection />
       </main>
@@ -45,25 +49,28 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 text-card-foreground transition-colors duration-300 sm:p-12">
+    <section className="relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-colors duration-300">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,theme(colors.primary/12),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,theme(colors.primary/12),transparent_60%)]"
       />
-      <Badge variant="secondary" className="gap-1.5">
-        <LayersIcon className="size-3" />
-        Common Design System
-      </Badge>
-      <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
-        どのブランドにも先に通すべき、共通の土台。
-      </h1>
-      <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
-        Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、
-        shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。
-        各導入先 (XXX など) はここを土台に、{" "}
-        <code>--primary-blue-*</code> と <code>--navigation-navy-*</code> の{" "}
-        2 系統 + ロゴだけを差し替えて運用します。
-      </p>
+      {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
+      <div className="relative mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+        <Badge variant="secondary" className="gap-1.5">
+          <LayersIcon className="size-3" />
+          Common Design System
+        </Badge>
+        <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+          どのブランドにも先に通すべき、共通の土台。
+        </h1>
+        <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+          Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、
+          shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。
+          各導入先 (XXX など) はここを土台に、{" "}
+          <code>--primary-blue-*</code> と <code>--navigation-navy-*</code> の{" "}
+          2 系統 + ロゴだけを差し替えて運用します。
+        </p>
+      </div>
     </section>
   );
 }

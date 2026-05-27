@@ -85,7 +85,7 @@ function SectionHeading({
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+      <h2 className="mt-2 text-h4 font-semibold tracking-tight sm:text-h3">
         {title}
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
