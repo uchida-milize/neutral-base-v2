@@ -19,28 +19,31 @@ export const metadata: Metadata = {
 export default function TdfPrototypeCanvasPage() {
   return (
     <main className="mx-auto max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
-      <header className="mb-10 max-w-3xl">
-        <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-          Prototype · 俯瞰
-        </p>
-        <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
-          申込フロー 11 画面を一望するキャンバス
-        </h1>
-        <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-          各画面は <strong className="text-foreground">390px 幅</strong> · 高さは内容に応じて可変。
-          画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
-          <a
-            href="/xxx/prototype"
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            画面遷移ビュー
-          </a>
-          {" "}を参照してください。
-        </p>
-      </header>
+      {/* ヘッダーは TOP と同じ max-w-5xl 幅で中央揃え。タイトル位置が他ページと揃う */}
+      <div className="mx-auto mb-10 max-w-5xl">
+        <header className="max-w-3xl">
+          <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+            Prototype · 俯瞰
+          </p>
+          <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
+            申込フロー 11 画面を一望するキャンバス
+          </h1>
+          <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
+            各画面は <strong className="text-foreground">390px 幅</strong> · 高さは内容に応じて可変。
+            画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
+            <a
+              href="/xxx/prototype"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              画面遷移ビュー
+            </a>
+            {" "}を参照してください。
+          </p>
+        </header>
+      </div>
 
-      {/* 横並びキャンバス: flex-wrap + items-start で高さ可変、左から順に流す */}
-      <div className="flex flex-wrap items-start justify-start gap-x-8 gap-y-12">
+      {/* キャンバスはより広い 1700px を活用、コンテンツは中央揃え */}
+      <div className="flex flex-wrap items-start justify-center gap-x-8 gap-y-12">
         {FLOW_META.map((step, i) => (
           <figure
             key={step.id}

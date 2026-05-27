@@ -22,7 +22,7 @@ export default function UikitPage() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 ease-out">
       <SiteHeader />
 
-      <main className="mx-auto max-w-[1400px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
         <header className="mb-8 max-w-3xl">
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Components
