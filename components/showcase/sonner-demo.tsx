@@ -1,40 +1,56 @@
 "use client";
 
 import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 
 export function SonnerDemo() {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-3">
       <Button
         variant="outline"
         onClick={() =>
-          toast.success("保存が完了しました", {
-            description: "変更内容はすべてサーバーに反映されました。",
+          toast("プロジェクトを作成しました", {
+            description: "5 秒以内に Undo できます",
           })
         }
       >
-        成功通知
+        通常トースト
       </Button>
       <Button
         variant="outline"
         onClick={() =>
-          toast.error("エラーが発生しました", {
-            description: "サーバーに接続できません。ネットワークをご確認ください。",
+          toast.success("保存しました", {
+            description: "変更がサーバーに反映されました",
           })
         }
       >
-        エラー通知
+        成功トースト
       </Button>
       <Button
         variant="outline"
         onClick={() =>
-          toast.warning("ご注意", {
-            description: "パスワードの有効期限が 3 日以内に切れます。",
+          toast.error("削除に失敗しました", {
+            description: "ネットワーク接続を確認してください",
           })
         }
       >
-        警告通知
+        失敗トースト
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast.promise(
+            new Promise((resolve) => setTimeout(resolve, 1500)),
+            {
+              loading: "アップロード中…",
+              success: "アップロード完了",
+              error: "失敗しました",
+            },
+          )
+        }
+      >
+        Promise トースト
       </Button>
     </div>
   );

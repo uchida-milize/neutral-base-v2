@@ -6,9 +6,9 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Design System Showcase",
+  title: "Design System",
   description:
-    "Figma Variables (162 color tokens + 13 size tokens) を反映した Next.js + Tailwind v4 + shadcn/ui のデザインシステムショーケース。",
+    "Figma Variables (162 color tokens + 13 size tokens) を反映した Next.js + Tailwind v4 + shadcn/ui のデザインシステム。汎用 (/) と各テナント (/tdf 等) を 1 つのリポジトリで運用。",
 };
 
 export default function RootLayout({

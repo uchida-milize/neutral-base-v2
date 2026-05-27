@@ -1,0 +1,73 @@
+/* =================================================================
+ * T&D Financial Life — tenant tokens (scoped)
+ *
+ * .tdf-scope の中だけ shadcn セマンティック層が T&D 仕様で上書きされる。
+ * /tdf/layout.tsx で全 /tdf/* ページをこのクラスでラップして適用する。
+ *
+ * 上書きするのは "primary / cta / 追加 primitives" の 3 種類:
+ *   1. tenant override primitives  navigation-navy / primary-blue
+ *   2. T&D 固有 primitives          cta-red / warm
+ *   3. semantic shortcuts           --primary を navy に切り替え
+ *
+ * 一次ソース: uploads/T&D UIUX Design System.zip の td-tokens.css
+ * ================================================================= */
+
+.tdf-scope {
+  /* ---- 1. tenant override primitives ---- */
+  --primary-blue-10: #eff5ff;
+  --primary-blue-50: #e2ecfb;
+  --primary-blue-100: #c1d5f3;
+  --primary-blue-200: #9abae7;
+  --primary-blue-300: #6e9adc;
+  --primary-blue-400: #4d7fcf;
+  --primary-blue-500: #2f66c2;
+  --primary-blue-600: #2553a3;
+  --primary-blue-700: #1a3f80;
+
+  --navigation-navy-10: #eef0f6;
+  --navigation-navy-50: #dfe3ec;
+  --navigation-navy-100: #b3bbcd;
+  --navigation-navy-200: #8590a8;
+  --navigation-navy-300: #5e6a86;
+  --navigation-navy-400: #364866;
+  --navigation-navy-500: #1b3157;
+  --navigation-navy-600: #142849;
+  --navigation-navy-700: #0c1d36;
+
+  /* ---- 2. T&D 固有 primitives ---- */
+  --cta-red-50: #fdebec;
+  --cta-red-100: #fbd0d3;
+  --cta-red-200: #f4a4a9;
+  --cta-red-300: #ea7077;
+  --cta-red-400: #d94852;
+  --cta-red-500: #c8242f;
+  --cta-red-600: #ab1e28;
+  --cta-red-700: #861820;
+
+  --warm-50: #fdfaf6;
+  --warm-100: #faf3e8;
+  --warm-200: #f3e6d2;
+  --warm-300: #e6d2b3;
+
+  /* ---- 3. semantic shortcuts (shadcn primitives が自動追従) ---- */
+  --primary: var(--navigation-navy-500); /* T&D primary は navy */
+  --primary-foreground: #ffffff;
+  --ring: var(--navigation-navy-500);
+  --accent: var(--navigation-navy-10);
+  --accent-foreground: var(--navigation-navy-700);
+
+  /* tdf-scope 用エイリアス — 直接参照したい場面で使用 */
+  --tdf-cta: var(--cta-red-500);
+  --tdf-cta-hover: var(--cta-red-600);
+  --tdf-cta-foreground: #ffffff;
+  --tdf-warm: var(--warm-50);
+}
+
+/* ダーク時は primary を 1 段明るくして "沈み" を防ぐ (portal.css 方針) */
+.dark .tdf-scope {
+  --primary: var(--primary-blue-400); /* #4d7fcf */
+  --primary-foreground: #0c1d36;
+  --ring: var(--primary-blue-400);
+  --accent: rgba(255, 255, 255, 0.06);
+  --accent-foreground: #f4f4f5;
+}
