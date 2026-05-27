@@ -30,7 +30,7 @@ export default function UikitPage() {
             Components
           </p>
           <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
-            汎用コンポーネントカタログ
+            汎用コンポーネントセット
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
             Figma Variables (162 colors / 13 sizes) を反映した shadcn/ui (new-york) コンポーネント。

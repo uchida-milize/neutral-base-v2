@@ -51,6 +51,7 @@
         │  最終承認後
         ↓
 [8] Figma に各ページのデザイン + リンク構造を FB
+        │  html.to.design プラグイン経由で手動取り込み (詳細は §5)
         │  /feedback-to-figma スキル (Priority 5) で自動化予定
 ```
 
@@ -260,6 +261,64 @@ Vercel Hobby プランは「team member 以外の author の commit は自動デ
 
 - `.env.local` に `VERCEL_TOKEN` のみ残置（緊急時用、現状の運用では使わない）
 - GitHub PAT は **Cowork には渡さない** 方針で確定（`gh auth login` ベース）
+
+---
+
+## 4-B. Figma 取り込みフロー (html.to.design プラグイン)
+
+`/xxx/windows` の 11 画面（その他テナントも同様）を Figma に取り込むには、Figma 公式コミュニティの **html.to.design** プラグインを使う。Vercel にデプロイ済みの URL を直接指定するだけで、テキスト・画像・色・レイアウトを Figma レイヤーとして再現できる。
+
+### 取り込み手順 (基本)
+
+1. Figma で対象のファイルを開く（新規 or 既存）
+2. メニュー → `Plugins` → `Browse plugins in Community` で「html.to.design」を検索してインストール (初回のみ)
+3. `Plugins` → `html.to.design` → `Open` で起動
+4. URL を貼り付け:
+   - `https://neutral-base.vercel.app/xxx/windows` (全11画面を一気に取り込む)
+   - または `https://neutral-base.vercel.app/xxx/prototype` (1画面ずつ手動で切り替えながら取り込み)
+5. Viewport を **1700px** に設定 (Windows ページが最大幅 1700px のため、全画面を1回でキャプチャするため)
+   - 単画面取り込みの場合は **375px** にして iPhone レイアウトを忠実に再現
+6. **Import** をクリック → 数十秒〜1分で Figma に取り込まれる
+
+### 取り込み後の整形
+
+html.to.design は Figma レイヤーを一塊のフレームとして配置するため、以下の手順で整理する:
+
+1. 取り込まれた最外フレームを選択 → 右クリック → **Frame selection** で個別 Frame に分割
+2. 各 `<figure>` 相当のレイヤーを選択 → **Frame** 化して名前を画面 ID (`01-guidance`, `02-product`, ...) にリネーム
+3. デザインシステムの Variables (162 トークン) と紐づけ:
+   - レイヤーパネルで色を選択 → 右クリック → **Set variable** で対応する Figma Variable を割り当て
+   - Master-Components ファイルを参照すれば一括変換可能
+
+### 役割分担の目安
+
+| 段階 | 担当 |
+|------|------|
+| Web 側の更新 | Cowork (ファイル編集) + お客様 (git push) → Vercel 自動デプロイ |
+| Figma 取り込みのトリガー | お客様 (手動で html.to.design 実行) |
+| 取り込み後の Figma 整理 | デザイナー (手動 or 半自動) |
+| 将来の自動化 | `/feedback-to-figma` スキル (HANDOFF Priority 5) |
+
+### 取り込みやすい URL (推奨)
+
+| URL | 用途 |
+|-----|------|
+| `https://neutral-base.vercel.app/xxx/windows` | 全画面を一括取り込み (推奨) |
+| `https://neutral-base.vercel.app/xxx/prototype` | 単画面を1つずつ取り込み (細かい調整したい時) |
+| `https://neutral-base.vercel.app/xxx/components` | UI Kit カタログを取り込み (Master Components 化に便利) |
+
+### html.to.design の制約と回避策
+
+- **動的要素 (hover state, dropdown 展開状態等)**: 取り込み時点の DOM スナップショットなので、Hover/Active/Disabled の各状態を撮り分けたい場合は、それぞれの状態を強制表示するための URL パラメータを別途用意するか、Figma 側で variant 化する
+- **iframe / canvas 要素**: 完全再現は難しい (今回の neutral-base には該当なし)
+- **Web フォント**: Geist Sans / Noto Sans JP が Figma 側にインストールされていれば自動マッチング、なければデフォルトフォントで取り込まれる → Figma にフォントを別途インストール推奨
+- **Layer 数の制限 (Free プラン)**: 1回の import で取り込めるレイヤー数に上限あり (現時点で 100,000 layers)。`/xxx/windows` 11画面でも収まる想定だが、超過時は 1画面ずつに切り替え
+
+### 将来の改善案
+
+- `/xxx/windows/[step]` のような単画面専用ルート (例: `/xxx/windows/01`) を追加 → html.to.design の `viewport=375 + per-screen URL` で個別取り込みが容易に
+- 取り込んだ後の Figma Variables への紐づけを自動化する Figma plugin を内製
+- `/feedback-to-figma` スキル化 (Priority 5): 取り込み → ページリンク構造をプロトタイプ接続として張る
 
 ---
 
