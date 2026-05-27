@@ -120,31 +120,28 @@ function Section({
 
 function HeroSection() {
   return (
-    <section className="relative p-8 transition-colors duration-300 sm:p-12">
-      <Badge variant="secondary" className="gap-1.5 text-caption">
-        <ShieldCheck className="size-3" />
-        XXX · Embedded Insurance
-      </Badge>
-      <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
-        信頼を、もっと触れる距離に。
+    <header className="mb-8 max-w-3xl">
+      <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+        Guidelines
+      </p>
+      <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
+        デザインガイドライン
       </h1>
-      <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
-        XXX 社のデジタル体験は、金融・保険領域で求められる
+      <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
+        XXX社のデジタル体験は、金融・保険領域で求められる
         <strong className="text-foreground">「誠実さ」</strong>と、
         現代の Web / アプリに求められる
         <strong className="text-foreground">「クリーンさ」</strong>を両立させます。
         本ガイドラインは <code>tokens.css</code> と
         Portal UI Kit の運用を、実装に落とすための公式ルールです。
       </p>
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild>
-          <a href="#color">カラー運用を見る</a>
-        </Button>
-        <Button asChild variant="outline">
-          <a href="#a11y">アクセシビリティ方針</a>
-        </Button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Badge variant="secondary" className="gap-1.5">
+          <ShieldCheck className="size-3" />
+          XXX · Embedded Insurance
+        </Badge>
       </div>
-    </section>
+    </header>
   );
 }
 

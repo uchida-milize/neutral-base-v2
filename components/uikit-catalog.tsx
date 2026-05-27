@@ -203,20 +203,6 @@ const statusBadge = (s: string) => {
 
 export function UikitCatalog() {
   return (
-    <ClientOnly
-          fallback={
-            <div className="mx-auto max-w-5xl space-y-6 p-6 py-10">
-              <div className="text-fg-muted text-body">
-                コンポーネントを読み込み中…
-              </div>
-              <div className="space-y-3">
-                <Skeleton className="h-10 w-1/3" />
-                <Skeleton className="h-40 w-full" />
-                <Skeleton className="h-40 w-full" />
-              </div>
-            </div>
-          }
-        >
         <div className="mx-auto max-w-5xl space-y-12 p-6 py-10">
           {/* ------- Button ------- */}
           <Section title="Button" desc="バリアント / サイズ / 状態">
@@ -980,7 +966,6 @@ export function UikitCatalog() {
             </Command>
           </Section>
         </div>
-        </ClientOnly>
   );
 }
 

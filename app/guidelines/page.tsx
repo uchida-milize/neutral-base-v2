@@ -125,15 +125,14 @@ function Section({
 
 function Hero() {
   return (
-    <section className="relative p-8 transition-colors duration-300 sm:p-12">
-      <Badge variant="secondary" className="gap-1.5">
-        <LayersIcon className="size-3" />
-        Common Design Guidelines
-      </Badge>
-      <h1 className="mt-4 text-h4 font-semibold tracking-tight sm:text-h3">
-        どのブランドにも先に通すべき、共通の土台。
+    <header className="mb-8 max-w-3xl">
+      <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+        Guidelines
+      </p>
+      <h1 className="mt-2 text-h5 font-semibold tracking-tight sm:text-h4">
+        デザインガイドライン
       </h1>
-      <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+      <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
         デザインシステムの「ベース原則」を定義するページです。
         XXX など各導入先のブランドルールは、ここを土台にした上で
         <Link
@@ -144,15 +143,13 @@ function Hero() {
         </Link>
         として個別に運用します。
       </p>
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild>
-          <a href="#principles">設計原則を見る</a>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/xxx/guidelines">XXX 専用ルールへ</Link>
-        </Button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Badge variant="secondary" className="gap-1.5">
+          <LayersIcon className="size-3" />
+          Common Design Guidelines
+        </Badge>
       </div>
-    </section>
+    </header>
   );
 }
 
