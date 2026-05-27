@@ -264,7 +264,45 @@ Vercel Hobby プランは「team member 以外の author の commit は自動デ
 
 ---
 
-## 4-B. Figma 取り込みフロー (html.to.design プラグイン)
+## 4-B. Figma 連携フロー
+
+### 戦略整理 — なぜ Figma 連携が必要か
+
+UI/UX の納品契約では、Figma ファイルが成果物として含まれるケースが多い（または **後日「Figma が欲しい」と顧客から要望が出る**）。完全に省略はできないため、以下の戦略で対応する:
+
+```
+日常運用                          ┌─── 納品トリガー (契約マイルストーン / 顧客要望) ─────┐
+                                  │                                                       │
+[Cowork でデザイン編集]            │   /export-to-figma スキル実行                         │
+   ↓                              │      ├ Figma Variables 一括生成 (162 colors + 13 sizes)│
+[git push]                        │      ├ Master Components 投入 (29個 + テナント拡張分) │
+   ↓                              │      ├ Pages を Frame として配置                       │
+[Vercel auto-deploy]              │      ├ プロトタイプ接続 (画面間リンク)                 │
+   ↓                              │      └ 完成レポート (Figma URL + 統計)                 │
+[顧客レビュー]                     │                                                       │
+   ↓                              └──────────────────────────────────────────────────────┘
+[最終承認]
+   ↓
+[納品時に上記スキルを発火 → Figma ファイルを生成して納品]
+```
+
+要点:
+
+- **日々の運用は Cowork × Vercel に集中**。Figma との常時同期はしない (二重メンテのコストを避ける)
+- **納品 / 顧客要望のタイミング** で `/export-to-figma` を発火、最新の `globals.css` + コードから一気に Figma ファイルを再構築
+- 仕様変更時は「最新の Cowork 側を Figma に再生成」だけでズレない (Cowork が単一情報源)
+
+### ツール選定 — Figma MCP と html.to.design の役割分担
+
+| 用途 | ツール | 理由 |
+|------|--------|------|
+| **本番の Figma 納品ファイル生成** | Figma MCP | Variables / Master Components / Frames を正規構造で投入できる。スキル化して自動実行可能 |
+| **見た目の照合・QA** | html.to.design | デプロイ済み URL からピクセル単位で取り込める。MCP 生成物との visual diff に最適 |
+| **その場の手早い取り込み** | html.to.design | 1〜2画面だけ Figma に入れたい時など、軽い用途 |
+
+`/export-to-figma` スキルの精度は、初回 1〜2 納品で html.to.design との diff を確認しながら調整 → 以降は安定運用、というプロセスを想定。
+
+### 即席の取り込み手順 (html.to.design)
 
 `/xxx/windows` の 11 画面（その他テナントも同様）を Figma に取り込むには、Figma 公式コミュニティの **html.to.design** プラグインを使う。Vercel にデプロイ済みの URL を直接指定するだけで、テキスト・画像・色・レイアウトを Figma レイヤーとして再現できる。
 
@@ -378,16 +416,29 @@ html.to.design は Figma レイヤーを一塊のフレームとして配置す�
 3. テナントごとの `tokens.css` も該当部分を更新
 4. 差分 diff を出力（人間が確認できるよう）
 
-### Priority 5 — Figma への逆フィードバック
+### Priority 5 — Figma 納品ファイル生成スキル ★契約対応の本命★
 
-**スキル: `/feedback-to-figma`**
+**スキル: `/export-to-figma`**
 
-入力: テナント名 + ページパス
+UI/UX 納品契約で Figma ファイルが要求されるケースに対応。日々の同期は行わず、納品マイルストーンや顧客要望のタイミングで実行する想定。
+
+入力: テナント名 (`xxx`, `aaa` 等)、Figma File URL（新規 or 既存）
 
 実行内容:
-1. デプロイ済みのページのスクリーンショット + Vercel URL を取得
-2. Figma MCP で対応するフレームにコメント追加
-3. ページ間のリンク構造を Figma プロトタイプ接続として張る
+1. Figma file 作成 or 既存ファイル指定（MCP の `create_new_file` または既存指定）
+2. `app/globals.css` を読み取り、Figma Variables を一括生成（162 colors + 13 sizes）
+3. `components/ui/*` を読み取り、Master Components として投入（29個 + テナント拡張分）
+   - Button / Card / Input / Tabs 等の variant 構造もそのまま再現
+4. テナント配下のページ (`app/<tenant>/*/page.tsx`) を Frame として配置
+5. プロトタイプ接続（画面間リンクを Figma の Interactive Prototype として張る）
+6. 完成レポート出力: Figma URL、投入したコンポーネント数、Variables 数、既知の差分リスト
+
+精度担保の補助フロー:
+- 同じ URL を html.to.design で別ファイルに取り込み、visual diff で比較
+- 差分があれば `/export-to-figma` のスクリプトを修正 → 次回からは正しく出る
+- 初回 1〜2 納品で安定化、以降はメンテフリーを目指す
+
+詳細な戦略は §4-B を参照。
 
 ### Priority 6（中長期）— GitHub Organization への移管
 
@@ -435,11 +486,6 @@ Org 化後の運用ベストプラクティス:
 4. **lucide-react v1.16.0 という存在しないバージョン** → v0.474.0 に修正済み
 5. **PAT がチャット履歴に露出** → `gh auth login` ベースに切り替え、Cowork に PAT を渡さない運用に
 6. **Vercel Hobby が non-team-member commit を拒否** → ローカル git config を `うちだ <tuchida@milize.co.jp>` に設定
-
-### 残課題
-
-- `Upload` フォルダ直下の `neutral-base/`（古い試行）と `design-system/`（バンドル展開ディレクトリ）はローカルで `rm -rf` 推奨（zip は残す）
-- Vercel 旧プロジェクト `design-system-silk-chi` と GitHub 旧リポジトリ `uchida-milize/design-system` は削除済み
 
 ---
 
