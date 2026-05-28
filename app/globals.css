@@ -1,6 +1,19 @@
-/* Chillax — 見出し / 大きな英数字用のディスプレイフォント (Fontshare CDN)
-   - Latin のみ。日本語は fallback の Geist Sans / Noto Sans JP にする */
-@import url("https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,600,700&display=swap");
+/* Chillax (Fontshare) — Medium (500) 単体のみ + size-adjust 120% + Latin 限定
+   - Medium ウェイトのみロード (= ウェイトはすべて Middle に固定)
+   - size-adjust: 120% により Chillax 描画文字が 120% に拡大される (= 英数字だけ大きく見える)
+   - unicode-range を Latin / 記号類だけに絞り、日本語は fallback (Noto Sans JP) に流す
+   - src URL は Fontshare の公開 CDN ハッシュ URL (https://api.fontshare.com/v2/css?f[]=chillax@500 から取得) */
+@font-face {
+  font-family: "Chillax";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  size-adjust: 120%;
+  src: url("https://cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.woff2") format("woff2"),
+       url("https://cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.woff") format("woff"),
+       url("https://cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.ttf") format("truetype");
+  unicode-range: U+0020-024F, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2122;
+}
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -609,6 +622,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Chillax は Medium (500) しかロードしていないので、Tailwind の font-bold 等が
+       faux-bold (合成太字) で描画されないように合成を全面禁止。
+       他のフォント (Geist) は複数ウェイトロード済みなので影響なし */
+    font-synthesis: none;
   }
   /* 見出し系を全体的に Chillax (Latin) に。日本語部分は font fallback で自然に Noto Sans JP に落ちる */
   h1, h2, h3, h4 {
