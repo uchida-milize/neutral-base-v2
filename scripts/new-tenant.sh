@@ -16,7 +16,9 @@
 #   2) components/xxx/ → components/<tenant>/ を複製
 #   3) コピーしたファイル内の xxx 文字列 (URL / import / CSS scope) を <tenant> に置換
 #   4) components/site-header.tsx の TENANTS 配列に新エントリを挿入
-#   5) 結果を要約して表示
+#   5) app/page.tsx の TENANT_CARDS 配列 (汎用 TOP「ブランド別の運用」) に追加
+#   6) app/layout.tsx の root に tokens.css の import を挿入
+#   7) 結果を要約して表示
 #
 # 置換しないもの (意図的):
 #   - "XXX" (大文字) というブランド表記 — 顧客提示用テキストは別途 /init-brand-tokens で
@@ -255,7 +257,7 @@ ok "xxx → ${TENANT} 置換完了"
 # ==========================================================================
 # Step 4: site-header.tsx の TENANTS 配列に新エントリを挿入
 # ==========================================================================
-log "Step 4/4: ${HEADER_FILE} に /${TENANT} エントリを追加"
+log "Step 4/6: ${HEADER_FILE} に /${TENANT} エントリを追加"
 
 NT_TENANT="${TENANT}" \
 NT_HEADER="${HEADER_FILE}" \
@@ -332,18 +334,129 @@ PYEOF
 ok "${HEADER_FILE} 更新完了"
 
 # ==========================================================================
+# Step 5: app/page.tsx の TENANT_CARDS 配列に新エントリを追加
+#   (汎用 TOP「ブランド別の運用」セクション)
+# ==========================================================================
+HOME_FILE="app/page.tsx"
+log "Step 5/6: ${HOME_FILE} の TENANT_CARDS に /${TENANT} エントリを追加"
+
+NT_TENANT="${TENANT}" \
+NT_HOME="${HOME_FILE}" \
+NT_LABEL="${BRAND_LABEL}" \
+python3 <<'PYEOF'
+import os, re, pathlib, sys
+
+path   = pathlib.Path(os.environ["NT_HOME"])
+tenant = os.environ["NT_TENANT"]
+label  = os.environ["NT_LABEL"]
+
+src = path.read_text(encoding="utf-8")
+
+# 既存エントリを除去 (--force 想定 / 冪等性のため毎回除去 → 再追加)
+# `  { id: "<tenant>", ... },` をブロック単位で削除
+block_re = re.compile(
+    r'^  \{\n'
+    r'(?:    [^\n]*\n)*?'
+    r'    id:\s*"' + re.escape(tenant) + r'",\n'
+    r'(?:    [^\n]*\n)*?'
+    r'  \},\n',
+    re.MULTILINE,
+)
+src_after_rm, n_rm = block_re.subn('', src)
+if n_rm > 0:
+    print(f"  既存の id: \"{tenant}\" エントリを {n_rm} 個除去")
+    src = src_after_rm
+
+# アンカー: `  // 新規テナントはここに追加 (new-tenant.sh で自動挿入)` 行の直前に挿入
+anchor_re = re.compile(r'^(\s*)//\s*新規テナントはここに追加', re.MULTILINE)
+m = anchor_re.search(src)
+
+new_entry = (
+    "  {\n"
+    f'    id: "{tenant}",\n'
+    f'    label: "{label}",\n'
+    f'    title: "{label} ガイドライン",\n'
+    f'    description:\n'
+    f'      "tokens.css の 4 スケール (primary / secondary / button / cta) で構成される {label} 専用テナント。色は自動反映。",\n'
+    f'    href: "/{tenant}/guidelines",\n'
+    f'    path: "/{tenant}/guidelines",\n'
+    "  },\n"
+)
+
+if m:
+    insert_at = m.start()
+    new_src = src[:insert_at] + new_entry + src[insert_at:]
+else:
+    # アンカーがない場合: TENANT_CARDS 配列の末尾 ']' 直前に挿入
+    arr_re = re.compile(r'(const\s+TENANT_CARDS\s*:\s*TenantCardData\[\]\s*=\s*\[)(.*?)(\]\s*;)', re.DOTALL)
+    mm = arr_re.search(src)
+    if not mm:
+        print("ERROR: TENANT_CARDS 配列が見つかりません", file=sys.stderr)
+        sys.exit(1)
+    body = mm.group(2).rstrip()
+    if not body.endswith(","): body += ","
+    new_body = body + "\n" + new_entry
+    new_src = src[:mm.start(2)] + new_body + src[mm.end(2):]
+
+path.write_text(new_src, encoding="utf-8")
+print(f"  /{tenant} エントリを TENANT_CARDS に追加 (label='{label}')")
+PYEOF
+
+ok "${HOME_FILE} 更新完了"
+
+# ==========================================================================
+# Step 6: app/layout.tsx に tokens.css の import を追加
+#   (root layout でグローバル import することで、汎用 TOP の AutoTenantCard が
+#    getComputedStyle() で CSS var を読み取れるようにする)
+# ==========================================================================
+LAYOUT_FILE="app/layout.tsx"
+log "Step 6/6: ${LAYOUT_FILE} に @/components/${TENANT}/tokens.css の import を追加"
+
+NT_TENANT="${TENANT}" \
+NT_LAYOUT="${LAYOUT_FILE}" \
+python3 <<'PYEOF'
+import os, re, pathlib
+
+path   = pathlib.Path(os.environ["NT_LAYOUT"])
+tenant = os.environ["NT_TENANT"]
+
+src = path.read_text(encoding="utf-8")
+import_line = f'import "@/components/{tenant}/tokens.css";\n'
+
+# 既に存在すれば何もしない (冪等)
+if import_line.strip() in src:
+    print(f"  既に @/components/{tenant}/tokens.css の import が存在 — スキップ")
+else:
+    # アンカー: `// 新規テナントの tokens.css はここに追加` の直前に挿入
+    anchor_re = re.compile(r'^(\s*)//\s*新規テナントの tokens\.css はここに追加', re.MULTILINE)
+    m = anchor_re.search(src)
+    if m:
+        insert_at = m.start()
+        new_src = src[:insert_at] + import_line + src[insert_at:]
+        path.write_text(new_src, encoding="utf-8")
+        print(f"  @/components/{tenant}/tokens.css を root layout に import")
+    else:
+        print(f"  WARN: anchor not found in {path}; 手動で import を追加してください")
+PYEOF
+
+ok "${LAYOUT_FILE} 更新完了"
+
+# ==========================================================================
 # サマリ
 # ==========================================================================
 echo
 printf "%b%s%b\n" "${C_BOLD}${C_GREEN}" "==== 完了 ====" "${C_RESET}"
 echo "  作成: app/${TENANT}/"
 echo "  作成: components/${TENANT}/"
-echo "  更新: ${HEADER_FILE}"
+echo "  更新: ${HEADER_FILE}      (TENANTS 配列にナビ追加)"
+echo "  更新: ${HOME_FILE}        (TENANT_CARDS に「ブランド別の運用」カード追加)"
+echo "  更新: ${LAYOUT_FILE}     (tokens.css を root に import)"
 echo
 echo "次の手順:"
 echo "  1. pnpm dev で http://localhost:3000/${TENANT} を確認"
-echo "  2. components/${TENANT}/tokens.css でブランドカラーを編集"
+echo "  2. http://localhost:3000/ の「ブランド別の運用」にカードが現れるか確認"
+echo "  3. components/${TENANT}/tokens.css でブランドカラーを編集"
 echo "     (将来 /init-brand-tokens スキルで自動化予定)"
-echo "  3. app/${TENANT}/page.tsx の hero テキストを ${BRAND_LABEL} 用に調整"
-echo "  4. git add -A && git commit -m \"feat: add ${TENANT} tenant\""
+echo "  4. app/${TENANT}/page.tsx の hero テキストを ${BRAND_LABEL} 用に調整"
+echo "  5. git add -A && git commit -m \"feat: add ${TENANT} tenant\""
 echo

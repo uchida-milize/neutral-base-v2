@@ -4,7 +4,7 @@ import * as React from "react";
  * FlowDiagram — デザインから公開までのワークフローを可視化する Dify 風フロー図。
  *
  * 4 ステップ:
- *   01. Wireframe / Design 入力 (Google AI Studio または Figma → MCP)
+ *   01. デザイン入力 (Figma / Google AI Studio / Excel 仕様書 / VI 資料)
  *   02. Claude Design でデザイン作成
  *   03. Vercel に公開 (= 開発側との接続点)
  *   04. Figma 書き出し (任意) — (1) が Figma MCP の場合は Variables / Components を保って戻せる
@@ -32,9 +32,9 @@ const STEPS: FlowStep[] = [
   {
     n: "01",
     icon: "📥",
-    title: "Wireframe / Design 入力",
-    sub: "Google AI Studio または Figma → MCP",
-    desc: "WF を Google AI Studio で作る、もしくは Figma で設計したデザインを Figma MCP 経由で取り込み。Figma MCP の場合は Variables / Components も同時に受け取る。",
+    title: "デザイン入力",
+    sub: "Figma / AI Studio / Excel 仕様書 / VI 資料",
+    desc: "Figma のデザインを MCP 経由 (Variables / Components ごと)、Google AI Studio のワイヤーフレーム、Excel 仕様書 (画面項目 + 埋め込みモック画像)、VI 資料 / ブランドガイド PDF (色・ロゴ・タイポ規定) のいずれか、あるいは複数を組み合わせて取り込み。",
     accent: "input",
   },
   {

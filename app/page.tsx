@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   LayoutGrid,
   BookOpen,
-  Building2,
   ArrowRight,
   FileTextIcon,
   LayersIcon,
@@ -13,6 +12,7 @@ import { SiteHeader } from "@/components/site-header";
 import { OverviewSection } from "@/components/overview-section";
 import { Badge } from "@/components/ui/badge";
 import { JpText } from "@/components/jp-text";
+import { AutoTenantCard, type TenantCardData } from "@/components/auto-tenant-card";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -68,11 +68,9 @@ function Hero() {
           <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
         </h1>
         <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
-          Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、
-          shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。
-          各導入先 (XXX など) はここを土台に、{" "}
-          <code>--secondary-color-*</code> と <code>--primary-color-*</code> の{" "}
-          2 系統 + ロゴだけを差し替えて運用します。
+          <JpText>
+            色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。
+          </JpText>
         </p>
       </div>
     </section>
@@ -115,45 +113,8 @@ function CoreSection() {
   );
 }
 
-/**
- * BrandDots — テナントの 3 色 (Primary / Secondary / Button) を真円で並べる小さい識別子。
- * 各カードのタイトル冒頭に置いて、テナント別の配色を視覚的に差別化する。
- */
-function BrandDots({
-  primary,
-  secondary,
-  button,
-}: {
-  primary: string;
-  secondary: string;
-  button: string;
-}) {
-  return (
-    <span
-      className="inline-flex shrink-0 items-center gap-1"
-      aria-label={`Primary ${primary}, Secondary ${secondary}, Button ${button}`}
-    >
-      <span
-        className="inline-block size-3 rounded-full ring-1 ring-border/40"
-        style={{ background: primary }}
-        title={`Primary: ${primary}`}
-        aria-hidden
-      />
-      <span
-        className="inline-block size-3 rounded-full ring-1 ring-border/40"
-        style={{ background: secondary }}
-        title={`Secondary: ${secondary}`}
-        aria-hidden
-      />
-      <span
-        className="inline-block size-3 rounded-full ring-1 ring-border/40"
-        style={{ background: button }}
-        title={`Button: ${button}`}
-        aria-hidden
-      />
-    </span>
-  );
-}
+// BrandDots は components/auto-tenant-card.tsx 内に CSS var ベースで実装済み。
+// 各テナントの tokens.css を直接読むため、props 渡しの旧 BrandDots は削除した。
 
 function CoreCard({
   href,
@@ -185,7 +146,61 @@ function CoreCard({
 
 /* ---------------------------------------------------------------- */
 /* テナント (各社専用) への導線                                        */
+/*                                                                  */
+/* TENANT_CARDS は new-tenant.sh が編集する配列。色情報は持たず、     */
+/* AutoTenantCard が getComputedStyle() で tokens.css から取得する。  */
+/* 新規テナント追加時は `// 新規テナントはここに追加` アンカーの      */
+/* 直前に新エントリを挿入する (順序が新しい→古いとなる)。            */
 /* ---------------------------------------------------------------- */
+
+const TENANT_CARDS: TenantCardData[] = [
+  {
+    id: "td-financial",
+    label: "T&Dファイナンシャル生命",
+    title: "T&Dファイナンシャル生命 ガイドライン",
+    description:
+      "コーポレートカラー Navy + Red を 4 スケール (primary / secondary / button / cta) に展開した本番テナント。組込ページ向け デザイン資料 (Guidelines / Components / Prototype / Windows)。",
+    href: "/td-financial/guidelines",
+    path: "/td-financial/guidelines",
+  },
+  {
+    id: "theo-tdf",
+    label: "THEO × T&Dファイナンシャル",
+    title: "THEO「つみたて安心ほけん」",
+    description:
+      "THEO Blue を primary、Coral を secondary、純赤を CTA に置いた組込申込フロー (LP → 情報入力 → シミュレーション → メアド → カード → 注意事項 → 完了)。",
+    href: "/theo-tdf",
+    path: "/theo-tdf/",
+  },
+  {
+    id: "xxx",
+    label: "XXX",
+    title: "XXX社 (サンプル架空企業)",
+    description:
+      "Teal / Cyan / Amber の 4 スケール構成。新規テナントの雛形として `./scripts/new-tenant.sh` がこのツリーを複製する。",
+    href: "/xxx",
+    path: "/xxx/",
+  },
+  {
+    id: "aaa",
+    label: "AAA",
+    title: "AAA (デモテナント)",
+    description:
+      "`/new-tenant` スキルの動作確認用デモテナント。色は XXX と同じ。削除可能。",
+    href: "/aaa",
+    path: "/aaa/",
+  },
+  {
+    id: "acme",
+    label: "ACME Corp",
+    title: "ACME Corp ガイドライン",
+    description:
+      "tokens.css の 4 スケール (primary / secondary / button / cta) で構成される ACME Corp 専用テナント。色は自動反映。",
+    href: "/acme/guidelines",
+    path: "/acme/guidelines",
+  },
+  // 新規テナントはここに追加 (new-tenant.sh で自動挿入)
+];
 
 function TenantsSection() {
   return (
@@ -198,71 +213,18 @@ function TenantsSection() {
           ブランド別の運用
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
-          各テナント (顧客企業) には、共通システムを土台にしたうえで navy / cta-red / warm などのブランド固有色を上書きした「専用ツリー」を用意します。
+          各テナント (顧客企業) には、共通システムを土台にしたうえで primary / secondary / button / cta の 4 スケールを上書きした「専用ツリー」を用意します。
           顧客には{" "}
           <code className="text-foreground">/&lt;テナント名&gt;/</code>{" "}
-          の URL だけを案内します。
+          の URL だけを案内します。各カードの色見本と hex は tokens.css から自動取得しています。
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <Link
-          href="/td-financial/guidelines"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
-        >
-          <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="gap-1.5">
-              <Building2 className="size-3" />
-              T&amp;Dファイナンシャル生命
-            </Badge>
-            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-          </div>
-          <h3 className="mt-3 flex items-center gap-2 text-h7 font-semibold">
-            <BrandDots
-              primary="#003388"
-              secondary="#db0034"
-              button="#344a9c"
-            />
-            T&amp;Dファイナンシャル生命 ガイドライン
-          </h3>
-          <p className="mt-2 text-body text-muted-foreground">
-            コーポレートカラー Navy <code>#003388</code> + Red <code>#db0034</code>、
-            通常ボタン Blue <code>#344a9c</code>、CTA Red <code>#db0034</code> 構成。
-            組込ページ向け デザイン資料 (Guidelines / Components / Prototype / Windows)。
-          </p>
-          <p className="mt-3 font-mono text-caption text-primary">/td-financial/guidelines</p>
-        </Link>
+        {TENANT_CARDS.map((card) => (
+          <AutoTenantCard key={card.id} {...card} />
+        ))}
 
-        <Link
-          href="/xxx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
-        >
-          <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="gap-1.5">
-              <Building2 className="size-3" />
-              XXX
-            </Badge>
-            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-          </div>
-          <h3 className="mt-3 flex items-center gap-2 text-h7 font-semibold">
-            <BrandDots
-              primary="#0f766e"
-              secondary="#0891b2"
-              button="#14b8a6"
-            />
-            XXX社 (サンプル架空企業)
-          </h3>
-          <p className="mt-2 text-body text-muted-foreground">
-            コーポレートカラー Teal <code>#0f766e</code> + Cyan <code>#0891b2</code>、
-            通常ボタン Teal mid <code>#14b8a6</code>、CTA Amber <code>#d97706</code> 構成。
-            Embedded Insurance Portal の 4 画面付き (Dashboard / Contracts / 詳細 / Settings)。
-          </p>
-          <p className="mt-3 font-mono text-caption text-primary">/xxx/</p>
-        </Link>
-
+        {/* HANDOFF.md への導線 — テナント追加手順 */}
         <a
           href="https://github.com/uchida-milize/neutral-base/blob/main/HANDOFF.md"
           target="_blank"
@@ -280,9 +242,8 @@ function TenantsSection() {
             他社テナントの追加方法
           </h3>
           <p className="mt-2 text-body">
-            新しい導入先が増えるたびに、<code>app/&lt;会社名&gt;/</code> と{" "}
-            <code>components/&lt;会社名&gt;/</code> をテンプレートから複製して追加します。
-            手順は HANDOFF.md を参照してください。
+            <code>./scripts/new-tenant.sh &lt;name&gt;</code> でテナントを 1 コマンド作成。
+            この TenantsSection への追加も自動で行われます。詳細は HANDOFF.md を参照。
           </p>
           <p className="mt-3 font-mono text-caption text-primary">
             github.com/.../HANDOFF.md

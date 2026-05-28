@@ -1,0 +1,65 @@
+import type { Metadata } from "next";
+
+import { TdfFlowScreenStatic } from "@/components/acme/flow-prototype";
+import { FLOW_META } from "@/components/acme/flow-meta";
+
+export const metadata: Metadata = {
+  title: "Windows | XXX Design System",
+  description:
+    "XXX Embedded Insurance 申込フローの 11 画面を 375px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
+};
+
+/**
+ * /acme/windows
+ *
+ * iPhone フレームは外し、各画面の `.phone` (幅px) を高さ可変のまま
+ * 左から右に並べる。複数列でラップしてもよいので、画面解像度に応じて
+ * flex-wrap で自然に折り返す。
+ */
+export default function TdfPrototypeCanvasPage() {
+  return (
+    <main className="mx-auto max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+      {/* ヘッダーは TOP と同じ max-w-5xl 幅で中央揃え。タイトル位置が他ページと揃う */}
+      <div className="mx-auto mb-10 max-w-5xl">
+        <header className="max-w-3xl">
+          <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+            Windows
+          </p>
+          <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+            スクリーン
+          </h1>
+          <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
+            各画面は <strong className="text-foreground">375px 幅</strong> · 高さは内容に応じて可変。
+            画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
+            <a
+              href="/acme/prototype"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              画面遷移ビュー
+            </a>
+            {" "}を参照してください。
+          </p>
+        </header>
+      </div>
+
+      {/* キャンバスはより広い 1700px を活用、コンテンツは中央揃え */}
+      <div className="flex flex-wrap items-start justify-center gap-x-8 gap-y-12">
+        {FLOW_META.map((step, i) => (
+          <figure
+            key={step.id}
+            className="flex flex-col items-start gap-3"
+            style={{ width: 375 }}
+          >
+            <figcaption>
+              <p className="font-mono text-caption text-muted-foreground">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 className="mt-1 text-h7 font-semibold">{step.label}</h3>
+            </figcaption>
+            <TdfFlowScreenStatic index={i} />
+          </figure>
+        ))}
+      </div>
+    </main>
+  );
+}

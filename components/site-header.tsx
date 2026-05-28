@@ -106,6 +106,19 @@ const TENANTS: Tenant[] = [
       { href: "/theo-tdf/windows", label: "Windows", match: "exact" },
     ],
   },
+  {
+    pathPrefix: "/acme",
+    brandLabel: "ACME Corp",
+    brandInitial: "A",
+    brandHref: "/acme",
+    items: [
+      { href: "/acme", label: "TOP", match: "exact" },
+      { href: "/acme/guidelines", label: "Guidelines", match: "exact" },
+      { href: "/acme/components", label: "Components", match: "exact" },
+      { href: "/acme/prototype", label: "Prototype", match: "exact" },
+      { href: "/acme/windows", label: "Windows", match: "exact" },
+    ],
+  },
   // 将来の他社はここに追加 (例)
   // {
   //   pathPrefix: "/aaa",

@@ -1,0 +1,93 @@
+/* =================================================================
+ * XXX — tenant tokens (scoped)
+ *
+ * .acme-scope の中だけ shadcn セマンティック層が XXX 仕様で上書きされる。
+ * /acme/layout.tsx で全 /acme/* ページをこのクラスでラップして適用する。
+ *
+ * 4 つのカラースケール (XXX は架空サンプル):
+ *   --primary-color-*    : コーポレートカラー1 — Teal   #0f766e (ブランド主要色)
+ *   --secondary-color-*  : コーポレートカラー2 — Cyan   #0891b2 (アクセント / 重要)
+ *   --button-color-*     : 通常ボタン色         — Teal  #14b8a6 (色面 + 罫線、primary 系の中間色)
+ *   --cta-color-*        : CTA 申込ボタン色     — Amber #d97706 (申込/前進 専用、対比色相)
+ *
+ * + 無彩色:
+ *   --warm-*             : Stone neutral
+ *
+ * 設計サンプル:
+ *   - 通常ボタンはブランド色相系の中間色、CTA は対比色相で目立たせる、という構成例
+ * ================================================================= */
+
+.acme-scope {
+  /* ---- 1. primary-color (Teal #0f766e — コーポレートカラー1) ---- */
+  --primary-color-10: #f0fdfa;
+  --primary-color-50: #ccfbf1;
+  --primary-color-100: #99f6e4;
+  --primary-color-200: #5eead4;
+  --primary-color-300: #2dd4bf;
+  --primary-color-400: #14b8a6;
+  --primary-color-500: #0f766e;   /* XXX primary anchor */
+  --primary-color-600: #115e59;
+  --primary-color-700: #134e4a;
+
+  /* ---- 2. secondary-color (Cyan #0891b2 — コーポレートカラー2) ---- */
+  --secondary-color-10: #ecfeff;
+  --secondary-color-50: #cffafe;
+  --secondary-color-100: #a5f3fc;
+  --secondary-color-200: #67e8f9;
+  --secondary-color-300: #22d3ee;
+  --secondary-color-400: #06b6d4;
+  --secondary-color-500: #0891b2;
+  --secondary-color-600: #0e7490;
+  --secondary-color-700: #155e75;
+
+  /* ---- 3. button-color (Teal #14b8a6 — 通常ボタン: 色面 + 罫線) ---- */
+  --button-color-50:  #f0fdfa;
+  --button-color-100: #ccfbf1;
+  --button-color-200: #99f6e4;
+  --button-color-300: #5eead4;
+  --button-color-400: #2dd4bf;
+  --button-color-500: #14b8a6;     /* XXX button anchor (teal-500) */
+  --button-color-600: #0d9488;
+  --button-color-700: #0f766e;
+
+  /* ---- 4. cta-color (Amber #d97706 — CTA 申込ボタン専用) ---- */
+  --cta-color-50:  #fffbeb;
+  --cta-color-100: #fef3c7;
+  --cta-color-200: #fde68a;
+  --cta-color-300: #fcd34d;
+  --cta-color-400: #fbbf24;
+  --cta-color-500: #d97706;        /* XXX CTA anchor (amber-600) */
+  --cta-color-600: #b45309;
+  --cta-color-700: #92400e;
+
+  /* ---- 5. warm bg scale (Stone neutral) ---- */
+  --warm-50:  #fafaf9;
+  --warm-100: #f5f5f4;
+  --warm-200: #e7e5e4;
+  --warm-300: #d6d3d1;
+
+  /* ---- 6. semantic shortcuts (shadcn primitives が自動追従) ---- */
+  --primary: var(--primary-color-500);
+  --primary-foreground: #ffffff;
+  --ring: var(--primary-color-500);
+  --accent: var(--primary-color-10);
+  --accent-foreground: var(--primary-color-700);
+
+  /* acme-scope 用エイリアス */
+  --acme-button:            var(--button-color-500);
+  --acme-button-hover:      var(--button-color-600);
+  --acme-button-foreground: #ffffff;
+  --acme-cta:               var(--cta-color-500);
+  --acme-cta-hover:         var(--cta-color-600);
+  --acme-cta-foreground:    #ffffff;
+  --acme-warm:              var(--warm-50);
+}
+
+/* ダーク時は primary を 1 段明るくして "沈み" を防ぐ */
+.dark .acme-scope {
+  --primary: var(--primary-color-300);
+  --primary-foreground: var(--primary-color-700);
+  --ring: var(--primary-color-300);
+  --accent: rgba(255, 255, 255, 0.06);
+  --accent-foreground: #f4f4f5;
+}
