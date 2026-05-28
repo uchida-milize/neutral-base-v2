@@ -63,7 +63,7 @@ function Hero() {
           <LayersIcon className="size-3" />
           Common Design System
         </Badge>
-        <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+        <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
           どのブランドにも先に通すべき、共通の土台。
         </h1>
         <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">

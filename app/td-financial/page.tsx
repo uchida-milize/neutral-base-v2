@@ -41,7 +41,7 @@ export default function TdFinancialHome() {
               <ShieldCheck className="size-3" />
               T&amp;Dファイナンシャル生命 · Embedded Insurance
             </Badge>
-            <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+            <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
               TDF 組込ページ向け デザイン資料
             </h1>
             <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">

@@ -41,7 +41,7 @@ export default function XxxHome() {
               <ShieldCheck className="size-3" />
               XXX · Embedded Insurance
             </Badge>
-            <h1 className="mt-4 text-h2 font-semibold tracking-tight sm:text-h1">
+            <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
               信頼を、もっと触れる距離に。
             </h1>
             <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
