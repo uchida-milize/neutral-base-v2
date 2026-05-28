@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
+import { FlowDiagram } from "@/components/flow-diagram";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,6 +61,7 @@ export default function GuidelinesPage() {
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
         <Hero />
+        <Workflow />
         <Pipeline />
         <Architecture />
         <Principles />
@@ -149,6 +151,24 @@ function Section({
     >
       {children}
     </section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* NEW: Workflow (デザインから公開までの 4 ステップ Dify 風フロー図)      */
+/* ---------------------------------------------------------------- */
+
+function Workflow() {
+  return (
+    <Section id="workflow">
+      <SectionHeading
+        eyebrow="Workflow"
+        title="デザインから公開までのフロー"
+        description="ワイヤー入力 → Claude Design でデザイン → Vercel で公開 → (任意) Figma に書き戻し、という 4 ステップ。Step 4 は契約や顧客要望に応じてだけ発火するオプションです。開発側との接続は Step 3 (Vercel) で行われ、ここで実装ファイルが共有されます。"
+        audience="both"
+      />
+      <FlowDiagram />
+    </Section>
   );
 }
 
