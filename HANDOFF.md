@@ -358,6 +358,32 @@ html.to.design は Figma レイヤーを一塊のフレームとして配置す�
 - 取り込んだ後の Figma Variables への紐づけを自動化する Figma plugin を内製
 - `/feedback-to-figma` スキル化 (Priority 5): 取り込み → ページリンク構造をプロトタイプ接続として張る
 
+### Claude Design 経由の Figma 取り込み実験 (2026-05-27)
+
+**実験対象**: 10 ページ規模の Figma ファイル（DOCTORCOMPASS / SHARP FINANCE 系の申込フロー）
+
+**観察できたこと**:
+
+| 方式 | 結果 |
+|------|------|
+| ファイル全体 drag&drop | Variables (トークン) は抽出できるが、Frame 構造は引き出せず。2636 node 規模で挫折 |
+| 個別 Frame URL を1つずつ渡す | 精度向上。レイアウト・色・タイポグラフィは概ね忠実に再現 |
+| Attach ダイアログの表示 | "1 page / 4 frames" と出ても、実際は 10 ページ存在することがあり、UI 表示は信頼しない方が良い |
+
+**Claude Design の性格 (実験から得た結論)**:
+
+- ✓ **派生・拡張に強い**: 元 Figma の Q1, Q2 から推測して Q3, Q4, Q5 を自動生成するなど、パターンを汲み取って続きを作る
+- ✓ **トークン抽出は正確**: 色・サイズはほぼ忠実
+- △ **同一性再現は不完全**: 元には無い画面を加筆する、細部のレイアウトが少しずれる、など
+
+**戦略への反映**:
+
+- 「顧客の既存 Figma を起点に新画面を作りたい」 → Claude Design (個別 Frame URL を渡す方式) が最適
+- 「Vercel で動いてる UI を Figma 納品物として正確に再構築したい」 → **Figma MCP 経由の `/export-to-figma` スキル必須**（Claude Design では完全一致できない）
+- 「Figma の Frame を React コードに正確に落としたい」 → 同上、**`/figma-to-page` スキル (Figma MCP)** が本命
+
+つまり Claude Design は「**創造系**」、Figma MCP 経由の Cowork スキルは「**同一性が要求される変換**」、と役割分担が確定。
+
 ---
 
 ## 5. 次のステップ（優先度順）
