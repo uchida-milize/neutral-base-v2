@@ -85,7 +85,7 @@ function Hero() {
 
 function CoreSection() {
   return (
-    <section className="mt-20">
+    <section className="mt-30">
       <div className="mb-6 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Pages
@@ -112,6 +112,46 @@ function CoreSection() {
         />
       </div>
     </section>
+  );
+}
+
+/**
+ * BrandDots — テナントの 3 色 (Primary / Secondary / Button) を真円で並べる小さい識別子。
+ * 各カードのタイトル冒頭に置いて、テナント別の配色を視覚的に差別化する。
+ */
+function BrandDots({
+  primary,
+  secondary,
+  button,
+}: {
+  primary: string;
+  secondary: string;
+  button: string;
+}) {
+  return (
+    <span
+      className="inline-flex shrink-0 items-center gap-1"
+      aria-label={`Primary ${primary}, Secondary ${secondary}, Button ${button}`}
+    >
+      <span
+        className="inline-block size-3 rounded-full ring-1 ring-border/40"
+        style={{ background: primary }}
+        title={`Primary: ${primary}`}
+        aria-hidden
+      />
+      <span
+        className="inline-block size-3 rounded-full ring-1 ring-border/40"
+        style={{ background: secondary }}
+        title={`Secondary: ${secondary}`}
+        aria-hidden
+      />
+      <span
+        className="inline-block size-3 rounded-full ring-1 ring-border/40"
+        style={{ background: button }}
+        title={`Button: ${button}`}
+        aria-hidden
+      />
+    </span>
   );
 }
 
@@ -149,7 +189,7 @@ function CoreCard({
 
 function TenantsSection() {
   return (
-    <section className="mt-20">
+    <section className="mt-30">
       <div className="mb-6 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Tenants
@@ -178,7 +218,12 @@ function TenantsSection() {
             </Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
-          <h3 className="mt-3 text-h7 font-semibold">
+          <h3 className="mt-3 flex items-center gap-2 text-h7 font-semibold">
+            <BrandDots
+              primary="#003388"
+              secondary="#db0034"
+              button="#344a9c"
+            />
             T&amp;Dファイナンシャル生命 ガイドライン
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
@@ -202,11 +247,17 @@ function TenantsSection() {
             </Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
-          <h3 className="mt-3 text-h7 font-semibold">
+          <h3 className="mt-3 flex items-center gap-2 text-h7 font-semibold">
+            <BrandDots
+              primary="#0f766e"
+              secondary="#0891b2"
+              button="#14b8a6"
+            />
             XXX社 (サンプル架空企業)
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
-            primary を navy <code>#1b3157</code> に差し替え、CTA に朱色 <code>#c8242f</code> を追加。
+            コーポレートカラー Teal <code>#0f766e</code> + Cyan <code>#0891b2</code>、
+            通常ボタン Teal mid <code>#14b8a6</code>、CTA Amber <code>#d97706</code> 構成。
             Embedded Insurance Portal の 4 画面付き (Dashboard / Contracts / 詳細 / Settings)。
           </p>
           <p className="mt-3 font-mono text-caption text-primary">/xxx/</p>

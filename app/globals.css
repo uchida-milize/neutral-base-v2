@@ -1,3 +1,7 @@
+/* Chillax — 見出し / 大きな英数字用のディスプレイフォント (Fontshare CDN)
+   - Latin のみ。日本語は fallback の Geist Sans / Noto Sans JP にする */
+@import url("https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,600,700&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -594,6 +598,9 @@
   /* Font family (next/font) */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Chillax — 見出し / 大きな英数字用。日本語は fallback で Geist Sans → Noto Sans JP
+     @theme inline 内に置くことで Tailwind の `font-chillax` utility として公開される */
+  --font-chillax: "Chillax", var(--font-geist-sans), "Noto Sans JP", sans-serif;
 }
 
 @layer base {
@@ -602,5 +609,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* 見出し系を全体的に Chillax (Latin) に。日本語部分は font fallback で自然に Noto Sans JP に落ちる */
+  h1, h2, h3, h4 {
+    font-family: var(--font-chillax);
   }
 }

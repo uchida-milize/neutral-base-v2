@@ -74,8 +74,8 @@ const ACCENT_CLASSES: Record<FlowStep["accent"], string> = {
 export function FlowDiagram() {
   return (
     <div className="relative my-4">
-      {/* Desktop: 4 ノードを横並び、間にベジェ曲線 */}
-      <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center md:gap-x-1">
+      {/* Desktop: 4 ノードを横並び、間にベジェ曲線。items-stretch で高さ均一化 */}
+      <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-stretch md:gap-x-1">
         <FlowNode step={STEPS[0]} />
         <CurveHorizontal />
         <FlowNode step={STEPS[1]} />
@@ -116,28 +116,37 @@ function FlowNode({ step }: { step: FlowStep }) {
   return (
     <div
       className={[
-        "rounded-xl p-5 text-card-foreground transition-colors duration-300",
+        "flex h-full flex-col rounded-xl p-5 text-card-foreground transition-colors duration-300",
         accentBg,
         step.optional
           ? "border-2 border-dashed border-border"
           : "border border-border",
       ].join(" ")}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-h5" aria-hidden>
-          {step.icon}
-        </span>
-        <span className="font-mono text-caption text-muted-foreground">
-          {step.n}
-        </span>
-      </div>
-      <h3 className="mt-3 text-h7 font-semibold leading-tight">{step.title}</h3>
-      <p className="mt-1 text-caption font-medium text-primary">{step.sub}</p>
+      {/* 大きな番号 — Chillax (Display フォント) で primary 色のアクセント */}
+      <span className="font-chillax text-h3 font-bold leading-none tracking-tight text-primary/85">
+        {step.n}
+      </span>
+
+      {/* タイトル */}
+      <h3 className="mt-4 text-h7 font-semibold leading-tight">{step.title}</h3>
+
+      {/* sub — 文頭にアイコンを文章サイズで添える */}
+      <p className="mt-1 text-caption font-medium text-primary">
+        <span className="mr-1" aria-hidden>{step.icon}</span>
+        {step.sub}
+      </p>
+
+      {/* desc */}
       <p className="mt-2 text-body text-muted-foreground">{step.desc}</p>
+
+      {/* optional badge は下部に押し出す (mt-auto で flex 残りスペースを埋める) */}
       {step.optional && (
-        <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-tiny font-medium text-muted-foreground">
-          任意 (Optional)
-        </span>
+        <div className="mt-auto pt-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-tiny font-medium text-muted-foreground">
+            任意 (Optional)
+          </span>
+        </div>
       )}
     </div>
   );

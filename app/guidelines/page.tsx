@@ -147,7 +147,7 @@ function Section({
   return (
     <section
       id={id}
-      className={`mt-20 scroll-mt-24 transition-colors duration-300 ${className}`}
+      className={`mt-30 scroll-mt-24 transition-colors duration-300 ${className}`}
     >
       {children}
     </section>
@@ -177,35 +177,53 @@ function Workflow() {
 /* ---------------------------------------------------------------- */
 
 function Pipeline() {
-  // 4 ステップ: Figma → CSS → Tailwind → React
-  const steps = [
+  // 3 つの役割グループに統合: UI/UX (デザイナー) / UI/UX+Dev (中間層) / Dev (開発者)
+  // 元の 4 ステップ:
+  //   01 Figma Variables       → UI/UX グループ
+  //   02 app/globals.css       → UI/UX+Dev (中間) グループ
+  //   03 Tailwind utility      → UI/UX+Dev (中間) グループ
+  //   04 React component       → Dev グループ
+  const groups: PipelineGroup[] = [
     {
-      n: "01",
+      icon: "🎨",
       who: "UI/UX",
-      title: "Figma Variables",
-      desc: "デザイナーが Figma で色・サイズ・効果を Variables として定義。JSON エクスポートが一次ソース。",
-      sample: "color/primary-color-500 = #003388",
+      title: "デザイナーが扱う層",
+      tasks: [
+        {
+          title: "Figma Variables",
+          desc: "デザイナーが Figma で色・サイズ・効果を Variables として定義。JSON エクスポートが一次ソース。",
+          sample: "color/primary-color-500 = #003388",
+        },
+      ],
     },
     {
-      n: "02",
-      who: "Bridge",
-      title: "app/globals.css",
-      desc: "Figma の JSON を CSS Custom Properties (162 colors + 13 sizes) として書き出す。テナント別の上書きは components/<tenant>/tokens.css。",
-      sample: "--primary-color-500: #003388;",
+      icon: "🤝",
+      who: "UI/UX + Dev",
+      title: "両者をつなぐ中間層",
+      tasks: [
+        {
+          title: "app/globals.css",
+          desc: "Figma の JSON を CSS Custom Properties (162 colors + 13 sizes) として書き出す。テナント別の上書きは components/<tenant>/tokens.css。",
+          sample: "--primary-color-500: #003388;",
+        },
+        {
+          title: "Tailwind utility (@theme inline)",
+          desc: "Tailwind v4 の @theme inline 経由で、CSS Variable がそのまま utility class として公開される。中間ビルド不要。",
+          sample: "bg-primary, text-primary-foreground, ring-ring",
+        },
+      ],
     },
     {
-      n: "03",
-      who: "Bridge",
-      title: "Tailwind utility (@theme inline)",
-      desc: "Tailwind v4 の @theme inline 経由で、CSS Variable がそのまま utility class として公開される。中間ビルド不要。",
-      sample: "bg-primary, text-primary-foreground, ring-ring",
-    },
-    {
-      n: "04",
+      icon: "💻",
       who: "Dev",
-      title: "React component (.tsx)",
-      desc: "開発者は className に utility を書くだけ。生 hex は触らないため、Figma 側の色変更が即座に全コンポーネントへ波及する。",
-      sample: '<button className="bg-primary text-primary-foreground">',
+      title: "開発者が扱う層",
+      tasks: [
+        {
+          title: "React component (.tsx)",
+          desc: "開発者は className に utility を書くだけ。生 hex は触らないため、Figma 側の色変更が即座に全コンポーネントへ波及する。",
+          sample: '<button className="bg-primary text-primary-foreground">',
+        },
+      ],
     },
   ];
 
@@ -213,37 +231,16 @@ function Pipeline() {
     <Section id="pipeline">
       <SectionHeading
         eyebrow="Pipeline"
-        title="UI/UX ↔ Dev 連携フロー"
-        description="デザイナーが Figma Variables を編集してから、開発者の React コンポーネントに色が反映されるまでの 4 ステップ。途中に「ビルド時の同期作業」は介在しないので、Figma の変更がそのまま実装に届きます。"
+        title="UI/UX ↔ Dev 連携の 3 つの層"
+        description="Figma Variables → CSS → Tailwind utility → React component というデータの流れを、扱う役割で 3 つの層に分けて示します。途中に「ビルド時の同期作業」は介在しないので、Figma の変更がそのまま実装に届きます。"
         audience="both"
       />
 
-      <ol className="space-y-3">
-        {steps.map((s) => (
-          <li
-            key={s.n}
-            className="rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300"
-          >
-            <div className="flex items-start gap-4">
-              <span className="font-mono text-h6 font-semibold text-primary">
-                {s.n}
-              </span>
-              <div className="min-w-0 flex-1 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-h7 font-semibold">{s.title}</h3>
-                  <Badge variant="outline" className="font-mono text-tiny">
-                    {s.who}
-                  </Badge>
-                </div>
-                <p className="text-body text-muted-foreground">{s.desc}</p>
-                <pre className="overflow-x-auto rounded-md bg-muted/60 px-3 py-2 font-mono text-tiny text-muted-foreground">
-                  {s.sample}
-                </pre>
-              </div>
-            </div>
-          </li>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {groups.map((g) => (
+          <PipelineGroupCard key={g.who} group={g} />
         ))}
-      </ol>
+      </div>
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader className="pb-2">
@@ -264,6 +261,50 @@ function Pipeline() {
         </CardContent>
       </Card>
     </Section>
+  );
+}
+
+type PipelineGroup = {
+  icon: string;
+  who: string;
+  title: string;
+  tasks: { title: string; desc: string; sample: string }[];
+};
+
+function PipelineGroupCard({ group }: { group: PipelineGroup }) {
+  return (
+    <div className="flex h-full flex-col rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
+      {/* アイコン + 役割 pill (TOP の OverviewSection と同じグルーピング方式) */}
+      <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-muted/60 px-2.5 py-1">
+        <span className="text-body" aria-hidden>{group.icon}</span>
+        <span className="font-chillax text-caption font-medium text-foreground">
+          {group.who}
+        </span>
+      </span>
+
+      {/* グループタイトル (役割の長文ラベル) */}
+      <h3 className="mt-3 text-h7 font-semibold leading-tight">{group.title}</h3>
+
+      {/* やること (1 つ or 2 つ) — code sample 付きの詳細版 */}
+      <div className="mt-4 space-y-3">
+        {group.tasks.map((t) => (
+          <div
+            key={t.title}
+            className="rounded-md bg-muted/40 p-3"
+          >
+            <p className="text-caption font-semibold leading-tight text-foreground">
+              {t.title}
+            </p>
+            <p className="mt-1 text-caption text-muted-foreground">
+              {t.desc}
+            </p>
+            <pre className="mt-2 overflow-x-auto rounded-md bg-background/80 px-2.5 py-1.5 font-mono text-tiny text-muted-foreground">
+              {t.sample}
+            </pre>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -502,7 +543,7 @@ function Principles() {
             key={p.n}
             className="flex gap-4 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300"
           >
-            <span className="font-mono text-h6 font-semibold text-primary">
+            <span className="font-chillax text-h6 font-semibold text-primary">
               {p.n}
             </span>
             <div className="space-y-1">
@@ -894,7 +935,7 @@ function BrandSatellites() {
 
 function Footer() {
   return (
-    <footer className="mt-20 border-t border-border pt-8 transition-colors duration-300">
+    <footer className="mt-30 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
           © Design System · Figma Variables を単一情報源として運用されています。

@@ -138,7 +138,7 @@ function Section({
   return (
     <section
       id={id}
-      className={`mt-20 scroll-mt-24 transition-colors duration-300 ${className}`}
+      className={`mt-30 scroll-mt-24 transition-colors duration-300 ${className}`}
     >
       {children}
     </section>
@@ -1159,7 +1159,7 @@ function ContentRules() {
 
 function Footer() {
   return (
-    <footer className="mt-20 border-t border-border pt-8 transition-colors duration-300">
+    <footer className="mt-30 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
           © XXX Design System · 一次ソース:{" "}
