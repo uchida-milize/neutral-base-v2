@@ -16,7 +16,7 @@ const alertVariants = cva(
         warning:
           "text-fg-warning bg-card border-warning-amber-200 *:data-[slot=alert-description]:text-fg-warning/90 dark:border-warning-amber-700",
         info:
-          "text-fg-info bg-card border-primary-blue-100 *:data-[slot=alert-description]:text-fg-info/90 dark:border-primary-blue-700",
+          "text-fg-info bg-card border-secondary-color-100 *:data-[slot=alert-description]:text-fg-info/90 dark:border-secondary-color-700",
       },
     },
     defaultVariants: { variant: "default" },

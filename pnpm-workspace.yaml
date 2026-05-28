@@ -1,0 +1,10 @@
+# pnpm v11 では設定の置き場所が package.json から pnpm-workspace.yaml に移動した。
+# シングルパッケージのリポジトリでも、このファイルで pnpm 設定を読み込ませる。
+# https://pnpm.io/settings
+#
+# ネイティブビルド (postinstall スクリプト) を許可するパッケージ:
+# - sharp:         Next.js の画像最適化 (next/image)
+# - unrs-resolver: Next.js 16 の Rust 製モジュールリゾルバ
+allowBuilds:
+  sharp: true
+  unrs-resolver: true

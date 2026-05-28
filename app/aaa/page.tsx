@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * /xxx — XXX 専用デザインシステムの入口。
+ * /aaa — XXX 専用デザインシステムの入口。
  * 顧客 (XXX 担当者) はこの URL から下の 4 ページにアクセスする。
  */
 export default function XxxHome() {
@@ -66,25 +66,25 @@ export default function XxxHome() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <NavCard
-              href="/xxx/guidelines"
+              href="/aaa/guidelines"
               icon={BookOpen}
               title="Guidelines"
               desc="ブランドの 4 つの柱、カラー運用 (navy / button-color / warm)、ボタン 5 種類、タイポグラフィ、アクセシビリティ方針。"
             />
             <NavCard
-              href="/xxx/components"
+              href="/aaa/components"
               icon={LayoutGrid}
               title="Components"
               desc="XXX 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
             />
             <NavCard
-              href="/xxx/prototype"
+              href="/aaa/prototype"
               icon={Smartphone}
               title="Prototype"
               desc="iPhone フレーム内で Portal の 4 画面 (Dashboard / Contracts / 詳細 / Settings) をタップ操作で遷移。"
             />
             <NavCard
-              href="/xxx/windows"
+              href="/aaa/windows"
               icon={Grid3x3}
               title="Windows"
               desc="同じ 4 画面を iPhone フレームに入れたまま 2×2 グリッドで並列表示。Figma キャンバス風。"

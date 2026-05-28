@@ -12,27 +12,27 @@
  * ===================================================================== */
 
 :root {
-  /* -------- Figma primitives: primary-blue -------- */
-  --primary-blue-10:  #f0f6ff;
-  --primary-blue-50:  #ebf2ff;
-  --primary-blue-100: #c4deff;
-  --primary-blue-200: #b1cbff;
-  --primary-blue-300: #89b2ff;
-  --primary-blue-400: #6298ff;
-  --primary-blue-500: #3b7eff;
-  --primary-blue-600: #2f66d0;
-  --primary-blue-700: #234ea0;
+  /* -------- Figma primitives: secondary-color -------- */
+  --secondary-color-10:  #f0f6ff;
+  --secondary-color-50:  #ebf2ff;
+  --secondary-color-100: #c4deff;
+  --secondary-color-200: #b1cbff;
+  --secondary-color-300: #89b2ff;
+  --secondary-color-400: #6298ff;
+  --secondary-color-500: #3b7eff;
+  --secondary-color-600: #2f66d0;
+  --secondary-color-700: #234ea0;
 
-  /* -------- Figma primitives: navigation-navy -------- */
-  --navigation-navy-10:  #eef0f4;
-  --navigation-navy-50:  #e7e9ed;
-  --navigation-navy-100: #b5bbc6;
-  --navigation-navy-200: #919baa;
-  --navigation-navy-300: #5e6d84;
-  --navigation-navy-400: #3f516c;
-  --navigation-navy-500: #0f2547;
-  --navigation-navy-600: #0e2241;
-  --navigation-navy-700: #02255c;
+  /* -------- Figma primitives: primary-color -------- */
+  --primary-color-10:  #eef0f4;
+  --primary-color-50:  #e7e9ed;
+  --primary-color-100: #b5bbc6;
+  --primary-color-200: #919baa;
+  --primary-color-300: #5e6d84;
+  --primary-color-400: #3f516c;
+  --primary-color-500: #0f2547;
+  --primary-color-600: #0e2241;
+  --primary-color-700: #02255c;
 
   /* -------- Figma primitives: danger-red -------- */
   --danger-red-50:  #feeded;
@@ -64,6 +64,32 @@
   --success-green-600: #13bf2e;
   --success-green-700: #0f9524;
 
+  /* -------- Tenant slots: button-color (通常ボタン: 色面 + 罫線) --------
+   * テナント未指定時は primary-color のエイリアス。
+   * 各テナントの tokens.css で上書きされる。
+   */
+  --button-color-50:  var(--primary-color-50);
+  --button-color-100: var(--primary-color-100);
+  --button-color-200: var(--primary-color-200);
+  --button-color-300: var(--primary-color-300);
+  --button-color-400: var(--primary-color-400);
+  --button-color-500: var(--primary-color-500);
+  --button-color-600: var(--primary-color-600);
+  --button-color-700: var(--primary-color-700);
+
+  /* -------- Tenant slots: cta-color (CTA 申込ボタン: 別途) --------
+   * テナント未指定時は primary-color のエイリアス。
+   * 各テナントの tokens.css で上書きされる (通常ボタンと差別化したい場合)。
+   */
+  --cta-color-50:  var(--primary-color-50);
+  --cta-color-100: var(--primary-color-100);
+  --cta-color-200: var(--primary-color-200);
+  --cta-color-300: var(--primary-color-300);
+  --cta-color-400: var(--primary-color-400);
+  --cta-color-500: var(--primary-color-500);
+  --cta-color-600: var(--primary-color-600);
+  --cta-color-700: var(--primary-color-700);
+
   /* -------- Figma primitives: neutral-gray -------- */
   --neutral-gray-100: #f9fbfc;
   --neutral-gray-200: #f5f6f6;
@@ -79,7 +105,7 @@
   --text-sub:            #5e6366;
   --text-muted:          #6b6f89;
   --text-inverse:        #ffffff;
-  --text-primary:        var(--primary-blue-500);
+  --text-primary:        var(--secondary-color-500);
   --text-placeholder:    #a5aabe;
   --text-disabled:       #a5aabe;
   --text-success:        #0f9524;
@@ -94,7 +120,7 @@
   --icon-main:           #191b1f;
   --icon-muted:          #6b6f89;
   --icon-inverse:        #ffffff;
-  --icon-primary:        var(--primary-blue-500);
+  --icon-primary:        var(--secondary-color-500);
   --icon-disabled:       #a5aabe;
   --icon-success:        #15d232;
   --icon-error:          #f64c4c;
@@ -132,8 +158,8 @@
   --checkbox-danger:     var(--danger-red-50);
 
   /* -------- Figma component: Button (Standard / Small) -------- */
-  --button-standard-primary:       var(--primary-blue-500);
-  --button-standard-primary-hover: var(--primary-blue-600);
+  --button-standard-primary:       var(--secondary-color-500);
+  --button-standard-primary-hover: var(--secondary-color-600);
   --button-standard-danger:        var(--danger-red-500);
   --button-standard-danger-hover:  var(--danger-red-600);
   --button-standard-neutral:       #eff0f3;
@@ -150,7 +176,7 @@
   --table-base-3: #e9eff2;
   --table-base-4: #f9fbfc;
   --table-base-5: #dcdcdc;
-  --table-base-6: var(--primary-blue-50);
+  --table-base-6: var(--secondary-color-50);
 
   /* -------- Figma chart palette -------- */
   --chart-rose:          #d81b60;
@@ -214,19 +240,19 @@
   --card-foreground:          var(--text-main);
   --popover:                  var(--background-base);
   --popover-foreground:       var(--text-main);
-  --primary:                  var(--primary-blue-500);
+  --primary:                  var(--secondary-color-500);
   --primary-foreground:       var(--text-inverse);
   --secondary:                var(--neutral-gray-300);
   --secondary-foreground:     var(--text-main);
   --muted:                    var(--background-2);
   --muted-foreground:         var(--text-muted);
-  --accent:                   var(--primary-blue-50);
-  --accent-foreground:        var(--primary-blue-700);
+  --accent:                   var(--secondary-color-50);
+  --accent-foreground:        var(--secondary-color-700);
   --destructive:              var(--danger-red-500);
   --destructive-foreground:   var(--text-inverse);
   --border:                   var(--border-default);
   --input:                    var(--border-default);
-  --ring:                     var(--primary-blue-500);
+  --ring:                     var(--secondary-color-500);
 
   /* chart-1..5 を shadcn 互換に */
   --chart-1: var(--chart-cobalt);
@@ -239,12 +265,12 @@
 
   --sidebar:                          var(--background-1);
   --sidebar-foreground:               var(--text-main);
-  --sidebar-primary:                  var(--primary-blue-500);
+  --sidebar-primary:                  var(--secondary-color-500);
   --sidebar-primary-foreground:       var(--text-inverse);
-  --sidebar-accent:                   var(--primary-blue-50);
-  --sidebar-accent-foreground:        var(--primary-blue-700);
+  --sidebar-accent:                   var(--secondary-color-50);
+  --sidebar-accent-foreground:        var(--secondary-color-700);
   --sidebar-border:                   var(--border-default);
-  --sidebar-ring:                     var(--primary-blue-500);
+  --sidebar-ring:                     var(--secondary-color-500);
 }
 
 /* Mobile (Figma "mobile" mode for button sizes) */
@@ -262,7 +288,7 @@
  * 設計ルール:
  *  - 背景・サーフェス・ボーダー・テキストはすべて中性グレー (zinc 系)
  *  - 純黒は使わず #0a0a0a〜#3f3f46 のステップで階層
- *  - primary は primary-blue/400 (#6298ff) — 暗い surface でも沈まない鮮やかな青
+ *  - primary は secondary-color/400 (#6298ff) — 暗い surface でも沈まない鮮やかな青
  *  - destructive は danger-red/500 維持
  *  - hover は "明るくなる" 方向
  *
@@ -279,14 +305,14 @@
   --text-sub:            #d4d4d8;     /* zinc-300 */
   --text-muted:          #a1a1aa;     /* zinc-400 */
   --text-inverse:        #18181b;     /* zinc-900 — light surface 上の文字 */
-  --text-primary:        var(--primary-blue-400);
+  --text-primary:        var(--secondary-color-400);
   --text-placeholder:    #71717a;     /* zinc-500 */
   --text-disabled:       #52525b;     /* zinc-600 */
   --text-success:        var(--success-green-400);
   --text-error:          var(--danger-red-400);
-  --text-info:           var(--primary-blue-400);
+  --text-info:           var(--secondary-color-400);
   --text-warning:        var(--warning-amber-500);
-  --text-link:           var(--primary-blue-400);
+  --text-link:           var(--secondary-color-400);
   --text-value-positive: var(--success-green-400);
   --text-value-negative: var(--danger-red-400);
 
@@ -294,13 +320,13 @@
   --icon-main:           #fafafa;
   --icon-muted:          #a1a1aa;
   --icon-inverse:        #18181b;
-  --icon-primary:        var(--primary-blue-400);
+  --icon-primary:        var(--secondary-color-400);
   --icon-disabled:       #52525b;
   --icon-success:        var(--success-green-400);
   --icon-error:          var(--danger-red-400);
-  --icon-info:           var(--primary-blue-400);
+  --icon-info:           var(--secondary-color-400);
   --icon-warning:        var(--warning-amber-500);
-  --icon-link:           var(--primary-blue-400);
+  --icon-link:           var(--secondary-color-400);
   --icon-value-positive: var(--success-green-400);
   --icon-value-negative: var(--danger-red-400);
 
@@ -319,8 +345,8 @@
   --border-success:      var(--success-green-400);
 
   /* -------- component / button overrides -------- */
-  --button-standard-primary:       var(--primary-blue-400);
-  --button-standard-primary-hover: var(--primary-blue-300);
+  --button-standard-primary:       var(--secondary-color-400);
+  --button-standard-primary-hover: var(--secondary-color-300);
   --button-standard-danger:        var(--danger-red-500);
   --button-standard-danger-hover:  var(--danger-red-400);
   --button-standard-neutral:       #3f3f46;     /* zinc-700 */
@@ -338,7 +364,7 @@
   --card-foreground:          var(--text-main);
   --popover:                  var(--background-1);
   --popover-foreground:       var(--text-main);
-  --primary:                  var(--primary-blue-400);
+  --primary:                  var(--secondary-color-400);
   --primary-foreground:       #02255c;       /* 鮮やかな青の上の暗文字 */
   --secondary:                #3f3f46;       /* zinc-700 */
   --secondary-foreground:     var(--text-main);
@@ -350,7 +376,7 @@
   --destructive-foreground:   #ffffff;
   --border:                   var(--border-default);
   --input:                    rgb(255 255 255 / 0.14);
-  --ring:                     var(--primary-blue-400);
+  --ring:                     var(--secondary-color-400);
 
   /* component/table の dark mode (achromatic) */
   --table-base:   var(--background-1);     /* row default = card 色 */
@@ -362,12 +388,12 @@
 
   --sidebar:                          var(--background-1);
   --sidebar-foreground:               var(--text-main);
-  --sidebar-primary:                  var(--primary-blue-400);
+  --sidebar-primary:                  var(--secondary-color-400);
   --sidebar-primary-foreground:       #02255c;
   --sidebar-accent:                   var(--background-3);
   --sidebar-accent-foreground:        var(--text-main);
   --sidebar-border:                   var(--border-default);
-  --sidebar-ring:                     var(--primary-blue-400);
+  --sidebar-ring:                     var(--secondary-color-400);
 }
 
 /* =====================================================================
@@ -426,26 +452,26 @@
   --color-table-base-5: var(--table-base-5);
   --color-table-base-6: var(--table-base-6);
 
-  /* Figma primitives → bg-primary-blue-500, text-danger-red-700, ... */
-  --color-primary-blue-10:  var(--primary-blue-10);
-  --color-primary-blue-50:  var(--primary-blue-50);
-  --color-primary-blue-100: var(--primary-blue-100);
-  --color-primary-blue-200: var(--primary-blue-200);
-  --color-primary-blue-300: var(--primary-blue-300);
-  --color-primary-blue-400: var(--primary-blue-400);
-  --color-primary-blue-500: var(--primary-blue-500);
-  --color-primary-blue-600: var(--primary-blue-600);
-  --color-primary-blue-700: var(--primary-blue-700);
+  /* Figma primitives → bg-secondary-color-500, text-danger-red-700, ... */
+  --color-secondary-color-10:  var(--secondary-color-10);
+  --color-secondary-color-50:  var(--secondary-color-50);
+  --color-secondary-color-100: var(--secondary-color-100);
+  --color-secondary-color-200: var(--secondary-color-200);
+  --color-secondary-color-300: var(--secondary-color-300);
+  --color-secondary-color-400: var(--secondary-color-400);
+  --color-secondary-color-500: var(--secondary-color-500);
+  --color-secondary-color-600: var(--secondary-color-600);
+  --color-secondary-color-700: var(--secondary-color-700);
 
-  --color-navigation-navy-10:  var(--navigation-navy-10);
-  --color-navigation-navy-50:  var(--navigation-navy-50);
-  --color-navigation-navy-100: var(--navigation-navy-100);
-  --color-navigation-navy-200: var(--navigation-navy-200);
-  --color-navigation-navy-300: var(--navigation-navy-300);
-  --color-navigation-navy-400: var(--navigation-navy-400);
-  --color-navigation-navy-500: var(--navigation-navy-500);
-  --color-navigation-navy-600: var(--navigation-navy-600);
-  --color-navigation-navy-700: var(--navigation-navy-700);
+  --color-primary-color-10:  var(--primary-color-10);
+  --color-primary-color-50:  var(--primary-color-50);
+  --color-primary-color-100: var(--primary-color-100);
+  --color-primary-color-200: var(--primary-color-200);
+  --color-primary-color-300: var(--primary-color-300);
+  --color-primary-color-400: var(--primary-color-400);
+  --color-primary-color-500: var(--primary-color-500);
+  --color-primary-color-600: var(--primary-color-600);
+  --color-primary-color-700: var(--primary-color-700);
 
   --color-danger-red-50:  var(--danger-red-50);
   --color-danger-red-100: var(--danger-red-100);

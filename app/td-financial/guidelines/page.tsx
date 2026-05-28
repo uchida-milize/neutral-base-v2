@@ -28,27 +28,26 @@ import {
 } from "@/components/ui/table";
 
 /* =================================================================
- * /guidelines/td — XXX 社専用デザインガイドライン
+ * /td-financial/guidelines — T&Dファイナンシャル生命 専用デザインガイドライン
  *
- * このページは uploads/MILIZE UIUX Design System (Bundle).zip 内の `td-tokens.css` と
- * `ui_kits/portal/*` の運用ルールを一次ソースとして書き起こしたものです。
- *
- * テナント差し替えポイント (色トークン):
- *   --primary-color-500 #0f766e — primary navy (ブランド基調)
- *   --secondary-color-500    #0891b2 — info / link / secondary
- *   --button-color-500         #d97706 — submit-CTA red (申込確定/前進)
- *   --warm-50             #fafaf9 — premium / featured surface
+ * 色トークン (tokens.css と完全一致):
+ *   --primary-color-500 #003388 — コーポレートカラー1 (Navy primary)
+ *   --secondary-color-500    #db0034 — コーポレートカラー2 (Red secondary)
+ *   --button-color-500         #344a9c — ボタンカラー (CTA Blue)
+ *   warm                  stone-50/100/200/300 — neutral 背景
  *
  * 設計の特徴:
- *   - Primary は赤ではなく "ティール"。ブランド基調を担うのは深い紺。
- *   - 申込/前進だけは "アンバー (amber)" を採用。danger とは別物として運用。
- *   - dark mode の surface は無彩色 (zinc) — ブランド色の影響を受けない汎用設計。
+ *   - Primary は Navy (#003388)。重厚な信頼感の基調。
+ *   - Secondary は Red (#db0034)。アクセント / 重要ラベル / destructive を兼ねる。
+ *   - CTA は Blue (#344a9c)。Navy より明るい青で前進アクションを明示。
+ *   - 2 つのコーポレートカラーは同色相の明度バリエーションでスケール展開し、
+ *     グラフ等の categorical 表現はこのスケール外で扱う。
  * ================================================================= */
 
 export const metadata: Metadata = {
-  title: "XXX ガイドライン | Design System",
+  title: "T&Dファイナンシャル生命 ガイドライン | Design System",
   description:
-    "XXX社 (サンプル架空企業)のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
+    "T&Dファイナンシャル生命のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
 };
 
 export default function TdGuidelinesPage() {
@@ -128,7 +127,7 @@ function HeroSection() {
         デザインガイドライン
       </h1>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-        XXX社のデジタル体験は、金融・保険領域で求められる
+        T&amp;Dファイナンシャル生命のデジタル体験は、金融・保険領域で求められる
         <strong className="text-foreground">「誠実さ」</strong>と、
         現代の Web / アプリに求められる
         <strong className="text-foreground">「クリーンさ」</strong>を両立させます。
@@ -138,7 +137,7 @@ function HeroSection() {
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge variant="secondary" className="gap-1.5">
           <ShieldCheck className="size-3" />
-          XXX · Embedded Insurance
+          T&amp;Dファイナンシャル生命 · Embedded Insurance
         </Badge>
       </div>
     </header>
@@ -153,22 +152,22 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: "信頼 (Trust)",
-    body: "Primary はティール (#0f766e)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
+    body: "Primary は Navy (#003388)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
   },
   {
     icon: SparklesIcon,
     title: "誠実 (Sincerity)",
-    body: "誇張・煽り表現は使わない。CTA のアンバー (#d97706) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
+    body: "誇張・煽り表現は使わない。CTA の Blue (#344a9c) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
   },
   {
     icon: PaletteIcon,
     title: "モダン (Modern)",
-    body: "Figma Variables ベースのトークン駆動。tenant override は --secondary-color-* と --primary-color-* に集約され、semantic 層は触らない。",
+    body: "Figma Variables ベースのトークン駆動。tenant override は 2 つのコーポレートカラー (Navy / Red) と CTA Blue に集約され、semantic 層は触らない。",
   },
   {
     icon: EyeIcon,
     title: "クリーン (Clean)",
-    body: "余白とグレースケールで階層を作る。warm (#fafaf9) は premium 面に限定し、装飾色は持ち込まない。",
+    body: "余白とグレースケールで階層を作る。warm (neutral) は背景・区切り限定で、装飾色は持ち込まない。",
   },
 ];
 
@@ -210,68 +209,68 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="Teal 基調 + Cyan アクセント + Teal 通常ボタン + Amber CTA"
-        description="XXX のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        title="Navy 基調 + Red アクセント + Blue CTA"
+        description="T&Dファイナンシャル生命のカラーは 2 つのコーポレートカラー (Navy / Red) と、CTA 専用の Blue、そして無彩色の neutral で構成されます。すべて同色相の明度バリエーションで階層を作り、グラフ等の categorical 表現はこのスケールとは別系統で扱います。直接 hex を書かず、必ず var(--text-main) / var(--button-primary) 等を経由します。"
       />
 
-      {/* スウォッチ群 — 5 スケール */}
+      {/* スウォッチ群 — 5 スケール (tokens.css と完全一致) */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ScaleBlock
           title="primary-color"
-          subtitle="コーポレートカラー1 · Teal #0f766e · ブランド主要色 / ヘッダー / sidebar"
+          subtitle="コーポレートカラー1 · Navy #003388 · ブランド主要色 / ヘッダー / sidebar"
           stops={[
-            { name: "10", hex: "#f0fdfa", inv: false },
-            { name: "50", hex: "#ccfbf1", inv: false },
-            { name: "100", hex: "#99f6e4", inv: false },
-            { name: "200", hex: "#5eead4", inv: false },
-            { name: "300", hex: "#2dd4bf", inv: false },
-            { name: "400", hex: "#14b8a6", inv: true },
-            { name: "500", hex: "#0f766e", inv: true, primary: true },
-            { name: "600", hex: "#115e59", inv: true },
-            { name: "700", hex: "#134e4a", inv: true },
+            { name: "10", hex: "#e5eaf3", inv: false },
+            { name: "50", hex: "#ccd6e7", inv: false },
+            { name: "100", hex: "#a6b8d5", inv: false },
+            { name: "200", hex: "#8099c4", inv: false },
+            { name: "300", hex: "#4d70aa", inv: true },
+            { name: "400", hex: "#265199", inv: true },
+            { name: "500", hex: "#003388", inv: true, primary: true },
+            { name: "600", hex: "#002e7a", inv: true },
+            { name: "700", hex: "#002666", inv: true },
           ]}
         />
         <ScaleBlock
           title="secondary-color"
-          subtitle="コーポレートカラー2 · Cyan #0891b2 · highlight / link / アクセント"
+          subtitle="コーポレートカラー2 · Red #db0034 · highlight / badge / アクセント"
           stops={[
-            { name: "10", hex: "#ecfeff", inv: false },
-            { name: "50", hex: "#cffafe", inv: false },
-            { name: "100", hex: "#a5f3fc", inv: false },
-            { name: "200", hex: "#67e8f9", inv: false },
-            { name: "300", hex: "#22d3ee", inv: false },
-            { name: "400", hex: "#06b6d4", inv: true },
-            { name: "500", hex: "#0891b2", inv: true, primary: true },
-            { name: "600", hex: "#0e7490", inv: true },
-            { name: "700", hex: "#155e75", inv: true },
+            { name: "10", hex: "#fce5ea", inv: false },
+            { name: "50", hex: "#f7ccd6", inv: false },
+            { name: "100", hex: "#f4a5b5", inv: false },
+            { name: "200", hex: "#ed7f99", inv: false },
+            { name: "300", hex: "#e64d71", inv: true },
+            { name: "400", hex: "#e02652", inv: true },
+            { name: "500", hex: "#db0034", inv: true, primary: true },
+            { name: "600", hex: "#c5002f", inv: true },
+            { name: "700", hex: "#a40027", inv: true },
           ]}
         />
         <ScaleBlock
           title="button-color"
-          subtitle="通常ボタンカラー · Teal #14b8a6 · 色面 + 罫線の 2 バリアント"
+          subtitle="通常ボタンカラー · Blue #344a9c · 色面 + 罫線の 2 バリアント"
           stops={[
-            { name: "50", hex: "#f0fdfa", inv: false },
-            { name: "100", hex: "#ccfbf1", inv: false },
-            { name: "200", hex: "#99f6e4", inv: false },
-            { name: "300", hex: "#5eead4", inv: false },
-            { name: "400", hex: "#2dd4bf", inv: false },
-            { name: "500", hex: "#14b8a6", inv: true, primary: true },
-            { name: "600", hex: "#0d9488", inv: true },
-            { name: "700", hex: "#0f766e", inv: true },
+            { name: "50", hex: "#eaecf5", inv: false },
+            { name: "100", hex: "#d6daeb", inv: false },
+            { name: "200", hex: "#b5bcdc", inv: false },
+            { name: "300", hex: "#99a4cd", inv: false },
+            { name: "400", hex: "#7180b8", inv: true },
+            { name: "500", hex: "#344a9c", inv: true, primary: true },
+            { name: "600", hex: "#2f438c", inv: true },
+            { name: "700", hex: "#273875", inv: true },
           ]}
         />
         <ScaleBlock
           title="cta-color"
-          subtitle="CTA 申込ボタンカラー · Amber #d97706 · 申込/前進 専用"
+          subtitle="CTA 申込ボタンカラー · Red #db0034 · 申込/前進 専用 (secondary と同色)"
           stops={[
-            { name: "50", hex: "#fffbeb", inv: false },
-            { name: "100", hex: "#fef3c7", inv: false },
-            { name: "200", hex: "#fde68a", inv: false },
-            { name: "300", hex: "#fcd34d", inv: false },
-            { name: "400", hex: "#fbbf24", inv: false },
-            { name: "500", hex: "#d97706", inv: true, primary: true },
-            { name: "600", hex: "#b45309", inv: true },
-            { name: "700", hex: "#92400e", inv: true },
+            { name: "50", hex: "#fce5ea", inv: false },
+            { name: "100", hex: "#f7ccd6", inv: false },
+            { name: "200", hex: "#f4a5b5", inv: false },
+            { name: "300", hex: "#ed7f99", inv: false },
+            { name: "400", hex: "#e64d71", inv: true },
+            { name: "500", hex: "#db0034", inv: true, primary: true },
+            { name: "600", hex: "#c5002f", inv: true },
+            { name: "700", hex: "#a40027", inv: true },
           ]}
         />
         <ScaleBlock
@@ -318,22 +317,22 @@ function ColorRules() {
                 <TableRow>
                   <TableCell>強調 / ブランド primary text</TableCell>
                   <TableCell><code>--text-primary</code></TableCell>
-                  <TableCell className="font-mono text-caption">primary-color-500</TableCell>
+                  <TableCell className="font-mono text-caption">primary-color-500 (#003388 Navy)</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>リンク / Info</TableCell>
+                  <TableCell>Secondary brand / badge / highlight</TableCell>
                   <TableCell><code>--text-link</code> / <code>--text-info</code></TableCell>
-                  <TableCell className="font-mono text-caption">secondary-color-500</TableCell>
+                  <TableCell className="font-mono text-caption">secondary-color-500 (#db0034 Red)</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Eyebrow アクセント</TableCell>
-                  <TableCell><code>--text-accent</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-500</TableCell>
+                  <TableCell>CTA / 申込ボタン</TableCell>
+                  <TableCell><code>--text-accent</code> / <code>--button-cta</code></TableCell>
+                  <TableCell className="font-mono text-caption">button-color-500 (#344a9c CTA Blue)</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>エラーテキスト</TableCell>
-                  <TableCell><code>--text-error</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-600</TableCell>
+                  <TableCell><code>--text-error</code> / <code>--destructive</code></TableCell>
+                  <TableCell className="font-mono text-caption">secondary-color-500 (#db0034 Red)</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>border default / strong</TableCell>
@@ -343,7 +342,7 @@ function ColorRules() {
                 <TableRow>
                   <TableCell>danger ボーダー</TableCell>
                   <TableCell><code>--border-danger</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-500</TableCell>
+                  <TableCell className="font-mono text-caption">secondary-color-500 (#db0034 Red)</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -354,10 +353,11 @@ function ColorRules() {
       <div className="mt-6 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
         <h3 className="text-h7 font-semibold">テナント差し替え点</h3>
         <p className="mt-2 text-body text-muted-foreground">
-          顧客企業が変えるのは <code>--secondary-color-*</code> と{" "}
-          <code>--primary-color-*</code>、そしてロゴアセットだけ。Semantic 層
-          (<code>--text-primary</code> / <code>--button-primary</code> 等) は
-          自動で追従するので触らないこと。
+          顧客企業が変えるのは 3 つのスケール (<code>--primary-color-*</code> =
+          コーポレートカラー1、<code>--secondary-color-*</code> = コーポレートカラー2、
+          <code>--button-color-*</code> = CTA カラー) と、ロゴアセット。
+          Semantic 層 (<code>--text-primary</code> / <code>--button-primary</code> 等)
+          は自動で追従するので触らないこと。
         </p>
       </div>
     </Section>
@@ -410,7 +410,7 @@ function ScaleBlock({
 }
 
 /* ---------------------------------------------------------------- */
-/* 4. ボタン運用 (XXX の核)                                            */
+/* 4. ボタン運用 (T&Dファイナンシャル生命 の核)                                            */
 /* ---------------------------------------------------------------- */
 
 function ButtonRules() {
@@ -418,36 +418,49 @@ function ButtonRules() {
     <Section id="buttons">
       <SectionHeading
         eyebrow="Buttons"
-        title="5 種類のボタンを意味で使い分ける"
-        description="XXX 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ティール = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
+        title="CTA と通常ボタンを明確に分ける"
+        description="T&Dファイナンシャル生命のボタン体系は tokens.css の --button-color-* と --cta-color-* に分かれています。「CTA Red = 申込/前進」「Blue 色面/罫線 = 通常確定/サブ」「グレー = キャンセル」「destructive = 削除」を厳密に分けます。"
       />
 
       <div className="grid gap-3 md:grid-cols-2">
         <ButtonRow
-          name="cta"
-          desc="申込/前進 (positive forward action)。1 画面に 1 つまで。"
+          name="cta (申込専用)"
+          desc="申込/前進 (positive forward action)。1 画面に 1 つまで。コーポレートカラー Red を CTA 専用で運用。"
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#d97706] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(217, 119, 6, 0.5)] hover:bg-[#b45309]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#db0034] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(219,0,52,0.5)] hover:bg-[#c5002f]"
             >
               申込を確定する
             </button>
           }
-          token="--button-cta · #d97706"
+          token="--cta-color-500 · #db0034"
         />
         <ButtonRow
-          name="primary"
-          desc="通常の確定 (保存・変更を反映)。エンタープライズの基本ボタン。"
+          name="primary (通常: 色面)"
+          desc="通常の確定 (保存・変更を反映)。色面の filled バリアント。エンタープライズの基本ボタン。"
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#0f766e] px-4 py-2 text-sm font-semibold text-white hover:bg-[#115e59]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#344a9c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2f438c]"
             >
               変更を保存
             </button>
           }
-          token="--button-primary · #0f766e"
+          token="--button-color-500 · #344a9c"
+        />
+        <ButtonRow
+          name="primary-outline (通常: 罫線)"
+          desc="通常確定の罫線バリアント。同じ button-color で色面と並列に使える。canceling action や軽い primary に。"
+          example={
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-[10px] border border-[#344a9c] bg-white px-4 py-2 text-sm font-semibold text-[#344a9c] hover:bg-[#eaecf5]"
+            >
+              変更を保存
+            </button>
+          }
+          token="--button-color-500 · border #344a9c"
         />
         <ButtonRow
           name="neutral"
@@ -463,8 +476,8 @@ function ButtonRules() {
           token="--button-neutral · #eef1f6"
         />
         <ButtonRow
-          name="outline"
-          desc="サブ操作 (CSV 出力・エクスポート等)。複数並列可。"
+          name="outline (サブ)"
+          desc="サブ操作 (CSV 出力・エクスポート等)。グレー罫線。primary-outline とは違って、通常 primary に降格しないアクション。"
           example={
             <button
               type="button"
@@ -477,16 +490,16 @@ function ButtonRules() {
         />
         <ButtonRow
           name="destructive"
-          desc="削除 (不可逆操作)。small サイズに限定。cta と同じ赤を使うが意味が違う。"
+          desc="削除 (不可逆操作)。small サイズに限定。CTA と同じ Red を使うが、文言・配置・サイズで区別する。"
           example={
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#d97706] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#b45309]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-[#db0034] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#c5002f]"
             >
               アカウントを削除
             </button>
           }
-          token="--button-cta-* (small size only)"
+          token="--cta-color-500 · #db0034 (small size only)"
         />
       </div>
 
@@ -494,7 +507,7 @@ function ButtonRules() {
         <CardHeader>
           <CardTitle className="text-h7">1 画面 1 つだけ、の規律</CardTitle>
           <CardDescription>
-            赤 (cta) とティール (primary) が同一画面に並ぶのは原則禁止。並べる場合は赤を 1 つに絞り、ティールは neutral / outline に降格させること。
+            CTA Red (cta) と Blue primary (通常ボタン) は色相が違うため共存できるが、CTA は意味的に「申込/前進」専用なので 1 画面 1 つに収束させる。複数の前進アクションがある場合は primary または primary-outline に降格すること。
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -511,7 +524,7 @@ function ButtonRules() {
                 <TableRow>
                   <TableCell>申込フォームの最下部 (送信)</TableCell>
                   <TableCell><Badge>OK</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">前進アクションは cta 赤で 1 つに収束</TableCell>
+                  <TableCell className="text-muted-foreground">前進アクションは CTA Red で 1 つに収束</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>キャンセル + 送信を並べる</TableCell>
@@ -519,19 +532,24 @@ function ButtonRules() {
                   <TableCell className="text-muted-foreground">cta + neutral の主従関係</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>cta 赤 と primary ティールを同列</TableCell>
-                  <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">どちらが主か判断できなくなる</TableCell>
+                  <TableCell>primary 色面 + primary-outline を並列</TableCell>
+                  <TableCell><Badge>OK</Badge></TableCell>
+                  <TableCell className="text-muted-foreground">同じ button-color で主従を強弱で表現できる</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>キャンセル を赤にする</TableCell>
+                  <TableCell>CTA Red を 1 画面に 2 つ以上</TableCell>
                   <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">赤は前進専用。後退・否定には使わない</TableCell>
+                  <TableCell className="text-muted-foreground">「最も大事な前進アクション」が複数あるのは矛盾</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>大面積の赤い背景</TableCell>
+                  <TableCell>キャンセル を CTA Red にする</TableCell>
                   <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">cta 赤はピンポイント。装飾には使わない</TableCell>
+                  <TableCell className="text-muted-foreground">CTA Red は前進専用。後退・否定には使わない</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>大面積の Red 背景</TableCell>
+                  <TableCell><Badge variant="destructive">NG</Badge></TableCell>
+                  <TableCell className="text-muted-foreground">Red はアクセント / CTA / destructive 限定。装飾には使わない</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -676,7 +694,7 @@ function AccessibilityRules() {
       <SectionHeading
         eyebrow="Accessibility"
         title="20 代から 70 代までを一枚の UI で支える"
-        description="XXX のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        description="T&Dファイナンシャル生命 のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -698,9 +716,10 @@ function AccessibilityRules() {
               UI コンポーネント (ボタンの外周線、フォームの境界): 3 : 1 以上。
             </p>
             <p>
-              ティール <code>#0f766e</code> on 白 = <strong>11.6 : 1</strong>、
-              button-color <code>#d97706</code> on 白 = <strong>5.4 : 1</strong>。
-              いずれも本文しきい値を超える設計。
+              Navy <code>#003388</code> on 白 = <strong>13.5 : 1</strong>、
+              CTA Blue <code>#344a9c</code> on 白 = <strong>9.1 : 1</strong>、
+              Red <code>#db0034</code> on 白 = <strong>5.9 : 1</strong>。
+              いずれも本文しきい値 (4.5 : 1) を超える設計。
             </p>
           </CardContent>
         </Card>
@@ -763,7 +782,7 @@ function AccessibilityRules() {
       {/* 視認性プレビュー */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">サイズ感の比較 (XXX 推奨)</CardTitle>
+          <CardTitle className="text-h7">サイズ感の比較 (T&Dファイナンシャル生命 推奨)</CardTitle>
           <CardDescription>
             60 代以上の主要導線は左の body-lg を既定としてください。
           </CardDescription>
@@ -782,7 +801,7 @@ function AccessibilityRules() {
             </p>
           </div>
           <div className="rounded-md border border-border p-4 transition-colors duration-300">
-            <p className="text-caption font-medium" style={{ color: "#d97706" }}>
+            <p className="text-caption font-medium" style={{ color: "#db0034" }}>
               非推奨 (caption 12px)
             </p>
             <p className="mt-2" style={{ fontSize: 12 }}>
@@ -851,7 +870,7 @@ function RadiusBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-2">
       <div
-        className="h-16 border border-border bg-[#0f766e]/10 transition-colors duration-300 dark:bg-[#2dd4bf]/15"
+        className="h-16 border border-border bg-[#003388]/10 transition-colors duration-300 dark:bg-[#4d70aa]/15"
         style={{ borderRadius: radius }}
       />
       <p className="text-body font-medium">{label}</p>
@@ -870,7 +889,7 @@ function ContentRules() {
       <SectionHeading
         eyebrow="Voice & Content"
         title="コピーは事実から、語尾は『です・ます』"
-        description="XXX のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        description="T&Dファイナンシャル生命 のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -955,18 +974,18 @@ function Footer() {
     <footer className="mt-20 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © XXX Design System · 一次ソース:{" "}
-          <code>td-tokens.css</code> + <code>ui_kits/portal/*</code>
+          © T&amp;Dファイナンシャル生命 Design System · 一次ソース:{" "}
+          <code>tokens.css</code> + <code>ui_kits/portal/*</code>
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
-            <Link href="/xxx/components">Components を見る</Link>
+            <Link href="/td-financial/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/xxx/prototype">Prototype を試す</Link>
+            <Link href="/td-financial/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/xxx">XXX 入口へ</Link>
+            <Link href="/td-financial">T&amp;Dファイナンシャル生命 入口へ</Link>
           </Button>
         </div>
       </div>

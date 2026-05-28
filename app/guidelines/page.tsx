@@ -256,7 +256,7 @@ function Tokens() {
         <CardHeader className="pb-2">
           <CardTitle className="text-h7">命名規約</CardTitle>
           <CardDescription>
-            生のスケール (例: <code>--primary-blue-500</code>) はトークン定義ファイル内でだけ使い、
+            生のスケール (例: <code>--secondary-color-500</code>) はトークン定義ファイル内でだけ使い、
             コンポーネントには公開しないこと。
           </CardDescription>
         </CardHeader>

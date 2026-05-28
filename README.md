@@ -60,3 +60,35 @@ lib/
 2. JSON エクスポート (`color.json`, `size.json`)
 3. `app/globals.css` の CSS 変数を更新
 4. `@theme inline` 経由で Tailwind ユーティリティとして自動公開
+
+## マルチテナント構成
+
+このリポジトリは複数顧客向けの汎用テンプレートとして運用される。
+`app/<tenant>/` 配下にテナント固有のページを置き、`components/<tenant>/tokens.css`
+でブランドカラーを上書きする方針。
+
+### 既存テナント
+
+| パス | 用途 | スコープクラス |
+|------|------|---------------|
+| `/xxx` | サンプル架空テナント (お手本・テンプレート参照用、永続) | `.xxx-scope` |
+| `/aaa` | デモテナント (`/new-tenant` スキルで生成) | `.aaa-scope` |
+
+### 新しいテナントを追加する (`/new-tenant` スキル)
+
+`/xxx/` を雛形として、新規顧客テナントをスキャフォールドする。
+
+```bash
+./scripts/new-tenant.sh <tenant>
+# 例:
+./scripts/new-tenant.sh acme --brand-label "ACME Corp"
+```
+
+実行後、以下が自動生成・更新される:
+
+- `app/<tenant>/` (TOP, Guidelines, Components, Prototype, Windows の 5 ページ)
+- `components/<tenant>/` (tokens.css ほか、flow 系コンポーネント)
+- `components/site-header.tsx` の `TENANTS` 配列に新エントリ
+
+`http://localhost:3000/<tenant>` で即立ち上がる。詳細は
+[`skills/new-tenant/SKILL.md`](skills/new-tenant/SKILL.md) を参照。

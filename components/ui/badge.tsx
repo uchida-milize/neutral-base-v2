@@ -22,7 +22,7 @@ const badgeVariants = cva(
         warning:
           "border-transparent bg-warning-amber-500 text-fg-main [a&]:hover:bg-warning-amber-600",
         info:
-          "border-transparent bg-primary-blue-50 text-primary-blue-700 dark:bg-primary-blue-700 dark:text-primary-blue-100 [a&]:hover:bg-primary-blue-100",
+          "border-transparent bg-secondary-color-50 text-secondary-color-700 dark:bg-secondary-color-700 dark:text-secondary-color-100 [a&]:hover:bg-secondary-color-100",
       },
     },
     defaultVariants: {

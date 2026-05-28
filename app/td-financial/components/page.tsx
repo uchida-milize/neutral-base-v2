@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * /xxx/components — XXX 専用 Components カタログ。
+ * /td-financial/components — XXX 専用 Components カタログ。
  *
- * 汎用版 (/components) と同じ <UikitCatalog /> を使い、xxx-scope (layout で適用済み)
+ * 汎用版 (/components) と同じ <UikitCatalog /> を使い、td-financial-scope (layout で適用済み)
  * の中で描画することで shadcn セマンティック層が自動で XXX 色に切り替わる。
  */
 export default function XxxComponentsPage() {
@@ -28,7 +28,7 @@ export default function XxxComponentsPage() {
           コンポーネントセット
         </h1>
         <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-          ここに並ぶ shadcn コンポーネントは <code>.xxx-scope</code> 配下にあるため、
+          ここに並ぶ shadcn コンポーネントは <code>.td-financial-scope</code> 配下にあるため、
           primary は teal <code>#0f766e</code>、accent は teal-50、ring も teal となります。
           汎用 Components と比較すると、XXX のブランドに合わせて自動的に色だけが差し替わっていることが分かります。
         </p>

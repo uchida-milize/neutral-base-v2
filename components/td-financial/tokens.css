@@ -1,0 +1,104 @@
+/* =================================================================
+ * T&Dファイナンシャル生命 — tenant tokens (scoped)
+ *
+ * .td-financial-scope の中だけ shadcn セマンティック層が T&D 仕様で上書きされる。
+ * /td-financial/layout.tsx で全 /td-financial/* ページをこのクラスでラップして適用する。
+ *
+ * 4 つのカラースケール:
+ *   --primary-color-*    : コーポレートカラー1 — Navy  #003388 (ブランド主要色)
+ *   --secondary-color-*  : コーポレートカラー2 — Red   #db0034 (アクセント / 重要)
+ *   --button-color-*     : 通常ボタン色         — Blue  #344a9c (色面 + 罫線の 2 バリアント)
+ *   --cta-color-*        : CTA 申込ボタン色     — Red   #db0034 (申込/前進 専用、secondary と同色)
+ *
+ * + 無彩色:
+ *   --warm-*             : Stone neutral — 背景・区切り
+ *
+ * 設計の特徴:
+ *   - 2 つのコーポレートカラー (Navy / Red) は同色相の明度バリエーションで階層を作る
+ *   - 通常ボタンは Blue (#344a9c)。Navy より明るく、申込確定 (Red) より穏やか
+ *   - CTA (申込/前進) は Red。secondary と同じ色だが、用途で区別する (CTA は 1 画面 1 つ)
+ *   - グラフ等の categorical 表現はこのスケール外で扱う
+ * ================================================================= */
+
+.td-financial-scope {
+  /* ---- 1. primary-color (Navy #003388 — コーポレートカラー1) ---- */
+  --primary-color-10:  #e5eaf3;
+  --primary-color-50:  #ccd6e7;
+  --primary-color-100: #a6b8d5;
+  --primary-color-200: #8099c4;
+  --primary-color-300: #4d70aa;
+  --primary-color-400: #265199;
+  --primary-color-500: #003388;   /* T&D primary anchor */
+  --primary-color-600: #002e7a;
+  --primary-color-700: #002666;
+
+  /* ---- 2. secondary-color (Red #db0034 — コーポレートカラー2) ---- */
+  --secondary-color-10:  #fce5ea;
+  --secondary-color-50:  #f7ccd6;
+  --secondary-color-100: #f4a5b5;
+  --secondary-color-200: #ed7f99;
+  --secondary-color-300: #e64d71;
+  --secondary-color-400: #e02652;
+  --secondary-color-500: #db0034;  /* T&D secondary anchor */
+  --secondary-color-600: #c5002f;
+  --secondary-color-700: #a40027;
+
+  /* ---- 3. button-color (Blue #344a9c — 通常ボタン: 色面 + 罫線) ---- */
+  --button-color-50:  #eaecf5;
+  --button-color-100: #d6daeb;
+  --button-color-200: #b5bcdc;
+  --button-color-300: #99a4cd;
+  --button-color-400: #7180b8;
+  --button-color-500: #344a9c;     /* T&D button anchor */
+  --button-color-600: #2f438c;
+  --button-color-700: #273875;
+
+  /* ---- 4. cta-color (Red #db0034 — CTA 申込ボタン専用) ---- *
+   * secondary-color と同じ Red を再利用。役割で区別する:
+   *   secondary-color : badge / 重要ラベル / highlight
+   *   cta-color       : 申込/前進ボタン (1 画面 1 つ)
+   */
+  --cta-color-50:  #fce5ea;
+  --cta-color-100: #f7ccd6;
+  --cta-color-200: #f4a5b5;
+  --cta-color-300: #ed7f99;
+  --cta-color-400: #e64d71;
+  --cta-color-500: #db0034;        /* T&D CTA anchor */
+  --cta-color-600: #c5002f;
+  --cta-color-700: #a40027;
+
+  /* ---- 5. warm bg scale (Stone neutral) ---- */
+  --warm-50:  #fafaf9;
+  --warm-100: #f5f5f4;
+  --warm-200: #e7e5e4;
+  --warm-300: #d6d3d1;
+
+  /* ---- 6. semantic shortcuts (shadcn primitives が自動追従) ---- */
+  --primary: var(--primary-color-500);            /* Navy #003388 */
+  --primary-foreground: #ffffff;
+  --ring: var(--primary-color-500);
+  --accent: var(--primary-color-10);              /* hover 等の薄い背景 */
+  --accent-foreground: var(--primary-color-700);
+
+  /* td-financial-scope 用エイリアス — 直接参照したい場面で使用 */
+  --td-financial-primary:           var(--primary-color-500);
+  --td-financial-primary-hover:     var(--primary-color-600);
+  --td-financial-button:            var(--button-color-500);   /* 通常 filled */
+  --td-financial-button-hover:      var(--button-color-600);
+  --td-financial-button-foreground: #ffffff;
+  --td-financial-cta:               var(--cta-color-500);      /* 申込 */
+  --td-financial-cta-hover:         var(--cta-color-600);
+  --td-financial-cta-foreground:    #ffffff;
+  --td-financial-secondary:         var(--secondary-color-500);
+  --td-financial-secondary-foreground: #ffffff;
+  --td-financial-warm:              var(--warm-50);
+}
+
+/* ダーク時は primary を 1 段明るくして "沈み" を防ぐ */
+.dark .td-financial-scope {
+  --primary: var(--primary-color-300);            /* navy-400 相当 (#4d70aa) */
+  --primary-foreground: #ffffff;
+  --ring: var(--primary-color-300);
+  --accent: rgba(255, 255, 255, 0.06);
+  --accent-foreground: #f4f4f5;
+}

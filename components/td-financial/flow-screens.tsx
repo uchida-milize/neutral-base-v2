@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { FLOW_META } from "@/components/xxx/flow-meta";
+import { FLOW_META } from "@/components/td-financial/flow-meta";
 
 /**
  * XXX Embedded Insurance Flow — モバイル 11 画面の TSX 移植。
@@ -15,8 +15,8 @@ import { FLOW_META } from "@/components/xxx/flow-meta";
  *     │                              Payment / Complete)
  *     └── screens.css          (本ファイルが参照するスタイル定義)
  *
- * スタイルは `components/xxx/flow.css` を `.xxx-flow` でスコープ化。
- * 全画面の最上位ラッパー `<div className="phone">` の親に `xxx-flow` を
+ * スタイルは `components/td-financial/flow.css` を `.td-financial-flow` でスコープ化。
+ * 全画面の最上位ラッパー `<div className="phone">` の親に `td-financial-flow` を
  * 付けることで、`.card` `.btn` 等のクラスが他所に漏れないようにしている。
  */
 

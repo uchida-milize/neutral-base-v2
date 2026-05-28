@@ -2,10 +2,10 @@
 
 import * as React from "react";
 
-import { FLOW } from "@/components/xxx/flow-screens";
+import { FLOW } from "@/components/td-financial/flow-screens";
 
-// `.xxx-flow` でスコープされた screen のスタイル。
-import "@/components/xxx/flow.css";
+// `.td-financial-flow` でスコープされた screen のスタイル。
+import "@/components/td-financial/flow.css";
 
 /* =================================================================
  * iPhone ベゼル — flow-prototype.jsx 由来。
@@ -108,8 +108,8 @@ function IPhoneBezel({
               </span>
             </div>
           </div>
-          {/* `.xxx-flow` でスコープした CSS を効かせる */}
-          <div className="xxx-flow">{children}</div>
+          {/* `.td-financial-flow` でスコープした CSS を効かせる */}
+          <div className="td-financial-flow">{children}</div>
           {/* Home indicator bottom space */}
           <div style={{ height: 40 * scale }} />
         </div>
@@ -170,7 +170,7 @@ export function TdfFlowScreenStatic({ index }: { index: number }) {
   const Comp = step.Component;
   return (
     <div
-      className="xxx-flow"
+      className="td-financial-flow"
       style={{
         // .phone がpx 幅なのに合わせて見やすく整える
         borderRadius: 18,

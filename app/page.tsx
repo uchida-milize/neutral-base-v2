@@ -68,7 +68,7 @@ function Hero() {
           Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、
           shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。
           各導入先 (XXX など) はここを土台に、{" "}
-          <code>--primary-blue-*</code> と <code>--navigation-navy-*</code> の{" "}
+          <code>--secondary-color-*</code> と <code>--primary-color-*</code> の{" "}
           2 系統 + ロゴだけを差し替えて運用します。
         </p>
       </div>
@@ -162,6 +162,30 @@ function TenantsSection() {
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
+        <Link
+          href="/td-financial/guidelines"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block rounded-lg border border-border bg-card p-6 text-card-foreground transition-colors duration-300 hover:border-primary"
+        >
+          <div className="flex items-center justify-between">
+            <Badge variant="secondary" className="gap-1.5">
+              <Building2 className="size-3" />
+              T&amp;Dファイナンシャル生命
+            </Badge>
+            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </div>
+          <h3 className="mt-3 text-h7 font-semibold">
+            T&amp;Dファイナンシャル生命 ガイドライン
+          </h3>
+          <p className="mt-2 text-body text-muted-foreground">
+            コーポレートカラー Navy <code>#003388</code> + Red <code>#db0034</code>、
+            通常ボタン Blue <code>#344a9c</code>、CTA Red <code>#db0034</code> 構成。
+            組込ページ向け デザイン資料 (Guidelines / Components / Prototype / Windows)。
+          </p>
+          <p className="mt-3 font-mono text-caption text-primary">/td-financial/guidelines</p>
+        </Link>
+
         <Link
           href="/xxx"
           target="_blank"

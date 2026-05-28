@@ -210,15 +210,15 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="Teal 基調 + Cyan アクセント + Teal 通常ボタン + Amber CTA"
-        description="XXX のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        title="5 スケール構成 (primary / secondary / button / cta / warm)"
+        description="AAA のカラーは 5 つのスケールで構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
       />
 
       {/* スウォッチ群 — 5 スケール */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ScaleBlock
           title="primary-color"
-          subtitle="コーポレートカラー1 · Teal #0f766e · ブランド主要色 / ヘッダー / sidebar"
+          subtitle="コーポレートカラー1 · Teal #0f766e · ブランド主要色"
           stops={[
             { name: "10", hex: "#f0fdfa", inv: false },
             { name: "50", hex: "#ccfbf1", inv: false },
@@ -233,7 +233,7 @@ function ColorRules() {
         />
         <ScaleBlock
           title="secondary-color"
-          subtitle="コーポレートカラー2 · Cyan #0891b2 · highlight / link / アクセント"
+          subtitle="コーポレートカラー2 · Cyan #0891b2 · アクセント"
           stops={[
             { name: "10", hex: "#ecfeff", inv: false },
             { name: "50", hex: "#cffafe", inv: false },
@@ -248,7 +248,7 @@ function ColorRules() {
         />
         <ScaleBlock
           title="button-color"
-          subtitle="通常ボタンカラー · Teal #14b8a6 · 色面 + 罫線の 2 バリアント"
+          subtitle="通常ボタンカラー · Teal #14b8a6 · 色面 + 罫線"
           stops={[
             { name: "50", hex: "#f0fdfa", inv: false },
             { name: "100", hex: "#ccfbf1", inv: false },
@@ -276,7 +276,7 @@ function ColorRules() {
         />
         <ScaleBlock
           title="warm (neutral)"
-          subtitle="無彩色 neutral · 背景 / 区切り線。装飾色は持ち込まない"
+          subtitle="無彩色 neutral · 背景 / 区切り線"
           stops={[
             { name: "50", hex: "#fafaf9", inv: false, primary: true },
             { name: "100", hex: "#f5f5f4", inv: false },
@@ -960,13 +960,13 @@ function Footer() {
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
-            <Link href="/xxx/components">Components を見る</Link>
+            <Link href="/aaa/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/xxx/prototype">Prototype を試す</Link>
+            <Link href="/aaa/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/xxx">XXX 入口へ</Link>
+            <Link href="/aaa">XXX 入口へ</Link>
           </Button>
         </div>
       </div>

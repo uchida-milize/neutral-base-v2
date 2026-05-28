@@ -4,75 +4,90 @@
  * .xxx-scope の中だけ shadcn セマンティック層が XXX 仕様で上書きされる。
  * /xxx/layout.tsx で全 /xxx/* ページをこのクラスでラップして適用する。
  *
- * カラーパレット (XXX は架空のサンプルテナント):
- *   - Primary    : Teal (deep cyan) — 旧 navigation-navy のロールを担当
- *   - Accent     : Cyan light       — 旧 primary-blue のロールを担当
- *   - CTA        : Amber (warm)     — 旧 cta-amber のロールを担当
- *   - Warm bg    : Stone (neutral)  — 旧 warm のロールを担当
+ * 4 つのカラースケール (XXX は架空サンプル):
+ *   --primary-color-*    : コーポレートカラー1 — Teal   #0f766e (ブランド主要色)
+ *   --secondary-color-*  : コーポレートカラー2 — Cyan   #0891b2 (アクセント / 重要)
+ *   --button-color-*     : 通常ボタン色         — Teal  #14b8a6 (色面 + 罫線、primary 系の中間色)
+ *   --cta-color-*        : CTA 申込ボタン色     — Amber #d97706 (申込/前進 専用、対比色相)
  *
- * NOTE: 変数名 (--primary-blue-*, --navigation-navy-*, --cta-amber-*, --warm-*) は
- * 過去の命名がそのまま残っているが、XXX scope 内では上の役割で運用される。
- * 将来テナント変数名を汎用化する場合は、別途リファクタリング。
+ * + 無彩色:
+ *   --warm-*             : Stone neutral
+ *
+ * 設計サンプル:
+ *   - 通常ボタンはブランド色相系の中間色、CTA は対比色相で目立たせる、という構成例
  * ================================================================= */
 
 .xxx-scope {
-  /* ---- 1. tenant primary scale (旧 navigation-navy = Teal/Cyan-dark) ---- */
-  --navigation-navy-10: #f0fdfa;   /* teal-50  */
-  --navigation-navy-50: #ccfbf1;   /* teal-100 */
-  --navigation-navy-100: #99f6e4;  /* teal-200 */
-  --navigation-navy-200: #5eead4;  /* teal-300 */
-  --navigation-navy-300: #2dd4bf;  /* teal-400 */
-  --navigation-navy-400: #14b8a6;  /* teal-500 */
-  --navigation-navy-500: #0f766e;  /* teal-700 — XXX primary */
-  --navigation-navy-600: #115e59;  /* teal-800 */
-  --navigation-navy-700: #134e4a;  /* teal-900 */
+  /* ---- 1. primary-color (Teal #0f766e — コーポレートカラー1) ---- */
+  --primary-color-10: #f0fdfa;
+  --primary-color-50: #ccfbf1;
+  --primary-color-100: #99f6e4;
+  --primary-color-200: #5eead4;
+  --primary-color-300: #2dd4bf;
+  --primary-color-400: #14b8a6;
+  --primary-color-500: #0f766e;   /* XXX primary anchor */
+  --primary-color-600: #115e59;
+  --primary-color-700: #134e4a;
 
-  /* ---- 2. tenant accent scale (旧 primary-blue = Cyan-light) ---- */
-  --primary-blue-10: #ecfeff;      /* cyan-50  */
-  --primary-blue-50: #cffafe;      /* cyan-100 */
-  --primary-blue-100: #a5f3fc;     /* cyan-200 */
-  --primary-blue-200: #67e8f9;     /* cyan-300 */
-  --primary-blue-300: #22d3ee;     /* cyan-400 */
-  --primary-blue-400: #06b6d4;     /* cyan-500 */
-  --primary-blue-500: #0891b2;     /* cyan-600 */
-  --primary-blue-600: #0e7490;     /* cyan-700 */
-  --primary-blue-700: #155e75;     /* cyan-800 */
+  /* ---- 2. secondary-color (Cyan #0891b2 — コーポレートカラー2) ---- */
+  --secondary-color-10: #ecfeff;
+  --secondary-color-50: #cffafe;
+  --secondary-color-100: #a5f3fc;
+  --secondary-color-200: #67e8f9;
+  --secondary-color-300: #22d3ee;
+  --secondary-color-400: #06b6d4;
+  --secondary-color-500: #0891b2;
+  --secondary-color-600: #0e7490;
+  --secondary-color-700: #155e75;
 
-  /* ---- 3. CTA scale (旧 cta-amber = Amber, warm complement) ---- */
-  --cta-amber-50: #fffbeb;           /* amber-50  */
-  --cta-amber-100: #fef3c7;          /* amber-100 */
-  --cta-amber-200: #fde68a;          /* amber-200 */
-  --cta-amber-300: #fcd34d;          /* amber-300 */
-  --cta-amber-400: #fbbf24;          /* amber-400 */
-  --cta-amber-500: #d97706;          /* amber-600 — XXX CTA */
-  --cta-amber-600: #b45309;          /* amber-700 */
-  --cta-amber-700: #92400e;          /* amber-800 */
+  /* ---- 3. button-color (Teal #14b8a6 — 通常ボタン: 色面 + 罫線) ---- */
+  --button-color-50:  #f0fdfa;
+  --button-color-100: #ccfbf1;
+  --button-color-200: #99f6e4;
+  --button-color-300: #5eead4;
+  --button-color-400: #2dd4bf;
+  --button-color-500: #14b8a6;     /* XXX button anchor (teal-500) */
+  --button-color-600: #0d9488;
+  --button-color-700: #0f766e;
 
-  /* ---- 4. warm bg scale (旧 warm = Stone neutral) ---- */
-  --warm-50: #fafaf9;              /* stone-50  */
-  --warm-100: #f5f5f4;             /* stone-100 */
-  --warm-200: #e7e5e4;             /* stone-200 */
-  --warm-300: #d6d3d1;             /* stone-300 */
+  /* ---- 4. cta-color (Amber #d97706 — CTA 申込ボタン専用) ---- */
+  --cta-color-50:  #fffbeb;
+  --cta-color-100: #fef3c7;
+  --cta-color-200: #fde68a;
+  --cta-color-300: #fcd34d;
+  --cta-color-400: #fbbf24;
+  --cta-color-500: #d97706;        /* XXX CTA anchor (amber-600) */
+  --cta-color-600: #b45309;
+  --cta-color-700: #92400e;
 
-  /* ---- 5. semantic shortcuts (shadcn primitives が自動追従) ---- */
-  --primary: var(--navigation-navy-500);   /* XXX primary は teal-700 */
+  /* ---- 5. warm bg scale (Stone neutral) ---- */
+  --warm-50:  #fafaf9;
+  --warm-100: #f5f5f4;
+  --warm-200: #e7e5e4;
+  --warm-300: #d6d3d1;
+
+  /* ---- 6. semantic shortcuts (shadcn primitives が自動追従) ---- */
+  --primary: var(--primary-color-500);
   --primary-foreground: #ffffff;
-  --ring: var(--navigation-navy-500);
-  --accent: var(--navigation-navy-10);
-  --accent-foreground: var(--navigation-navy-700);
+  --ring: var(--primary-color-500);
+  --accent: var(--primary-color-10);
+  --accent-foreground: var(--primary-color-700);
 
-  /* xxx-scope 用エイリアス — 直接参照したい場面で使用 */
-  --xxx-cta: var(--cta-amber-500);
-  --xxx-cta-hover: var(--cta-amber-600);
-  --xxx-cta-foreground: #ffffff;
-  --xxx-warm: var(--warm-50);
+  /* xxx-scope 用エイリアス */
+  --xxx-button:            var(--button-color-500);
+  --xxx-button-hover:      var(--button-color-600);
+  --xxx-button-foreground: #ffffff;
+  --xxx-cta:               var(--cta-color-500);
+  --xxx-cta-hover:         var(--cta-color-600);
+  --xxx-cta-foreground:    #ffffff;
+  --xxx-warm:              var(--warm-50);
 }
 
 /* ダーク時は primary を 1 段明るくして "沈み" を防ぐ */
 .dark .xxx-scope {
-  --primary: var(--navigation-navy-300);   /* teal-400 (#2dd4bf) */
-  --primary-foreground: var(--navigation-navy-700);
-  --ring: var(--navigation-navy-300);
+  --primary: var(--primary-color-300);
+  --primary-foreground: var(--primary-color-700);
+  --ring: var(--primary-color-300);
   --accent: rgba(255, 255, 255, 0.06);
   --accent-foreground: #f4f4f5;
 }
