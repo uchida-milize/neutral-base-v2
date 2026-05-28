@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { OverviewSection } from "@/components/overview-section";
+import { SiteFooter } from "@/components/site-footer";
 import { JpText } from "@/components/jp-text";
 
 export const metadata: Metadata = {
@@ -99,6 +100,7 @@ export default function XxxHome() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </>
   );
 }

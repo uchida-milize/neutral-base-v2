@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { OverviewSection } from "@/components/overview-section";
 import { Badge } from "@/components/ui/badge";
 import { JpText } from "@/components/jp-text";
@@ -42,6 +43,7 @@ export default function Home() {
         <CoreSection />
         <TenantsSection />
       </main>
+      <SiteFooter />
     </div>
   );
 }
