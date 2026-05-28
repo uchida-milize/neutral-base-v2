@@ -9,7 +9,7 @@ import * as React from "react";
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mx-auto max-w-5xl px-4 pb-10 pt-12 sm:px-6">
+    <footer className="max-w-5xl px-4 pb-10 pt-12 sm:px-6">
       <p className="text-center text-tiny text-muted-foreground/70">
         © {year} MILIZE. All rights reserved.
       </p>

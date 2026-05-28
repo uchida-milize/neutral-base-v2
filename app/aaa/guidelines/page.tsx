@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 
 export default function TdGuidelinesPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+    <main className="max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       <HeroSection />
       <BrandPillars />
       <ColorRules />

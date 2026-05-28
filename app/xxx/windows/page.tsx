@@ -18,9 +18,9 @@ export const metadata: Metadata = {
  */
 export default function TdfPrototypeCanvasPage() {
   return (
-    <main className="mx-auto max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+    <main className="max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       {/* ヘッダーは TOP と同じ max-w-5xl 幅で中央揃え。タイトル位置が他ページと揃う */}
-      <div className="mx-auto mb-10 max-w-5xl">
+      <div className="mb-10 max-w-5xl">
         <header className="max-w-3xl">
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Windows

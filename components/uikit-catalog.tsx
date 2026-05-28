@@ -203,7 +203,7 @@ const statusBadge = (s: string) => {
 
 export function UikitCatalog() {
   return (
-        <div className="mx-auto max-w-5xl space-y-12 p-6 py-10">
+        <div className="max-w-5xl space-y-12 p-6 py-10">
           {/* ------- Button ------- */}
           <Section title="Button" desc="バリアント / サイズ / 状態">
             <div className="flex flex-wrap items-center gap-3">

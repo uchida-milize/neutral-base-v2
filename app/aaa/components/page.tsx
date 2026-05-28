@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  */
 export default function XxxComponentsPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+    <main className="max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       <ScrollToTop />
       {/* ページヘッダー */}
       <header className="mb-8 max-w-3xl">
