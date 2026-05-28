@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { OverviewSection } from "@/components/overview-section";
-import { SiteFooter } from "@/components/site-footer";
 import { JpText } from "@/components/jp-text";
 
 export const metadata: Metadata = {
@@ -28,14 +27,14 @@ export default function TdFinancialHome() {
   return (
     <>
       {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
-      <div className="max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
+      <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
         <section className="relative overflow-hidden rounded-2xl bg-[#003388] text-white transition-colors duration-300">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(219,0,52,0.35),transparent_55%)]"
           />
           {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
-          <div className="relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+          <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
             <Badge
               variant="secondary"
               className="gap-1.5 bg-white/10 text-caption text-white"
@@ -55,7 +54,7 @@ export default function TdFinancialHome() {
         </section>
       </div>
 
-      <main className="max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
         <OverviewSection
           guidelinesHref="/td-financial/guidelines"
           tenant="T&Dファイナンシャル生命"
@@ -100,7 +99,6 @@ export default function TdFinancialHome() {
           </div>
         </section>
       </main>
-      <SiteFooter />
     </>
   );
 }

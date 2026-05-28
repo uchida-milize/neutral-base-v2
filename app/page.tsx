@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { OverviewSection } from "@/components/overview-section";
 import { Badge } from "@/components/ui/badge";
 import { JpText } from "@/components/jp-text";
@@ -34,16 +33,15 @@ export default function Home() {
       <SiteHeader />
 
       {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
-      <div className="max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
+      <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
         <Hero />
       </div>
 
-      <main className="max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
         <OverviewSection />
         <CoreSection />
         <TenantsSection />
       </main>
-      <SiteFooter />
     </div>
   );
 }
@@ -61,7 +59,7 @@ function Hero() {
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#bfdbfe,#f0f9ff)] dark:bg-[linear-gradient(to_right,rgba(96,165,250,0.18),rgba(96,165,250,0.04))]"
       />
       {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
-      <div className="relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
         <Badge variant="secondary" className="gap-1.5">
           <LayersIcon className="size-3" />
           Common Design System
