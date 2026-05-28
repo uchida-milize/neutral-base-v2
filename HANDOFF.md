@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年5月28日
+最終更新: 2026年5月28日 (午前: 初稿、午後: theo-tdf テナント構築 + 自動色反映パイプライン整備、セクション 9 参照)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -612,3 +612,175 @@ UI/UX 納品契約で Figma ファイルが要求されるケースに対応。
 > 「`HANDOFF.md` を読んでください。Priority 5 (`/export-to-figma`) の Figma MCP 連携を試したいです。」
 
 このように Priority 番号 + やりたい作業を伝えると Cowork が文脈を即座に把握できます。
+
+---
+
+## 9. セッションログ
+
+### 2026-05-28 (午後)
+
+最初は **Priority 2 `/init-brand-tokens` スキルの設計**として開始したが、お客様提供の `組込申込画面.xlsx` が「ブランド規定書」ではなく「申込画面の項目仕様書 + 埋め込みモック画像」だったため、スコープを **「theo-tdf テナントを実画面アセットで一気に構築」+「全テナントの色反映の自動化」** にピボットして完走。
+
+#### 9.1 新規テナント `theo-tdf` 構築
+
+**概要**: 「THEO × T&Dファイナンシャル生命」の組込申込フローを実画面ベースで実装。
+
+| 項目 | 内容 |
+|---|---|
+| URL | `/theo-tdf/*` |
+| 用途 | THEO「つみたて安心ほけん」申込フロー (LP → 情報入力 → シミュレーション → メアド → カード → 注意事項 → 完了 / 全 7 画面) |
+| 一次ソース | `uploads/組込申込画面.xlsx` Sheet1「汎用_画面案」の埋め込み画像 22 個 → ユニーク 10 個に重複排除 → 申込フロー 7 画面 + ステップインジケータ部品を特定 |
+| アセット配置 | `public/assets/theo-tdf/screens/01-lp.png` 〜 `07-complete.png` + `part-step-indicator.png` |
+
+**画面表示の仕組み**: `components/theo-tdf/flow-screens.tsx` を 1248 行 → 約 115 行にスリム化。`ScreenImg` という単一コンポーネントが `<img>` を 375px viewport に width:100% で流し込み、画面下部 88px に透明な onNext ホットゾーン、左上 80×64px に透明な onBack ホットゾーンを重ねる。FLOW 配列 API は維持しているので `flow-prototype.tsx` (iPhone フレーム) は無改修で動作。
+
+**将来の置き換え経路**: Claude Design 等で TSX 化された画面が降ってきたら `FLOW.map(...)` の `Component` を `ScreenImg` から本物の `<RealScreen />` に差し替えるだけで切替可能。画面単位の段階移行も可能。
+
+#### 9.2 theo-tdf カラー (お客様指定 + 同色相スケール)
+
+| トークン | アンカー | 役割 |
+|---|---|---|
+| `--primary-color-500` | `#065fe3` | Ink Blue (ブランド主要色 / ヘッダー / sidebar) |
+| `--secondary-color-500` | `#ff748d` | Coral (アクセント / 重要バッジ / リンク) |
+| `--button-color-500` | `#007dff` | 明るい THEO Blue (filled CTA / シミュレーション画面ボタン) |
+| `--cta-color-500` | `#ff2d2d` | 強い純赤 (申込確定ボタン、1 画面 1 つ) |
+
+**スケール生成ロジック (重要)**: 9 段階 (10/50/100/200/300/400/500/600/700) を「**H と S は anchor の値に完全固定、L だけアンカー相対に補間**」で生成:
+
+```python
+# t は「anchor → 白 (正) / anchor → 黒 (負)」への補間比率
+ladder = {
+    "10":  +0.92,  "50":  +0.80,  "100": +0.62,
+    "200": +0.42,  "300": +0.23,  "400": +0.08,
+    "500":  0.00,                                # anchor そのもの
+    "600": -0.18,  "700": -0.42,
+}
+# L_new = L_a + (1 - L_a) * t   (t >= 0 のとき、白に向かう)
+# L_new = L_a * (1 + t)         (t < 0  のとき、黒に向かう)
+# H と S は anchor 値で固定 → 完全に同色相のトーン違い
+```
+
+これにより、明るい anchor (例: secondary `#ff748d` の L=72.7%) でも階調が逆転しない単調性 (10 < 500 < 700) を保証。H と S は sRGB 量子化丸めで ±0.5° / ±1% 以内のドリフトのみ。
+
+#### 9.3 GeistMono → Inter のグローバル置換
+
+**動機**: GeistMono の等幅見た目を現代的な Inter のクリーンな見た目に統一したい (お客様要望)。
+
+**実装の要点**:
+- `app/layout.tsx`: `GeistMono` import を削除し、`Inter from "next/font/google"` で読み込み (variable `--font-inter`)
+- `app/globals.css`: `--font-mono: var(--font-inter);` に **変数名は維持しつつ実体だけ差し替え**
+- これにより既存の `font-mono` Tailwind utility や `className="font-mono"` を 1 箇所も書き換えずに、全テナント・全ページの "コード/識別子のラベル" が Inter で描画される
+- 4 テナント (`xxx`, `aaa`, `td-financial`, `theo-tdf`) の Guidelines ページの Typography セクションの「Geist Mono」表記を「Inter」に更新
+
+**注意**: Inter は厳密には等幅ではない。本リポジトリでは `font-mono` を「強調された等幅風表記」というより「コード/識別子の意味的ラベル」として使っているため、Inter で問題なし。等幅性が必要な箇所が将来出てきた場合は `--font-mono` を別変数 (例: `--font-truly-mono`) に分けて両立できる構造になっている。
+
+#### 9.4 Guidelines ページの自動色反映 (★最重要★)
+
+**問題**: 4 テナントの `guidelines/page.tsx` が `ScaleBlock`/`ButtonRow` にハードコードした hex 値を props で渡していたため、`tokens.css` を更新しても表示が古いまま (4 テナント × 5 スケール × 9 段 = 180 箇所を手動更新する必要があった)。
+
+**解決**: 2 つの共通コンポーネントを新設して全テナントで使い回し:
+
+`components/guidelines/auto-color-scale.tsx`:
+- `<AutoColorScale prefix="primary-color" title="..." subtitle="..." />` の形で使用
+- 各 swatch は `background: var(--{prefix}-{step})` で描画
+- マウント後に `getComputedStyle()` で実際の RGB を取得 → hex 文字列にして表示
+- 文字色 (白 / 黒) は背景の相対輝度から自動判定 (WCAG 相当)
+- light/dark テーマ切替に `MutationObserver` で追従
+- `<AutoWarmScale />` は warm 4 段 (50/100/200/300) 専用エイリアス
+
+`components/guidelines/auto-button-grid.tsx`:
+- 5 種類のボタン (cta / primary / neutral / outline / destructive) を内包
+- すべて `bg-[color:var(--cta-color-500)]` 形式の CSS var 経由
+- どのテナントから呼び出しても、その scope の tokens.css が自動反映される
+- `<AutoButtonGrid />` 1 行で 5 種全てが揃う
+
+**4 テナントへの一括反映 (Python スクリプトで自動置換)**:
+- `function ScaleBlock` (45 行) と `function ButtonRow` (26 行) の local 定義を全テナントから削除
+- 5 ScaleBlock 呼び出し → `<AutoColorScale>` × 4 + `<AutoWarmScale>` × 1
+- 5 ButtonRow 呼び出し (inline hardcoded hex 含む) → `<AutoButtonGrid />` 1 行
+- 削除した hardcoded hex (例: theo-tdf に xxx の Teal `#0f766e` が残っていた) も同時に解消
+
+**今後の運用**: `new-tenant.sh` は `xxx` を雛形にコピーするため、**今後の新規テナントは自動で AutoColorScale + AutoButtonGrid を継承**。テナントごとのカスタマイズは `components/<tenant>/tokens.css` のアンカー値だけ書き換えれば、Guidelines ページの hex 表示・swatch・5 種ボタン全てが追従する。
+
+#### 9.5 汎用 TOP「ブランド別の運用」のデータ駆動化 + 自動色反映
+
+**問題**: `app/page.tsx` の `TenantsSection` が各テナントカードを JSX でハードコード (色も hex 直書き)。新規テナント追加時に手動編集が必要だった。
+
+**解決**:
+- 新コンポーネント `components/auto-tenant-card.tsx` を作成 (Client Component)
+- `<div ref={ref} className={`${id}-scope`}>` で tenant の scope を被せ、内側で `getComputedStyle()` から `--primary-color-500` / `--secondary-color-500` / `--button-color-500` / `--cta-color-500` を取得 → hex を本文に動的表示
+- `BrandDots` も `style={{ background: "var(--primary-color-500)" }}` 等の CSS var ベースに → scope に応じて色が自動切替
+- `app/page.tsx` の `TenantsSection` を `TENANT_CARDS: TenantCardData[]` 配列 + `.map(...)` 構造に作り直し
+- `app/layout.tsx` で **全テナントの tokens.css を root import** (各 tokens は `.<tenant>-scope` でスコープ済みなので global import しても他に漏れない)
+
+**`scripts/new-tenant.sh` を 4 step → 6 step に拡張**:
+- **Step 5 (新規)**: `app/page.tsx` の `TENANT_CARDS` 配列に新エントリを自動挿入 (アンカー: `// 新規テナントはここに追加 (new-tenant.sh で自動挿入)` の直前)
+- **Step 6 (新規)**: `app/layout.tsx` に `import "@/components/<tenant>/tokens.css";` を自動挿入 (アンカー: `// 新規テナントの tokens.css はここに追加` の直前)
+- 既存エントリの除去 (--force 想定 / 冪等性) も実装
+- 動作確認: dry-run + 実テナント生成 (`demo-acme` で試験 → 全 ステップ正常 → 完全除去まで成功)
+
+**今後の効果**: `./scripts/new-tenant.sh <name>` 1 コマンドで:
+1. `app/<tenant>/` + `components/<tenant>/` 生成 (既存)
+2. `components/site-header.tsx` のヘッダーナビ追加 (既存)
+3. **`app/page.tsx` の「ブランド別の運用」カード追加 (新規)**
+4. **`app/layout.tsx` への tokens.css グローバル import 追加 (新規)**
+
+すべて自動。お客様は `components/<tenant>/tokens.css` の 4 つのアンカー色だけ書き換えれば、汎用 TOP + Guidelines + ボタン展示が全自動で正しい色になる。
+
+#### 9.6 Hero (ホーム TOP) のコピー差し替え
+
+「Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、shadcn/ui (new-york) を Tailwind v4 で組み立てた汎用デザインシステム。各導入先 (XXX など) はここを土台に、`--secondary-color-*` と `--primary-color-*` の 2 系統 + ロゴだけを差し替えて運用します。」(技術スタック中心)
+
+→ 「色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。」(メリット中心)
+
+文字数はほぼ同等 (~140 字)。`<JpText>` で囲んで「、」「。」で意味の塊単位で改行されるように。
+
+#### 9.7 Workflow 01 ノードの入力ソース拡張
+
+`components/flow-diagram.tsx` の Step 01 (Dify 風 4 ノード曲線フロー図の先頭) を:
+
+- 旧: 「Wireframe / Design 入力」「Google AI Studio または Figma → MCP」(2 経路のみ)
+- 新: 「**デザイン入力**」「**Figma / AI Studio / Excel 仕様書 / VI 資料**」(**4 経路**)
+
+`desc` も 4 経路を網羅: Figma のデザインを MCP 経由 (Variables / Components ごと)、Google AI Studio のワイヤーフレーム、**Excel 仕様書 (画面項目 + 埋め込みモック画像)**、**VI 資料 / ブランドガイド PDF (色・ロゴ・タイポ規定)** のいずれか、または複数を組み合わせて取り込み。
+
+→ これは 9.1 で実際に体験した「Excel 仕様書からの取り込み」と、Priority 2 `/init-brand-tokens` で扱う予定の「VI 資料 / PDF からの色抽出」を Workflow 図にも反映した形。
+
+#### 9.8 本日新規追加・変更されたファイル一覧
+
+**新規ファイル**:
+- `app/theo-tdf/` (テナントツリー全体、`new-tenant.sh` で生成)
+- `components/theo-tdf/` (同上)
+- `components/theo-tdf/tokens.css` (theo-tdf 色トークン)
+- `components/theo-tdf/flow-meta.ts` (申込フロー 7 ステップ メタ)
+- `components/theo-tdf/flow-screens.tsx` (画像ベース ScreenImg、約 115 行)
+- `public/assets/theo-tdf/screens/` (申込フロー 8 PNG)
+- `components/guidelines/auto-color-scale.tsx` (自動色反映 ScaleBlock)
+- `components/guidelines/auto-button-grid.tsx` (自動色反映 5 種ボタン)
+- `components/auto-tenant-card.tsx` (汎用 TOP の自動色反映カード)
+
+**変更ファイル**:
+- `app/layout.tsx` (Inter 導入 + 全テナント tokens.css の root import)
+- `app/globals.css` (`--font-mono: var(--font-inter)`)
+- `app/page.tsx` (TenantsSection データ駆動化 + Hero コピー差し替え)
+- `app/{xxx,aaa,td-financial,theo-tdf}/guidelines/page.tsx` (AutoColorScale / AutoButtonGrid 採用 + フォント表記更新)
+- `components/site-header.tsx` (theo-tdf エントリ追加)
+- `components/flow-diagram.tsx` (Step 01 を 4 入力経路に拡張)
+- `scripts/new-tenant.sh` (4 step → 6 step、Step 5/6 で page.tsx と layout.tsx を自動編集)
+
+#### 9.9 既知のハマりポイント (今日の追加分)
+
+13. **GeistMono → Inter のフォント変数差し替え**: `--font-mono` の変数名を維持して中身だけ差し替えると、既存の `font-mono` utility / className を一切書き換えずにグローバル切替できる。命名のリネームより「変数の参照先を変える」方が影響範囲が狭くて済む。
+14. **`next/font/google` Inter のビルド時依存**: 初回ビルドで Google Fonts からダウンロードするため**ネットワークが必要**。Cowork サンドボックスでは `pnpm build` が SWC パッケージ取得段階で失敗するが、お客様の Mac ローカルでは問題なくビルドできる。`tsc --noEmit` での型検証は Cowork でも通る。
+15. **テナントごとの `.<tenant>-scope` CSS を root layout で global import しても安全**: 各 tokens.css は `.<tenant>-scope { ... }` のスコープ付きセレクタなので、グローバル import しても他のスタイルに漏れない。これにより汎用 TOP の `AutoTenantCard` が `getComputedStyle()` で CSS var を解決できる。
+16. **`.git/index.lock` 残留問題の解決手順**: GoogleDrive FUSE で git 操作が中断されると 0 バイトの `index.lock` が残る。Cowork からは `rm` が `Operation not permitted` で拒否されるので、`mcp__cowork__allow_cowork_file_delete` で削除許可を取得してから `rm -f .git/index.lock` を実行する。お客様のターミナルからは直接 `rm -f .git/index.lock` で削除可能。
+17. **HSL ベースのスケール生成は anchor 相対補間で書く**: 固定 L ラダー (10:91%, 50:85%, ...) は dark anchor (T&D Navy #003388 L=27%) では機能するが、light anchor (theo-tdf secondary #ff748d L=72.7%) では階調が逆転する。「anchor → 白 / anchor → 黒」への補間 t で書けばどの anchor でも単調性が保証される。S と H は固定で OK (sRGB 量子化丸めで ±1% 程度のドリフトのみ、肉眼では同色相)。
+
+#### 9.10 次回セッションでの作業候補
+
+セクション 6「次のステップ」の優先度は基本的にそのまま。本日の作業の派生として:
+
+1. **Priority 2 `/init-brand-tokens` の本実装**: 本日は手動で theo-tdf の色を抽出 → tokens.css に反映したが、これをスキル化する。入力タイプ 5 系統 ((A) ブランド規定型 xlsx / (B) 画面仕様型 xlsx / (C) URL / (D) PDF / (E) Figma / (F) AI Studio 画像) を auto-detect dispatcher で分岐。MVP は (B) ブランチで `組込申込画面.xlsx` をテストケースに。
+2. **Priority 3 `/import-claude-design` の設計**: Claude Design 出力 zip を `app/<tenant>/<page>/` に自動配置するスキル。本日構築した theo-tdf の flow-screens.tsx 構造 (ScreenImg + FLOW 配列) を真似ると、画像ベース → React ベースへの段階移行も同じパターンで扱える。
+3. **theo-tdf の TSX 化**: 現在は `<img>` を iPhone フレームに流し込んでいるだけ。Claude Design に投げて React コンポーネント化すれば、CTA ボタンや入力欄を「本物の」UI に置き換えられる (ホットゾーンの onNext/onBack も実 button に統合できる)。
+
