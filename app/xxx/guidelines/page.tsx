@@ -116,7 +116,7 @@ function SectionHeading({
         </p>
         {audience ? <AudienceBadge audience={audience} /> : null}
       </div>
-      <h2 className="mt-2 text-h5 font-semibold leading-tight tracking-tight">
+      <h2 className="mt-2 text-[1.8rem] font-semibold leading-tight tracking-tight">
         <JpText>{title}</JpText>
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">

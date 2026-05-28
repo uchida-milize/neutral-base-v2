@@ -90,7 +90,7 @@ function CoreSection() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Pages
         </p>
-        <h2 className="mt-2 text-h5 font-semibold tracking-tight">
+        <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
           汎用システムの 2 ページ
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
@@ -194,7 +194,7 @@ function TenantsSection() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Tenants
         </p>
-        <h2 className="mt-2 text-h5 font-semibold tracking-tight">
+        <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
           ブランド別の運用
         </h2>
         <p className="mt-3 text-body text-muted-foreground">

@@ -66,7 +66,7 @@ export default function XxxHome() {
             <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
               Pages
             </p>
-            <h2 className="mt-2 text-h5 font-semibold tracking-tight">
+            <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
               このシステムの 4 つのページ
             </h2>
           </div>
