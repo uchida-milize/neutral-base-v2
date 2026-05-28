@@ -1,6 +1,6 @@
-# Handoff — XXX デザインシステム × 顧客 UI/UX 構築フロー
+# Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年5月27日
+最終更新: 2026年5月28日
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -13,9 +13,9 @@
 ### 構想全体フロー
 
 ```
-[1] Google AI Studio でワイヤーフレーム作成
+[1] Google AI Studio または Figma でワイヤーフレーム / デザイン作成
         │
-        │  お客様が直接アップロード（Upload フォルダは経由しない）
+        │  Figma の場合は Figma MCP 経由で取り込み (Variables/Components も)
         ↓
 [2] claude.ai/design (Claude Design) でページデザイン化
         ├ Figma UI Kit を読み込ませて反映
@@ -26,63 +26,37 @@
         │
         │  お客様が "Hand off to Claude Code" / "Export" で zip ダウンロード
         ↓
-[3] Upload フォルダに handoff バンドル（zip）を配置
+[3] Upload フォルダに handoff バンドル (zip) を配置
         │
-        │  Cowork が /import-claude-design スキルで読み込む
+        │  Cowork が /import-claude-design スキルで読み込む (Priority 3、未実装)
         ↓
 [4] Cowork が neutral-base リポジトリの該当テナント配下に配置
         ├ app/<tenant>/<page>/ に Claude Design 出力を整形して置く
         ├ components/<tenant>/tokens.css でブランドカラーを上書き
-        ├ site-header.tsx の TENANTS 配列にエントリ追加（新規テナントの場合）
+        ├ site-header.tsx の TENANTS 配列にエントリ追加 (新規テナントの場合)
         └ import 文・コンポーネント参照を本リポジトリの構造に合わせて調整
         │
         ↓
-[5] お客様がローカルで git add / commit / push
+[5] お客様がローカルで git add / commit / push (Cowork は push しない方針)
         │
         ↓
 [6] Vercel が自動デプロイ
         │
         ↓
-[7] neutral-base.vercel.app/<tenant> が顧客レビュー Space
-        ├ 顧客 (XXX 担当者など) はこの URL だけを案内される
-        ├ /xxx/prototype で iPhone フレーム単画面遷移
-        └ /xxx/windows で 2×2 グリッド俯瞰
+[7] neutral-base.vercel.app/<tenant> が顧客レビュー Space (Basic Auth 保護)
+        ├ 顧客担当者はこの URL だけを案内される
+        ├ /<tenant>/prototype で iPhone フレーム単画面遷移
+        ├ /<tenant>/windows で 2×2 グリッド俯瞰
+        └ /<tenant>/<page>?focus=1 でナビ非表示の「顧客説明モード」
         │
         │  最終承認後
         ↓
 [8] Figma に各ページのデザイン + リンク構造を FB
-        │  html.to.design プラグイン経由で手動取り込み (詳細は §5)
-        │  /feedback-to-figma スキル (Priority 5) で自動化予定
+        │  html.to.design プラグイン経由で手動取り込み (詳細は §4-B)
+        │  /export-to-figma スキル (Priority 5) で自動化予定
 ```
 
-### Upload フォルダのファイル区分
-
-`Upload/` 直下に置くべきもの・置かないものを明確化:
-
-| 種別 | Upload に置く？ | 理由 |
-|------|--------------|------|
-| **Google AI Studio ワイヤーフレーム zip** | ❌ 置かない | 直接 claude.ai/design にアップロード（Claude Design 内部で使う） |
-| **Claude Design の handoff バンドル zip** | ✅ 置く | Cowork が読み込んで `app/<tenant>/` に展開する |
-| **顧客提供素材（ロゴ・PDF・ブランドガイドライン等）** | ✅ 置く | `/init-brand-tokens` スキルが参照 |
-| **`.env.local`** | ✅ 置く（既存） | VERCEL_TOKEN 等、git管理外の機密情報 |
-| **作業中の neutral-base-v2/** | ✅ 置く（既存） | git管理されたメインプロジェクト |
-
-ファイル整理の運用イメージ:
-
-```
-Upload/
-├── .env.local                              VERCEL_TOKEN
-├── neutral-base-v2/                        メインプロジェクト (git管理)
-├── _handoffs/                              Claude Design 出力の保管庫
-│   └── xxx-claude-design-20260603.zip
-│   └── aaa-claude-design-20260615.zip
-└── _brand-assets/                          顧客提供素材の保管庫（任意）
-    └── aaa/
-        ├── logo.svg
-        └── brand-guidelines.pdf
-```
-
-`_handoffs/` と `_brand-assets/` は **作る必要は今すぐない** ですが、複数顧客を並行運用する時にこの構成にしておくと整理しやすいです。
+詳細な /guidelines ページ内 Workflow フロー図 (Dify 風 4 ノード曲線) を参照。
 
 ### 役割分担
 
@@ -94,18 +68,17 @@ Upload/
 | **Vercel** | GitHub Integration による自動デプロイ + 顧客プレビューホスティング |
 | **Figma** | デザインシステム Variables のソース・オブ・トゥルース、最終 FB の格納先 |
 
-### テナント設計方針 — XXX は架空のサンプルテナント
+### テナント設計方針
 
-このリポジトリは複数顧客向けの汎用テンプレートとして運用するため、**特定の実在企業名は表に出さない方針**。
+このリポジトリは「汎用デザインシステムを土台に、テナントごとに色 + ロゴだけを差し替える」運用。
 
-- `/xxx/` 配下に並んでいるのは **架空企業「XXX」（Sample Tenant）** のデモコンテンツ
-- 申込フロー・カラー設計（teal primary / amber CTA）は「サンプル企業ならこういう作りになる」という見本
-- 新規顧客が来たら `/xxx/` をテンプレートとして `/aaa/`・`/bbb/` 等の実顧客テナントを派生
-- XXX 自体は永続的に「お手本テナント」として残す（テンプレート参照用）
-- ロゴ: `public/assets/logo_xxx.svg` (フル), `public/assets/logo_xxx_mark.svg` (マークのみ) — どちらもダミー
-- 旧 `logo_td_financial.png` は実在企業のロゴだったため、削除推奨（ローカルから `rm` 必要）
+| テナント | 種別 | URL | ブランドカラー | 用途 |
+|---|---|---|---|---|
+| **xxx** | 架空サンプル (お手本テンプレート、永続) | `/xxx` | Teal / Cyan / Teal mid / Amber | 雛形 — 新規テナントはこれを複製 |
+| **aaa** | デモテナント (検証用、削除可) | `/aaa` | xxx と同色 (Teal/Cyan/Teal mid/Amber) | `/new-tenant` スキルの動作確認用 |
+| **td-financial** | 本番顧客 (T&Dファイナンシャル生命) | `/td-financial` | Navy `#003388` / Red `#db0034` / Blue `#344a9c` / Red `#db0034` | 顧客向け本番テナント |
 
-この方針により、リポジトリ全体を顧客に見せても問題ない透明性を確保しつつ、デモとしての説得力（実機さながらの申込フロー画面など）も維持できる。
+XXX 自体は永続的に「お手本テナント」として残す (新規テナントの雛形参照用)。実在企業ロゴは公開ロゴ URL を直接参照する形 (`brandLogo` 経由)。
 
 ---
 
@@ -117,60 +90,119 @@ Upload/
 |------|-----|
 | GitHub リポジトリ | `https://github.com/uchida-milize/neutral-base` (Private) |
 | Vercel プロジェクト | `tuchida in milize projects` / `neutral-base` |
-| 本番 URL | `https://neutral-base.vercel.app` |
+| 本番 URL | `https://neutral-base.vercel.app` (Basic Auth 保護) |
 | ローカル作業フォルダ | `~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2` |
 
-### Routes
+### Routes (全 18 ページ)
 
-汎用デザインシステム (3 ページ):
-- `/` — TOP（土台の意義 + テナント案内）
-- `/guidelines` — Guidelines（汎用のデザインルール）
-- `/components` — Components（25 セクションの shadcn/ui カタログ）
+**汎用デザインシステム (3 ページ)**:
+- `/` — TOP (Hero + Overview 3 グループ + Core ページ案内 + Tenants 案内)
+- `/guidelines` — Guidelines (Workflow フロー図 + Pipeline 3 グループ + Architecture + Principles + Tokens + Typography + Accessibility + Components + Theme & Responsive + BrandSatellites)
+- `/components` — Components (25 セクションの shadcn/ui カタログ)
 
-XXX テナント (5 ページ, `.xxx-scope` で teal 系に自動切替):
-- `/xxx` — TOP（XXX ポータル入口）
-- `/xxx/guidelines` — Guidelines（XXX ブランド固有ルール）
-- `/xxx/components` — Components（同じ UikitCatalog が teal で表示）
-- `/xxx/prototype` — Prototype（iPhone フレームの画面遷移）
-- `/xxx/windows` — Windows（2×2 グリッドで俯瞰）
+**各テナント (5 ページ × 3 = 15)**:
+| テナント | パス | スコープクラス |
+|---|---|---|
+| XXX | `/xxx`, `/xxx/guidelines`, `/xxx/components`, `/xxx/prototype`, `/xxx/windows` | `.xxx-scope` |
+| AAA | 同上で `/aaa/*` | `.aaa-scope` |
+| T&D | 同上で `/td-financial/*` | `.td-financial-scope` |
 
 ### ヘッダーナビゲーション
 
-`components/site-header.tsx` の `TENANTS` 配列で動的切替。
+`components/site-header.tsx` の `TENANTS` 配列で動的切替。URL パス前方一致で判定。
 
-| エリア | メニュー |
-|-------|---------|
-| 汎用 | TOP / Guidelines / Components |
-| XXX | TOP / Guidelines / Components / Prototype / Windows |
+| エリア | メニュー | ブランドマーク |
+|-------|---------|---|
+| 汎用 | TOP / Guidelines / Components | "D" 文字マーク |
+| XXX | TOP / Guidelines / Components / Prototype / Windows | "T" 文字マーク |
+| AAA | 同上 | "A" 文字マーク |
+| T&D | 同上 | **公式ロゴ画像** (Fontshare/CDN 経由の URL) |
 
-新規テナントの追加は `TENANTS` 配列に 1 エントリ追加 + `app/<tenant>/` 配下にディレクトリを作るだけで成立する設計。
+新規テナントの追加は `TENANTS` 配列に 1 エントリ追加 + `app/<tenant>/` 配下にディレクトリを作るだけで成立する設計。`./scripts/new-tenant.sh <name>` で全自動。
+
+### フォーカスモード (`?focus=1`)
+
+URL クエリで `?focus=1` を付けると、ヘッダーのナビセットとテーマトグルが非表示になり、ロゴクリックも無効化される。**顧客説明用 URL** として共有可能 (お客様が他ページに遷移できない):
+
+```
+https://neutral-base.vercel.app/td-financial/prototype?focus=1
+https://neutral-base.vercel.app/td-financial/windows?focus=1
+https://neutral-base.vercel.app/td-financial/guidelines?focus=1
+```
+
+### Basic Auth (本番保護)
+
+`middleware.ts` で Edge Runtime Basic Auth を実装済み。Vercel 環境変数:
+
+- `BASIC_AUTH_USER`
+- `BASIC_AUTH_PASS`
+
+両方が未設定だと fail-closed (500) で誤公開を防ぐ。`_next/static/*` / `_next/image/*` / `favicon.ico` / `robots.txt` / `sitemap.xml` は除外、`NODE_ENV=development` 時はバイパス。
 
 ### 技術スタック
 
 - Next.js 16.2.6 + React 19.2.4
-- Tailwind CSS v4 (CSS-based config)
+- Tailwind CSS v4 (`@theme inline` で CSS Variables を utility class として自動公開)
 - shadcn/ui (new-york style)
 - Radix UI primitives
-- Geist Sans / Geist Mono (geist パッケージ, セルフホスト)
-- Noto Sans JP 9 ウェイト (セルフホスト, public/fonts/)
+- Geist Sans / Geist Mono (geist パッケージ、セルフホスト)
+- Noto Sans JP 9 ウェイト (セルフホスト、public/fonts/)
+- **Chillax** (Fontshare CDN、Medium 500 単体 + size-adjust 120% + Latin 限定) — 見出しと大きな英数字
 - lucide-react アイコン
 - react-day-picker v10
 - next-themes (light/dark)
 - sonner (トースト通知)
+- pnpm v11 (`pnpm-workspace.yaml` の `allowBuilds` に sharp / unrs-resolver)
 
-### Tailwind 準拠の確認
+### CSS トークン構造 (4 スケール + 1 neutral)
 
-両側の入口が明確に分離されている。
+`globals.css` で定義、各テナントの `tokens.css` で上書き:
+
+| トークン | 役割 | 例 (T&D) |
+|---|---|---|
+| `--primary-color-*` | コーポレートカラー1 (ブランド主要色) | Navy `#003388` |
+| `--secondary-color-*` | コーポレートカラー2 (アクセント / badge / highlight) | Red `#db0034` |
+| `--button-color-*` | 通常ボタン色 (色面 + 罫線の 2 バリアント) | Blue `#344a9c` |
+| `--cta-color-*` | CTA 申込ボタン専用 (= 1 画面 1 つ) | Red `#db0034` (secondary と同色) |
+| `--warm-*` | 無彩色 neutral (背景 / 区切り線) | Stone 50-300 |
+
+各スケール 10/50/100/200/300/400/500/600/700 の 9 段階 (warm のみ 4 段階)。
+
+### ボタン体系 (テナント別の差別化)
+
+T&D の例:
+
+| ボタン | 色 | 用途 |
+|---|---|---|
+| **cta (申込専用)** | Red `#db0034` 色面 | 申込/前進、1 画面 1 つ |
+| **primary (通常 filled)** | Blue `#344a9c` 色面 | 通常の確定・保存 |
+| **primary-outline (通常 罫線)** | Blue `#344a9c` 罫線 | サブ primary、キャンセル + 確定の主従 |
+| **neutral** | グレー色面 | キャンセル / 戻る |
+| **outline (サブ)** | グレー罫線 | CSV 出力等 |
+| **destructive** | Red 小サイズ | 削除 |
+
+### Tailwind 準拠
 
 **デザイナー側** — `app/globals.css` の CSS Variables を編集
-- 162 color tokens + 13 size tokens
-- `.xxx-scope` で XXX 用オーバーライド
+- 162 color tokens + 13 size tokens + 4 テナント色スケール (各テナントの `tokens.css` で上書き)
+- `.<tenant>-scope` で各テナントのオーバーライドが効く
 
 **開発者側** — JSX で Tailwind utility を直接書く
-- `className="rounded-md bg-primary text-primary-foreground"` のような可読性高い記法
-- 同じトークン (`bg-primary`) を共有しているので、ad-hoc 拡張してもブランド整合性が保たれる
+- `className="bg-primary text-primary-foreground"` のような可読性高い記法
+- 生 hex を書かない → Figma 側の色変更が即座に全コンポーネントへ波及
 
-新規コンポーネントを足す時も、`shadcn` の new-york スタイル規約に沿って書けば自動的に既存システムと馴染む。
+### タイポグラフィ階層
+
+| 階層 | サイズ | フォント | 用途 |
+|---|---|---|---|
+| h1 (Hero) | `text-h2` 48px / sm: `text-h1` 56px | Chillax Medium (Latin 120%) | ページ最大タイトル |
+| **h2 (セクション)** | **`text-[1.8rem]` 28.8px** | Chillax Medium (Latin 120%) | セクション見出し |
+| h3 (CardTitle) | `text-h7` 19.2px (= h2 の 80%) | Chillax Medium (Latin 120%) | 段落見出し |
+| body | `text-body` 14px / `text-body-lg` 16px | Geist Sans / Noto Sans JP | 本文 |
+
+セクション間スペーシング: `mt-30` (120px)。Hero h1 に `leading-tight` で 2 行以上の折り返し時の行間を約 80% に。
+
+`JpText` ヘルパー (`components/jp-text.tsx`) で「、」「。」「！」「？」直後で意味のかたまり単位の改行を実現。
 
 ---
 
@@ -179,45 +211,61 @@ XXX テナント (5 ページ, `.xxx-scope` で teal 系に自動切替):
 ```
 neutral-base-v2/
 ├── app/
-│   ├── page.tsx                    (206行)  汎用 TOP
-│   ├── layout.tsx                  (geist フォント設定)
-│   ├── globals.css                 (162 トークン + .xxx-scope)
-│   ├── guidelines/page.tsx         (610行)  汎用 Guidelines
-│   ├── components/page.tsx         (49行)   汎用 Components → UikitCatalog
-│   └── xxx/
-│       ├── layout.tsx              (.xxx-scope を当てる)
-│       ├── page.tsx                XXX TOP
-│       ├── guidelines/page.tsx     XXX Guidelines (968行)
-│       ├── components/page.tsx     XXX Components → UikitCatalog
-│       ├── prototype/page.tsx      iPhone 画面遷移
-│       └── windows/page.tsx        2×2 俯瞰
+│   ├── globals.css                # 162 colors + 13 sizes + 4 tenant scales + Chillax + @layer base
+│   ├── layout.tsx                 # root layout (geist フォント + SiteFooter 統合)
+│   ├── page.tsx                   # 汎用 TOP (Hero + Overview + Core + Tenants)
+│   ├── guidelines/page.tsx        # 汎用 Guidelines (Workflow フロー図 + Pipeline 3 グループ + Arch + …)
+│   ├── components/page.tsx        # 汎用 Components → UikitCatalog
+│   ├── xxx/                       # 架空サンプル (Teal/Cyan/Teal-mid/Amber)
+│   │   ├── layout.tsx             # .xxx-scope を当てる
+│   │   ├── page.tsx               # TOP (Hero + Overview + 4 ページ案内)
+│   │   ├── guidelines/page.tsx    # Guidelines (5 ScaleBlock + Tailwind マッピング + コードスニペット)
+│   │   ├── components/page.tsx    # Components → UikitCatalog
+│   │   ├── prototype/page.tsx     # iPhone 画面遷移
+│   │   └── windows/page.tsx       # 2×2 俯瞰 (max-w-[1700px] mx-auto)
+│   ├── aaa/                       # デモテナント (xxx と同色、削除可能)
+│   │   └── ... (xxx と同構造)
+│   └── td-financial/              # T&Dファイナンシャル生命 本番テナント
+│       └── ... (Navy/Red/Blue 配色、公式ロゴ表示)
 ├── components/
-│   ├── ui/                         shadcn コンポーネント 29個
-│   ├── uikit-catalog.tsx           (1041行) 25 セクションのリッチカタログ
-│   ├── site-header.tsx             テナント別ナビ切替
+│   ├── ui/                        # shadcn primitives (29 個)
+│   ├── uikit-catalog.tsx          # Components ページ本体 (25 セクション)
+│   ├── site-header.tsx            # テナント切替 + ?focus=1 対応 + brandLogo 対応
+│   ├── site-footer.tsx            # © MILIZE (layout 経由で全ページ)
+│   ├── overview-section.tsx       # 「30 秒で分かる」3 グループ (UI/UX / 🤝 / Dev)
+│   ├── flow-diagram.tsx           # Dify 風 Workflow フロー図 (4 ノード曲線)
+│   ├── jp-text.tsx                # 読点 / 句点で改行されやすくするヘルパー
 │   ├── mock-viewer/
-│   │   ├── iphone-frame.tsx        iPhone フレーム
-│   │   └── canvas-grid.tsx         俯瞰グリッド
-│   ├── xxx-portal-mock.tsx
-│   ├── xxx/
-│   │   ├── tokens.css              XXX 用 CSS Variables オーバーライド
-│   │   ├── flow.css
-│   │   ├── flow-meta.ts            申込フロー11画面のメタ情報
-│   │   ├── flow-prototype.tsx      iPhone フレームでの遷移実装
+│   │   ├── iphone-frame.tsx       # iPhone フレーム
+│   │   └── canvas-grid.tsx        # 俯瞰グリッド
+│   ├── xxx-portal-mock.tsx        # @deprecated
+│   ├── xxx/, aaa/, td-financial/  # 各テナント固有
+│   │   ├── tokens.css             # 4 スケール (primary/secondary/button/cta) + warm 上書き
+│   │   ├── flow.css               # .<tenant>-flow scope
+│   │   ├── flow-meta.ts           # 申込フロー11画面メタ
+│   │   ├── flow-prototype.tsx     # iPhone フレームでの遷移実装
 │   │   ├── flow-screens.tsx
 │   │   └── screens.tsx
 │   ├── client-only.tsx
 │   ├── theme-toggle.tsx
+│   ├── scroll-to-top.tsx
 │   └── showcase/sonner-demo.tsx
-├── lib/utils.ts                    cn() ヘルパー
+├── lib/utils.ts                   # cn() ヘルパー
+├── middleware.ts                  # Basic Auth (Next.js Edge Runtime)
 ├── public/
-│   ├── fonts/                      Noto Sans JP 9 ウェイト
-│   └── assets/                     ロゴ等
+│   ├── fonts/                     # Noto Sans JP 9 ウェイト
+│   └── assets/                    # ロゴ等
+├── scripts/
+│   ├── new-tenant.sh              # /new-tenant スキル本体 (Bash + Python 埋込み)
+│   └── rename-tokens.sh           # CSS 変数一括リネーム (改修用、再利用は稀)
+├── skills/
+│   └── new-tenant/SKILL.md        # Cowork スキル定義
+├── pnpm-workspace.yaml            # allowBuilds: sharp, unrs-resolver (pnpm v11 対応)
 ├── package.json
 ├── tsconfig.json
 ├── next.config.ts
-├── DEPLOY.md                       初回 push + 日常更新の手順
-└── HANDOFF.md                      このファイル
+├── DEPLOY.md                      # 初回 push + 日常更新の手順
+└── HANDOFF.md                     # このファイル
 ```
 
 ---
@@ -228,9 +276,9 @@ neutral-base-v2/
 
 ```bash
 cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2
-rm -f .git/index.lock  # FUSE で残った場合のみ
+rm -f .git/index.lock              # FUSE で残った場合のみ
 git add -A
-git commit -m "変更の説明"
+git commit -m "変更の説明"          # 複数行メッセージは時々ハマるので、シンプルな 1 行推奨
 git push
 ```
 
@@ -241,192 +289,223 @@ push → 数十秒で Vercel が再ビルド・再デプロイ。
 - `api.vercel.com` ブロック → Cowork から Vercel CLI で直接デプロイは不可
 - `api.github.com` ブロック → Cowork から GitHub API 経由のリポ作成は不可
 - `github.com` ・`registry.npmjs.org` は到達可能
-- ローカル GoogleDrive フォルダは FUSE マウントで一部 `rm` 操作が拒否される（`rsync --delete` も避ける）
+- ローカル GoogleDrive フォルダは FUSE マウントで一部 `rm` 操作が拒否される (`rsync --delete` も避ける)
+  - 対処: `mcp__cowork__allow_cowork_file_delete` ツールで削除許可を取得
 
 ### コミット作者の重要ルール
 
 Vercel Hobby プランは「team member 以外の author の commit は自動デプロイしない」制限がある。
 
-- Cowork サンドボックスの `git config` は `Cowork Agent <cowork@users.noreply.github.com>` になっていた → これだと Vercel に拒否される
-- 解決済み: ローカルで `git config user.name "うちだ"` / `git config user.email "tuchida@milize.co.jp"` を設定済み
-- 今後、Cowork が編集→お客様が `git commit` する流れなら、お客様 identity で commit されるので問題なし
+- ローカルで `git config user.name "うちだ"` / `git config user.email "tuchida@milize.co.jp"` 設定済み
+- Cowork が編集 → お客様が `git commit` する流れなら、お客様 identity で commit されるので問題なし
+
+### git 運用方針 (確定)
+
+- **Cowork は編集のみ**、`git add / commit / push` はすべてお客様がターミナルで実行
+- GitHub PAT は **Cowork には渡さない** 方針で確定 (`gh auth login` ベース)
+- `.env.local` に `VERCEL_TOKEN` のみ残置 (緊急時用、現状の運用では使わない)
 
 ### Vercel-GitHub 連携
 
-- GitHub Integration 設定済み（Vercel ダッシュボード上で結合済み）
+- GitHub Integration 設定済み (Vercel ダッシュボード上で結合済み)
 - push 後、新しい commit は自動でビルド・デプロイ
 - 失敗時は Vercel ダッシュボードでログ確認
-
-### 認証情報
-
-- `.env.local` に `VERCEL_TOKEN` のみ残置（緊急時用、現状の運用では使わない）
-- GitHub PAT は **Cowork には渡さない** 方針で確定（`gh auth login` ベース）
 
 ---
 
 ## 4-B. Figma 連携フロー
 
-### 戦略整理 — なぜ Figma 連携が必要か
+(前バージョンと同内容のため要約)
 
-UI/UX の納品契約では、Figma ファイルが成果物として含まれるケースが多い（または **後日「Figma が欲しい」と顧客から要望が出る**）。完全に省略はできないため、以下の戦略で対応する:
+UI/UX 納品契約で Figma ファイルが要求されるケースに備え、以下の戦略:
 
-```
-日常運用                          ┌─── 納品トリガー (契約マイルストーン / 顧客要望) ─────┐
-                                  │                                                       │
-[Cowork でデザイン編集]            │   /export-to-figma スキル実行                         │
-   ↓                              │      ├ Figma Variables 一括生成 (162 colors + 13 sizes)│
-[git push]                        │      ├ Master Components 投入 (29個 + テナント拡張分) │
-   ↓                              │      ├ Pages を Frame として配置                       │
-[Vercel auto-deploy]              │      ├ プロトタイプ接続 (画面間リンク)                 │
-   ↓                              │      └ 完成レポート (Figma URL + 統計)                 │
-[顧客レビュー]                     │                                                       │
-   ↓                              └──────────────────────────────────────────────────────┘
-[最終承認]
-   ↓
-[納品時に上記スキルを発火 → Figma ファイルを生成して納品]
-```
+- **日常運用**: Cowork × Vercel に集中。Figma との常時同期はしない
+- **納品 / 顧客要望のタイミング**: `/export-to-figma` (Priority 5、未実装) を発火
+- **見た目の QA**: html.to.design で `https://neutral-base.vercel.app/<tenant>/windows?focus=1` を Viewport 1700px で取り込み
 
-要点:
+Claude Design の特性 (2026-05-27 実験結果):
+- ✓ 派生・拡張に強い (Q1→Q2 から Q3/Q4 を自動生成)
+- ✓ トークン抽出は正確
+- △ 同一性再現は不完全 (細部のレイアウトずれ、不要な加筆)
 
-- **日々の運用は Cowork × Vercel に集中**。Figma との常時同期はしない (二重メンテのコストを避ける)
-- **納品 / 顧客要望のタイミング** で `/export-to-figma` を発火、最新の `globals.css` + コードから一気に Figma ファイルを再構築
-- 仕様変更時は「最新の Cowork 側を Figma に再生成」だけでズレない (Cowork が単一情報源)
+→ Claude Design = 「**創造系**」、Figma MCP 経由 Cowork スキル = 「**同一性が要求される変換**」と役割分担。
 
-### ツール選定 — Figma MCP と html.to.design の役割分担
-
-| 用途 | ツール | 理由 |
-|------|--------|------|
-| **本番の Figma 納品ファイル生成** | Figma MCP | Variables / Master Components / Frames を正規構造で投入できる。スキル化して自動実行可能 |
-| **見た目の照合・QA** | html.to.design | デプロイ済み URL からピクセル単位で取り込める。MCP 生成物との visual diff に最適 |
-| **その場の手早い取り込み** | html.to.design | 1〜2画面だけ Figma に入れたい時など、軽い用途 |
-
-`/export-to-figma` スキルの精度は、初回 1〜2 納品で html.to.design との diff を確認しながら調整 → 以降は安定運用、というプロセスを想定。
-
-### 即席の取り込み手順 (html.to.design)
-
-`/xxx/windows` の 11 画面（その他テナントも同様）を Figma に取り込むには、Figma 公式コミュニティの **html.to.design** プラグインを使う。Vercel にデプロイ済みの URL を直接指定するだけで、テキスト・画像・色・レイアウトを Figma レイヤーとして再現できる。
-
-### 取り込み手順 (基本)
-
-1. Figma で対象のファイルを開く（新規 or 既存）
-2. メニュー → `Plugins` → `Browse plugins in Community` で「html.to.design」を検索してインストール (初回のみ)
-3. `Plugins` → `html.to.design` → `Open` で起動
-4. URL を貼り付け:
-   - `https://neutral-base.vercel.app/xxx/windows` (全11画面を一気に取り込む)
-   - または `https://neutral-base.vercel.app/xxx/prototype` (1画面ずつ手動で切り替えながら取り込み)
-5. Viewport を **1700px** に設定 (Windows ページが最大幅 1700px のため、全画面を1回でキャプチャするため)
-   - 単画面取り込みの場合は **375px** にして iPhone レイアウトを忠実に再現
-6. **Import** をクリック → 数十秒〜1分で Figma に取り込まれる
-
-### 取り込み後の整形
-
-html.to.design は Figma レイヤーを一塊のフレームとして配置するため、以下の手順で整理する:
-
-1. 取り込まれた最外フレームを選択 → 右クリック → **Frame selection** で個別 Frame に分割
-2. 各 `<figure>` 相当のレイヤーを選択 → **Frame** 化して名前を画面 ID (`01-guidance`, `02-product`, ...) にリネーム
-3. デザインシステムの Variables (162 トークン) と紐づけ:
-   - レイヤーパネルで色を選択 → 右クリック → **Set variable** で対応する Figma Variable を割り当て
-   - Master-Components ファイルを参照すれば一括変換可能
-
-### 役割分担の目安
-
-| 段階 | 担当 |
-|------|------|
-| Web 側の更新 | Cowork (ファイル編集) + お客様 (git push) → Vercel 自動デプロイ |
-| Figma 取り込みのトリガー | お客様 (手動で html.to.design 実行) |
-| 取り込み後の Figma 整理 | デザイナー (手動 or 半自動) |
-| 将来の自動化 | `/feedback-to-figma` スキル (HANDOFF Priority 5) |
-
-### 取り込みやすい URL (推奨)
-
-| URL | 用途 |
-|-----|------|
-| `https://neutral-base.vercel.app/xxx/windows` | 全画面を一括取り込み (推奨) |
-| `https://neutral-base.vercel.app/xxx/prototype` | 単画面を1つずつ取り込み (細かい調整したい時) |
-| `https://neutral-base.vercel.app/xxx/components` | UI Kit カタログを取り込み (Master Components 化に便利) |
-
-### html.to.design の制約と回避策
-
-- **動的要素 (hover state, dropdown 展開状態等)**: 取り込み時点の DOM スナップショットなので、Hover/Active/Disabled の各状態を撮り分けたい場合は、それぞれの状態を強制表示するための URL パラメータを別途用意するか、Figma 側で variant 化する
-- **iframe / canvas 要素**: 完全再現は難しい (今回の neutral-base には該当なし)
-- **Web フォント**: Geist Sans / Noto Sans JP が Figma 側にインストールされていれば自動マッチング、なければデフォルトフォントで取り込まれる → Figma にフォントを別途インストール推奨
-- **Layer 数の制限 (Free プラン)**: 1回の import で取り込めるレイヤー数に上限あり (現時点で 100,000 layers)。`/xxx/windows` 11画面でも収まる想定だが、超過時は 1画面ずつに切り替え
-
-### 将来の改善案
-
-- `/xxx/windows/[step]` のような単画面専用ルート (例: `/xxx/windows/01`) を追加 → html.to.design の `viewport=375 + per-screen URL` で個別取り込みが容易に
-- 取り込んだ後の Figma Variables への紐づけを自動化する Figma plugin を内製
-- `/feedback-to-figma` スキル化 (Priority 5): 取り込み → ページリンク構造をプロトタイプ接続として張る
-
-### Claude Design 経由の Figma 取り込み実験 (2026-05-27)
-
-**実験対象**: 10 ページ規模の Figma ファイル（DOCTORCOMPASS / SHARP FINANCE 系の申込フロー）
-
-**観察できたこと**:
-
-| 方式 | 結果 |
-|------|------|
-| ファイル全体 drag&drop | Variables (トークン) は抽出できるが、Frame 構造は引き出せず。2636 node 規模で挫折 |
-| 個別 Frame URL を1つずつ渡す | 精度向上。レイアウト・色・タイポグラフィは概ね忠実に再現 |
-| Attach ダイアログの表示 | "1 page / 4 frames" と出ても、実際は 10 ページ存在することがあり、UI 表示は信頼しない方が良い |
-
-**Claude Design の性格 (実験から得た結論)**:
-
-- ✓ **派生・拡張に強い**: 元 Figma の Q1, Q2 から推測して Q3, Q4, Q5 を自動生成するなど、パターンを汲み取って続きを作る
-- ✓ **トークン抽出は正確**: 色・サイズはほぼ忠実
-- △ **同一性再現は不完全**: 元には無い画面を加筆する、細部のレイアウトが少しずれる、など
-
-**戦略への反映**:
-
-- 「顧客の既存 Figma を起点に新画面を作りたい」 → Claude Design (個別 Frame URL を渡す方式) が最適
-- 「Vercel で動いてる UI を Figma 納品物として正確に再構築したい」 → **Figma MCP 経由の `/export-to-figma` スキル必須**（Claude Design では完全一致できない）
-- 「Figma の Frame を React コードに正確に落としたい」 → 同上、**`/figma-to-page` スキル (Figma MCP)** が本命
-
-つまり Claude Design は「**創造系**」、Figma MCP 経由の Cowork スキルは「**同一性が要求される変換**」、と役割分担が確定。
+詳細は前バージョンの §4-B 参照 (内容は不変)。
 
 ---
 
-## 5. 次のステップ（優先度順）
+## 5. 実装済みスキル / 機能
 
-### Priority 1 — テナント追加の自動化スキル
+### ✅ Priority 1 — `/new-tenant` テナント追加スキル (実装済み)
 
-**スキル: `/new-tenant`**
+**スキル本体**: `scripts/new-tenant.sh` + `skills/new-tenant/SKILL.md`
 
-入力: 顧客名（例: `aaa`）
+**使い方**:
+```bash
+./scripts/new-tenant.sh <tenant>                                        # 最小構成
+./scripts/new-tenant.sh aaa                                              # サンプル名で
+./scripts/new-tenant.sh acme --brand-label "ACME Corp"                  # ブランド表示名指定
+./scripts/new-tenant.sh acme --brand-label "..." --brand-initial "A"    # マーク文字指定
+./scripts/new-tenant.sh aaa --force                                      # 既存上書き
+./scripts/new-tenant.sh aaa --dry-run                                    # 確認のみ
+```
 
-実行内容:
-1. `app/<tenant>/` ディレクトリを `app/xxx/` の構造を雛形に複製
-2. `components/<tenant>/tokens.css` を作成（暫定でデフォルト値）
-3. `components/site-header.tsx` の `TENANTS` 配列に新エントリ追加
-4. README に新テナントエントリを追記
+**実行内容**:
+1. `app/xxx/` → `app/<tenant>/` 全体を `cp -R` で複製
+2. `components/xxx/` → `components/<tenant>/` 全体を複製
+3. コピー先で以下を一括置換:
+   - `/xxx` (URL) → `/<tenant>`
+   - `@/components/xxx/` (import) → `@/components/<tenant>/`
+   - `.xxx-scope` / `xxx-scope` → `.<tenant>-scope` / `<tenant>-scope`
+   - `.xxx-flow` / `xxx-flow` → `.<tenant>-flow` / `<tenant>-flow`
+   - `--xxx-` (CSS 変数 prefix) → `--<tenant>-`
+4. `components/site-header.tsx` の `TENANTS` 配列に新エントリ挿入 (`// 将来の他社はここに追加 (例)` アンカーの直前)
 
-これだけで `https://neutral-base.vercel.app/aaa` が即立ち上がる。
+**置換しないもの** (意図的):
+- `XXX` (大文字、ブランドテキスト) — 顧客に見せる文言は `/init-brand-tokens` (Priority 2) または手動で
+- React コンポーネント名 (例: `TdfFlowPrototype`) — ファイルが別なので衝突しない
+
+### ✅ T&Dファイナンシャル生命テナント (本番運用中)
+
+- URL: `/td-financial/*`
+- カラー: Navy `#003388` / Red `#db0034` / Blue `#344a9c` / Red `#db0034`
+- 公式ロゴ表示 (T&D 公式 CDN URL を `brandLogo` で参照)
+- Hero タイトル: 「TDF 組込ページ向け デザイン資料」
+
+### ✅ CSS 変数の 4 スケール構造
+
+- `--primary-color-*` (旧 `navigation-navy-*`)
+- `--secondary-color-*` (旧 `primary-blue-*`)
+- `--button-color-*` (旧 `cta-amber-*`)
+- `--cta-color-*` (新規追加)
+- `--warm-*` (neutral)
+
+各 9 段階 (10〜700)、テナントの `tokens.css` で上書き、`globals.css` のデフォルトは primary-color エイリアス。
+
+### ✅ ボタン体系の再構成 (T&D 例)
+
+- cta (Red filled, 申込専用)
+- primary 色面 (Blue filled)
+- primary 罫線 (Blue outline)
+- neutral / outline / destructive
+
+### ✅ フォーカスモード `?focus=1`
+
+ヘッダーのナビセット非表示 + ロゴクリック無効化。顧客説明 URL として共有可能。
+
+### ✅ Basic Auth (本番のみ)
+
+`middleware.ts` で Vercel env (`BASIC_AUTH_USER` / `BASIC_AUTH_PASS`) を検証。fail-closed。dev はスキップ。
+
+### ✅ SiteFooter (全ページ)
+
+`components/site-footer.tsx` を root layout に統合。`© <year> MILIZE. All rights reserved.` を `text-tiny text-muted-foreground/70 text-left` で控えめに表示。コンテンツ幅 (`max-w-5xl mx-auto`) 内の左端。
+
+### ✅ Chillax フォント (Fontshare CDN)
+
+`@font-face` で直接定義 (Medium 500 単体ロード):
+- `size-adjust: 120%` で英数字が自動 120% 拡大
+- `unicode-range` で Latin / 記号限定 → 日本語は Noto Sans JP fallback
+- `font-synthesis: none` で faux-bold 防止 → 常に Medium で描画
+- `@layer base` で h1-h4 に自動適用
+- `font-chillax` Tailwind utility で明示適用も可能
+
+`src` URL は Fontshare の公開 CDN ハッシュ:
+```
+https://cdn.fontshare.com/wf/XASL35KKT35X3ACCBCOQKKABSR6AT3FX/6MU5BWUUPHCFUHM2F3E3QPQGKXCVBUOO/WZY5PMNTII6NKOB2TTIAX7QVAWMSY2DQ.woff2
+```
+
+将来 Fontshare 側で URL が変更されると壊れる。その場合は `https://api.fontshare.com/v2/css?f[]=chillax@500&display=swap` をブラウザで開いて新 URL を取得して差し替える。
+
+### ✅ 日本語の改行制御 (`JpText`)
+
+`components/jp-text.tsx`: 「、」「。」「！」「？」直後で文字列を分割し、各セグメントを `<span className="inline-block">` で包む。ブラウザが折り返す時に意味のかたまり単位で改行される。全 Hero h1 + 全 SectionHeading.title に適用。
+
+### ✅ /guidelines の充実
+
+**汎用 `/guidelines`** には以下が並ぶ:
+1. Hero
+2. **Workflow** (新規) — Dify 風 4 ステップ曲線フロー
+3. **Architecture** (新規) — 4 レイヤー + file tree + 技術スタック
+4. **Pipeline** — 3 グループ構造 (UI/UX / 🤝 UI/UX+Dev / Dev) + テナントごとのカスタマイズカード
+5. Principles (4 設計原則)
+6. Tokens (セマンティック swatch)
+7. Typography (8 段スケール)
+8. Accessibility
+9. Components
+10. Theme & Responsive
+11. BrandSatellites (テナント案内)
+12. Footer
+
+各セクションの `<SectionHeading>` に **読み手バッジ** (`🎨 デザイナー向け` / `💻 開発者向け` / `🤝 両者向け`) を pill 形で表示。
+
+**テナント `/<tenant>/guidelines`** には:
+1. Hero
+2. Brand Pillars (4 つの柱)
+3. Color (5 スケール ScaleBlock + Tailwind マッピング表 + テナント生スケール直接アクセス + コードスニペット 6 種)
+4. Buttons (6 種のボタン + 1 画面 1 つ規律)
+5. Typography
+6. Accessibility
+7. Shape (Radius & Shadow)
+8. Voice & Content
+9. Footer
+
+### ✅ TOP の OverviewSection
+
+`components/overview-section.tsx` を共有化、3 つの TOP (汎用 / xxx / td-financial) で利用。
+
+3 グループ並列構造 (PipelineStep 4 ステップは廃止、RoleGroup に統合):
+- 🎨 UI/UX (デザイナーが触る) — Figma Variables
+- 🤝 UI/UX + Dev (両者をつなぐ中間層) — globals.css + Tailwind utility
+- 💻 Dev (開発者が触る) — React component
+
+各 group に: アイコン + who の pill / タイトル / やること / 触るファイル。番号 (01-04) は削除 (TOP は並列の役割表示なので)。
+
+### ✅ 汎用 TOP の TenantsSection
+
+T&D カードを XXX より左に配置 (左上)。各カードのタイトル冒頭に **3 色ドット** (`BrandDots`) を真円で表示:
+- T&D: Navy ● + Red ● + Blue ●
+- XXX: Teal ● + Cyan ● + Teal mid ●
+
+`size-3` の円 + 薄い ring で背景境界、`aria-label` でアクセシビリティ対応。
+
+### ✅ レイアウト / タイポ調整
+
+- セクション間スペーシング: `mt-30` (120px)
+- h2 サイズ: `text-[1.8rem]` (28.8px = h2 の 120%)
+- h1 に `leading-tight` (折り返し時の行間を 80% に)
+- `--text-h7: 1.2rem` (19.2px = h2 の 80%)
+- 中央寄せ (`mx-auto max-w-5xl` / `max-w-[1400px]` / `max-w-[1700px]` for windows)
+
+---
+
+## 6. 次のステップ (優先度順)
 
 ### Priority 2 — 顧客ブランド色の自動抽出スキル
 
 **スキル: `/init-brand-tokens`**
 
-入力: 顧客サイト URL、または PDF / PNG（ブランドガイドライン）
+入力: 顧客サイト URL、または PDF / PNG (ブランドガイドライン)
 
 実行内容:
-1. Claude in Chrome で顧客サイトをレンダリング → スクリーンショット + 計算後CSS
+1. Claude in Chrome で顧客サイトをレンダリング → スクリーンショット + 計算後 CSS
 2. CSS の頻出色 + ロゴ画像から k-means でパレット抽出
-3. Claude vision で「primary / secondary / accent / neutral / semantic」のロール推論
+3. Claude vision で「primary / secondary / button / cta / neutral」のロール推論
 4. `brand-palette.json` を生成
-5. 人間レビュー用に Markdown サマリ（色見本付き）出力
-6. 承認後、`components/<tenant>/tokens.css` に書き込み
+5. 人間レビュー用に Markdown サマリ (色見本付き) 出力
+6. 承認後、`components/<tenant>/tokens.css` の 4 スケールに書き込み
 
 ### Priority 3 — Claude Design 出力の取り込みスキル
 
 **スキル: `/import-claude-design`**
 
-入力: Claude Design からエクスポートした handoff バンドル（ZIP または share URL）
+入力: Claude Design からエクスポートした handoff バンドル (ZIP または share URL)
 
 実行内容:
 1. バンドルを解析し、ページ単位に分割
-2. テナント名（`xxx`, `aaa` 等）を指定された場合、`app/<tenant>/<page>/` に配置
-3. `tokens.css` との衝突がないかチェック（Claude Design 側のトークン名と本リポジトリのトークン名のマッピング）
-4. import 文の解決（`@/components/ui/*` のパスに置き換え）
+2. テナント名を指定された場合、`app/<tenant>/<page>/` に配置
+3. `tokens.css` との衝突がないかチェック (Claude Design 側のトークン名と本リポジトリのトークン名のマッピング)
+4. import 文の解決 (`@/components/ui/*` のパスに置き換え)
 5. `iphone-frame` や `canvas-grid` で wrap が必要なら自動で挿入
 6. 結果サマリを Markdown で出力
 
@@ -434,95 +513,102 @@ html.to.design は Figma レイヤーを一塊のフレームとして配置す�
 
 **スキル: `/sync-figma-tokens`**
 
-入力: Figma file URL（Master-Components ファイル）
+入力: Figma file URL (Master-Components ファイル)
 
 実行内容:
 1. Figma MCP で Variables を取得
 2. `app/globals.css` の CSS Variables を更新
 3. テナントごとの `tokens.css` も該当部分を更新
-4. 差分 diff を出力（人間が確認できるよう）
+4. 差分 diff を出力
 
 ### Priority 5 — Figma 納品ファイル生成スキル ★契約対応の本命★
 
 **スキル: `/export-to-figma`**
 
-UI/UX 納品契約で Figma ファイルが要求されるケースに対応。日々の同期は行わず、納品マイルストーンや顧客要望のタイミングで実行する想定。
+UI/UX 納品契約で Figma ファイルが要求されるケースに対応。
 
-入力: テナント名 (`xxx`, `aaa` 等)、Figma File URL（新規 or 既存）
+入力: テナント名、Figma File URL (新規 or 既存)
 
 実行内容:
-1. Figma file 作成 or 既存ファイル指定（MCP の `create_new_file` または既存指定）
-2. `app/globals.css` を読み取り、Figma Variables を一括生成（162 colors + 13 sizes）
-3. `components/ui/*` を読み取り、Master Components として投入（29個 + テナント拡張分）
-   - Button / Card / Input / Tabs 等の variant 構造もそのまま再現
+1. Figma file 作成 or 既存ファイル指定
+2. `app/globals.css` を読み取り、Figma Variables を一括生成 (162 colors + 13 sizes + 4 テナント色スケール)
+3. `components/ui/*` を読み取り、Master Components として投入 (29 個 + テナント拡張分)
 4. テナント配下のページ (`app/<tenant>/*/page.tsx`) を Frame として配置
-5. プロトタイプ接続（画面間リンクを Figma の Interactive Prototype として張る）
-6. 完成レポート出力: Figma URL、投入したコンポーネント数、Variables 数、既知の差分リスト
+5. プロトタイプ接続 (画面間リンクを Figma の Interactive Prototype として張る)
+6. 完成レポート出力
 
-精度担保の補助フロー:
-- 同じ URL を html.to.design で別ファイルに取り込み、visual diff で比較
-- 差分があれば `/export-to-figma` のスクリプトを修正 → 次回からは正しく出る
-- 初回 1〜2 納品で安定化、以降はメンテフリーを目指す
+精度担保: html.to.design との visual diff で初回 1〜2 納品で調整、以降は安定運用。
 
-詳細な戦略は §4-B を参照。
+### Priority 6 (中長期) — GitHub Organization への移管
 
-### Priority 6（中長期）— GitHub Organization への移管
+現在は `uchida-milize/neutral-base` (個人アカウント = dev/検証スペース)。本番運用の目処が立ったら `design-milize` のような Organization に移管予定。
 
-現在は `uchida-milize/neutral-base`（個人アカウント = dev/検証スペース）。本番運用の目処が立ったら `design-milize` のような Organization に移管予定。
-
-実行内容:
-1. https://github.com/organizations/new で新 Org を作成（Plan: Free でOK）
+1. https://github.com/organizations/new で新 Org を作成 (Plan: Free でOK)
 2. 既存リポジトリの Settings → Danger Zone → **Transfer ownership** で Org に転送
-3. ローカルの remote URL を更新: `git remote set-url origin https://github.com/design-milize/neutral-base.git`
-4. Vercel-GitHub Integration の追従確認（URLは自動更新されるはず）
+3. ローカルの remote URL を更新
+4. Vercel-GitHub Integration の追従確認
 5. HANDOFF.md / DEPLOY.md の参照を更新
 
-転送後、GitHub が旧URLからの自動リダイレクトを提供するため、移行は段階的に進められる。Vercel の本番URL (`neutral-base.vercel.app`) は GitHub URL変更とは無関係に維持される。
+### Priority 7 (中長期) — ガバナンスの整備
 
-### Priority 7（中長期）— ガバナンスの整備
-
-Org 化後の運用ベストプラクティス:
-
-- **Branch protection rules**: `main` への直接 push を禁止 → PR 必須化
-- **CODEOWNERS**: ファイル別レビュアー自動アサイン (例: `/app/xxx/* @td-team`)
-- **GitHub Actions**: テスト・lint・PR ごとの preview deploy 自動化
-- **顧客別リポジトリ戦略**: `design-milize/neutral-base`（基盤）と `design-milize/customer-aaa`（顧客固有）の派生方針を確定
+- Branch protection rules: `main` への直接 push を禁止 → PR 必須化
+- CODEOWNERS: ファイル別レビュアー自動アサイン
+- GitHub Actions: テスト・lint・PR ごとの preview deploy 自動化
+- 顧客別リポジトリ戦略: `design-milize/neutral-base` (基盤) と `design-milize/customer-aaa` (顧客固有) の派生方針
 
 ---
 
-## 6. 引き継ぎ事項・既知の事項
+## 7. 引き継ぎ事項・既知の事項
 
 ### 環境
 
 - macOS Sonoma (おそらく)
-- Mac には `gh` (GitHub CLI), `git`, Node.js, Homebrew がインストール済み
+- Mac には `gh` (GitHub CLI), `git`, Node.js, Homebrew, pnpm v11 がインストール済み
 - GoogleDrive デスクトップアプリで `~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload` が同期マウント
 
 ### Cowork コネクタ
 
 設定済み: Design プラグイン (Figma, Slack, Notion, Atlassian 等のコネクタ含む)、Figma プラグイン
 
-未設定 (将来必要になりそう): GitHub MCP（PR コメント・Issue 操作したい場合）
+未設定 (将来必要になりそう): GitHub MCP (PR コメント・Issue 操作したい場合)
 
-### 過去にハマったポイント
+### 過去にハマったポイント (累積)
 
 1. **Cowork サンドボックスから Vercel API がブロック** → GitHub Integration 経由で迂回
-2. **GoogleDrive FUSE の `rm` 制限** → 削除はローカルで、Cowork からは `rsync` で上書きのみ
+2. **GoogleDrive FUSE の `rm` 制限** → `mcp__cowork__allow_cowork_file_delete` ツールで削除許可を取得
 3. **`next/font/google` がサンドボックスから到達不可** → `geist` パッケージでセルフホスト
 4. **lucide-react v1.16.0 という存在しないバージョン** → v0.474.0 に修正済み
 5. **PAT がチャット履歴に露出** → `gh auth login` ベースに切り替え、Cowork に PAT を渡さない運用に
 6. **Vercel Hobby が non-team-member commit を拒否** → ローカル git config を `うちだ <tuchida@milize.co.jp>` に設定
+7. **pnpm v11 で sharp / unrs-resolver のビルドスクリプトが拒否される** → `pnpm-workspace.yaml` の `allowBuilds` に追加
+8. **複数行 git commit メッセージで terminal が止まったように見える** → 1 行メッセージで実行
+9. **Bash heredoc 内のバックティック / バックスラッシュエスケープ問題** → クォート付き heredoc (`<<'EOF'`) + 環境変数渡しで解決
+10. **Tailwind v4 の utility 公開** → `@theme inline` ブロック内に変数定義する必要がある (`:root` 内では公開されない)
+11. **flex-col の body 内で `mx-auto max-w-5xl` の左寄せ動作が不安定** → footer は `w-full` の外殻 + 内側 `<div className="mx-auto max-w-5xl">` の二段構造に
+12. **Chillax フォント URL がハッシュベースで予測不可** → ブラウザで `api.fontshare.com/v2/css?f[]=chillax@500` を開いて取得
+
+### 確定済みの運用ルール
+
+- **Cowork は編集のみ、git は手動** (Cowork からは push しない)
+- **テナント追加**: `./scripts/new-tenant.sh <name>` → `tokens.css` の色を手動編集 → commit/push
+- **顧客向け URL**: `https://neutral-base.vercel.app/<tenant>/<page>?focus=1` で共有 (ナビ非表示モード)
+- **Basic Auth**: Vercel env で `BASIC_AUTH_USER` / `BASIC_AUTH_PASS` を設定済み
+- **複数顧客並行運用**: `app/<tenant>/` ディレクトリと `.<tenant>-scope` クラスで完全独立
 
 ---
 
-## 7. 次のチャットで Cowork に伝える言葉（テンプレ）
+## 8. 次のチャットで Cowork に伝える言葉 (テンプレ)
 
 新しい Cowork チャットを開いて、このファイルを添付した上で:
 
-> 「`HANDOFF.md` を読んでください。Priority 1（`/new-tenant` スキル）の実装に進みたいです。」
+> 「`HANDOFF.md` を読んでください。Priority 2 (`/init-brand-tokens` スキル) の設計から始めたいです。サンプル顧客サイト URL を渡すので、ブランド色抽出を試したいです。」
 
 あるいは:
 
-> 「`HANDOFF.md` を読んでから、まずは `/init-brand-tokens` スキルの設計から始めたいです。サンプル顧客サイト URL を渡すので、ブランド色抽出を試したいです。」
+> 「`HANDOFF.md` を読んでから、新規テナント `acme` を追加して、ブランドカラーを 〇〇〇 / △△△ / □□□ に設定したいです。」
+
+あるいは:
+
+> 「`HANDOFF.md` を読んでください。Priority 5 (`/export-to-figma`) の Figma MCP 連携を試したいです。」
 
 このように Priority 番号 + やりたい作業を伝えると Cowork が文脈を即座に把握できます。
