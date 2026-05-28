@@ -221,7 +221,7 @@
   --text-h4:        2rem;     /* 32px */
   --text-h5:        1.5rem;   /* 24px */
   --text-h6:        1.25rem;  /* 20px */
-  --text-h7:        1.125rem; /* 18px */
+  --text-h7:        1.35rem;  /* 21.6px — 段落見出し / CardTitle、旧 18px から 1.2x */
   --text-body-lg:   1rem;     /* 16px */
   --text-body:      0.875rem; /* 14px */
   --text-caption:   0.75rem;  /* 12px */

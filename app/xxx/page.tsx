@@ -60,7 +60,7 @@ export default function XxxHome() {
         />
 
         {/* 4 ページのナビゲーション */}
-        <section>
+        <section className="mt-20">
           <div className="mb-6">
             <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
               Pages

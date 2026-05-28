@@ -84,7 +84,7 @@ function Hero() {
 
 function CoreSection() {
   return (
-    <section className="mt-16">
+    <section className="mt-20">
       <div className="mb-6 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Pages
@@ -148,7 +148,7 @@ function CoreCard({
 
 function TenantsSection() {
   return (
-    <section className="mt-16">
+    <section className="mt-20">
       <div className="mb-6 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Tenants

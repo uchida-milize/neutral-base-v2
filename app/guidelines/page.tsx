@@ -144,7 +144,7 @@ function Section({
   return (
     <section
       id={id}
-      className={`mt-16 scroll-mt-24 transition-colors duration-300 ${className}`}
+      className={`mt-20 scroll-mt-24 transition-colors duration-300 ${className}`}
     >
       {children}
     </section>
