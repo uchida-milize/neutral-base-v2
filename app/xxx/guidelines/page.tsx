@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { JpText } from "@/components/jp-text";
 
 /* =================================================================
  * /guidelines/td — XXX 社専用デザインガイドライン
@@ -115,8 +116,8 @@ function SectionHeading({
         </p>
         {audience ? <AudienceBadge audience={audience} /> : null}
       </div>
-      <h2 className="mt-2 text-h5 font-semibold tracking-tight">
-        {title}
+      <h2 className="mt-2 text-h5 font-semibold leading-tight tracking-tight">
+        <JpText>{title}</JpText>
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
         {description}

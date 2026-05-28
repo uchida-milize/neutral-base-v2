@@ -12,6 +12,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { OverviewSection } from "@/components/overview-section";
 import { Badge } from "@/components/ui/badge";
+import { JpText } from "@/components/jp-text";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -64,7 +65,7 @@ function Hero() {
           Common Design System
         </Badge>
         <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
-          どのブランドにも先に通すべき、共通の土台。
+          <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
         </h1>
         <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
           Figma Variables から生成された 162 色 + 13 サイズのトークンを単一情報源として、

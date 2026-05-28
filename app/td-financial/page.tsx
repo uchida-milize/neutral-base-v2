@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { OverviewSection } from "@/components/overview-section";
+import { JpText } from "@/components/jp-text";
 
 export const metadata: Metadata = {
   title: "T&Dファイナンシャル生命 Design System",
@@ -42,7 +43,7 @@ export default function TdFinancialHome() {
               T&amp;Dファイナンシャル生命 · Embedded Insurance
             </Badge>
             <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
-              TDF 組込ページ向け デザイン資料
+              <JpText>TDF 組込ページ向け デザイン資料</JpText>
             </h1>
             <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
               金融・保険領域に求められる<strong className="text-white">「誠実さ」</strong>と、
