@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { OverviewSection } from "@/components/overview-section";
 
 export const metadata: Metadata = {
   title: "XXX Design System",
@@ -53,6 +54,11 @@ export default function XxxHome() {
       </div>
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+        <OverviewSection
+          guidelinesHref="/xxx/guidelines"
+          tenant="XXX (架空サンプル)"
+        />
+
         {/* 4 ページのナビゲーション */}
         <section>
           <div className="mb-6">

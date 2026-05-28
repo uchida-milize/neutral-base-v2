@@ -318,12 +318,12 @@ function ColorRules() {
         />
       </div>
 
-      {/* Semantic 役割マップ */}
+      {/* Tailwind マッピング表 (token → Tailwind class → CSS var → 実際の値) */}
       <Card className="mt-8 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">Semantic 役割マップ</CardTitle>
+          <CardTitle className="text-h7">token → Tailwind class → CSS var の対応表</CardTitle>
           <CardDescription>
-            「どの色をいつ使うか」は意味で決めます。プリミティブを直接参照しないこと。
+            デザイナーが指す色 (Figma の primary-color-500) と、開発者が書くコード (className=&quot;bg-primary&quot;) と、ブラウザに渡る CSS の値が、どう繋がっているか。Tailwind v4 の <code>@theme inline</code> が CSS Variable をそのまま utility class として公開しているため、3 つは常に同期します。
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -332,50 +332,59 @@ function ColorRules() {
               <TableHeader>
                 <TableRow>
                   <TableHead>役割</TableHead>
-                  <TableHead>Semantic トークン</TableHead>
-                  <TableHead>解決される値</TableHead>
+                  <TableHead>Tailwind class (Dev)</TableHead>
+                  <TableHead>CSS variable</TableHead>
+                  <TableHead className="text-right">解決値</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell>本文テキスト</TableCell>
-                  <TableCell><code>--text-main</code></TableCell>
-                  <TableCell className="font-mono text-caption">#0f172a</TableCell>
+                  <TableCell>ブランド主要色 (primary)</TableCell>
+                  <TableCell><code className="font-mono">bg-primary</code> / <code className="font-mono">text-primary</code> / <code className="font-mono">ring-primary</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--primary)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">#0f766e Teal</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>primary 上の文字色</TableCell>
+                  <TableCell><code className="font-mono">text-primary-foreground</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--primary-foreground)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">#ffffff</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>背景 / 本文</TableCell>
+                  <TableCell><code className="font-mono">bg-background</code> / <code className="font-mono">text-foreground</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--background) / var(--foreground)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">white / near-black</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>補助テキスト</TableCell>
-                  <TableCell><code>--text-muted</code></TableCell>
-                  <TableCell className="font-mono text-caption">#6b7280</TableCell>
+                  <TableCell><code className="font-mono">text-muted-foreground</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--muted-foreground)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">gray-500 相当</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>強調 / ブランド primary text</TableCell>
-                  <TableCell><code>--text-primary</code></TableCell>
-                  <TableCell className="font-mono text-caption">primary-color-500</TableCell>
+                  <TableCell>カード面 / 文字</TableCell>
+                  <TableCell><code className="font-mono">bg-card</code> / <code className="font-mono">text-card-foreground</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--card) / var(--card-foreground)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">white / foreground</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>リンク / Info</TableCell>
-                  <TableCell><code>--text-link</code> / <code>--text-info</code></TableCell>
-                  <TableCell className="font-mono text-caption">secondary-color-500</TableCell>
+                  <TableCell>境界線</TableCell>
+                  <TableCell><code className="font-mono">border-border</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--border)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">gray-200 相当</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Eyebrow アクセント</TableCell>
-                  <TableCell><code>--text-accent</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-500</TableCell>
+                  <TableCell>アクセント (hover の薄背景)</TableCell>
+                  <TableCell><code className="font-mono">bg-accent</code> / <code className="font-mono">text-accent-foreground</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--accent) / var(--accent-foreground)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">primary-color-10 (#f0fdfa)</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>エラーテキスト</TableCell>
-                  <TableCell><code>--text-error</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-600</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>border default / strong</TableCell>
-                  <TableCell><code>--border-default</code> / <code>--border-strong</code></TableCell>
-                  <TableCell className="font-mono text-caption">#e0e4ec / #c9d0dd</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>danger ボーダー</TableCell>
-                  <TableCell><code>--border-danger</code></TableCell>
-                  <TableCell className="font-mono text-caption">button-color-500</TableCell>
+                  <TableCell>destructive / エラー</TableCell>
+                  <TableCell><code className="font-mono">bg-destructive</code></TableCell>
+                  <TableCell className="font-mono text-caption">var(--destructive)</TableCell>
+                  <TableCell className="text-right font-mono text-caption">red-600 系</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -383,16 +392,176 @@ function ColorRules() {
         </CardContent>
       </Card>
 
+      {/* テナント生スケールへの直接アクセス */}
+      <Card className="mt-4 transition-colors duration-300">
+        <CardHeader>
+          <CardTitle className="text-h7">テナント生スケールへの直接アクセス</CardTitle>
+          <CardDescription>
+            上の semantic だけでは表現できない場合 (グラフの 6 色目を出したい等) に使う、生スケールへの直接参照。可能な限り上の semantic を優先し、これは「最終手段」として位置づけます。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`/* CSS: 直接 var() で参照 */
+.my-chart-bar-2 {
+  background: var(--primary-color-300);  /* teal-300 */
+  border-color: var(--secondary-color-500); /* cyan-600 */
+}
+
+/* React / Tailwind: arbitrary value で参照 */
+<div className="bg-[color:var(--primary-color-300)]">
+  ...
+</div>`}</pre>
+        </CardContent>
+      </Card>
+
+      {/* Tailwind class でのコードスニペット — 開発者がコピペで使える */}
+      <Card className="mt-4 transition-colors duration-300">
+        <CardHeader>
+          <CardTitle className="text-h7">コードスニペット (コピペ用)</CardTitle>
+          <CardDescription>
+            よくあるパターン。<strong className="text-foreground">直接 hex を書かない</strong>こと
+            (Figma 側の値変更時に追従できなくなるため)。Tailwind utility か CSS var を経由。
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <SnippetCard
+            label="① ヘッダー / ヒーロー (Teal primary)"
+            preview={
+              <div className="rounded-md bg-primary px-4 py-3 text-primary-foreground">
+                <p className="text-caption font-medium opacity-80">Embedded Insurance</p>
+                <p className="text-h7 font-semibold">信頼を、もっと触れる距離に。</p>
+              </div>
+            }
+            code={`<header className="rounded-md bg-primary px-4 py-3 text-primary-foreground">
+  <p className="text-caption opacity-80">Embedded Insurance</p>
+  <p className="text-h7 font-semibold">信頼を、もっと触れる距離に。</p>
+</header>`}
+          />
+
+          <SnippetCard
+            label="② CTA 申込ボタン (Amber)"
+            preview={
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-md bg-[color:var(--cta-color-500)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--cta-color-600)]"
+              >
+                申込を確定する
+              </button>
+            }
+            code={`<button className="inline-flex items-center justify-center rounded-md
+  bg-[color:var(--cta-color-500)] px-4 py-2 text-sm font-semibold text-white
+  hover:bg-[color:var(--cta-color-600)]">
+  申込を確定する
+</button>`}
+          />
+
+          <SnippetCard
+            label="③ 通常ボタン (Teal, 色面)"
+            preview={
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-md bg-[color:var(--button-color-500)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--button-color-600)]"
+              >
+                変更を保存
+              </button>
+            }
+            code={`<button className="inline-flex items-center justify-center rounded-md
+  bg-[color:var(--button-color-500)] px-4 py-2 text-sm font-semibold text-white
+  hover:bg-[color:var(--button-color-600)]">
+  変更を保存
+</button>`}
+          />
+
+          <SnippetCard
+            label="④ 通常ボタン (Teal, 罫線)"
+            preview={
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-md border border-[color:var(--button-color-500)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--button-color-500)] hover:bg-[color:var(--button-color-50)]"
+              >
+                変更を保存
+              </button>
+            }
+            code={`<button className="inline-flex items-center justify-center rounded-md
+  border border-[color:var(--button-color-500)] bg-white px-4 py-2
+  text-sm font-semibold text-[color:var(--button-color-500)]
+  hover:bg-[color:var(--button-color-50)]">
+  変更を保存
+</button>`}
+          />
+
+          <SnippetCard
+            label="⑤ 重要ラベル / バッジ (Cyan secondary)"
+            preview={
+              <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--secondary-color-10)] px-3 py-1 text-caption font-medium text-[color:var(--secondary-color-700)]">
+                重要
+              </span>
+            }
+            code={`<span className="inline-flex items-center gap-1 rounded-full
+  bg-[color:var(--secondary-color-10)] px-3 py-1
+  text-caption font-medium text-[color:var(--secondary-color-700)]">
+  重要
+</span>`}
+          />
+
+          <SnippetCard
+            label="⑥ Card (汎用、ブランドに依存しない)"
+            preview={
+              <div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
+                <p className="text-h7 font-semibold">タイトル</p>
+                <p className="mt-1 text-body text-muted-foreground">
+                  本文。<code className="text-foreground">bg-card</code> / <code className="text-foreground">text-card-foreground</code> /{" "}
+                  <code className="text-foreground">border-border</code> は全テナント共通の semantic です。
+                </p>
+              </div>
+            }
+            code={`<div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
+  <p className="text-h7 font-semibold">タイトル</p>
+  <p className="mt-1 text-body text-muted-foreground">本文</p>
+</div>`}
+          />
+        </CardContent>
+      </Card>
+
       <div className="mt-6 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
         <h3 className="text-h7 font-semibold">テナント差し替え点</h3>
         <p className="mt-2 text-body text-muted-foreground">
-          顧客企業が変えるのは <code>--secondary-color-*</code> と{" "}
-          <code>--primary-color-*</code>、そしてロゴアセットだけ。Semantic 層
-          (<code>--text-primary</code> / <code>--button-primary</code> 等) は
-          自動で追従するので触らないこと。
+          顧客企業が変えるのは 4 つのスケール (<code>--primary-color-*</code>、
+          <code>--secondary-color-*</code>、<code>--button-color-*</code>、
+          <code>--cta-color-*</code>) と、ロゴアセット。Semantic 層 (<code>--primary</code> /
+          <code>--accent</code> 等) は自動で追従するので触らないこと。
         </p>
       </div>
     </Section>
+  );
+}
+
+/**
+ * コードスニペット表示用カード — preview (実描画) + code (className 文字列) を並べる。
+ */
+function SnippetCard({
+  label,
+  preview,
+  code,
+}: {
+  label: string;
+  preview: React.ReactNode;
+  code: string;
+}) {
+  return (
+    <div className="rounded-md border border-border bg-card transition-colors duration-300">
+      <div className="border-b border-border px-4 py-2">
+        <p className="text-caption font-medium text-foreground">{label}</p>
+      </div>
+      <div className="grid gap-0 lg:grid-cols-2">
+        <div className="flex items-center justify-center border-b border-border bg-background p-4 lg:border-b-0 lg:border-r">
+          {preview}
+        </div>
+        <pre className="overflow-x-auto bg-muted/40 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">
+          {code}
+        </pre>
+      </div>
+    </div>
   );
 }
 
