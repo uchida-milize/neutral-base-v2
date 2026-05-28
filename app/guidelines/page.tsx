@@ -59,6 +59,8 @@ export default function GuidelinesPage() {
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
         <Hero />
+        <Pipeline />
+        <Architecture />
         <Principles />
         <Tokens />
         <Typography />
@@ -76,20 +78,50 @@ export default function GuidelinesPage() {
 /* 共通: セクション見出し                                              */
 /* ---------------------------------------------------------------- */
 
+/**
+ * 読み手バッジ — そのセクションが誰向けかを示すヒント。
+ * 「ページを分けない」方針なので、ナビゲーション補助として控えめに表示する。
+ */
+type Audience = "designer" | "developer" | "both";
+
+const AUDIENCE_LABELS: Record<Audience, { icon: string; label: string }> = {
+  designer:  { icon: "🎨", label: "デザイナー向け" },
+  developer: { icon: "💻", label: "開発者向け" },
+  both:      { icon: "🤝", label: "両者向け" },
+};
+
+function AudienceBadge({ audience }: { audience: Audience }) {
+  const { icon, label } = AUDIENCE_LABELS[audience];
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-2 py-0.5 text-tiny font-medium text-muted-foreground"
+      aria-label={`このセクションは ${label}`}
+    >
+      <span aria-hidden>{icon}</span>
+      <span>{label}</span>
+    </span>
+  );
+}
+
 function SectionHeading({
   eyebrow,
   title,
   description,
+  audience,
 }: {
   eyebrow: string;
   title: string;
   description: string;
+  audience?: Audience;
 }) {
   return (
     <header className="mb-8 max-w-3xl">
-      <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-        {eyebrow}
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+          {eyebrow}
+        </p>
+        {audience ? <AudienceBadge audience={audience} /> : null}
+      </div>
       <h2 className="mt-2 text-h5 font-semibold tracking-tight">
         {title}
       </h2>
@@ -116,6 +148,262 @@ function Section({
     >
       {children}
     </section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* NEW: Pipeline (UI/UX ↔ Dev 連携フロー)                              */
+/* ---------------------------------------------------------------- */
+
+function Pipeline() {
+  // 4 ステップ: Figma → CSS → Tailwind → React
+  const steps = [
+    {
+      n: "01",
+      who: "UI/UX",
+      title: "Figma Variables",
+      desc: "デザイナーが Figma で色・サイズ・効果を Variables として定義。JSON エクスポートが一次ソース。",
+      sample: "color/primary-color-500 = #003388",
+    },
+    {
+      n: "02",
+      who: "Bridge",
+      title: "app/globals.css",
+      desc: "Figma の JSON を CSS Custom Properties (162 colors + 13 sizes) として書き出す。テナント別の上書きは components/<tenant>/tokens.css。",
+      sample: "--primary-color-500: #003388;",
+    },
+    {
+      n: "03",
+      who: "Bridge",
+      title: "Tailwind utility (@theme inline)",
+      desc: "Tailwind v4 の @theme inline 経由で、CSS Variable がそのまま utility class として公開される。中間ビルド不要。",
+      sample: "bg-primary, text-primary-foreground, ring-ring",
+    },
+    {
+      n: "04",
+      who: "Dev",
+      title: "React component (.tsx)",
+      desc: "開発者は className に utility を書くだけ。生 hex は触らないため、Figma 側の色変更が即座に全コンポーネントへ波及する。",
+      sample: '<button className="bg-primary text-primary-foreground">',
+    },
+  ];
+
+  return (
+    <Section id="pipeline">
+      <SectionHeading
+        eyebrow="Pipeline"
+        title="UI/UX ↔ Dev 連携フロー"
+        description="デザイナーが Figma Variables を編集してから、開発者の React コンポーネントに色が反映されるまでの 4 ステップ。途中に「ビルド時の同期作業」は介在しないので、Figma の変更がそのまま実装に届きます。"
+        audience="both"
+      />
+
+      <ol className="space-y-3">
+        {steps.map((s) => (
+          <li
+            key={s.n}
+            className="rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300"
+          >
+            <div className="flex items-start gap-4">
+              <span className="font-mono text-h6 font-semibold text-primary">
+                {s.n}
+              </span>
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-h7 font-semibold">{s.title}</h3>
+                  <Badge variant="outline" className="font-mono text-tiny">
+                    {s.who}
+                  </Badge>
+                </div>
+                <p className="text-body text-muted-foreground">{s.desc}</p>
+                <pre className="overflow-x-auto rounded-md bg-muted/60 px-3 py-2 font-mono text-tiny text-muted-foreground">
+                  {s.sample}
+                </pre>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <Card className="mt-6 transition-colors duration-300">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-h7">テナントごとのカスタマイズ</CardTitle>
+          <CardDescription>
+            顧客企業のブランドカラーは <code>components/&lt;tenant&gt;/tokens.css</code> で
+            上書きします。<code>.&lt;tenant&gt;-scope</code> クラスでスコープされているので、
+            同じリポジトリで複数テナントを並行運用できます。
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-body text-muted-foreground">
+          <p>
+            <strong className="text-foreground">テナント追加の自動化:</strong>{" "}
+            <code>./scripts/new-tenant.sh &lt;tenant&gt;</code> を実行すると、
+            <code>app/&lt;tenant&gt;/</code> と <code>components/&lt;tenant&gt;/</code> の
+            雛形が一括生成されます。
+          </p>
+        </CardContent>
+      </Card>
+    </Section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* NEW: Architecture (ファイル構造マップ)                              */
+/* ---------------------------------------------------------------- */
+
+function Architecture() {
+  const tree = `neutral-base-v2/
+├── app/
+│   ├── globals.css              # 162 colors + 13 sizes (Figma source)
+│   ├── layout.tsx               # root layout (geist font, theme provider)
+│   ├── page.tsx                 # 汎用 TOP
+│   ├── guidelines/              # 汎用 Guidelines (このページ)
+│   ├── components/              # 汎用 Components
+│   ├── xxx/                     # XXX テナント (架空サンプル)
+│   │   ├── layout.tsx           # .xxx-scope を適用
+│   │   ├── page.tsx
+│   │   ├── guidelines/
+│   │   ├── components/
+│   │   ├── prototype/           # iPhone フレーム遷移
+│   │   └── windows/             # 2×2 グリッド俯瞰
+│   └── td-financial/            # T&D 本番テナント
+│       └── ...同じ構造
+├── components/
+│   ├── ui/                      # shadcn primitives (29 個)
+│   ├── uikit-catalog.tsx        # Components ページ本体 (25 セクション)
+│   ├── site-header.tsx          # ヘッダー (テナント切替 + フォーカスモード)
+│   ├── theme-toggle.tsx         # ライト/ダーク切替
+│   ├── mock-viewer/             # iphone-frame, canvas-grid
+│   ├── xxx/                     # XXX 固有
+│   │   ├── tokens.css           # ★ ブランドカラー override
+│   │   ├── flow-*.tsx           # 申込フロー (iPhone 内)
+│   │   └── screens.tsx
+│   └── td-financial/            # T&D 固有 (同じ構造)
+├── lib/utils.ts                 # cn() helper
+├── middleware.ts                # Basic Auth (本番 only)
+├── public/
+│   ├── fonts/                   # Noto Sans JP self-hosted
+│   └── assets/                  # ロゴ等
+├── scripts/
+│   ├── new-tenant.sh            # /new-tenant スキル本体
+│   └── rename-tokens.sh         # 一括リネーム用
+└── skills/
+    └── new-tenant/SKILL.md      # Cowork スキル定義`;
+
+  const layers = [
+    {
+      icon: "🎨",
+      title: "デザインソース",
+      who: "UI/UX",
+      paths: ["app/globals.css", "components/<tenant>/tokens.css"],
+      desc: "色・サイズ・タイポの一次定義。Figma Variables と 1:1 対応。",
+    },
+    {
+      icon: "🧩",
+      title: "プリミティブ",
+      who: "UI/UX & Dev",
+      paths: ["components/ui/"],
+      desc: "shadcn/ui の 29 個 (Button / Input / Dialog ...)。両チームの共通言語。",
+    },
+    {
+      icon: "📑",
+      title: "アプリケーションページ",
+      who: "Dev",
+      paths: ["app/<tenant>/*/page.tsx"],
+      desc: "実際の画面実装。Tailwind utility と shadcn primitive を組み合わせる。",
+    },
+    {
+      icon: "🛠️",
+      title: "自動化スキル",
+      who: "Dev",
+      paths: ["scripts/", "skills/"],
+      desc: "テナント追加、トークンリネーム等の繰り返し作業をスクリプト化。",
+    },
+  ];
+
+  return (
+    <Section id="architecture">
+      <SectionHeading
+        eyebrow="Architecture"
+        title="ファイル構造マップ"
+        description="リポジトリのどこに何があるか。デザイナーは globals.css と tokens.css、開発者は components/ と app/ を主に触ります。"
+        audience="developer"
+      />
+
+      {/* 4 つのレイヤー */}
+      <div className="grid gap-3 md:grid-cols-2">
+        {layers.map((l) => (
+          <div
+            key={l.title}
+            className="rounded-lg border border-border bg-card p-4 text-card-foreground transition-colors duration-300"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-h7" aria-hidden>{l.icon}</span>
+              <h3 className="text-h7 font-semibold">{l.title}</h3>
+              <Badge variant="outline" className="font-mono text-tiny">
+                {l.who}
+              </Badge>
+            </div>
+            <p className="mt-2 text-body text-muted-foreground">{l.desc}</p>
+            <ul className="mt-2 space-y-0.5">
+              {l.paths.map((p) => (
+                <li key={p} className="font-mono text-tiny text-primary">
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* file tree */}
+      <Card className="mt-6 transition-colors duration-300">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-h7">file tree (一覧)</CardTitle>
+          <CardDescription>
+            主要ファイルのみ抜粋。完全版は GitHub リポジトリで参照してください。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">
+            {tree}
+          </pre>
+        </CardContent>
+      </Card>
+
+      {/* 技術スタック */}
+      <Card className="mt-4 transition-colors duration-300">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-h7">技術スタックの位置づけ</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-1.5 text-body text-muted-foreground">
+            <li>
+              <strong className="text-foreground">Next.js 16</strong> (App Router, Turbopack)
+              — ルーティングと SSR/SSG。<code>app/&lt;tenant&gt;/</code> がそのまま URL に対応。
+            </li>
+            <li>
+              <strong className="text-foreground">React 19</strong> — UI レイヤー。
+            </li>
+            <li>
+              <strong className="text-foreground">Tailwind CSS v4</strong>
+              — utility-first スタイリング。<code>@theme inline</code> で CSS Variables を
+              utility class として自動公開するので、Figma の値変更が即座に
+              反映される（ビルド設定のメンテナンス不要）。
+            </li>
+            <li>
+              <strong className="text-foreground">shadcn/ui (new-york)</strong>
+              — Radix UI を土台にしたヘッドレス component を <code>components/ui/</code>
+              にコピーして使う方式。「ライブラリ」ではなく「自分のコード」として育てる。
+            </li>
+            <li>
+              <strong className="text-foreground">Vercel</strong>
+              — GitHub の <code>main</code> ブランチ push で自動デプロイ。
+              プレビュー URL は <code>neutral-base.vercel.app/&lt;tenant&gt;</code>。
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </Section>
   );
 }
 
@@ -185,6 +473,7 @@ function Principles() {
         eyebrow="Principles"
         title="設計原則 4 つ"
         description="どの導入先でも崩さない、デザインシステムの土台です。これに反する個別最適化は採用しません。"
+        audience="both"
       />
       <ol className="space-y-3">
         {PRINCIPLES.map((p) => (
@@ -217,6 +506,7 @@ function Tokens() {
         eyebrow="Tokens"
         title="セマンティックトークン"
         description="shadcn の表記 (background / foreground / primary / ...) に Figma の生値を流し込む二段構成。コンポーネントは生値ではなくセマンティック名のみを参照します。"
+        audience="both"
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -325,6 +615,7 @@ function Typography() {
         eyebrow="Typography"
         title="11 段階のフォントスケール"
         description="Figma の size.json から取り込んだ 11 段階。導入先のフォントファミリーは差し替え可能ですが、サイズと階層関係は共通とします。"
+        audience="both"
       />
       <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
         <Table>
@@ -375,6 +666,7 @@ function Accessibility() {
         eyebrow="Accessibility"
         title="最低ライン: WCAG 2.2 AA"
         description="各社のガイドラインはこの最低ラインを下回ってはいけません。導入先の業種に応じて上振れさせるのは可です。"
+        audience="both"
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
@@ -429,6 +721,7 @@ function Components() {
         eyebrow="Components"
         title="共通コンポーネント運用"
         description="プリミティブは shadcn/ui (new-york)。スタイルはトークン経由でのみ上書きします。"
+        audience="both"
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
@@ -484,6 +777,7 @@ function ThemeAndResponsive() {
         eyebrow="Theme & Responsive"
         title="ライト・ダーク・モバイル"
         description="単一のトークンセットから 4 環境 (ライト × デスクトップ / ライト × モバイル / ダーク × デスクトップ / ダーク × モバイル) に展開します。"
+        audience="developer"
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
@@ -539,6 +833,7 @@ function BrandSatellites() {
         eyebrow="Brand-specific"
         title="各社別ガイドライン"
         description="共通ガイドラインを土台として、各導入先のブランド固有ルールは子ページに分離されています。"
+        audience="both"
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Link

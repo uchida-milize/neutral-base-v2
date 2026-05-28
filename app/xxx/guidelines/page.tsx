@@ -71,20 +71,50 @@ export default function TdGuidelinesPage() {
 /* セクション共通                                                    */
 /* ---------------------------------------------------------------- */
 
+/**
+ * 読み手バッジ — そのセクションが誰向けかを示すヒント。
+ * 「ページを分けない」方針なので、ナビゲーション補助として控えめに表示する。
+ */
+type Audience = "designer" | "developer" | "both";
+
+const AUDIENCE_LABELS: Record<Audience, { icon: string; label: string }> = {
+  designer:  { icon: "🎨", label: "デザイナー向け" },
+  developer: { icon: "💻", label: "開発者向け" },
+  both:      { icon: "🤝", label: "両者向け" },
+};
+
+function AudienceBadge({ audience }: { audience: Audience }) {
+  const { icon, label } = AUDIENCE_LABELS[audience];
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-2 py-0.5 text-tiny font-medium text-muted-foreground"
+      aria-label={`このセクションは ${label}`}
+    >
+      <span aria-hidden>{icon}</span>
+      <span>{label}</span>
+    </span>
+  );
+}
+
 function SectionHeading({
   eyebrow,
   title,
   description,
+  audience,
 }: {
   eyebrow: string;
   title: string;
   description: string;
+  audience?: Audience;
 }) {
   return (
     <header className="mb-8 max-w-3xl">
-      <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-        {eyebrow}
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
+          {eyebrow}
+        </p>
+        {audience ? <AudienceBadge audience={audience} /> : null}
+      </div>
       <h2 className="mt-2 text-h5 font-semibold tracking-tight">
         {title}
       </h2>
@@ -179,6 +209,7 @@ function BrandPillars() {
         eyebrow="Brand Pillars"
         title="ブランドの 4 つの柱"
         description="すべてのデザイン判断はこの 4 つに照らして妥当性を確認します。迷ったら最も保守的な選択を採ります。"
+        audience="both"
       />
       <div className="grid gap-4 md:grid-cols-2">
         {PILLARS.map(({ icon: Icon, title, body }) => (
@@ -212,6 +243,7 @@ function ColorRules() {
         eyebrow="Color"
         title="Teal 基調 + Cyan アクセント + Teal 通常ボタン + Amber CTA"
         description="XXX のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        audience="both"
       />
 
       {/* スウォッチ群 — 5 スケール */}
@@ -420,6 +452,7 @@ function ButtonRules() {
         eyebrow="Buttons"
         title="5 種類のボタンを意味で使い分ける"
         description="XXX 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ティール = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
+        audience="both"
       />
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -591,6 +624,7 @@ function TypographyRules() {
         eyebrow="Typography"
         title="モバイル基準の 8 段スケール"
         description="td-tokens.css は 'モバイルチューニング済み' のスケール。ワイヤーフレームでは 7–10px が混在していたものを下限 12px に引き上げ、業務系の可読性を確保しています。フォントは Geist Sans + Noto Sans JP のセルフホスト構成。"
+        audience="both"
       />
       <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
         <Table>
@@ -677,6 +711,7 @@ function AccessibilityRules() {
         eyebrow="Accessibility"
         title="20 代から 70 代までを一枚の UI で支える"
         description="XXX のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        audience="both"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -806,6 +841,7 @@ function RadiusAndShadow() {
         eyebrow="Shape"
         title="角丸とシャドウ"
         description="角丸は意図的に階段状。ボタンは 10px、フォーム 14px、カード 18px、フィーチャーカード 24px の 4 段で構造を表します。"
+        audience="designer"
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <RadiusBox label="sm" value="6px" />
@@ -871,6 +907,7 @@ function ContentRules() {
         eyebrow="Voice & Content"
         title="コピーは事実から、語尾は『です・ます』"
         description="XXX のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        audience="designer"
       />
 
       <div className="grid gap-4 md:grid-cols-2">
