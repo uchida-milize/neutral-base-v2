@@ -16,7 +16,7 @@ import { JpText } from "@/components/jp-text";
 export const metadata: Metadata = {
   title: "THEO × T&Dファイナンシャル | つみたて安心ほけん",
   description:
-    "THEO「つみたて安心ほけん」(引受: T&Dファイナンシャル生命) 組込申込ページのデザインシステム。TOP / Guidelines / Components / Prototype / Windows を一望できるポータル。",
+    "THEO「つみたて安心ほけん」(引受: T&Dファイナンシャル生命) 組込申込ページのデザインシステム。TOP / ガイドライン / コンポーネント / プロトタイプ / スクリーン を一望できるポータル。",
 };
 
 /**
@@ -74,25 +74,25 @@ export default function TheoTdfHome() {
             <NavCard
               href="/theo-tdf/guidelines"
               icon={BookOpen}
-              title="Guidelines"
+              title="ガイドライン"
               desc="ブランドの 4 つの柱、カラー運用 (THEO Blue / T&D Red / button / cta / warm)、ボタン体系、タイポグラフィ、アクセシビリティ方針。"
             />
             <NavCard
               href="/theo-tdf/components"
               icon={LayoutGrid}
-              title="Components"
+              title="コンポーネント"
               desc="THEO × T&D 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
             />
             <NavCard
               href="/theo-tdf/prototype"
               icon={Smartphone}
-              title="Prototype"
+              title="プロトタイプ"
               desc="iPhone フレーム内で つみたて安心ほけん の申込フロー 7 画面 (TOP → 情報入力 → シミュレーション → メアド → カード → 注意事項 → 完了) をタップで遷移。"
             />
             <NavCard
               href="/theo-tdf/windows"
               icon={Grid3x3}
-              title="Windows"
+              title="スクリーン"
               desc="同じ 7 画面を 375px 幅で左から右に並べたキャンバス。画面間の流れと情報量を一目で俯瞰。"
             />
           </div>

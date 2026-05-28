@@ -75,25 +75,25 @@ export default function TdFinancialHome() {
             <NavCard
               href="/td-financial/guidelines"
               icon={BookOpen}
-              title="Guidelines"
+              title="ガイドライン"
               desc="ブランドの 4 つの柱、カラー運用 (navy primary / red secondary / blue CTA)、ボタン 5 種類、タイポグラフィ、アクセシビリティ方針。"
             />
             <NavCard
               href="/td-financial/components"
               icon={LayoutGrid}
-              title="Components"
+              title="コンポーネント"
               desc="T&Dファイナンシャル生命 仕様で描画された Buttons / Forms / Tables / Badges 等のコンポーネントカタログ。"
             />
             <NavCard
               href="/td-financial/prototype"
               icon={Smartphone}
-              title="Prototype"
+              title="プロトタイプ"
               desc="iPhone フレーム内で Portal の 4 画面 (Dashboard / Contracts / 詳細 / Settings) をタップ操作で遷移。"
             />
             <NavCard
               href="/td-financial/windows"
               icon={Grid3x3}
-              title="Windows"
+              title="スクリーン"
               desc="同じ 4 画面を iPhone フレームに入れたまま 2×2 グリッドで並列表示。Figma キャンバス風。"
             />
           </div>

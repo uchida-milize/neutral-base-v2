@@ -303,11 +303,11 @@ new_entry = (
     f'    brandInitial: "{init}",\n'
     f'    brandHref: "/{tenant}",\n'
     "    items: [\n"
-    f'      {{ href: "/{tenant}", label: "TOP", match: "exact" }},\n'
-    f'      {{ href: "/{tenant}/guidelines", label: "Guidelines", match: "exact" }},\n'
-    f'      {{ href: "/{tenant}/components", label: "Components", match: "exact" }},\n'
-    f'      {{ href: "/{tenant}/prototype", label: "Prototype", match: "exact" }},\n'
-    f'      {{ href: "/{tenant}/windows", label: "Windows", match: "exact" }},\n'
+    f'      {{ href: "/{tenant}", label: "ホーム", match: "exact" }},\n'
+    f'      {{ href: "/{tenant}/guidelines", label: "ガイドライン", match: "exact" }},\n'
+    f'      {{ href: "/{tenant}/components", label: "コンポーネント", match: "exact" }},\n'
+    f'      {{ href: "/{tenant}/prototype", label: "プロトタイプ", match: "exact" }},\n'
+    f'      {{ href: "/{tenant}/windows", label: "スクリーン", match: "exact" }},\n'
     "    ],\n"
     "  },\n"
 )

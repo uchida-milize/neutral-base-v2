@@ -797,7 +797,7 @@ export function UikitCatalog() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Components</BreadcrumbPage>
+                  <BreadcrumbPage>コンポーネント</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

@@ -4,7 +4,7 @@ import { TdfFlowScreenStatic } from "@/components/theo-tdf/flow-prototype";
 import { FLOW_META } from "@/components/theo-tdf/flow-meta";
 
 export const metadata: Metadata = {
-  title: "Windows | THEO × T&Dファイナンシャル",
+  title: "スクリーン | THEO × T&Dファイナンシャル",
   description:
     "THEO「つみたて安心ほけん」申込フローの 7 画面を 375px 幅のページとして左から右に並べ、各画面の情報要素と遷移の流れを一目で俯瞰できるキャンバス。",
 };
@@ -23,7 +23,7 @@ export default function TdfPrototypeCanvasPage() {
       <div className="mx-auto mb-10 max-w-5xl">
         <header className="max-w-3xl">
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-            Windows
+            Screens
           </p>
           <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
             スクリーン

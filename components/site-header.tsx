@@ -57,11 +57,11 @@ const TENANTS: Tenant[] = [
     brandInitial: "T",
     brandHref: "/xxx",
     items: [
-      { href: "/xxx", label: "TOP", match: "exact" },
-      { href: "/xxx/guidelines", label: "Guidelines", match: "exact" },
-      { href: "/xxx/components", label: "Components", match: "exact" },
-      { href: "/xxx/prototype", label: "Prototype", match: "exact" },
-      { href: "/xxx/windows", label: "Windows", match: "exact" },
+      { href: "/xxx", label: "ホーム", match: "exact" },
+      { href: "/xxx/guidelines", label: "ガイドライン", match: "exact" },
+      { href: "/xxx/components", label: "コンポーネント", match: "exact" },
+      { href: "/xxx/prototype", label: "プロトタイプ", match: "exact" },
+      { href: "/xxx/windows", label: "スクリーン", match: "exact" },
     ],
   },
   {
@@ -70,11 +70,11 @@ const TENANTS: Tenant[] = [
     brandInitial: "A",
     brandHref: "/aaa",
     items: [
-      { href: "/aaa", label: "TOP", match: "exact" },
-      { href: "/aaa/guidelines", label: "Guidelines", match: "exact" },
-      { href: "/aaa/components", label: "Components", match: "exact" },
-      { href: "/aaa/prototype", label: "Prototype", match: "exact" },
-      { href: "/aaa/windows", label: "Windows", match: "exact" },
+      { href: "/aaa", label: "ホーム", match: "exact" },
+      { href: "/aaa/guidelines", label: "ガイドライン", match: "exact" },
+      { href: "/aaa/components", label: "コンポーネント", match: "exact" },
+      { href: "/aaa/prototype", label: "プロトタイプ", match: "exact" },
+      { href: "/aaa/windows", label: "スクリーン", match: "exact" },
     ],
   },
   {
@@ -86,11 +86,11 @@ const TENANTS: Tenant[] = [
     brandLogo: "https://is.tdf-life.co.jp/tdcustomer/assets/Logo_Type-BZQyE79C.png",
     brandLogoWithLabel: false,
     items: [
-      { href: "/td-financial", label: "TOP", match: "exact" },
-      { href: "/td-financial/guidelines", label: "Guidelines", match: "exact" },
-      { href: "/td-financial/components", label: "Components", match: "exact" },
-      { href: "/td-financial/prototype", label: "Prototype", match: "exact" },
-      { href: "/td-financial/windows", label: "Windows", match: "exact" },
+      { href: "/td-financial", label: "ホーム", match: "exact" },
+      { href: "/td-financial/guidelines", label: "ガイドライン", match: "exact" },
+      { href: "/td-financial/components", label: "コンポーネント", match: "exact" },
+      { href: "/td-financial/prototype", label: "プロトタイプ", match: "exact" },
+      { href: "/td-financial/windows", label: "スクリーン", match: "exact" },
     ],
   },
   {
@@ -99,11 +99,11 @@ const TENANTS: Tenant[] = [
     brandInitial: "T",
     brandHref: "/theo-tdf",
     items: [
-      { href: "/theo-tdf", label: "TOP", match: "exact" },
-      { href: "/theo-tdf/guidelines", label: "Guidelines", match: "exact" },
-      { href: "/theo-tdf/components", label: "Components", match: "exact" },
-      { href: "/theo-tdf/prototype", label: "Prototype", match: "exact" },
-      { href: "/theo-tdf/windows", label: "Windows", match: "exact" },
+      { href: "/theo-tdf", label: "ホーム", match: "exact" },
+      { href: "/theo-tdf/guidelines", label: "ガイドライン", match: "exact" },
+      { href: "/theo-tdf/components", label: "コンポーネント", match: "exact" },
+      { href: "/theo-tdf/prototype", label: "プロトタイプ", match: "exact" },
+      { href: "/theo-tdf/windows", label: "スクリーン", match: "exact" },
     ],
   },
   {
@@ -112,11 +112,11 @@ const TENANTS: Tenant[] = [
     brandInitial: "A",
     brandHref: "/acme",
     items: [
-      { href: "/acme", label: "TOP", match: "exact" },
-      { href: "/acme/guidelines", label: "Guidelines", match: "exact" },
-      { href: "/acme/components", label: "Components", match: "exact" },
-      { href: "/acme/prototype", label: "Prototype", match: "exact" },
-      { href: "/acme/windows", label: "Windows", match: "exact" },
+      { href: "/acme", label: "ホーム", match: "exact" },
+      { href: "/acme/guidelines", label: "ガイドライン", match: "exact" },
+      { href: "/acme/components", label: "コンポーネント", match: "exact" },
+      { href: "/acme/prototype", label: "プロトタイプ", match: "exact" },
+      { href: "/acme/windows", label: "スクリーン", match: "exact" },
     ],
   },
   // 将来の他社はここに追加 (例)
@@ -126,9 +126,9 @@ const TENANTS: Tenant[] = [
   //   brandInitial: "A",
   //   brandHref: "/aaa",
   //   items: [
-  //     { href: "/aaa", label: "TOP", match: "exact" },
-  //     { href: "/aaa/guidelines", label: "Guidelines", match: "exact" },
-  //     { href: "/aaa/components", label: "Components", match: "exact" },
+  //     { href: "/aaa", label: "ホーム", match: "exact" },
+  //     { href: "/aaa/guidelines", label: "ガイドライン", match: "exact" },
+  //     { href: "/aaa/components", label: "コンポーネント", match: "exact" },
   //   ],
   // },
 ];
@@ -140,9 +140,9 @@ const GENERIC: Tenant = {
   brandInitial: "D",
   brandHref: "/",
   items: [
-    { href: "/", label: "TOP", match: "exact" },
-    { href: "/guidelines", label: "Guidelines", match: "exact" },
-    { href: "/components", label: "Components", match: "exact" },
+    { href: "/", label: "ホーム", match: "exact" },
+    { href: "/guidelines", label: "ガイドライン", match: "exact" },
+    { href: "/components", label: "コンポーネント", match: "exact" },
   ],
 };
 
