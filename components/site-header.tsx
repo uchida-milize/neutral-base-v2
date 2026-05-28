@@ -93,6 +93,19 @@ const TENANTS: Tenant[] = [
       { href: "/td-financial/windows", label: "Windows", match: "exact" },
     ],
   },
+  {
+    pathPrefix: "/theo-tdf",
+    brandLabel: "THEO × T&Dファイナンシャル",
+    brandInitial: "T",
+    brandHref: "/theo-tdf",
+    items: [
+      { href: "/theo-tdf", label: "TOP", match: "exact" },
+      { href: "/theo-tdf/guidelines", label: "Guidelines", match: "exact" },
+      { href: "/theo-tdf/components", label: "Components", match: "exact" },
+      { href: "/theo-tdf/prototype", label: "Prototype", match: "exact" },
+      { href: "/theo-tdf/windows", label: "Windows", match: "exact" },
+    ],
+  },
   // 将来の他社はここに追加 (例)
   // {
   //   pathPrefix: "/aaa",

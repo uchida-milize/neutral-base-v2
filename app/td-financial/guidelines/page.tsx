@@ -27,6 +27,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { JpText } from "@/components/jp-text";
+import { AutoColorScale, AutoWarmScale } from "@/components/guidelines/auto-color-scale";
+import { AutoButtonGrid } from "@/components/guidelines/auto-button-grid";
 
 /* =================================================================
  * /td-financial/guidelines — T&Dファイナンシャル生命 専用デザインガイドライン
@@ -246,76 +248,29 @@ function ColorRules() {
         audience="both"
       />
 
-      {/* スウォッチ群 — 5 スケール (tokens.css と完全一致) */}
+      {/* スウォッチ群 — 5 スケール (テナントの tokens.css の値を自動反映) */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <ScaleBlock
+        <AutoColorScale
+          prefix="primary-color"
           title="primary-color"
-          subtitle="コーポレートカラー1 · Navy #003388 · ブランド主要色 / ヘッダー / sidebar"
-          stops={[
-            { name: "10", hex: "#e5eaf3", inv: false },
-            { name: "50", hex: "#ccd6e7", inv: false },
-            { name: "100", hex: "#a6b8d5", inv: false },
-            { name: "200", hex: "#8099c4", inv: false },
-            { name: "300", hex: "#4d70aa", inv: true },
-            { name: "400", hex: "#265199", inv: true },
-            { name: "500", hex: "#003388", inv: true, primary: true },
-            { name: "600", hex: "#002e7a", inv: true },
-            { name: "700", hex: "#002666", inv: true },
-          ]}
+          subtitle="コーポレートカラー1 · ブランド主要色 / ヘッダー / sidebar"
         />
-        <ScaleBlock
+        <AutoColorScale
+          prefix="secondary-color"
           title="secondary-color"
-          subtitle="コーポレートカラー2 · Red #db0034 · highlight / badge / アクセント"
-          stops={[
-            { name: "10", hex: "#fce5ea", inv: false },
-            { name: "50", hex: "#f7ccd6", inv: false },
-            { name: "100", hex: "#f4a5b5", inv: false },
-            { name: "200", hex: "#ed7f99", inv: false },
-            { name: "300", hex: "#e64d71", inv: true },
-            { name: "400", hex: "#e02652", inv: true },
-            { name: "500", hex: "#db0034", inv: true, primary: true },
-            { name: "600", hex: "#c5002f", inv: true },
-            { name: "700", hex: "#a40027", inv: true },
-          ]}
+          subtitle="コーポレートカラー2 · highlight / link / アクセント"
         />
-        <ScaleBlock
+        <AutoColorScale
+          prefix="button-color"
           title="button-color"
-          subtitle="通常ボタンカラー · Blue #344a9c · 色面 + 罫線の 2 バリアント"
-          stops={[
-            { name: "50", hex: "#eaecf5", inv: false },
-            { name: "100", hex: "#d6daeb", inv: false },
-            { name: "200", hex: "#b5bcdc", inv: false },
-            { name: "300", hex: "#99a4cd", inv: false },
-            { name: "400", hex: "#7180b8", inv: true },
-            { name: "500", hex: "#344a9c", inv: true, primary: true },
-            { name: "600", hex: "#2f438c", inv: true },
-            { name: "700", hex: "#273875", inv: true },
-          ]}
+          subtitle="通常ボタンカラー · 色面 + 罫線の 2 バリアント"
         />
-        <ScaleBlock
+        <AutoColorScale
+          prefix="cta-color"
           title="cta-color"
-          subtitle="CTA 申込ボタンカラー · Red #db0034 · 申込/前進 専用 (secondary と同色)"
-          stops={[
-            { name: "50", hex: "#fce5ea", inv: false },
-            { name: "100", hex: "#f7ccd6", inv: false },
-            { name: "200", hex: "#f4a5b5", inv: false },
-            { name: "300", hex: "#ed7f99", inv: false },
-            { name: "400", hex: "#e64d71", inv: true },
-            { name: "500", hex: "#db0034", inv: true, primary: true },
-            { name: "600", hex: "#c5002f", inv: true },
-            { name: "700", hex: "#a40027", inv: true },
-          ]}
+          subtitle="CTA 申込ボタンカラー · 申込/前進 専用 (1 画面 1 つ)"
         />
-        <ScaleBlock
-          title="warm (neutral)"
-          subtitle="無彩色 neutral · 背景 / 区切り線。装飾色は持ち込まない"
-          stops={[
-            { name: "50", hex: "#fafaf9", inv: false, primary: true },
-            { name: "100", hex: "#f5f5f4", inv: false },
-            { name: "200", hex: "#e7e5e4", inv: false },
-            { name: "300", hex: "#d6d3d1", inv: false },
-          ]}
-        />
+        <AutoWarmScale subtitle="無彩色 neutral · 背景 / 区切り線。装飾色は持ち込まない" />
       </div>
 
       {/* Tailwind マッピング表 (token → Tailwind class → CSS var → 実際の値) */}
@@ -565,50 +520,7 @@ function SnippetCard({
   );
 }
 
-function ScaleBlock({
-  title,
-  subtitle,
-  stops,
-}: {
-  title: string;
-  subtitle: string;
-  stops: {
-    name: string;
-    hex: string;
-    inv?: boolean;
-    primary?: boolean;
-  }[];
-}) {
-  return (
-    <Card className="overflow-hidden transition-colors duration-300">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-h7 font-mono">{title}</CardTitle>
-        <CardDescription>{subtitle}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div
-          className="grid overflow-hidden rounded-md border border-border"
-          style={{ gridTemplateColumns: `repeat(${stops.length}, minmax(0, 1fr))` }}
-        >
-          {stops.map((s) => (
-            <div
-              key={s.name}
-              className="relative flex flex-col items-center justify-center py-3 text-[10px] leading-none"
-              style={{ background: s.hex, color: s.inv ? "#fff" : "#0f172a" }}
-              title={`${title}-${s.name} · ${s.hex}`}
-            >
-              <span className="font-semibold">{s.name}</span>
-              <span className="mt-1 font-mono opacity-80">{s.hex}</span>
-              {s.primary ? (
-                <span className="absolute right-1 top-1 size-1.5 rounded-full bg-current opacity-70" />
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// ScaleBlock は AutoColorScale (components/guidelines/auto-color-scale.tsx) に統合済み。
 
 /* ---------------------------------------------------------------- */
 /* 4. ボタン運用 (T&Dファイナンシャル生命 の核)                                            */
@@ -624,86 +536,8 @@ function ButtonRules() {
         audience="both"
       />
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <ButtonRow
-          name="cta (申込専用)"
-          desc="申込/前進 (positive forward action)。1 画面に 1 つまで。コーポレートカラー Red を CTA 専用で運用。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#db0034] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(219,0,52,0.5)] hover:bg-[#c5002f]"
-            >
-              申込を確定する
-            </button>
-          }
-          token="--cta-color-500 · #db0034"
-        />
-        <ButtonRow
-          name="primary (通常: 色面)"
-          desc="通常の確定 (保存・変更を反映)。色面の filled バリアント。エンタープライズの基本ボタン。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#344a9c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2f438c]"
-            >
-              変更を保存
-            </button>
-          }
-          token="--button-color-500 · #344a9c"
-        />
-        <ButtonRow
-          name="primary-outline (通常: 罫線)"
-          desc="通常確定の罫線バリアント。同じ button-color で色面と並列に使える。canceling action や軽い primary に。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] border border-[#344a9c] bg-white px-4 py-2 text-sm font-semibold text-[#344a9c] hover:bg-[#eaecf5]"
-            >
-              変更を保存
-            </button>
-          }
-          token="--button-color-500 · border #344a9c"
-        />
-        <ButtonRow
-          name="neutral"
-          desc="キャンセル / 戻る。primary と並べて主従を明示する。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#eef1f6] px-4 py-2 text-sm font-medium text-[#475569] hover:bg-[#e3e7ee]"
-            >
-              やめる
-            </button>
-          }
-          token="--button-neutral · #eef1f6"
-        />
-        <ButtonRow
-          name="outline (サブ)"
-          desc="サブ操作 (CSV 出力・エクスポート等)。グレー罫線。primary-outline とは違って、通常 primary に降格しないアクション。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] border border-[#c9d0dd] bg-white px-4 py-2 text-sm font-medium text-[#0f172a] hover:bg-[#f9fafc]"
-            >
-              CSV 出力
-            </button>
-          }
-          token="--button-outline · border #c9d0dd"
-        />
-        <ButtonRow
-          name="destructive"
-          desc="削除 (不可逆操作)。small サイズに限定。CTA と同じ Red を使うが、文言・配置・サイズで区別する。"
-          example={
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[#db0034] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#c5002f]"
-            >
-              アカウントを削除
-            </button>
-          }
-          token="--cta-color-500 · #db0034 (small size only)"
-        />
-      </div>
+      {/* 5 種ボタン (テナントの tokens.css の値を自動反映) */}
+      <AutoButtonGrid />
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
@@ -762,32 +596,7 @@ function ButtonRules() {
   );
 }
 
-function ButtonRow({
-  name,
-  desc,
-  example,
-  token,
-}: {
-  name: string;
-  desc: string;
-  example: React.ReactNode;
-  token: string;
-}) {
-  return (
-    <Card className="transition-colors duration-300">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-h7 font-mono">{name}</CardTitle>
-          <Badge variant="outline" className="font-mono text-tiny">
-            {token}
-          </Badge>
-        </div>
-        <CardDescription>{desc}</CardDescription>
-      </CardHeader>
-      <CardContent className="pb-5">{example}</CardContent>
-    </Card>
-  );
-}
+// ButtonRow は AutoButtonGrid (components/guidelines/auto-button-grid.tsx) に統合済み。
 
 /* ---------------------------------------------------------------- */
 /* 5. タイポグラフィ                                                  */
@@ -864,7 +673,8 @@ function TypographyRules() {
               (セルフホスト · 100–900 の 9 ウェイト)
             </p>
             <p>
-              コード: <strong className="text-foreground">Geist Mono</strong>
+              コード: <strong className="text-foreground">Inter</strong>{" "}
+              (Google Fonts、`--font-mono` 変数経由で全 `font-mono` utility に適用)
             </p>
             <p className="text-caption">
               見出し font-weight = 600 / 本文 line-height = 1.6 / 見出し

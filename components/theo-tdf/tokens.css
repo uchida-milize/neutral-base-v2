@@ -1,0 +1,111 @@
+/* =================================================================
+ * THEO × T&Dファイナンシャル — tenant tokens (scoped)
+ *
+ * .theo-tdf-scope の中だけ shadcn セマンティック層が THEO 仕様で上書きされる。
+ * /theo-tdf/layout.tsx で全 /theo-tdf/* ページをこのクラスでラップして適用する。
+ *
+ * 4 つのカラースケール (アンカーはお客様指定):
+ *   --primary-color-*    : Primary       — #065fe3 (深いインク調のブルー)
+ *   --secondary-color-*  : Secondary     — #ff748d (コーラル/ピンク、アクセント)
+ *   --button-color-*     : Button color  — #007dff (明るい THEO Blue、filled button)
+ *   --cta-color-*        : CTA (申込確定) — #ff2d2d (強い純赤、1 画面 1 つ)
+ *
+ * + 無彩色:
+ *   --warm-*             : Stone neutral — 背景・区切り
+ *
+ * スケール生成ロジック (完全に同色相のトーン違い):
+ *   - 各スケールは H, S を anchor の値に **完全固定**
+ *   - L のみが anchor 相対で補間: 10〜400 は anchor → 白に向かって t={0.92, 0.80,
+ *     0.62, 0.42, 0.23, 0.08} だけ補間、600/700 は anchor → 黒に t={0.18, 0.42}
+ *   - 500 は anchor そのもの
+ *   - これにより明るい anchor (例: secondary L=72.7%) でも 10 が 500 より明るく、
+ *     700 が 500 より暗いことが必ず保証される (単調性)
+ *
+ *   ※ HSL ↔ sRGB 変換の丸めで H が ±0.5°、S が ±1% 程度ずれるが、肉眼での同色相性は
+ *     維持される。
+ * ================================================================= */
+
+.theo-tdf-scope {
+  /* ---- 1. primary-color (Primary #065fe3 — Ink Blue) ---- */
+  --primary-color-10:  #e9f2fe;
+  --primary-color-50:  #c9defe;
+  --primary-color-100: #98c1fc;
+  --primary-color-200: #62a0fb;
+  --primary-color-300: #2f81fa;
+  --primary-color-400: #0768f8;
+  --primary-color-500: #065fe3;   /* anchor (H≈216° S≈95% L≈46%) */
+  --primary-color-600: #054eba;
+  --primary-color-700: #033784;
+
+  /* ---- 2. secondary-color (Secondary #ff748d — Coral) ---- */
+  --secondary-color-10:  #fff4f6;
+  --secondary-color-50:  #ffe3e8;
+  --secondary-color-100: #ffcad4;
+  --secondary-color-200: #ffaebd;
+  --secondary-color-300: #ff94a7;
+  --secondary-color-400: #ff7f96;
+  --secondary-color-500: #ff748d;  /* anchor (H≈349° S=100% L≈73%) */
+  --secondary-color-600: #ff3156;
+  --secondary-color-700: #d70027;
+
+  /* ---- 3. button-color (Button #007dff — Bright Blue, filled CTA) ---- */
+  --button-color-10:  #ebf5ff;
+  --button-color-50:  #cce5ff;
+  --button-color-100: #9eceff;
+  --button-color-200: #6bb4ff;
+  --button-color-300: #3b9bff;
+  --button-color-400: #1487ff;
+  --button-color-500: #007dff;     /* anchor (H≈211° S=100% L=50%) */
+  --button-color-600: #0066d1;
+  --button-color-700: #004894;
+
+  /* ---- 4. cta-color (CTA #ff2d2d — 申込確定専用、強い純赤) ---- *
+   * 役割で区別:
+   *   secondary-color : badge / 重要ラベル / コーラルアクセント (#ff748d)
+   *   cta-color       : 申込/前進ボタン (1 画面 1 つ) — secondary より純赤で訴求力高
+   */
+  --cta-color-10:  #ffeeee;
+  --cta-color-50:  #ffd5d5;
+  --cta-color-100: #ffafaf;
+  --cta-color-200: #ff8585;
+  --cta-color-300: #ff5d5d;
+  --cta-color-400: #ff3e3e;
+  --cta-color-500: #ff2d2d;        /* anchor (H=0° S=100% L≈59%) */
+  --cta-color-600: #f60000;
+  --cta-color-700: #ae0000;
+
+  /* ---- 5. warm bg scale (Stone neutral) ---- */
+  --warm-50:  #fafaf9;
+  --warm-100: #f5f5f4;
+  --warm-200: #e7e5e4;
+  --warm-300: #d6d3d1;
+
+  /* ---- 6. semantic shortcuts (shadcn primitives が自動追従) ---- */
+  --primary: var(--primary-color-500);            /* Ink Blue #065fe3 */
+  --primary-foreground: #ffffff;
+  --ring: var(--primary-color-500);
+  --accent: var(--primary-color-10);              /* hover 等の薄い背景 */
+  --accent-foreground: var(--primary-color-700);
+
+  /* theo-tdf-scope 用エイリアス — 直接参照したい場面で使用 */
+  --theo-tdf-primary:           var(--primary-color-500);
+  --theo-tdf-primary-hover:     var(--primary-color-600);
+  --theo-tdf-button:            var(--button-color-500);   /* 通常 filled */
+  --theo-tdf-button-hover:      var(--button-color-600);
+  --theo-tdf-button-foreground: #ffffff;
+  --theo-tdf-cta:               var(--cta-color-500);      /* 申込確定 */
+  --theo-tdf-cta-hover:         var(--cta-color-600);
+  --theo-tdf-cta-foreground:    #ffffff;
+  --theo-tdf-secondary:         var(--secondary-color-500);
+  --theo-tdf-secondary-foreground: #ffffff;
+  --theo-tdf-warm:              var(--warm-50);
+}
+
+/* ダーク時は primary を 1 段明るくして "沈み" を防ぐ */
+.dark .theo-tdf-scope {
+  --primary: var(--primary-color-300);            /* primary 同色相の明 (#2f81fa) */
+  --primary-foreground: #ffffff;
+  --ring: var(--primary-color-300);
+  --accent: rgba(255, 255, 255, 0.06);
+  --accent-foreground: #f4f4f5;
+}

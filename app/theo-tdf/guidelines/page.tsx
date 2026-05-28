@@ -244,8 +244,8 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="5 スケール構成 (primary / secondary / button / cta / warm)"
-        description="AAA のカラーは 5 つのスケールで構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        title="Teal 基調 + Cyan アクセント + Teal 通常ボタン + Amber CTA"
+        description="XXX のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
         audience="both"
       />
 
@@ -990,13 +990,13 @@ function Footer() {
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
-            <Link href="/aaa/components">Components を見る</Link>
+            <Link href="/theo-tdf/components">Components を見る</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/aaa/prototype">Prototype を試す</Link>
+            <Link href="/theo-tdf/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/aaa">XXX 入口へ</Link>
+            <Link href="/theo-tdf">XXX 入口へ</Link>
           </Button>
         </div>
       </div>
