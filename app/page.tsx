@@ -60,7 +60,6 @@ function Hero() {
       />
       {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
       <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
-        {/* 上段: Badge + h1 (フル幅、「、」位置で自然に 2 行に折り返す) */}
         <Badge variant="secondary" className="gap-1.5">
           <LayersIcon className="size-3" />
           Common Design System
@@ -68,129 +67,13 @@ function Hero() {
         <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
           <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
         </h1>
-
-        {/* 下段: 本文 (左、max-w-2xl) + 線画イラスト (右、lg 以上で表示) — 上下センター揃え */}
-        <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-          <p className="max-w-2xl text-body text-muted-foreground sm:text-body-lg">
-            <JpText>
-              色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。
-            </JpText>
-          </p>
-          {/* 線画イラスト — 本文の右側、上下センター揃え (lg 以上のみ表示) */}
-          <div className="hidden shrink-0 lg:block">
-            <HeroIllustration />
-          </div>
-        </div>
+        <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+          <JpText>
+            色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。
+          </JpText>
+        </p>
       </div>
     </section>
-  );
-}
-
-/**
- * HeroIllustration — Hero 右側に置くアナログ線画。
- *
- * 構成:
- *   - 3 つの phone モックを baseline 上に並置 (左/中央/右、微妙な傾き)
- *   - 各 phone は同じ構造 (header / card / 本文 / CTA) を持ち、上部に異なる "色ドット数" を持つ
- *     ことで「同じ土台、ブランドごとに異なる色」を表現
- *   - 下部に shared な波打つ baseline 2 本 (土台 = "共通基盤")
- *   - 上部に破線の連結アーク (「同じデザイン言語」のメタファー)
- *   - 控えめな ✦ sparkle で手書き感
- *
- * 表現:
- *   - 純粋な line art (fill なし、stroke=currentColor のみ)
- *   - text-foreground/55 で文章の邪魔をしない強度
- *   - rounded line caps + slightly curved baseline + 傾いた phone でアナログ感を演出
- */
-function HeroIllustration() {
-  return (
-    <svg
-      viewBox="0 0 280 220"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-auto w-[260px] text-foreground/55 dark:text-foreground/65"
-      aria-hidden
-    >
-      {/* Phone 1 — 左、わずかに左傾 */}
-      <g transform="translate(28 50) rotate(-4 28 60)">
-        <rect x="0" y="0" width="56" height="118" rx="8" />
-        <rect x="22" y="6" width="14" height="2.5" rx="1.25" />
-        <line x1="9" y1="22" x2="47" y2="22" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="29" x2="38" y2="29" strokeWidth="1" opacity="0.9" />
-        {/* hero card */}
-        <rect x="9" y="38" width="38" height="22" rx="2" strokeWidth="1.1" />
-        <line x1="13" y1="46" x2="35" y2="46" strokeWidth="1" opacity="0.65" />
-        <line x1="13" y1="52" x2="30" y2="52" strokeWidth="1" opacity="0.65" />
-        {/* content lines */}
-        <line x1="9" y1="70" x2="47" y2="70" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="77" x2="42" y2="77" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="84" x2="35" y2="84" strokeWidth="1" opacity="0.9" />
-        {/* CTA */}
-        <rect x="13" y="96" width="30" height="12" rx="3" strokeWidth="1.2" />
-        {/* 1 色ドット (brand A) */}
-        <circle cx="42" cy="50" r="2.6" strokeWidth="1.2" />
-      </g>
-
-      {/* Phone 2 — 中央、直立 */}
-      <g transform="translate(112 46)">
-        <rect x="0" y="0" width="56" height="122" rx="8" />
-        <rect x="22" y="6" width="14" height="2.5" rx="1.25" />
-        <line x1="9" y1="22" x2="47" y2="22" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="29" x2="38" y2="29" strokeWidth="1" opacity="0.9" />
-        <rect x="9" y="38" width="38" height="22" rx="2" strokeWidth="1.1" />
-        <line x1="13" y1="46" x2="35" y2="46" strokeWidth="1" opacity="0.65" />
-        <line x1="13" y1="52" x2="30" y2="52" strokeWidth="1" opacity="0.65" />
-        <line x1="9" y1="70" x2="47" y2="70" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="77" x2="42" y2="77" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="84" x2="35" y2="84" strokeWidth="1" opacity="0.9" />
-        <rect x="13" y="96" width="30" height="12" rx="3" strokeWidth="1.2" />
-        {/* 2 色ドット (brand B — primary + secondary) */}
-        <circle cx="37" cy="50" r="2.6" strokeWidth="1.2" />
-        <circle cx="45" cy="50" r="2.6" strokeWidth="1.2" />
-      </g>
-
-      {/* Phone 3 — 右、わずかに右傾 */}
-      <g transform="translate(196 50) rotate(4 28 60)">
-        <rect x="0" y="0" width="56" height="118" rx="8" />
-        <rect x="22" y="6" width="14" height="2.5" rx="1.25" />
-        <line x1="9" y1="22" x2="47" y2="22" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="29" x2="38" y2="29" strokeWidth="1" opacity="0.9" />
-        <rect x="9" y="38" width="38" height="22" rx="2" strokeWidth="1.1" />
-        <line x1="13" y1="46" x2="35" y2="46" strokeWidth="1" opacity="0.65" />
-        <line x1="13" y1="52" x2="30" y2="52" strokeWidth="1" opacity="0.65" />
-        <line x1="9" y1="70" x2="47" y2="70" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="77" x2="42" y2="77" strokeWidth="1" opacity="0.9" />
-        <line x1="9" y1="84" x2="35" y2="84" strokeWidth="1" opacity="0.9" />
-        <rect x="13" y="96" width="30" height="12" rx="3" strokeWidth="1.2" />
-        {/* 3 色ドット (brand C — primary + secondary + button) */}
-        <circle cx="32" cy="50" r="2.6" strokeWidth="1.2" />
-        <circle cx="40" cy="50" r="2.6" strokeWidth="1.2" />
-        <circle cx="48" cy="50" r="2.6" strokeWidth="1.2" />
-      </g>
-
-      {/* Foundation — 2 本の波打つ baseline (= 「共通の土台」のメタファー) */}
-      <path d="M 6 188 Q 70 181, 140 187 T 274 188" strokeWidth="1.5" />
-      <path d="M 12 195 Q 70 192, 140 196 T 268 196" strokeWidth="1" opacity="0.45" />
-
-      {/* 連結アーク (上、破線 — 「同じデザイン言語」) */}
-      <path
-        d="M 50 32 Q 140 10, 230 32"
-        strokeWidth="0.9"
-        strokeDasharray="2 4"
-        opacity="0.5"
-      />
-
-      {/* 手書き感を出す控えめな ✦ sparkle 3 つ */}
-      <g opacity="0.55" strokeWidth="0.9">
-        <path d="M 18 30 v -5 M 15.5 27.5 h 5" />
-        <path d="M 262 26 v -4 M 260 24 h 4" />
-        <path d="M 142 208 v -4 M 140 206 h 4" />
-      </g>
-    </svg>
   );
 }
 
