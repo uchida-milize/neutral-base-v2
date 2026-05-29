@@ -67,7 +67,7 @@ function Hero() {
         <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
           <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
         </h1>
-        <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+        <p className="mt-4 max-w-[940px] text-body leading-[1.8] text-muted-foreground sm:text-body-lg">
           <JpText>
             色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。
           </JpText>
