@@ -161,7 +161,7 @@ export function TheoTdfClaudeDesignShell() {
   ];
 
   return (
-    <div className="font-jp min-h-screen w-full bg-warm-100">
+    <div className="theo-tdf-cd font-jp min-h-screen w-full bg-warm-100 transition-colors duration-300">
       <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
         <Rail step={step} go={go} />
         <main className="py-10 flex flex-col items-center gap-4">

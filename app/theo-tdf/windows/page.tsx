@@ -51,7 +51,7 @@ function StaticScreen({
         <h3 className="mt-1 text-h7 font-semibold">{label}</h3>
       </figcaption>
       <div
-        className="font-jp rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm"
+        className="theo-tdf-cd font-jp rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300"
         style={{ width: 390 }}
       >
         <div className="flex flex-col" style={{ minHeight: 600 }}>
