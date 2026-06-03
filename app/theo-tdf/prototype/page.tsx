@@ -1,45 +1,24 @@
 import type { Metadata } from "next";
 
-import { TdfFlowPrototype } from "@/components/theo-tdf/flow-prototype";
+import { TheoTdfClaudeDesignShell } from "@/components/theo-tdf/claude-design/app-shell";
 
 export const metadata: Metadata = {
-  title: "Prototype | XXX Design System",
+  title: "プロトタイプ | THEO × T&Dファイナンシャル",
   description:
-    "XXX Embedded Insurance 申込フロー (Guidance → Product → Plan → 情報入力 → 入力確認 → eKYC → 健康告知 → 申込確認 → 決済 → 完了) を iPhone フレーム内でタップ操作できる本物さながらのプロトタイプ。",
+    "THEO「つみたて安心ほけん」申込フロー 10 画面 (イントロ → プラン選択 → 補償内容 → メール送信 → 申込フォーム → 内容確認 → お支払い登録 → カード入力 → カード確認 → 完了) を iPhone フレーム内でタップ操作できるクリッカブルプロトタイプ。Claude Design 出力 (2026-06-03) を本格 TSX 実装に取り込んだもの。",
 };
 
 /**
  * /theo-tdf/prototype
  *
- * 申込フロー 11 画面を iPhone フレームの中で進む / 戻るできるクリッカブル
- * プロトタイプ。チップによる任意ジャンプも可能。
+ * Claude Design (claude.ai/design) で生成された申込フロー 10 画面の
+ * クリッカブルプロトタイプ。左サイドの Rail で任意ジャンプ、画面下部の
+ * 前 / 次ボタンで step 移動ができる。
+ *
+ * 実装は app-shell.tsx + screens.tsx の 2 ファイルに分離されており、
+ * 各画面の中身を編集したい場合は screens.tsx を、流れや shell の見た目を
+ * 編集したい場合は app-shell.tsx を触る。
  */
-export default function TdfPrototypeSinglePage() {
-  return (
-    <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
-      <header className="mb-8 max-w-3xl">
-        <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
-          Prototype
-        </p>
-        <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
-          プロトタイプ
-        </h1>
-        <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-          画面内の{" "}
-          <strong className="text-foreground">赤いボタン</strong>{" "}
-          を押すたびに STEP が進みます。上部のチップで任意の画面に直接ジャンプも可能です。
-          並列比較したい場合は{" "}
-          <a
-            href="/theo-tdf/windows"
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            俯瞰ビュー
-          </a>
-          {" "}を参照。
-        </p>
-      </header>
-
-      <TdfFlowPrototype />
-    </main>
-  );
+export default function TheoTdfPrototypePage() {
+  return <TheoTdfClaudeDesignShell />;
 }
