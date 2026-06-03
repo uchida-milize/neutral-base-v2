@@ -784,3 +784,128 @@ ladder = {
 2. **Priority 3 `/import-claude-design` の設計**: Claude Design 出力 zip を `app/<tenant>/<page>/` に自動配置するスキル。本日構築した theo-tdf の flow-screens.tsx 構造 (ScreenImg + FLOW 配列) を真似ると、画像ベース → React ベースへの段階移行も同じパターンで扱える。
 3. **theo-tdf の TSX 化**: 現在は `<img>` を iPhone フレームに流し込んでいるだけ。Claude Design に投げて React コンポーネント化すれば、CTA ボタンや入力欄を「本物の」UI に置き換えられる (ホットゾーンの onNext/onBack も実 button に統合できる)。
 
+---
+
+## 10. Claude Design に渡す仕様伝達テンプレ
+
+外部の Claude Design (claude.ai/design) で prototype を作る前に、以下の prompt を最初に貼っておくことで、戻り後の Cowork 側統合コストをほぼゼロにできる。本リポジトリの design system を Claude Design が事前に理解した状態で出力するため、独自の color palette や font scale を新規定義することがなくなる。
+
+### 10.1 使い方
+
+新しい Claude Design セッションを開いて、最初に以下の prompt を一度貼る:
+
+> 「以下が既存の Design System の仕様です。新規の color token / font / text scale は定義せず、これらの Tailwind utility 名をそのまま使ってください。」
+
+そして以下のテンプレを貼り付ける。続いて、お客様の作りたい画面の要件を続けて投入する。
+
+### 10.2 テンプレ本文 (コピペ用)
+
+```
+このリポジトリは Next.js 16 + Tailwind v4 + shadcn/ui (new-york style) の構成で、
+デザイントークンは以下の Tailwind utility 名で参照します。新規 prototype を作る
+場合、必ずこれらの class 名を使ってください (独自の color palette / font / text
+scale は定義しないでください)。
+
+== セマンティック色 (shadcn 経由、light/dark で自動反転) ==
+  bg-background      ページ背景
+  bg-card            カード背景
+  bg-popover         ポップオーバー背景
+  bg-muted           muted な surface
+  bg-accent          ハイライト surface
+  bg-destructive     破壊的アクション
+  text-foreground    主要テキスト
+  text-muted-foreground   弱めテキスト
+  text-card-foreground    カード内テキスト
+  border-border      標準罫線
+  ring-ring          フォーカスリング
+
+== ブランド色スケール (テナント tokens.css 経由、テナント切替時は色だけ変わる) ==
+  primary-color-{10,50,100,200,300,400,500,600,700}    コーポレートカラー1
+  secondary-color-{...}                                  コーポレートカラー2
+  button-color-{...}                                     通常 filled ボタン
+  cta-color-{...}                                        申込/前進 CTA (1 画面 1 つ)
+  warm-{50,100,200,300}                                  無彩色 neutral 背景
+
+  ※ Tailwind utility 形式の bg-primary-500 / text-cta-700 / border-button-300
+    なども全て利用可能です (@theme inline で alias 済み)。
+
+== タイポ (Figma Variables 由来、汎用デザインシステム用の大きめスケール) ==
+  text-h1 (56px), text-h2 (48px), text-h3 (40px), text-h4 (32px),
+  text-h5 (24px), text-h6 (20px), text-h7 (19.2px),
+  text-body-lg (16px), text-body (14px), text-caption (12px), text-tiny (10px)
+
+== タイポ (Claude Design 出力用のコンパクトスケール、モバイル画面密度向け) ==
+  text-cd-h2 (34px), text-cd-h3 (28px), text-cd-h4 (24px),
+  text-cd-h5 (20px), text-cd-h6 (18px), text-cd-h7 (16px)
+  ※ 申込画面のような密度のあるモバイル UI ではこちらを使用。
+
+== フォント ==
+  font-jp      Zen Kaku Gothic New + Hiragino Kaku Gothic ProN + Yu Gothic
+  font-en      Geist (Latin / 数字)
+  font-mono    Inter (= 旧 Geist Mono の置き換え、コード/識別子ラベル用)
+  font-chillax Chillax (見出しの Latin 用、デザインシステム説明ページのみ)
+
+== ダーク対応 (任意) ==
+  next-themes で <html class="dark"> を切り替えます。
+  semantic 色 (bg-background, text-foreground 等) は .dark 時に自動反転されます。
+  画面側はクラス名を書くだけで dark mode 対応になります。
+  ダーク独自の細かい色 (例: bg-warm-100 を dark で #1b212b にしたい) が必要な場合は、
+  生 hex を埋め込まず、JSON で「dark のとき bg-warm-100 → #1b212b」のような
+  指定リストを別途渡してください。Cowork 側で globals.css に転記します。
+
+== shadcn primitives (これを優先して使う) ==
+  Button (variants: default / destructive / outline / secondary / ghost / link)
+  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+  Badge (variants: default / secondary / destructive / outline)
+  Input, Label, Textarea
+  Select, SelectTrigger, SelectContent, SelectItem
+  Checkbox, RadioGroup, RadioGroupItem
+  Switch
+  Table, TableHeader, TableBody, TableRow, TableHead, TableCell
+  Tabs, TabsList, TabsTrigger, TabsContent
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle
+  Popover, PopoverTrigger, PopoverContent
+  Tooltip, TooltipTrigger, TooltipContent
+  Alert, AlertTitle, AlertDescription
+  Separator, Avatar, AspectRatio
+
+  ※ アイコンは lucide-react を使ってください (例: import { ChevronRight } from "lucide-react")
+
+== 推奨アンチパターン ==
+  - bg-white / bg-black の直接使用 → bg-card / bg-background / bg-foreground を
+  - text-neutral-{N} / text-gray-{N} の直接使用 → text-foreground / text-muted-foreground を
+  - 独自 hex の埋め込み (bg-[#xxxxxx]) → 上記いずれかの token を
+  - 独自 font-size の埋め込み (text-[14px]) → text-body 等のスケールを
+  - 自作 Button コンポーネント → shadcn の <Button> を
+```
+
+### 10.3 ダーク値が必要な場合の追加情報
+
+ダークモード固有の RGB 値も指定したい場合は、上記テンプレと一緒に以下のような JSON を渡す:
+
+```
+このプロトタイプは dark mode 時に以下の RGB 値を使ってください。
+
+{
+  "bg-warm-100": "#131820",
+  "bg-warm-50":  "#232a36",
+  "bg-card":     "#1b212b",
+  "border-default": "#2c3441",
+  "text-foreground": "#e7ebf1",
+  "text-muted-foreground": "#b0b9c6"
+}
+
+(Tailwind class 名はそのまま、`dark:` variant で自動で RGB を切替えてください。)
+```
+
+### 10.4 反省: 2026-06-03 セッションでの教訓
+
+theo-tdf の Claude Design 取り込みでは、最初に上記テンプレを渡さなかったため:
+
+- Claude Design 側で独自 Tailwind config (`primary`, `secondary`, `button`, `cta`, `warm` の独立スケール) が定義された
+- Cowork 側で受け取った後、`@theme inline` に alias を追加 (`--color-primary-{step}` → `--primary-color-{step}`) する作業が発生
+- ダークモードは `[data-theme="dark"] [class~="bg-white"]` のような utility class 強制上書き形式 (`!important`) で実装された
+- 結果として動作はするが、design system の semantic 層を経由しない「平行レイヤー」になった
+
+幸い、ブランド色 (primary/secondary/button/cta) は alias 経由で tokens.css と接続されており、テナント差し替えは引き続き有効。次回からは §10.2 のテンプレを最初に渡せばこの遠回りを回避できる。
+
