@@ -467,8 +467,8 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   );
 }
 
-export function Simulator({ m, setM, y, setY }: { m: number; setM: SetNum; y: number; setY: SetNum }) {
-  const [open, setOpen] = useState(false);
+export function Simulator({ m, setM, y, setY, initialSimOpen }: { m: number; setM: SetNum; y: number; setY: SetNum; initialSimOpen?: boolean }) {
+  const [open, setOpen] = useState(initialSimOpen ?? false);
   return (
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
       <SectionLabel>保険料シミュレーション</SectionLabel>
@@ -505,6 +505,9 @@ export function ScreenStep2({
   setM,
   y,
   setY,
+  initialNoticeOpen,
+  initialAgree,
+  initialSimOpen,
 }: {
   go: Go;
   sel: string;
@@ -513,10 +516,13 @@ export function ScreenStep2({
   setM: SetNum;
   y: number;
   setY: SetNum;
+  initialNoticeOpen?: boolean;
+  initialAgree?: boolean;
+  initialSimOpen?: boolean;
 }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
-  const [agree, setAgree] = useState(false);
-  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [agree, setAgree] = useState(initialAgree ?? false);
+  const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
   const heroRef = useRef<HTMLDivElement>(null);
   const [solid, setSolid] = useState(false);
   const bindScroll = (el: HTMLDivElement | null) => {
@@ -625,7 +631,7 @@ export function ScreenStep2({
             </div>
           </div>
 
-          <Simulator m={m} setM={setM} y={y} setY={setY} />
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} />
 
           <div className="rounded-2xl border border-warm-200 bg-white p-5">
             <SectionLabel>ご確認事項</SectionLabel>
@@ -758,6 +764,9 @@ export function ScreenForm({
   setM,
   y,
   setY,
+  initialEditOpen,
+  initialSheetRes,
+  initialSame,
 }: {
   go: Go;
   sel: string;
@@ -765,12 +774,15 @@ export function ScreenForm({
   setM: SetNum;
   y: number;
   setY: SetNum;
+  initialEditOpen?: boolean;
+  initialSheetRes?: boolean;
+  initialSame?: boolean;
 }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [nat, setNat] = useState("jp");
-  const [same, setSame] = useState(true);
-  const [editOpen, setEditOpen] = useState(false);
-  const [sheetRes, setSheetRes] = useState(false);
+  const [same, setSame] = useState(initialSame ?? true);
+  const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
+  const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
   const yen = (v: number) => v.toLocaleString("ja-JP");
 
   // 契約者住所（受取人「契約者と同じ」用の自動入力値）
@@ -1067,12 +1079,28 @@ export function AgreeItem({
   );
 }
 
-export function ScreenStep4({ go, sel, m, y }: { go: Go; sel: string; m: number; y: number }) {
+export function ScreenStep4({
+  go,
+  sel,
+  m,
+  y,
+  initialOpenIdx,
+  initialChecks,
+  initialAcctOpen,
+}: {
+  go: Go;
+  sel: string;
+  m: number;
+  y: number;
+  initialOpenIdx?: number;
+  initialChecks?: boolean[];
+  initialAcctOpen?: boolean;
+}) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
-  const [checks, setChecks] = useState([false, false, false, false, false]);
-  const [openIdx, setOpenIdx] = useState(-1);
-  const [acctOpen, setAcctOpen] = useState(false);
+  const [checks, setChecks] = useState(initialChecks ?? [false, false, false, false, false]);
+  const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
+  const [acctOpen, setAcctOpen] = useState(initialAcctOpen ?? false);
   const all = checks.every(Boolean);
   const toggleCheck = (i: number) => setChecks((a) => a.map((v, k) => (k === i ? !v : v)));
   return (

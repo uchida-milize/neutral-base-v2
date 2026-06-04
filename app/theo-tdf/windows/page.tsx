@@ -26,17 +26,22 @@ type ScreenDef = {
   key: string;
   label: string;
   el: React.ReactNode;
+  /** 状態バリアント (ボトムシート等) は 820px 固定高さで描画 */
+  height?: number;
 };
 
 function StaticScreen({
   label,
   index,
   total,
+  height,
   children,
 }: {
   label: string;
   index: number;
   total: number;
+  /** ボトムシート等 absolute 配置の状態バリアントは 820px 固定にする */
+  height?: number;
   children: React.ReactNode;
 }) {
   return (
@@ -48,10 +53,13 @@ function StaticScreen({
         <h3 className="mt-1 text-h7 font-semibold">{label}</h3>
       </figcaption>
       <div
-        className="theo-tdf-cd font-jp rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300"
-        style={{ width: 390 }}
+        className="theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300"
+        style={{ width: 390, height }}
       >
-        <div className="flex flex-col" style={{ minHeight: 600 }}>
+        <div
+          className="flex flex-col"
+          style={height ? { height: "100%" } : { minHeight: 600 }}
+        >
           {children}
         </div>
       </div>
@@ -69,6 +77,12 @@ export default function TheoTdfWindowsPage() {
     { key: "card",     label: "カード入力 (外部)",                 el: <ScreenCardInput go={noop} /> },
     { key: "cardconf", label: "カード確認 (外部)",                 el: <ScreenCardConfirm go={noop} /> },
     { key: "done",     label: "完了",                              el: <ScreenDone go={noop} /> },
+    // ---- 状態バリアント (モーダル / アコーディオン展開状態の Figma 書き出し用) ----
+    { key: "st-notice",  label: "状態① プラン選択 / 重要事項ボトムシート",       height: 820, el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialNoticeOpen /> },
+    { key: "st-sim",     label: "状態② プラン選択 / 給付予想額アコーディオン",   el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialSimOpen /> },
+    { key: "st-edit",    label: "状態③ 申込フォーム / 積立修正シート＋給付予想額", height: 820, el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} initialEditOpen initialSheetRes /> },
+    { key: "st-agree",   label: "状態④ 内容確認 / 同意項目①展開＋全チェック",    el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialOpenIdx={0} initialChecks={[true, true, true, true, true]} /> },
+    { key: "st-acct",    label: "状態⑤ 内容確認 / 引落口座設定 展開",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen /> },
   ];
 
   return (
@@ -97,7 +111,7 @@ export default function TheoTdfWindowsPage() {
 
       <div className="flex flex-wrap items-start justify-center gap-x-8 gap-y-12">
         {screens.map((s, i) => (
-          <StaticScreen key={s.key} label={s.label} index={i} total={screens.length}>
+          <StaticScreen key={s.key} label={s.label} index={i} total={screens.length} height={s.height}>
             {s.el}
           </StaticScreen>
         ))}
