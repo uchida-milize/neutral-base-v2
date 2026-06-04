@@ -774,6 +774,13 @@
   .fade-in  { animation: theoTdfFadeIn 0.22s ease-out; }
 }
 
+/* theo-tdf prototype 用 success (メール認証済み表示 / GMO 画面のアクセント)
+   Claude Design 2026-06-04 出力の styles.css 由来 */
+.theo-tdf-cd {
+  --success: #1f8a4c;
+  --success-10: #e8f6ee;
+}
+
 /* ===============================================================
  * Claude Design 出力 (theo-tdf prototype) ダークモード
  * - 既存 ThemeToggle が <html data-theme="dark"> を付ける
@@ -785,6 +792,8 @@
 [data-theme="dark"] .theo-tdf-cd {
   --warm-100: #1b212b;
   --warm-300: #3a4350;
+  --success: #2fbf6b;
+  --success-10: #11271b;
   background-color: #10151c !important;
 }
 
@@ -811,6 +820,7 @@
 [data-theme="dark"] .theo-tdf-cd [class~="border-primary-100"]                    { border-color: #1f3a66 !important; }
 [data-theme="dark"] .theo-tdf-cd [class~="border-primary-200"]                    { border-color: #264a82 !important; }
 [data-theme="dark"] .theo-tdf-cd [class~="border-[color:var(--secondary-color-100)]"] { border-color: #4a2230 !important; }
+[data-theme="dark"] .theo-tdf-cd [class~="border-[color:var(--secondary-color-200)]"] { border-color: #5a2a3a !important; }
 
 /* text */
 [data-theme="dark"] .theo-tdf-cd [class~="text-neutral-900"]                      { color: #f3f5f8 !important; }

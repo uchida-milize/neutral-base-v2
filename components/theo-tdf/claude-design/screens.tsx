@@ -7,18 +7,26 @@
    AppBar の `title` prop は将来用に予約済み。 */
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 /* ============================================================
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: outputs/claude-design-import/td/project/screens.jsx (2026-06-03 取り込み)
+   原典: TD 組込1-handoff.tar.gz / project/screens.jsx (2026-06-04 取り込み)
+
+   2026-06-04 版での画面構成変更 (旧 10 画面 → 新 6 画面):
+   - イントロ + プラン選択 + 補償内容 + メール送信 → ScreenStep2 (1ページ統合)
+   - 内容確認 + お支払い登録 → ScreenStep4 (1ページ統合)
+   - カード入力 / カード確認 (外部 GMO) は 2 画面のまま
+   - ステッパーは全 4 ステップ (カード承認はステップ外)
 
    ポート時の変更点:
    - "use client"、ESM import (UMD React から)
    - text-h{2-7} → text-cd-h{2-7} に置換 (Claude Design の 16-34px scale)
    - アセットパス assets/... → /assets/theo-tdf/...
+   - bg-success → bg-[color:var(--success)] (globals.css の theo-tdf-cd 区画で定義)
+   - ローカル dark toggle は削除 (サイト共通 ThemeToggle が <html data-theme> を制御)
    - 最小限の inline 型付け
    ============================================================ */
 
@@ -44,6 +52,10 @@ export type AgreeItemData = {
   t: string;
   blocks: AgreeBlock[];
 };
+
+type Go = (n: number) => void;
+type SetNum = React.Dispatch<React.SetStateAction<number>>;
+type SetStr = React.Dispatch<React.SetStateAction<string>>;
 
 /* ---------------- ICONS (line / wireframe) ---------------- */
 export const Ic = {
@@ -78,7 +90,19 @@ export function PH({ className = "", label }: { className?: string; label: strin
 }
 
 // Buttons — cta (申込/前進), button (通常), outline (罫線)
-export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
+export function Btn({
+  kind = "button",
+  children,
+  onClick,
+  disabled,
+  full = true,
+}: {
+  kind?: "cta" | "button" | "outline" | "ghost";
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  full?: boolean;
+}) {
   const base = "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 h-12 text-cd-h7 font-bold transition-colors active:scale-[.99]";
   const kinds = {
     cta: "bg-cta-500 text-white hover:bg-cta-600",
@@ -95,14 +119,14 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 }
 
 // Phone app bar (THEO header)
-export function AppBar({ title, onBack }: { title?: string; onBack?: () => void }) {
+export function AppBar({ title, onBack, brandVisible = true }: { title?: string; onBack?: () => void; brandVisible?: boolean }) {
   return (
     <div className="sticky top-0 z-20 bg-primary text-primary-foreground">
       <div className="flex items-center justify-between px-3 h-14">
         <button onClick={onBack} className="grid place-items-center w-9 h-9 -ml-1 rounded-full hover:bg-white/10">
           {onBack ? <Ic.chevL className="w-5 h-5" /> : <span className="w-5" />}
         </button>
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
           <span className="font-en font-semibold tracking-[0.1em] text-cd-h7">THEO</span>
           <span className="text-cd-h7 font-medium truncate">つみたて安心ほけん</span>
           <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;THEO&gt;</span>
@@ -116,7 +140,7 @@ export function AppBar({ title, onBack }: { title?: string; onBack?: () => void 
 }
 
 // step progress dots
-export function Steps({ n, of = 7 }: { n: number; of?: number }) {
+export function Steps({ n, of = 4 }: { n: number; of?: number }) {
   return (
     <div className="flex items-center gap-1.5 px-5 py-3 bg-white border-b border-warm-200">
       {Array.from({ length: of }).map((_, i) => (
@@ -131,7 +155,17 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // 入力グループの囲い（契約者情報 / 保険金受取人 など）
-export function GroupCard({ title, sub, icon: Icon, children }: { title: string; sub?: string; icon?: (p: { className?: string }) => React.ReactNode; children: React.ReactNode }) {
+export function GroupCard({
+  title,
+  sub,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  sub?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
   return (
     <section className="rounded-2xl border border-warm-200 bg-white overflow-hidden shadow-sm">
       <div className="flex items-center gap-2.5 px-5 py-3.5 bg-warm-50 border-b border-warm-200">
@@ -165,7 +199,21 @@ export function ActionBar({ children }: { children: React.ReactNode }) {
 }
 
 // Wireframe form field
-export function Field({ label, placeholder, required, hint, value, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; disabled?: boolean }) {
+export function Field({
+  label,
+  placeholder,
+  required,
+  hint,
+  value,
+  disabled,
+}: {
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  hint?: string;
+  value?: string;
+  disabled?: boolean;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
@@ -199,7 +247,21 @@ export function LockedField({ label, value }: { label: string; value: string }) 
 }
 
 // Wireframe select (dropdown)
-export function Select({ label, required, hint, value, options = [], disabled }: { label: string; required?: boolean; hint?: string; value?: string; options?: string[]; disabled?: boolean }) {
+export function Select({
+  label,
+  required,
+  hint,
+  value,
+  options = [],
+  disabled,
+}: {
+  label: string;
+  required?: boolean;
+  hint?: string;
+  value?: string;
+  options?: string[];
+  disabled?: boolean;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
@@ -220,79 +282,9 @@ export function Select({ label, required, hint, value, options = [], disabled }:
 export const PREFS = ["都道府県を選択","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
 
 /* ============================================================
-   SCREEN 1 — イントロ / ヒーロー
+   プラン定義
    ============================================================ */
-export function ScreenIntro({ go }: { go: (n: number) => void }) {
-  return (
-    <>
-      <AppBar title="保険" />
-      <div className="flex-1 overflow-y-auto no-sb">
-        {/* hero */}
-        <div className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-5" />
-          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 text-cd-h3 font-bold leading-snug">信頼を、もっと<br/>触れる距離に。</h1>
-          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
-          <div className="mt-4"><Badge>重要</Badge></div>
-        </div>
-
-        <div className="px-5 py-6 space-y-6">
-          {/* hook card */}
-          <div className="rounded-2xl border border-warm-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3 mb-2">
-              <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
-              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
-            </div>
-            <p className="text-cd-h6 font-bold text-neutral-800 leading-relaxed">
-              働けなくなっても、<br/>つみたては止めない。
-            </p>
-            <p className="mt-2 text-caption text-neutral-500 leading-relaxed">
-              就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
-            </p>
-            <div className="mt-4 rounded-lg border border-warm-200 overflow-hidden bg-white">
-              <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
-            </div>
-          </div>
-
-          {/* value points */}
-          <div className="space-y-3">
-            {[
-              { i: Ic.shield, t: "申込みは10分", d: "クレジットカード払い。入力は最小限。" },
-              { i: Ic.chart,  t: "マイページでかんたん運用管理", d: "保険料の変更、給付額の変更、ご請求、控除証明書。" },
-              { i: Ic.heart,  t: "少額から、毎月", d: "月額数百円から。いつでも見直し可能。" },
-            ].map((v, k) => (
-              <div key={k} className="flex items-start gap-3 rounded-xl border border-warm-200 bg-white p-4">
-                <div className="grid place-items-center w-10 h-10 rounded-full bg-primary-10 text-primary-600 shrink-0">
-                  <v.i className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-cd-h7 font-bold text-neutral-800">{v.t}</p>
-                  <p className="text-caption text-neutral-500 leading-relaxed">{v.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* premium teaser */}
-          <div className="flex items-end justify-between rounded-xl bg-warm-100 px-5 py-4">
-            <span className="text-caption text-neutral-500">保険料</span>
-            <span className="text-neutral-800"><span className="font-en text-cd-h2 font-semibold">¥480</span><span className="text-cd-h7"> / 月〜</span></span>
-          </div>
-        </div>
-      </div>
-
-      <ActionBar>
-        <Btn kind="cta" onClick={() => go(1)}>プランを見る<Ic.chevR className="w-4 h-4" /></Btn>
-        <p className="text-center text-caption text-neutral-400">引受保険会社 / 重要事項は申込前にご確認ください</p>
-      </ActionBar>
-    </>
-  );
-}
-
-/* ============================================================
-   SCREEN 2 — プラン選択
-   ============================================================ */
-export const PLANS = [
+export const PLANS: Plan[] = [
   { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
     feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "免責期間：60日"] },
   { id: "b", name: "がん", price: "¥980", lead: "初めてがんと診断された場合に、給付金が支払われます",
@@ -314,13 +306,13 @@ export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean
         {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
       </div>
       <p className="mt-2 text-caption text-neutral-500">{p.lead}</p>
-      <div className="mt-3 flex items-baseline gap-1 text-neutral-800">
-        <span className="font-en text-cd-h4 font-semibold">{p.price}</span><span className="text-caption">/ 月</span>
+      <div className="mt-3 flex items-baseline justify-end gap-1 text-neutral-800">
+        <span className="font-en text-cd-h4 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
       </div>
       <ul className="mt-3 space-y-1.5 border-t border-warm-200 pt-3">
         {p.feat.map((f, i) => (
           <li key={i} className="flex items-center gap-2 text-caption text-neutral-600">
-            <Ic.check className="w-3.5 h-3.5 text-primary shrink-0" />{f}
+            <Ic.check className="w-3.5 h-3.5 text-primary shrink-0" />{f.replace(/¥([\d,]+)/g, "$1 円")}
           </li>
         ))}
       </ul>
@@ -328,32 +320,21 @@ export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean
   );
 }
 
-export function ScreenPlans({ go, sel, setSel }: { go: (n: number) => void; sel: string; setSel: (s: string) => void }) {
+/* Divider used inside combined (multi-section) pages */
+export function StepSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <>
-      <AppBar title="プラン選択" onBack={() => go(0)} />
-      <Steps n={2} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-4">
-        <div>
-          <h2 className="text-cd-h5 font-bold text-neutral-800">プランを選ぶ</h2>
-          <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
-        </div>
-        {PLANS.map((p) => (
-          <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
-        ))}
-        <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed">
-          ※ 保険料は年齢・性別により変動します。最終的な保険料は次の画面でご確認いただけます。
-        </div>
+    <section className="space-y-4">
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
+        <span className="flex-1 h-px bg-warm-200" />
       </div>
-      <ActionBar>
-        <Btn kind="button" onClick={() => go(2)} disabled={!sel}>補償内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
-      </ActionBar>
-    </>
+      {children}
+    </section>
   );
 }
 
 /* ============================================================
-   SCREEN 3 — 補償内容の確認
+   共有部品 — 確認 Row / 金額体裁 / シミュレーション
    ============================================================ */
 export function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
   return (
@@ -364,10 +345,36 @@ export function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }
   );
 }
 
-// Shared積立スライダー（Simulator と 申込フォームの修正シートで共用）
-export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: (n: number) => void; y: number; setY: (n: number) => void; onInput?: () => void }) {
+// 補償項目の金額表示を「50,000 円」体裁（大きな数字＋円）に整形
+export function FeatValue({ v }: { v?: string }) {
+  const m = (v || "").match(/^(.*?)¥([\d,]+)(.*)$/);
+  if (!m) return <span className="text-cd-h7 text-neutral-700">{v}</span>;
+  const [, pre, num, post] = m;
+  return (
+    <span className="text-neutral-700 whitespace-nowrap">
+      {pre && <span className="text-caption text-neutral-500">{pre}</span>}
+      <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{num}</span>
+      <span className="text-caption"> 円{post}</span>
+    </span>
+  );
+}
+
+// Shared 積立スライダー（Simulator と 申込フォームの修正シートで共用）
+export function SimSliders({
+  m,
+  setM,
+  y,
+  setY,
+  onInput,
+}: {
+  m: number;
+  setM: SetNum;
+  y: number;
+  setY: SetNum;
+  onInput?: () => void;
+}) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
-  const sliderStyle = { accentColor: "var(--primary-color-500)" };
+  const sliderStyle: React.CSSProperties = { accentColor: "var(--primary-color-500)" };
   const onM = (e: React.ChangeEvent<HTMLInputElement>) => { setM(+e.target.value); onInput && onInput(); };
   const onY = (e: React.ChangeEvent<HTMLInputElement>) => { setY(+e.target.value); onInput && onInput(); };
   return (
@@ -412,7 +419,7 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const annual = m * 12;
   const maxBenefit = annual * y;
-  const rows = [];
+  const rows: { n: number; age: number; premium: number; benefit: number; cum: number }[] = [];
   for (let n = 0; n <= y; n++) {
     const age = startAge + n;
     const benefit = annual * (y - n);
@@ -460,7 +467,7 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   );
 }
 
-export function Simulator({ m, setM, y, setY }: { m: number; setM: (n: number) => void; y: number; setY: (n: number) => void }) {
+export function Simulator({ m, setM, y, setY }: { m: number; setM: SetNum; y: number; setY: SetNum }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
@@ -487,131 +494,302 @@ export function Simulator({ m, setM, y, setY }: { m: number; setM: (n: number) =
   );
 }
 
-export function ScreenCoverage({ go, sel, m, setM, y, setY }: { go: (n: number) => void; sel: string; m: number; setM: (n: number) => void; y: number; setY: (n: number) => void }) {
+/* ============================================================
+   STEP 2 — プラン選択 ＋ 補償内容 ＋ 不足分メール送信（1ページ）
+   ============================================================ */
+export function ScreenStep2({
+  go,
+  sel,
+  setSel,
+  m,
+  setM,
+  y,
+  setY,
+}: {
+  go: Go;
+  sel: string;
+  setSel: SetStr;
+  m: number;
+  setM: SetNum;
+  y: number;
+  setY: SetNum;
+}) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  const [agree, setAgree] = useState(false);
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [solid, setSolid] = useState(false);
+  const bindScroll = (el: HTMLDivElement | null) => {
+    const node = el as (HTMLDivElement & { __theoBound?: boolean }) | null;
+    if (!node || node.__theoBound) return;
+    node.__theoBound = true;
+    node.addEventListener("scroll", () => {
+      const h = heroRef.current;
+      setSolid(node.scrollTop >= (h ? h.offsetHeight - 16 : 220));
+    }, { passive: true });
+  };
   return (
     <>
-      <AppBar title="補償内容" onBack={() => go(1)} />
-      <Steps n={3} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-5">
-        <div className="rounded-2xl border border-primary-100 bg-primary-10/60 p-4">
-          <div className="flex items-center justify-between">
-            <Badge tone="primary">選択中のプラン</Badge>
-            <button onClick={() => go(1)} className="text-caption font-medium text-button-500">変更する</button>
-          </div>
-          <p className="mt-2 text-cd-h6 font-bold text-neutral-800">{plan.name}</p>
+      <AppBar title="保険" brandVisible={solid} />
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
+
+        {/* ---- イントロ / ヒーロー ---- */}
+        <div ref={heroRef} className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
+          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
+          <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
+          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
         </div>
 
-        <div className="rounded-2xl border border-warm-200 bg-white p-5">
-          <SectionLabel>補償項目</SectionLabel>
-          <div className="py-3 border-b border-warm-200">
-            <p className="text-caption text-neutral-500">保険名称</p>
-            <p className="mt-0.5 text-cd-h7 font-medium text-neutral-900">無配当特定疾病障害介護保証保険（団体型）</p>
-          </div>
-          {plan.feat.map((f, i) => {
-            const [k, v] = f.split("：");
-            return <Row key={i} k={k} v={v || "—"} />;
-          })}
-          <Row k="保険料（月額）" v={`${plan.price} / 月`} strong />
+        {/* progress — sticks to top once the blue hero scrolls out of view */}
+        <div className="sticky top-0 z-30">
+          <Steps n={1} />
         </div>
 
-        <Simulator m={m} setM={setM} y={y} setY={setY} />
+        <div className="px-5 py-6 space-y-8">
+          {/* hook card */}
+          <div className="space-y-6">
+            <div className="-mx-1">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
+                <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
+              </div>
+              <p className="text-cd-h5 font-bold text-neutral-800 leading-relaxed">
+                働けなくなっても、<br/>つみたては止めない。
+              </p>
+              <p className="mt-2 text-cd-h7 text-neutral-500 leading-relaxed">
+                就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
+              </p>
+              <div className="mt-4 overflow-hidden">
+                <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+              </div>
+            </div>
 
-        <div className="rounded-2xl border border-warm-200 bg-white p-5">
-          <SectionLabel>ご確認事項</SectionLabel>
-          {["重要事項説明書（契約概要・注意喚起情報）", "ご契約のしおり・約款", "個人情報の取扱いについて"].map((t, i) => (
-            <button key={i} className="flex items-center justify-between w-full py-3 border-b border-warm-200 last:border-0 text-left">
-              <span className="flex items-center gap-2 text-cd-h7 text-neutral-700"><Ic.doc className="w-4 h-4 text-neutral-400" />{t}</span>
-              <Ic.chevR className="w-4 h-4 text-neutral-400" />
-            </button>
+            {/* value points */}
+            <div className="space-y-3">
+              {[
+                { i: Ic.shield, t: "申込みは10分", d: "クレジットカード払い。入力は最小限。" },
+                { i: Ic.chart,  t: "マイページでかんたん運用管理", d: "保険料の変更、給付額の変更、ご請求、控除証明書。" },
+                { i: Ic.heart,  t: "少額から、毎月", d: "月額数百円から。いつでも見直し可能。" },
+              ].map((v, k) => (
+                <div key={k} className="flex items-start gap-3 rounded-xl border border-warm-200 bg-white p-4">
+                  <div className="grid place-items-center w-10 h-10 rounded-full bg-primary-10 text-primary-600 shrink-0">
+                    <v.i className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-cd-h7 font-bold text-neutral-800">{v.t}</p>
+                    <p className="text-caption text-neutral-500 leading-relaxed">{v.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ---- プラン選択 ---- */}
+        <StepSection label="プラン選択">
+          <div>
+            <h2 className="text-cd-h5 font-bold text-neutral-800">プランを選ぶ</h2>
+            <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
+          </div>
+          {PLANS.map((p) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
           ))}
+          <p className="text-caption text-neutral-500 leading-relaxed px-1">
+            ※ 保険料は年齢・性別により変動します。
+          </p>
+        </StepSection>
+
+        {/* ---- 補償内容 ---- */}
+        <StepSection label="補償内容">
+          <div className="rounded-2xl border border-warm-200 bg-white p-5">
+            <SectionLabel>補償項目</SectionLabel>
+            <div className="py-3 border-b border-warm-200">
+              <p className="text-caption text-neutral-500">保険名称</p>
+              <p className="mt-0.5 text-cd-h7 font-medium text-neutral-900">無配当特定疾病障害介護保証保険（団体型）</p>
+            </div>
+            {plan.feat.map((f, i) => {
+              const [k, v] = f.split("：");
+              return (
+                <div key={i} className="flex items-center justify-between py-3 border-b border-warm-200 last:border-0">
+                  <span className="text-caption text-neutral-500">{k}</span>
+                  <FeatValue v={v || "—"} />
+                </div>
+              );
+            })}
+            <div className="flex items-center justify-between py-3 border-b border-warm-200 last:border-0">
+              <span className="text-caption text-neutral-500">保険料（月額）</span>
+              <span className="text-neutral-800">
+                <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{plan.price.replace("¥", "")}</span>
+                <span className="text-caption"> 円 / 月</span>
+              </span>
+            </div>
+          </div>
+
+          <Simulator m={m} setM={setM} y={y} setY={setY} />
+
+          <div className="rounded-2xl border border-warm-200 bg-white p-5">
+            <SectionLabel>ご確認事項</SectionLabel>
+            {["重要事項説明書（契約概要・注意喚起情報）", "ご契約のしおり・約款", "個人情報の取扱いについて"].map((t, i) => (
+              <button key={i} className="flex items-center justify-between w-full py-3 border-b border-warm-200 last:border-0 text-left">
+                <span className="flex items-center gap-2 text-cd-h7 text-neutral-700"><Ic.doc className="w-4 h-4 text-neutral-400" />{t}</span>
+                <Ic.chevR className="w-4 h-4 text-neutral-400" />
+              </button>
+            ))}
+          </div>
+        </StepSection>
+
+        {/* ---- 不足分メール送信 / 事前同意 ---- */}
+        <StepSection label="不足分メール送信">
+          <p className="text-cd-h7 text-neutral-700 leading-relaxed">
+            ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
+          </p>
+
+          <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+
+          <div>
+            <h3 className="text-cd-h6 font-bold text-neutral-800">事前同意事項</h3>
+            <p className="text-caption text-neutral-500 mt-1">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
+
+            <button onClick={() => setNoticeOpen(true)}
+              className="mt-3 flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+              <span className="flex items-center gap-2.5 min-w-0">
+                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
+                <span className="text-cd-h7 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
+              </span>
+              <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
+            </button>
+          </div>
+
+          <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left">
+            <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+              {agree && <Ic.check className="w-3 h-3" />}
+            </span>
+            <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
+          </button>
+        </StepSection>
         </div>
       </div>
+
       <ActionBar>
-        <div className="flex items-start gap-2 rounded-lg bg-warm-100 px-3 py-2.5 text-caption text-neutral-600 leading-relaxed">
+        <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
           <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
           申込みには、ご本人様名義のクレジットカードが必要です
         </div>
-        <Btn kind="cta" onClick={() => go(3)}>この内容で申込む<Ic.chevR className="w-4 h-4" /></Btn>
-        <Btn kind="outline" onClick={() => go(1)}>プランを変更する</Btn>
-      </ActionBar>
-    </>
-  );
-}
-
-/* ============================================================
-   SCREEN — メールアドレス入力 / 事前同意（フォーム前段）
-   ============================================================ */
-export function ScreenEmail({ go }: { go: (n: number) => void }) {
-  const [agree, setAgree] = useState(false);
-  return (
-    <>
-      <AppBar title="お申込み" onBack={() => go(2)} />
-      <Steps n={4} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-5">
-        <p className="text-cd-h7 text-neutral-700 leading-relaxed">
-          ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
-        </p>
-
-        <Field label="メールアドレス" placeholder="imasawa.mikako.11@tdf-life.co.jp" required />
-
-        <div>
-          <h2 className="text-cd-h5 font-bold text-neutral-800">事前同意事項</h2>
-          <p className="text-caption text-neutral-500 mt-1">お申し込み前にご確認ください。</p>
-
-          <div className="mt-3 rounded-2xl bg-warm-100 border border-warm-200 p-4 max-h-72 overflow-y-auto no-sb space-y-4">
-            <section>
-              <h3 className="text-cd-h7 font-bold text-neutral-800 mb-1.5">この保険について</h3>
-              <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                <li>・本保険は団体契約であり、所定の会員資格を喪失された場合、保険契約は解約となり、更新はできませんのでご注意ください。</li>
-                <li>・この契約は、申込み日が17日までの場合は翌月1日(0時)より、18日から末日までの場合は翌々月1日(0時)より補償が開始します。</li>
-                <li>・満期日までに更新しない旨のお申し出がなければ、団体の取り決めにより原則自動更新されます。</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="text-cd-h7 font-bold text-neutral-800 mb-1.5">個人情報の取扱いについて</h3>
-              <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                <li>・ご入力いただく個人情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
-                <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
-              </ul>
-            </section>
-          </div>
-        </div>
-
-        <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left">
-          <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
-            {agree && <Ic.check className="w-3 h-3" />}
-          </span>
-          <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-        </button>
-      </div>
-      <ActionBar>
-        <Btn kind="cta" onClick={() => go(4)} disabled={!agree}>上記に同意してメールを送信</Btn>
+        <Btn kind="cta" onClick={() => go(1)} disabled={!agree}>上記に同意してメールを送信</Btn>
         {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
       </ActionBar>
+
+      {/* 重要事項ボトムシート */}
+      {noticeOpen && (
+        <div className="absolute inset-0 z-40">
+          <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
+          <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
+              <h3 className="flex items-center gap-2 text-cd-h6 font-bold text-neutral-800">
+                <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
+                重要事項・事前同意事項
+              </h3>
+              <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div className="px-5 py-4 overflow-y-auto no-sb space-y-5">
+              <p className="text-caption text-neutral-500 leading-relaxed">
+                お申込み前に、以下の内容を必ずご確認ください。
+              </p>
+              <section className="space-y-1.5">
+                <h4 className="text-cd-h7 font-bold text-neutral-800">契約概要・注意喚起情報</h4>
+                <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                  <li>・本保険は団体契約であり、所定の会員資格を喪失された場合、保険契約は解約となり、更新はできません。</li>
+                  <li>・申込み日が17日までの場合は翌月1日（0時）より、18日から末日までの場合は翌々月1日（0時）より補償が開始します。</li>
+                  <li>・満期日までに更新しない旨のお申し出がなければ、団体の取り決めにより原則自動更新されます。</li>
+                  <li>・告知義務があります。事実と異なる告知をされた場合、ご契約が解除され保険金をお支払いできないことがあります。</li>
+                </ul>
+              </section>
+              <section className="space-y-2">
+                <h4 className="text-cd-h7 font-bold text-neutral-800">関連書類</h4>
+                {["重要事項説明書（契約概要・注意喚起情報）", "ご契約のしおり・約款", "個人情報の取扱いについて"].map((t, i) => (
+                  <button key={i} className="flex items-center justify-between w-full rounded-xl border border-warm-200 bg-warm-50 px-3.5 py-3 text-left">
+                    <span className="flex items-center gap-2 text-cd-h7 text-neutral-700"><Ic.doc className="w-4 h-4 text-neutral-400" />{t}</span>
+                    <Ic.chevR className="w-4 h-4 text-neutral-400" />
+                  </button>
+                ))}
+              </section>
+
+              <div className="border-t border-warm-200 pt-4 space-y-5">
+                <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
+                  <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
+                  事前同意事項
+                </p>
+                <section className="space-y-1.5">
+                  <h4 className="text-cd-h7 font-bold text-neutral-800">この保険について</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・本保険は団体契約であり、所定の会員資格を喪失された場合、保険契約は解約となり、更新はできませんのでご注意ください。</li>
+                    <li>・この契約は、申込み日が17日までの場合は翌月1日（0時）より、18日から末日までの場合は翌々月1日（0時）より補償が開始します。</li>
+                    <li>・満期日までに更新しない旨のお申し出がなければ、団体の取り決めにより原則自動更新されます。</li>
+                  </ul>
+                </section>
+                <section className="space-y-1.5">
+                  <h4 className="text-cd-h7 font-bold text-neutral-800">個人情報の取扱いについて</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・ご入力いただく個人情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
+                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+            <div className="px-5 py-3 border-t border-warm-200">
+              <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
 /* ============================================================
-   SCREEN 4 — 申込フォーム
+   STEP 3 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, m, setM, y, setY }: { go: (n: number) => void; sel: string; m: number; setM: (n: number) => void; y: number; setY: (n: number) => void }) {
+export function ScreenForm({
+  go,
+  sel,
+  m,
+  setM,
+  y,
+  setY,
+}: {
+  go: Go;
+  sel: string;
+  m: number;
+  setM: SetNum;
+  y: number;
+  setY: SetNum;
+}) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [nat, setNat] = useState("jp");
   const [same, setSame] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
+  const [sheetRes, setSheetRes] = useState(false);
   const yen = (v: number) => v.toLocaleString("ja-JP");
-  const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
 
   // 契約者住所（受取人「契約者と同じ」用の自動入力値）
   const holder = { zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", bldg: "丸の内ビル 10F" };
 
   return (
     <>
-      <AppBar title="お申込み" onBack={() => go(3)} />
-      <Steps n={5} />
+      <AppBar title="お申込み" onBack={() => go(0)} />
+      <Steps n={2} />
       <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">
+        <div className="flex items-start gap-3 px-1 pt-1">
+          <span className="grid place-items-center w-6 h-6 mt-0.5 rounded-full bg-[color:var(--success)] text-white shrink-0">
+            <Ic.check className="w-3.5 h-3.5" />
+          </span>
+          <p className="text-cd-h7 text-neutral-700 leading-relaxed">
+            <span className="font-bold text-[color:var(--success)]">メールアドレスを認証しました。</span><br/>
+            ご契約者さまと保険金受取人さまの情報入力をお願いします。
+          </p>
+        </div>
         <div className="rounded-xl bg-primary-10 px-4 py-3 flex items-center gap-2 text-caption text-primary-700">
           <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
         </div>
@@ -692,7 +870,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY }: { go: (n: number) => v
             <span className="text-neutral-700 tabular-nums">{y}年</span>
           </div>
         </div>
-        <Btn kind="button" onClick={() => go(5)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
+        <Btn kind="button" onClick={() => go(2)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
       </ActionBar>
 
       {/* 修正ボトムシート */}
@@ -706,11 +884,20 @@ export function ScreenForm({ go, sel, m, setM, y, setY }: { go: (n: number) => v
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-5 overflow-y-auto no-sb">
-              <SimSliders m={m} setM={setM} y={y} setY={setY} />
-              <div className="rounded-xl bg-primary-10 px-4 py-3 flex items-center justify-between mt-2 mb-1">
-                <span className="text-caption font-medium text-primary-700">最大給付金額　0年目</span>
-                <span className="text-primary-600"><span className="font-en text-cd-h4 font-semibold tabular-nums">{man(m * 12 * y)}</span><span className="text-cd-h7"> 万円</span></span>
+            <div className="px-5 overflow-y-auto no-sb pb-2">
+              <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
+
+              {/* シミュレーション結果（アコーディオン） */}
+              <button onClick={() => setSheetRes((o) => !o)}
+                className="flex items-center justify-between w-full mt-2 pt-4 border-t border-warm-200 text-left">
+                <span className="text-cd-h7 font-bold text-neutral-800">給付予想額をみる</span>
+                <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${sheetRes ? "rotate-180" : ""}`}>
+                  <Ic.chevR className="w-4 h-4 rotate-90" />
+                </span>
+              </button>
+              <div style={{ maxHeight: sheetRes ? "1600px" : "0px", opacity: sheetRes ? 1 : 0, marginTop: sheetRes ? "16px" : "0px" }}
+                className="overflow-hidden transition-all duration-300 ease-out">
+                <BenefitTable m={m} y={y} />
               </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
@@ -724,10 +911,10 @@ export function ScreenForm({ go, sel, m, setM, y, setY }: { go: (n: number) => v
 }
 
 /* ============================================================
-   SCREEN 5 — 内容確認
+   STEP 4 — 内容確認 ＋ お支払い登録（1ページ）
    ============================================================ */
 // 重要事項（5項目）— ①〜④は添付内容、⑤は契約のしおり・約款
-export const AGREE_ITEMS = [
+export const AGREE_ITEMS: AgreeItemData[] = [
   {
     t: "申込に関する注意事項の確認",
     blocks: [
@@ -843,7 +1030,21 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
   );
 }
 
-export function AgreeItem({ num, item, open, onToggle, checked, onCheck }: { num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked: boolean; onCheck: () => void }) {
+export function AgreeItem({
+  num,
+  item,
+  open,
+  onToggle,
+  checked,
+  onCheck,
+}: {
+  num: string;
+  item: AgreeItemData;
+  open: boolean;
+  onToggle: () => void;
+  checked: boolean;
+  onCheck: () => void;
+}) {
   return (
     <div className={`rounded-xl border bg-white overflow-hidden ${checked ? "border-primary-200" : "border-warm-200"}`}>
       <div className="flex items-center gap-2.5 px-3 py-3">
@@ -866,18 +1067,20 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck }: { num
   );
 }
 
-export function ScreenConfirm({ go, sel, m, y }: { go: (n: number) => void; sel: string; m: number; y: number }) {
+export function ScreenStep4({ go, sel, m, y }: { go: Go; sel: string; m: number; y: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [checks, setChecks] = useState([false, false, false, false, false]);
   const [openIdx, setOpenIdx] = useState(-1);
+  const [acctOpen, setAcctOpen] = useState(false);
   const all = checks.every(Boolean);
   const toggleCheck = (i: number) => setChecks((a) => a.map((v, k) => (k === i ? !v : v)));
   return (
     <>
-      <AppBar title="内容確認" onBack={() => go(4)} />
-      <Steps n={6} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-5">
+      <AppBar title="内容確認・お支払い登録" onBack={() => go(1)} />
+      <Steps n={3} />
+      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">
+        <StepSection label="内容確認">
         <h2 className="text-cd-h5 font-bold text-neutral-800">お申込み内容</h2>
 
         <div className="rounded-2xl border border-warm-200 bg-white p-5">
@@ -885,7 +1088,7 @@ export function ScreenConfirm({ go, sel, m, y }: { go: (n: number) => void; sel:
           <Row k="契約プラン" v={plan.name} strong />
           <Row k="毎月の積立金額（希望給付額）" v={`${yen(m)} 円`} />
           <Row k="保障期間" v={`${y} 年`} />
-          <Row k="保険料（月額）" v={`${plan.price} / 月`} />
+          <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} />
           <Row k="保険期間" v="1年（自動更新）" />
         </div>
 
@@ -901,7 +1104,7 @@ export function ScreenConfirm({ go, sel, m, y }: { go: (n: number) => void; sel:
             <span className="text-cd-h7 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
           </div>
           <Row k="電話番号" v="090-0000-0000" />
-          <Row k="メールアドレス" v="imasawa.mikako.11@tdf-life.co.jp" />
+          <Row k="メールアドレス" v="samplename@sample.co.jp" />
         </div>
 
         <div className="rounded-2xl border border-warm-200 bg-white p-5">
@@ -928,52 +1131,47 @@ export function ScreenConfirm({ go, sel, m, y }: { go: (n: number) => void; sel:
           </div>
           <p className="mt-3 text-caption text-neutral-500 text-right tabular-nums">{checks.filter(Boolean).length} / 5 確認済み</p>
         </div>
+        </StepSection>
+
+        <StepSection label="お支払い登録">
+          <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
+            <button onClick={() => setAcctOpen((o) => !o)} className="flex items-center justify-between w-full px-5 py-4 text-left">
+              <h3 className="text-cd-h6 font-bold text-neutral-800">引落口座設定</h3>
+              <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${acctOpen ? "rotate-180" : ""}`}>
+                <Ic.chevR className="w-4 h-4 rotate-90" />
+              </span>
+            </button>
+            <div style={{ maxHeight: acctOpen ? "600px" : "0px", opacity: acctOpen ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+              <div className="px-5 pb-5">
+                <p className="text-caption text-neutral-600 leading-relaxed">
+                  下記「クレジットカード登録開始」ボタンより、お客様の取引金融機関のWEB口座振替受付サービスサイトへリンクします。引落口座の設定手続きを開始してください。
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {[
+                    "お客様と取引金融機関との間で、印鑑なしに直接口座振替の設定を行うことが可能です。",
+                    "引落口座の設定が完了していない場合はつみたて購入を開始することができません。また、一部の地方銀行、信用組合、労働金庫等ではご利用することができませんので、ご注意ください。",
+                  ].map((t, i) => (
+                    <li key={i} className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed">
+                      <span className="text-neutral-400 shrink-0">・</span><span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-caption text-neutral-600 leading-relaxed">
+                  登録できない金融機関一覧は<a className="text-button-500 underline font-medium">こちら</a>からご確認ください。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed space-y-1">
+            <p>※ 収納代行会社（GMOペイメントゲートウェイ）のサイトへ遷移します。</p>
+            <p>※ 引落口座の設定を行った後、登録内容が表示されない場合は、<a className="text-button-500 underline">こちら</a>を押して画面を更新してください。</p>
+          </div>
+        </StepSection>
       </div>
       <ActionBar>
-        <Btn kind="cta" onClick={() => go(6)} disabled={!all}>お支払い情報の登録へ進む<Ic.chevR className="w-4 h-4" /></Btn>
+        <Btn kind="cta" onClick={() => go(3)} disabled={!all}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
         {!all && <p className="text-center text-caption text-neutral-400">5項目すべてチェックすると進めます</p>}
-      </ActionBar>
-    </>
-  );
-}
-
-/* ============================================================
-   SCREEN — お支払い登録（引落口座設定）→ 外部サイトへ
-   ============================================================ */
-export function ScreenPayment({ go }: { go: (n: number) => void }) {
-  return (
-    <>
-      <AppBar title="お支払い登録" onBack={() => go(5)} />
-      <Steps n={7} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-5">
-        <div className="rounded-2xl border border-warm-200 bg-white p-5">
-          <h2 className="text-cd-h5 font-bold text-neutral-800">引落口座設定</h2>
-          <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
-            下記「クレジットカード登録開始」ボタンより、お客様の取引金融機関のWEB口座振替受付サービスサイトへリンクします。引落口座の設定手続きを開始してください。
-          </p>
-          <ul className="mt-3 space-y-2">
-            {[
-              "お客様と取引金融機関との間で、印鑑なしに直接口座振替の設定を行うことが可能です。",
-              "引落口座の設定が完了していない場合はつみたて購入を開始することができません。また、一部の地方銀行、信用組合、労働金庫等ではご利用することができませんので、ご注意ください。",
-            ].map((t, i) => (
-              <li key={i} className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed">
-                <span className="text-neutral-400 shrink-0">・</span><span>{t}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-caption text-neutral-600 leading-relaxed">
-            登録できない金融機関一覧は<a className="text-button-500 underline font-medium">こちら</a>からご確認ください。
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed space-y-1">
-          <p>※ 収納代行会社（GMOペイメントゲートウェイ）のサイトへ遷移します。</p>
-          <p>※ 引落口座の設定を行った後、登録内容が表示されない場合は、<a className="text-button-500 underline">こちら</a>を押して画面を更新してください。</p>
-        </div>
-      </div>
-      <ActionBar>
-        <Btn kind="cta" onClick={() => go(7)}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
-        <p className="text-center text-caption text-neutral-400">収納代行会社のサイトへ遷移します</p>
       </ActionBar>
     </>
   );
@@ -995,7 +1193,7 @@ export const CARD_BRANDS = ["VISA", "Mastercard", "JCB", "AMEX", "Diners", "DC",
 /* ============================================================
    SCREEN — 外部: クレジットカード情報入力（GMO）
    ============================================================ */
-export function ScreenCardInput({ go }: { go: (n: number) => void }) {
+export function ScreenCardInput({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
@@ -1003,10 +1201,10 @@ export function ScreenCardInput({ go }: { go: (n: number) => void }) {
         <h2 className="text-cd-h6 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
-            <span className="w-1.5 h-3.5 bg-success rounded-[1px]" />クレジットカード情報を入力ください
+            <span className="w-1.5 h-3.5 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力ください
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
-          <Field label="カード名義（半角ローマ字）" placeholder="SARI KAWAHARA" required />
+          <Field label="カード名義（半角ローマ字）" placeholder="TARO YAMADA" required />
           <div className="grid grid-cols-2 gap-3">
             <Field label="有効期限（月／年）" placeholder="04 / 25" required />
             <Field label="セキュリティコード" placeholder="***" required />
@@ -1030,17 +1228,11 @@ export function ScreenCardInput({ go }: { go: (n: number) => void }) {
               </li>
             ))}
           </ul>
-          <div className="border-t border-neutral-200 pt-3">
-            <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
-              <span className="w-1.5 h-3.5 bg-success rounded-[1px]" />保険金の受取人
-            </p>
-            <p className="mt-1.5 text-cd-h7 text-neutral-700">ご契約者本人</p>
-          </div>
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(8)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
-        <button onClick={() => go(6)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
+        <Btn kind="button" onClick={() => go(4)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
+        <button onClick={() => go(2)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
       </div>
     </>
   );
@@ -1049,7 +1241,7 @@ export function ScreenCardInput({ go }: { go: (n: number) => void }) {
 /* ============================================================
    SCREEN — 外部: カード情報の確認（GMO）
    ============================================================ */
-export function ScreenCardConfirm({ go }: { go: (n: number) => void }) {
+export function ScreenCardConfirm({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
@@ -1057,23 +1249,23 @@ export function ScreenCardConfirm({ go }: { go: (n: number) => void }) {
         <h2 className="text-cd-h6 font-bold text-neutral-800">お申込み内容の確認（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
-            <span className="w-1.5 h-3.5 bg-success rounded-[1px]" />ご登録内容
+            <span className="w-1.5 h-3.5 bg-[color:var(--success)] rounded-[1px]" />ご登録内容
           </p>
           <div>
             <Row k="カード番号" v="**** **** **** 3456" />
-            <Row k="カード名義" v="SARI KAWAHARA" />
+            <Row k="カード名義" v="TARO YAMADA" />
             <Row k="有効期限" v="04 / 25" />
             <Row k="お支払い方法" v="一回払い" />
-            <Row k="保険金の受取人" v="ご契約者本人" />
+            <Row k="保険金の受取人" v="山田 花子様" />
           </div>
           <p className="rounded-lg bg-neutral-50 border border-neutral-200 p-3 text-caption text-neutral-500 leading-relaxed">
-            上記の内容で登録します。「この内容で登録する」を押すと、お申込みが確定し、初回のお支払い手続きが行われます。
+            上記の内容で申込します。「この内容で申込」を押すと、お申込みが確定し、初回のお支払い手続きが行われます。
           </p>
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(9)}>この内容で登録する</Btn>
-        <button onClick={() => go(7)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
+        <Btn kind="button" onClick={() => go(5)}>この内容で申込</Btn>
+        <button onClick={() => go(3)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
       </div>
     </>
   );
@@ -1082,35 +1274,58 @@ export function ScreenCardConfirm({ go }: { go: (n: number) => void }) {
 /* ============================================================
    SCREEN 6 — 完了
    ============================================================ */
-export function ScreenDone({ go }: { go: (n: number) => void }) {
+export function ScreenDone({ go }: { go: Go }) {
   return (
     <>
       <AppBar title="お申込み完了" />
       <div className="flex-1 overflow-y-auto no-sb">
         <div className="bg-primary text-primary-foreground px-5 pt-8 pb-10 text-center">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-6 mx-auto mb-7 opacity-95" />
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-10 mx-auto mb-7 opacity-95" />
           <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white/15 mb-4">
             <Ic.check className="w-8 h-8" />
           </div>
-          <h2 className="text-cd-h4 font-bold">お申込みが完了しました</h2>
+          <h2 className="text-cd-h4 font-bold">お申込が完了しました</h2>
           <p className="mt-2 text-caption opacity-90">受付番号　THEO-2026-000482</p>
         </div>
+
+        {/* progress — sticks to top once the blue hero scrolls out of view */}
+        <div className="sticky top-0 z-30">
+          <Steps n={4} />
+        </div>
+
         <div className="px-5 py-6 space-y-5">
+          <div className="px-1">
+            <p className="text-cd-h7 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
+              受付確認メールをご確認ください。<br/>
+              初回の保険料引き落とし開始と保険開始までの流れは下記となります。
+            </p>
+          </div>
+
           <div className="rounded-2xl border border-warm-200 bg-white p-5">
             <SectionLabel>このあとの流れ</SectionLabel>
+            <div className="mt-1">
             {[
-              ["1", "受付確認メールを送信しました", "ご登録のメールアドレスをご確認ください。"],
+              ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
               ["2", "審査・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
               ["3", "初回保険料の引落し", "翌月以降、THEO のご登録口座より。"],
-            ].map(([n, t, d]) => (
-              <div key={n} className="flex items-start gap-3 py-3 border-b border-warm-200 last:border-0">
-                <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
-                <div>
-                  <p className="text-cd-h7 font-bold text-neutral-800">{t}</p>
-                  <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
+            ].map(([n, t, d], idx, arr) => (
+              <div key={n}>
+                <div className="flex items-start gap-3">
+                  <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
+                  <div>
+                    <p className="text-cd-h7 font-bold text-neutral-800">{t}</p>
+                    <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
+                  </div>
                 </div>
+                {idx < arr.length - 1 && (
+                  <div className="flex pl-[0.6rem] py-2 text-primary-300">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                  </div>
+                )}
               </div>
             ))}
+            </div>
           </div>
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed">
             保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。

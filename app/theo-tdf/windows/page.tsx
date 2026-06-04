@@ -3,13 +3,9 @@
 import * as React from "react";
 
 import {
-  ScreenIntro,
-  ScreenPlans,
-  ScreenCoverage,
-  ScreenEmail,
+  ScreenStep2,
   ScreenForm,
-  ScreenConfirm,
-  ScreenPayment,
+  ScreenStep4,
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
@@ -18,8 +14,9 @@ import {
 /**
  * /theo-tdf/windows
  *
- * Claude Design 出力の 10 画面を 390px 幅で左から右に並べたキャンバス。
- * 高さは内容に応じて可変。画面解像度に合わせて flex-wrap で自動折り返し。
+ * Claude Design 出力の 6 画面 (4 ステップ + 外部カード承認 2 画面) を
+ * 390px 幅で左から右に並べたキャンバス。高さは内容に応じて可変。
+ * 画面解像度に合わせて flex-wrap で自動折り返し。
  * 実際にタップで動かしたい場合は /theo-tdf/prototype を参照。
  *
  * Server Component から呼べないため "use client" (各 Screen が useState を持つため)。
@@ -66,16 +63,12 @@ export default function TheoTdfWindowsPage() {
   const noop = () => {};
 
   const screens: ScreenDef[] = [
-    { key: "intro",    label: "イントロ",         el: <ScreenIntro go={noop} /> },
-    { key: "plans",    label: "プラン選択",       el: <ScreenPlans go={noop} sel="c" setSel={noop} /> },
-    { key: "coverage", label: "補償内容",         el: <ScreenCoverage go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "email",    label: "メール送信",       el: <ScreenEmail go={noop} /> },
-    { key: "form",     label: "申込フォーム",     el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "confirm",  label: "内容確認",         el: <ScreenConfirm go={noop} sel="c" m={10000} y={15} /> },
-    { key: "payment",  label: "お支払い登録",     el: <ScreenPayment go={noop} /> },
-    { key: "card",     label: "カード入力 (外部)", el: <ScreenCardInput go={noop} /> },
-    { key: "cardconf", label: "カード確認 (外部)", el: <ScreenCardConfirm go={noop} /> },
-    { key: "done",     label: "完了",             el: <ScreenDone go={noop} /> },
+    { key: "step2",    label: "プラン選択 (イントロ〜メール送信)", el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} /> },
+    { key: "form",     label: "申込フォーム",                      el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
+    { key: "step4",    label: "内容確認・お支払い登録",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} /> },
+    { key: "card",     label: "カード入力 (外部)",                 el: <ScreenCardInput go={noop} /> },
+    { key: "cardconf", label: "カード確認 (外部)",                 el: <ScreenCardConfirm go={noop} /> },
+    { key: "done",     label: "完了",                              el: <ScreenDone go={noop} /> },
   ];
 
   return (

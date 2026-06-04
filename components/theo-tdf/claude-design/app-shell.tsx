@@ -4,13 +4,9 @@ import * as React from "react";
 
 import {
   Ic,
-  ScreenIntro,
-  ScreenPlans,
-  ScreenCoverage,
-  ScreenEmail,
+  ScreenStep2,
   ScreenForm,
-  ScreenConfirm,
-  ScreenPayment,
+  ScreenStep4,
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
@@ -18,23 +14,48 @@ import {
 
 /* ============================================================
    THEO 組込保険 — App shell (flow rail + phone frame)
-   Claude Design 出力 app.jsx からポート (2026-06-03)
+   Claude Design 出力 app.jsx からポート (2026-06-04 更新)
+
+   画面構成 (旧 10 画面 → 新 6 画面):
+   - Steps: card auth (ext) is NOT a numbered step → 4 numbered steps total
+   - scr 0: プラン選択 (イントロ + プラン + 補償内容 + メール送信 統合)
+   - scr 1: 申込フォーム
+   - scr 2: 内容確認 (+ お支払い登録 統合)
+   - scr 3-4: クレジットカード承認 (外部 GMO、2 画面 / 1 ステップ枠)
+   - scr 5: 完了
    ============================================================ */
 
-const FLOW = [
-  { key: "intro",    label: "イントロ",       en: "Intro" },
-  { key: "plans",    label: "プラン選択",     en: "Plans" },
-  { key: "coverage", label: "補償内容",       en: "Coverage" },
-  { key: "email",    label: "メール送信",     en: "Email" },
-  { key: "form",     label: "申込フォーム",   en: "Application" },
-  { key: "confirm",  label: "内容確認",       en: "Confirm" },
-  { key: "payment",  label: "お支払い登録",   en: "Payment" },
-  { key: "card",     label: "カード入力",     en: "Card (外部)",    ext: true },
-  { key: "cardconf", label: "カード確認",     en: "Card 確認 (外部)", ext: true },
-  { key: "done",     label: "完了",           en: "Complete" },
+type FlowEntry = {
+  key: string;
+  label: string;
+  en: string;
+  scr: number[];
+  ext?: boolean;
+  noNum?: boolean;
+  subs?: string[];
+};
+
+/* Steps: card auth (ext) is NOT a numbered step → 4 numbered steps total. */
+const FLOW: FlowEntry[] = [
+  { key: "step2", label: "プラン選択",          en: "Plan / Coverage", scr: [0] },
+  { key: "form",  label: "申込フォーム",        en: "Application",     scr: [1] },
+  { key: "step4", label: "内容確認",            en: "Confirm",         scr: [2] },
+  { key: "card",  label: "クレジットカード承認", en: "Card Auth (外部)", ext: true, noNum: true, scr: [3, 4] },
+  { key: "done",  label: "完了",                en: "Complete",        scr: [5] },
 ];
 
-function Rail({ step, go }: { step: number; go: (n: number) => void }) {
+// step number for each FLOW entry (null for non-numbered ext step)
+const STEP_NUMS = (() => {
+  let c = 0;
+  return FLOW.map((f) => (f.noNum ? null : ++c));
+})();
+const TOTAL_STEPS = STEP_NUMS.filter((n) => n != null).length;
+
+// Which FLOW step owns a given screen index
+const stepOfScreen = (scr: number) => FLOW.findIndex((f) => f.scr.includes(scr));
+
+function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
+  const curStep = stepOfScreen(scr);
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 py-10 pr-8">
       <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">
@@ -42,49 +63,79 @@ function Rail({ step, go }: { step: number; go: (n: number) => void }) {
       </p>
       <h1 className="mt-1 text-cd-h5 font-bold text-neutral-800">THEO 組込保険</h1>
       <p className="text-caption text-neutral-400 mt-0.5">
-        ワイヤーフレーム / 全{FLOW.length}画面
+        ワイヤーフレーム / 全{TOTAL_STEPS}ステップ
       </p>
       <nav className="mt-8 space-y-1">
         {FLOW.map((f, i) => {
-          const active = i === step;
-          const done = i < step;
+          const active = i === curStep;
+          const done = i < curStep;
           return (
-            <button
-              key={f.key}
-              onClick={() => go(i)}
-              className={`flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-left transition ${
-                active ? "bg-white shadow-sm" : "hover:bg-white/60"
-              }`}
-            >
-              <span
-                className={`grid place-items-center w-6 h-6 rounded-full text-caption font-en font-semibold shrink-0
-                  ${active
-                    ? "bg-primary text-white"
-                    : done
-                      ? "bg-primary-10 text-primary-600"
-                      : "bg-warm-200 text-neutral-400"
-                  }`}
+            <div key={f.key}>
+              <button
+                onClick={() => go(f.scr[0])}
+                className={`flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-left transition ${
+                  active ? "bg-white shadow-sm" : "hover:bg-white/60"
+                }`}
               >
-                {i + 1}
-              </span>
-              <span className="min-w-0">
                 <span
-                  className={`block text-cd-h7 leading-tight flex items-center gap-1.5 ${
-                    active ? "font-bold text-neutral-800" : "text-neutral-600"
-                  }`}
+                  className={`grid place-items-center w-6 h-6 rounded-full text-caption font-en font-semibold shrink-0
+                    ${f.noNum
+                      ? active
+                        ? "bg-primary/15 text-primary-600"
+                        : "bg-warm-200 text-neutral-400"
+                      : active
+                        ? "bg-primary text-white"
+                        : done
+                          ? "bg-primary-10 text-primary-600"
+                          : "bg-warm-200 text-neutral-400"
+                    }`}
                 >
-                  {f.label}
-                  {f.ext && (
-                    <span className="font-mono text-[9px] tracking-wide rounded bg-neutral-200 text-neutral-500 px-1 py-0.5">
-                      外部
-                    </span>
+                  {f.noNum ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                      <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                  ) : (
+                    STEP_NUMS[i]
                   )}
                 </span>
-                <span className="block font-mono text-[10px] tracking-wide uppercase text-neutral-400">
-                  {f.en}
+                <span className="min-w-0">
+                  <span
+                    className={`block text-cd-h7 leading-tight flex items-center gap-1.5 ${
+                      active ? "font-bold text-neutral-800" : "text-neutral-600"
+                    }`}
+                  >
+                    {f.label}
+                    {f.ext && (
+                      <span className="font-mono text-[9px] tracking-wide rounded bg-neutral-200 text-neutral-500 px-1 py-0.5">
+                        外部
+                      </span>
+                    )}
+                  </span>
+                  <span className="block font-mono text-[10px] tracking-wide uppercase text-neutral-400">
+                    {f.en}
+                  </span>
                 </span>
-              </span>
-            </button>
+              </button>
+              {/* sub-screens for combined steps — only when active */}
+              {active && f.subs && (
+                <div className="ml-[1.85rem] mt-1 mb-1 space-y-0.5 border-l border-warm-200 pl-3">
+                  {f.subs.map((s, j) => {
+                    const sActive = f.scr[j] === scr;
+                    return (
+                      <button
+                        key={j}
+                        onClick={() => go(f.scr[j])}
+                        className="flex items-center gap-2 w-full text-left py-1 group"
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sActive ? "bg-primary" : "bg-warm-300 group-hover:bg-warm-400"}`} />
+                        <span className={`text-caption ${sActive ? "text-primary-700 font-medium" : "text-neutral-500"}`}>{s}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
@@ -116,6 +167,7 @@ function Phone({
         className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}
       >
         <div className="relative w-full h-full rounded-[34px] overflow-hidden bg-warm-50 flex flex-col">
+          {/* status bar */}
           <div
             className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`}
           >
@@ -141,20 +193,20 @@ function Phone({
 }
 
 export function TheoTdfClaudeDesignShell() {
-  const [step, setStep] = React.useState(0);
+  const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("a");
-  const [simM, setSimM] = React.useState(10000);
-  const [simY, setSimY] = React.useState(15);
-  const go = (n: number) => setStep(Math.max(0, Math.min(FLOW.length - 1, n)));
+  const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
+  const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
+  const NSCR = 6;
+  const go = (n: number) => setScr(Math.max(0, Math.min(NSCR - 1, n)));
+
+  const curStep = stepOfScreen(scr);
+  const external = !!(FLOW[curStep] && FLOW[curStep].ext);
 
   const screens = [
-    <ScreenIntro key="intro" go={go} />,
-    <ScreenPlans key="plans" go={go} sel={sel} setSel={setSel} />,
-    <ScreenCoverage key="coverage" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
-    <ScreenEmail key="email" go={go} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
     <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
-    <ScreenConfirm key="confirm" go={go} sel={sel} m={simM} y={simY} />,
-    <ScreenPayment key="payment" go={go} />,
+    <ScreenStep4 key="step4" go={go} sel={sel} m={simM} y={simY} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
     <ScreenDone key="done" go={go} />,
@@ -163,24 +215,25 @@ export function TheoTdfClaudeDesignShell() {
   return (
     <div className="theo-tdf-cd font-jp min-h-screen w-full bg-warm-100 transition-colors duration-300">
       <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
-        <Rail step={step} go={go} />
+        <Rail scr={scr} go={go} />
         <main className="py-10 flex flex-col items-center gap-4">
-          <Phone external={FLOW[step] && FLOW[step].ext}>{screens[step]}</Phone>
+          <Phone external={external}>{screens[scr]}</Phone>
+          {/* prev / next outside the phone */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => go(step - 1)}
-              disabled={step === 0}
+              onClick={() => go(scr - 1)}
+              disabled={scr === 0}
               className="flex items-center gap-1 rounded-full bg-white border border-warm-200 px-4 h-10 text-caption font-medium text-neutral-600 shadow-sm disabled:opacity-40 hover:border-warm-300"
             >
               <Ic.chevL className="w-4 h-4" />
               前の画面
             </button>
             <span className="font-mono text-caption text-neutral-400 px-2">
-              {step + 1} / {FLOW.length}
+              {external ? "外部サイト（GMO）" : `STEP ${STEP_NUMS[curStep]} / ${TOTAL_STEPS}`}
             </span>
             <button
-              onClick={() => go(step + 1)}
-              disabled={step === FLOW.length - 1}
+              onClick={() => go(scr + 1)}
+              disabled={scr === NSCR - 1}
               className="flex items-center gap-1 rounded-full bg-white border border-warm-200 px-4 h-10 text-caption font-medium text-neutral-600 shadow-sm disabled:opacity-40 hover:border-warm-300"
             >
               次の画面
