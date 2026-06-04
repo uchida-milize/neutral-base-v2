@@ -853,30 +853,131 @@ scale は定義しないでください)。
   生 hex を埋め込まず、JSON で「dark のとき bg-warm-100 → #1b212b」のような
   指定リストを別途渡してください。Cowork 側で globals.css に転記します。
 
-== shadcn primitives (これを優先して使う) ==
-  Button (variants: default / destructive / outline / secondary / ghost / link)
-  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
-  Badge (variants: default / secondary / destructive / outline)
+== 🔴 絶対ルール: shadcn primitives を必ず使う (独自 atom を新規定義しない) ==
+
+このリポジトリには shadcn/ui の React コンポーネントが完備されています。
+新規 prototype を生成する時、**以下を独自に再実装することは禁止**します。
+必ず shadcn の primitive を import して使ってください。
+
+理由: Cowork 統合後の design system は以下の 3 系統が一致している必要があります。
+  1. リポジトリ内の React component (shadcn primitives)
+  2. Figma の Master Component Library
+  3. デザイナーの認識 (= ガイドライン上の名前)
+
+これらが一致して初めて「Vercel ↔ Figma の双方向同期」「Figma 納品時の identity 保持」
+が機能します。独自 atom を新規定義すると、この 3 系統の対応関係が壊れ、後で MCP 経由の
+Figma 書き戻しで Component Instance ではなく "detached frame" になります (= 致命的)。
+
+【独自定義禁止 (= 必ず shadcn を使う)】
+
+  ❌ function Btn(...) {} を新規定義  → ✅ import { Button } from "@/components/ui/button"
+  ❌ function Field(...) {} を新規定義 → ✅ <Label> + <Input> を組み合わせる
+  ❌ function Select(...) {} を新規定義 → ✅ shadcn <Select> + <SelectTrigger> + <SelectContent> + <SelectItem>
+  ❌ function GroupCard(...) {} を新規定義 → ✅ <Card> + <CardHeader> + <CardTitle> + <CardContent>
+  ❌ function Badge(...) {} を新規定義  → ✅ shadcn <Badge variant="...">
+  ❌ function Checkbox / Radio / Switch を新規定義 → ✅ shadcn の対応 primitive
+
+【shadcn と Claude Design 独自 atom の対応表 (生成前に必ず参照)】
+
+  Claude Design がやりがちな独自定義  →  代わりに使うべき shadcn / 標準パターン
+  ─────────────────────────────────────────────────────────────────────
+  Btn                                  →  Button (variant: default / destructive /
+                                          outline / secondary / ghost / link)
+  Btn (kind="cta")                     →  Button + className="bg-cta-500 hover:bg-cta-600
+                                          text-white" (shadcn variant で表現できない時は
+                                          className 拡張、独自 wrapper を作らない)
+  Field (label + input + hint)         →  <Label htmlFor="x"> + <Input id="x"> +
+                                          <p className="text-caption text-muted-foreground">
+                                          (3 要素を 1 コンポーネントに包まない)
+  LockedField                          →  <Label> + <Input disabled value="..."> + Lock icon
+  Select (options array)               →  <Select><SelectTrigger><SelectValue/></SelectTrigger>
+                                          <SelectContent>{options.map(o => <SelectItem>)}
+                                          </SelectContent></Select>
+  GroupCard (title + icon + children)  →  <Card><CardHeader><CardTitle>title</CardTitle>
+                                          </CardHeader><CardContent>{children}</CardContent></Card>
+  Badge (tone="secondary"/"primary")   →  <Badge variant="secondary"> / <Badge variant="default">
+  Row (k:v pair)                       →  単純な <div className="flex justify-between">
+                                          (コンポーネント化不要、inline で書く)
+  SectionLabel (uppercase eyebrow)     →  <p className="text-caption uppercase tracking-[0.18em]
+                                          text-primary"> (inline、コンポーネント化不要)
+  PH (placeholder)                     →  <div className="wf-ph">…</div>
+                                          (globals.css の utility 使用、inline)
+
+【独自定義が許される唯一の例外】
+
+  shadcn に直接対応する primitive が無い、かつ複数画面で再利用する場合のみ。
+  例: AppBar (ヘッダー、status bar 含む) / Steps (progress dots) / ActionBar
+      (sticky bottom area) / Phone (iPhone frame) などのモバイル UI 特有のもの。
+  
+  ※ ただし、これらも components/<tenant>/claude-design/ に閉じ込めて
+    components/ui/ には**侵入させない**こと (= shadcn ライブラリの purity を守る)。
+
+【shadcn の variant に欲しいものが無い時】
+
+  自作 wrapper を作るのではなく、shadcn の Button に className で拡張する:
+
+  ✅ OK:
+    <Button variant="default" className="bg-cta-500 hover:bg-cta-600 text-white">
+      申込を確定する
+    </Button>
+
+  ❌ NG:
+    function CtaButton({ children, ...props }) {
+      return <button className="bg-cta-500 ..." {...props}>{children}</button>;
+    }
+    (= shadcn を経由していないため、Figma 書き戻し時に identity が失われる)
+
+  もし「cta variant を恒久化したい」なら、コード生成時には shadcn <Button> +
+  className で表現し、Cowork 側で受け取った後に shadcn の button.tsx の
+  variants 設定に追加する (Cowork が判断して行う)。
+
+== shadcn primitives 一覧 (必ずこれを使う) ==
+
+  Button         variants: default / destructive / outline / secondary / ghost / link
+  Card           CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+  Badge          variants: default / secondary / destructive / outline
   Input, Label, Textarea
-  Select, SelectTrigger, SelectContent, SelectItem
+  Select         SelectTrigger, SelectValue, SelectContent, SelectItem
   Checkbox, RadioGroup, RadioGroupItem
   Switch
-  Table, TableHeader, TableBody, TableRow, TableHead, TableCell
-  Tabs, TabsList, TabsTrigger, TabsContent
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle
-  Popover, PopoverTrigger, PopoverContent
-  Tooltip, TooltipTrigger, TooltipContent
-  Alert, AlertTitle, AlertDescription
+  Table          TableHeader, TableBody, TableRow, TableHead, TableCell
+  Tabs           TabsList, TabsTrigger, TabsContent
+  Dialog         DialogTrigger, DialogContent, DialogHeader, DialogTitle
+  Popover        PopoverTrigger, PopoverContent
+  Tooltip        TooltipTrigger, TooltipContent
+  Alert          AlertTitle, AlertDescription
   Separator, Avatar, AspectRatio
+  Sheet          (bottom sheet / drawer 用)
+  ScrollArea, Skeleton, Progress
 
-  ※ アイコンは lucide-react を使ってください (例: import { ChevronRight } from "lucide-react")
+  ※ アイコンは lucide-react を使ってください
+    例: import { ChevronRight, X, Shield } from "lucide-react"
+  ※ 上記に無いもの (Accordion / Carousel など) が必要なら、独自定義する前に
+    「shadcn の ◯◯ が欲しい」とコメントしてください。Cowork が
+    `pnpm dlx shadcn@latest add <component>` で追加します。
 
-== 推奨アンチパターン ==
-  - bg-white / bg-black の直接使用 → bg-card / bg-background / bg-foreground を
-  - text-neutral-{N} / text-gray-{N} の直接使用 → text-foreground / text-muted-foreground を
-  - 独自 hex の埋め込み (bg-[#xxxxxx]) → 上記いずれかの token を
-  - 独自 font-size の埋め込み (text-[14px]) → text-body 等のスケールを
-  - 自作 Button コンポーネント → shadcn の <Button> を
+== 推奨アンチパターン (= 絶対にやってはいけないこと) ==
+
+  ❌ 自作 Button / Field / Select / Card 等を function 定義する
+     → shadcn の primitive を import して使う
+
+  ❌ bg-white / bg-black の直接使用
+     → bg-card / bg-background / bg-foreground を
+
+  ❌ text-neutral-{N} / text-gray-{N} の直接使用
+     → text-foreground / text-muted-foreground を
+
+  ❌ 独自 hex の埋め込み (bg-[#xxxxxx])
+     → 必ず token (bg-primary-500 等) を経由
+
+  ❌ 独自 font-size の埋め込み (text-[14px])
+     → text-body / text-cd-h7 等のスケールを
+
+  ❌ shadcn を import せず、見た目だけ似せた独自 <button> を書く
+     → 後の Figma 書き戻しで identity が失われるため厳禁
+
+  ❌ icon を SVG で手書き定義する (Ic.chevR = (p) => <svg>...</svg> 等)
+     → import { ChevronRight } from "lucide-react" を使う
 ```
 
 ### 10.3 ダーク値が必要な場合の追加情報
@@ -908,4 +1009,36 @@ theo-tdf の Claude Design 取り込みでは、最初に上記テンプレを�
 - 結果として動作はするが、design system の semantic 層を経由しない「平行レイヤー」になった
 
 幸い、ブランド色 (primary/secondary/button/cta) は alias 経由で tokens.css と接続されており、テナント差し替えは引き続き有効。次回からは §10.2 のテンプレを最初に渡せばこの遠回りを回避できる。
+
+### 10.5 反省 2 件目: コンポーネント identity の喪失 (2026-06-XX)
+
+§10.2 で「shadcn primitives を優先して使ってください」と書いていたが、表現が**弱すぎた**ため:
+
+- Claude Design は独自に `Btn` / `Field` / `Select` / `GroupCard` / `Badge` などの atom を新規定義してしまった
+- これらが `components/<tenant>/claude-design/screens.tsx` に閉じ込められた状態となり、shadcn primitives (`Button`, `Input`, `Card` 等) と**並列に存在する「2 セットの component layer」**ができてしまった
+- 結果として:
+  - Tailwind class / CSS Variable レベルでは見た目が揃っているが
+  - 構造的には `Btn` と `Button` が **別物** で、shadcn 経由の lineage が無い
+  - 将来 MCP 経由で Figma に書き戻す時、`Btn` は Master Component の Instance ではなく **detached frame** になる (= identity 失う)
+  - shadcn の Button を改修しても `Btn` には反映されない (= 二重管理)
+
+#### 対策 (§10.2 で実施済み)
+
+§10.2 のテンプレを以下の方向で強化:
+1. 「優先して使ってください」→ 「**絶対に守ってください、独自 atom を新規定義しないでください**」
+2. 独自定義禁止リスト (`Btn` / `Field` / `GroupCard` 等) を明示
+3. shadcn 代替の **対応マッピング表** を提示
+4. shadcn に variant が無い時の対処法 (className 拡張のみ、wrapper 禁止) を明示
+5. 理由 (Vercel ↔ Figma の双方向同期、Figma 納品時の identity 保持) を明文化
+
+#### 既存 theo-tdf prototype の扱い
+
+theo-tdf の既存 `screens.tsx` (1125 行) は引き続き運用可能だが、構造的には「独自 atom set + shadcn primitives 」の並列状態。完全統合は HANDOFF.md §6 Priority 5 周辺 (= Phase B コンポーネント差し替え) で実施予定 (お客様要望時に着手)。
+
+#### 次回セッション以降の予防策
+
+新規 prototype を Claude Design で作る時、§10.2 (strengthened版) を**毎回最初に**貼ること。これにより:
+- ✅ Claude Design の生成コードが shadcn-based になる
+- ✅ Cowork 統合時にそのまま使える (= retrofit 作業不要)
+- ✅ Figma 書き戻し時に identity 保持が容易になる
 
