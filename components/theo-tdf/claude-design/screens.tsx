@@ -544,7 +544,7 @@ export function ScreenStep2({
           <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
           <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
           <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
-          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
+          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO ご利用者さま向け、<br/>保険のお申込みページです。</p>
         </div>
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
