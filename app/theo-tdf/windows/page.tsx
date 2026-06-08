@@ -3,7 +3,9 @@
 import * as React from "react";
 
 import {
+  ScreenOverview,
   ScreenStep2,
+  ScreenPin,
   ScreenForm,
   ScreenStep4,
   ScreenCardInput,
@@ -71,18 +73,20 @@ export default function TheoTdfWindowsPage() {
   const noop = () => {};
 
   const screens: ScreenDef[] = [
-    { key: "step2",    label: "プラン選択 (イントロ〜メール送信)", el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "form",     label: "申込フォーム",                      el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "step4",    label: "内容確認・お支払い登録",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} /> },
-    { key: "card",     label: "カード入力 (外部)",                 el: <ScreenCardInput go={noop} /> },
-    { key: "cardconf", label: "カード確認 (外部)",                 el: <ScreenCardConfirm go={noop} /> },
-    { key: "done",     label: "完了",                              el: <ScreenDone go={noop} /> },
+    { key: "overview", label: "商品概要",                el: <ScreenOverview go={noop} /> },
+    { key: "step2",    label: "プラン選択",              el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} /> },
+    { key: "pin",      label: "PINコード認証",            el: <ScreenPin go={noop} /> },
+    { key: "form",     label: "申込フォーム",            el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
+    { key: "step4",    label: "内容確認・お支払い",       el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} /> },
+    { key: "card",     label: "カード入力 (外部)",        el: <ScreenCardInput go={noop} /> },
+    { key: "cardconf", label: "カード確認 (外部)",        el: <ScreenCardConfirm go={noop} /> },
+    { key: "done",     label: "完了",                    el: <ScreenDone go={noop} /> },
     // ---- 状態バリアント (モーダル / アコーディオン展開状態の Figma 書き出し用) ----
     { key: "st-notice",  label: "状態① プラン選択 / 重要事項ボトムシート",       height: 820, el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialNoticeOpen /> },
     { key: "st-sim",     label: "状態② プラン選択 / 給付予想額アコーディオン",   el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialSimOpen /> },
     { key: "st-edit",    label: "状態③ 申込フォーム / 積立修正シート＋給付予想額", height: 820, el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} initialEditOpen initialSheetRes /> },
-    { key: "st-agree",   label: "状態④ 内容確認 / 同意項目①展開＋全チェック",    el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialOpenIdx={0} initialChecks={[true, true, true, true, true]} /> },
-    { key: "st-acct",    label: "状態⑤ 内容確認 / 引落口座設定 展開",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen /> },
+    { key: "st-agree",   label: "状態④ 内容確認 / 重要事項①展開＋全チェック",    el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialOpenIdx={0} initialChecks={[true, true, true, true, true, true, true, true]} /> },
+    { key: "st-acct",    label: "状態⑤ 内容確認 / お支払い詳細 展開",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen /> },
   ];
 
   return (

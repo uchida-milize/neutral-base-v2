@@ -4,7 +4,9 @@ import * as React from "react";
 
 import {
   Ic,
+  ScreenOverview,
   ScreenStep2,
+  ScreenPin,
   ScreenForm,
   ScreenStep4,
   ScreenCardInput,
@@ -14,15 +16,17 @@ import {
 
 /* ============================================================
    THEO 組込保険 — App shell (flow rail + phone frame)
-   Claude Design 出力 app.jsx からポート (2026-06-04 更新)
+   Claude Design 出力 app.jsx からポート (2026-06-08 更新)
 
-   画面構成 (旧 10 画面 → 新 6 画面):
-   - Steps: card auth (ext) is NOT a numbered step → 4 numbered steps total
-   - scr 0: プラン選択 (イントロ + プラン + 補償内容 + メール送信 統合)
-   - scr 1: 申込フォーム
-   - scr 2: 内容確認 (+ お支払い登録 統合)
-   - scr 3-4: クレジットカード承認 (外部 GMO、2 画面 / 1 ステップ枠)
-   - scr 5: 完了
+   画面構成 (8 画面 / 5 ステップ):
+   - Steps: PIN認証 と カード承認(外部) は番号なし → 5 numbered steps total
+   - scr 0: 商品概要 (STEP1)
+   - scr 1: プラン選択 (STEP2)
+   - scr 2: PINコード認証 (番号なし)
+   - scr 3: 申込フォーム (STEP3)
+   - scr 4: 内容確認・お支払い (STEP4)
+   - scr 5-6: クレジットカード承認 (外部 GMO、2 画面 / 番号なし)
+   - scr 7: 完了 (STEP5)
    ============================================================ */
 
 type FlowEntry = {
@@ -35,13 +39,15 @@ type FlowEntry = {
   subs?: string[];
 };
 
-/* Steps: card auth (ext) is NOT a numbered step → 4 numbered steps total. */
+/* Steps: PIN認証 と カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
-  { key: "step2", label: "プラン選択",          en: "Plan / Coverage", scr: [0] },
-  { key: "form",  label: "申込フォーム",        en: "Application",     scr: [1] },
-  { key: "step4", label: "内容確認",            en: "Confirm",         scr: [2] },
-  { key: "card",  label: "クレジットカード承認", en: "Card Auth (外部)", ext: true, noNum: true, scr: [3, 4] },
-  { key: "done",  label: "完了",                en: "Complete",        scr: [5] },
+  { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
+  { key: "step2",    label: "プラン選択",          en: "Plan / Coverage",  scr: [1] },
+  { key: "pin",      label: "PINコード認証",        en: "PIN Verify",       noNum: true, scr: [2] },
+  { key: "form",     label: "申込フォーム",        en: "Application",      scr: [3] },
+  { key: "step4",    label: "内容確認",            en: "Confirm",          scr: [4] },
+  { key: "card",     label: "クレジットカード承認", en: "Card Auth (外部)", ext: true, noNum: true, scr: [5, 6] },
+  { key: "done",     label: "完了",                en: "Complete",         scr: [7] },
 ];
 
 // step number for each FLOW entry (null for non-numbered ext step)
@@ -197,14 +203,17 @@ export function TheoTdfClaudeDesignShell() {
   const [sel, setSel] = React.useState("a");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
-  const NSCR = 6;
+  const NSCR = 8;
   const go = (n: number) => setScr(Math.max(0, Math.min(NSCR - 1, n)));
 
   const curStep = stepOfScreen(scr);
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
+  const curStepNo = STEP_NUMS[curStep];
 
   const screens = [
+    <ScreenOverview key="overview" go={go} />,
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
+    <ScreenPin key="pin" go={go} />,
     <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
     <ScreenStep4 key="step4" go={go} sel={sel} m={simM} y={simY} />,
     <ScreenCardInput key="card" go={go} />,
@@ -229,7 +238,11 @@ export function TheoTdfClaudeDesignShell() {
               前の画面
             </button>
             <span className="font-mono text-caption text-neutral-400 px-2">
-              {external ? "外部サイト（GMO）" : `STEP ${STEP_NUMS[curStep]} / ${TOTAL_STEPS}`}
+              {external
+                ? "外部サイト（GMO）"
+                : curStepNo == null
+                  ? FLOW[curStep]?.label ?? ""
+                  : `STEP ${curStepNo} / ${TOTAL_STEPS}`}
             </span>
             <button
               onClick={() => go(scr + 1)}

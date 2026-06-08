@@ -2,35 +2,38 @@
 /* eslint-disable @next/next/no-img-element --
    Claude Design 出力のプロトタイプ。<img> は logo / chart の静的アセット用で軽量。 */
 /* eslint-disable @typescript-eslint/no-unused-expressions --
-   `onInput && onInput()` パターンが多数あり、Claude Design 由来のスタイル維持のため許容。 */
+   `onInput && onInput()` 等のパターンが多数あり、Claude Design 由来のスタイル維持のため許容。 */
 /* eslint-disable @typescript-eslint/no-unused-vars --
-   AppBar の `title` prop は将来用に予約済み。 */
+   AppBar の `title` 等、将来用に予約済みの prop / ローカルがある。 */
+/* eslint-disable react-hooks/set-state-in-effect --
+   DateDrumSheet が「シートを開いた時に value へ同期」「月変更時に日をクランプ」
+   する目的で effect 内 setState を使用 (Claude Design 由来の意図的パターン)。 */
 
 import * as React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /* ============================================================
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1-handoff.tar.gz / project/screens.jsx (2026-06-04 取り込み)
+   原典: TD 組込1.1-handoff.tar.gz / project/screens.jsx (2026-06-08 取り込み)
 
-   2026-06-04 版での画面構成変更 (旧 10 画面 → 新 6 画面):
-   - イントロ + プラン選択 + 補償内容 + メール送信 → ScreenStep2 (1ページ統合)
-   - 内容確認 + お支払い登録 → ScreenStep4 (1ページ統合)
-   - カード入力 / カード確認 (外部 GMO) は 2 画面のまま
-   - ステッパーは全 4 ステップ (カード承認はステップ外)
+   2026-06-08 版 (8 画面 / 5 ステップ):
+   - 商品概要 (Overview) を先頭に追加 / プラン選択は STEP 番号付きの 3 ブロック構成
+   - PINコード認証 (メール内 URL からの遷移想定、ステップ外) を追加
+   - 申込フォームは生年月日ドラムロール (DateDrumSheet) で入力
+   - 内容確認は重要事項 8 項目 + お支払い (クレカ規定アコーディオン) 統合
+   - カード入力 / 確認 (外部 GMO) は 2 画面
 
    ポート時の変更点:
    - "use client"、ESM import (UMD React から)
    - text-h{2-7} → text-cd-h{2-7} に置換 (Claude Design の 16-34px scale)
    - アセットパス assets/... → /assets/theo-tdf/...
    - bg-success → bg-[color:var(--success)] (globals.css の theo-tdf-cd 区画で定義)
+   - el.__bound 動的プロパティへ型安全なキャストを付与
    - ローカル dark toggle は削除 (サイト共通 ThemeToggle が <html data-theme> を制御)
-   - 最小限の inline 型付け
    ============================================================ */
 
-/* ===================== 型定義 ===================== */
 export type Plan = {
   id: string;
   name: string;
@@ -44,6 +47,7 @@ export type AgreeBlock = {
   p?: string;
   ul?: string[];
   link?: string;
+  download?: string;
   note?: string;
   table?: string[][];
 };
@@ -57,18 +61,29 @@ type Go = (n: number) => void;
 type SetNum = React.Dispatch<React.SetStateAction<number>>;
 type SetStr = React.Dispatch<React.SetStateAction<string>>;
 
+/* ============================================================
+   THEO 組込保険 — Screens + shared wireframe atoms
+   ============================================================ */
+
 /* ---------------- ICONS (line / wireframe) ---------------- */
 export const Ic = {
   chevL: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 18l-6-6 6-6"/></svg>,
   chevR: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M9 18l6-6-6-6"/></svg>,
-  menu: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...p}><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
-  shield: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg>,
+  chevD: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 9l6 6 6-6"/></svg>,
+  menu:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...p}><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
+  shield:(p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg>,
   chart: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 19V5M4 19h16M8 16v-4M13 16V9M18 16v-7"/></svg>,
-  doc: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9.5 13h6M9.5 16.5h6"/></svg>,
+  doc:   (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9.5 13h6M9.5 16.5h6"/></svg>,
   check: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 6L9 17l-5-5"/></svg>,
   heart: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M19 5.5c-1.8-1.7-4.6-1.5-6.3.3L12 6.5l-.7-.7C9.6 4 6.8 3.8 5 5.5c-2 1.9-2 5 0 7l7 6.8 7-6.8c2-2 2-5.1 0-7z"/></svg>,
-  user: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-  tag: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1"/></svg>,
+  user:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  tag:   (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1"/></svg>,
+  card:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
+  heartHand: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 12.8C9.3 11 7.4 9.4 7.4 7.3c0-1.5 1.2-2.6 2.6-2.6.9 0 1.6.4 2 1 .4-.6 1.1-1 2-1 1.4 0 2.6 1.1 2.6 2.6 0 2.1-1.9 3.7-4.6 5.5z"/><path d="M3.6 16.4c1.3 2.5 4.4 3.9 8.4 3.9s7.1-1.4 8.4-3.9"/></svg>,
+  featSavings: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>,
+  featTuition: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 4L2.5 8.5 12 13l9.5-4.5L12 4z"/><path d="M6 10.5V15c0 1.4 2.7 2.7 6 2.7s6-1.3 6-2.7v-4.5"/><path d="M21.5 8.5v5"/></svg>,
+  featCare: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 9.2c-1.5-1.6-3.9-1-3.9 1 0 1.6 2 3 3.9 4.3 1.9-1.3 3.9-2.7 3.9-4.3 0-2-2.4-2.6-3.9-1z"/><path d="M3 15.5l3.2-1.3a2 2 0 0 1 1.5 0l2.4 1a2 2 0 0 0 1.5 0L18 12.6a1.4 1.4 0 0 1 1.8.7 1.4 1.4 0 0 1-.6 1.8l-5.4 3.1a3 3 0 0 1-2.4.3L3 16.4"/><path d="M3 14v6"/></svg>,
+  cardArt: (p: { className?: string }) => <svg viewBox="0 0 64 42" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="3" width="60" height="36" rx="5"/><rect x="9" y="11" width="12" height="9" rx="1.6"/><path d="M9 30h12M27 30h8M41 30h6"/><path d="M44 12h11"/></svg>,
 };
 
 /* ---------------- ATOMS ---------------- */
@@ -90,19 +105,7 @@ export function PH({ className = "", label }: { className?: string; label: strin
 }
 
 // Buttons — cta (申込/前進), button (通常), outline (罫線)
-export function Btn({
-  kind = "button",
-  children,
-  onClick,
-  disabled,
-  full = true,
-}: {
-  kind?: "cta" | "button" | "outline" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-  full?: boolean;
-}) {
+export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
   const base = "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 h-12 text-cd-h7 font-bold transition-colors active:scale-[.99]";
   const kinds = {
     cta: "bg-cta-500 text-white hover:bg-cta-600",
@@ -131,21 +134,30 @@ export function AppBar({ title, onBack, brandVisible = true }: { title?: string;
           <span className="text-cd-h7 font-medium truncate">つみたて安心ほけん</span>
           <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;THEO&gt;</span>
         </div>
-        <button className="grid place-items-center w-9 h-9 -mr-1 rounded-full hover:bg-white/10">
-          <Ic.menu className="w-5 h-5" />
-        </button>
+        <span className="w-9 shrink-0" />
       </div>
     </div>
   );
 }
 
-// step progress dots
-export function Steps({ n, of = 4 }: { n: number; of?: number }) {
+// step progress dots — 既出（到達済み）ステップは押下でその画面へ遷移
+const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
+export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: (n: number) => void }) {
   return (
     <div className="flex items-center gap-1.5 px-5 py-3 bg-white border-b border-warm-200">
-      {Array.from({ length: of }).map((_, i) => (
-        <div key={i} className={`h-1 flex-1 rounded-full ${i < n ? "bg-primary" : "bg-warm-200"}`} />
-      ))}
+      {Array.from({ length: of }).map((_, i) => {
+        const stepNo = i + 1;
+        const filled = i < n;
+        const clickable = filled && typeof go === "function" && STEP_TO_SCREEN[stepNo] != null;
+        return (
+          <button key={i} type="button" disabled={!clickable}
+            onClick={clickable ? () => go(STEP_TO_SCREEN[stepNo]) : undefined}
+            aria-label={`STEP ${stepNo}`}
+            className={`group flex-1 flex items-center py-2 -my-2 ${clickable ? "cursor-pointer" : "cursor-default"}`}>
+            <span className={`block w-full h-1 rounded-full transition-all ${filled ? "bg-primary" : "bg-warm-200"} ${clickable ? "group-hover:h-1.5 group-active:opacity-70" : ""}`} />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -155,24 +167,14 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // 入力グループの囲い（契約者情報 / 保険金受取人 など）
-export function GroupCard({
-  title,
-  sub,
-  icon: Icon,
-  children,
-}: {
-  title: string;
-  sub?: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-}) {
+export function GroupCard({ title, sub, icon: Icon, children }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode }) {
   return (
     <section className="rounded-2xl border border-warm-200 bg-white overflow-hidden shadow-sm">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 bg-warm-50 border-b border-warm-200">
-        {Icon && <span className="grid place-items-center w-8 h-8 rounded-full bg-primary-10 text-primary-600 shrink-0"><Icon className="w-4 h-4" /></span>}
+      <div className="flex items-center gap-3 px-5 py-3.5 bg-primary-10 border-b border-primary-100">
+        {Icon && <Icon className="w-7 h-7 text-primary-600 shrink-0" />}
         <div className="min-w-0">
           <p className="text-cd-h7 font-bold text-neutral-800 leading-tight">{title}</p>
-          {sub && <p className="text-[11px] text-neutral-400 leading-tight">{sub}</p>}
+          {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
       <div className="p-5 space-y-3">{children}</div>
@@ -189,31 +191,19 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Bottom sticky action bar
-export function ActionBar({ children }: { children: React.ReactNode }) {
+// Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
+export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
+  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-5 py-3 space-y-2 transition-colors duration-300";
   return (
-    <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-warm-200 px-5 py-3 space-y-2">
+    <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
+      style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
       {children}
     </div>
   );
 }
 
 // Wireframe form field
-export function Field({
-  label,
-  placeholder,
-  required,
-  hint,
-  value,
-  disabled,
-}: {
-  label: string;
-  placeholder?: string;
-  required?: boolean;
-  hint?: string;
-  value?: string;
-  disabled?: boolean;
-}) {
+export function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
@@ -222,6 +212,7 @@ export function Field({
       <input
         placeholder={placeholder}
         defaultValue={value}
+        onChange={onChange}
         disabled={disabled}
         className={`fld h-11 rounded-lg border px-3 text-cd-h7 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
       />
@@ -247,28 +238,14 @@ export function LockedField({ label, value }: { label: string; value: string }) 
 }
 
 // Wireframe select (dropdown)
-export function Select({
-  label,
-  required,
-  hint,
-  value,
-  options = [],
-  disabled,
-}: {
-  label: string;
-  required?: boolean;
-  hint?: string;
-  value?: string;
-  options?: string[];
-  disabled?: boolean;
-}) {
+export function Select({ label, required, hint, value, onChange, options = [], disabled }: { label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
         {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
       </span>
       <div className="relative">
-        <select defaultValue={value} disabled={disabled}
+        <select defaultValue={value} onChange={onChange} disabled={disabled}
           className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-cd-h7 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
@@ -279,10 +256,80 @@ export function Select({
   );
 }
 
-export const PREFS = ["都道府県を選択","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+export const PREFS: string[] = ["都道府県を選択","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
 
 /* ============================================================
-   プラン定義
+   SCREEN 1 — イントロ / ヒーロー
+   ============================================================ */
+export function ScreenIntro({ go }: { go: Go }) {
+  return (
+    <>
+      <AppBar title="保険" />
+      <div className="flex-1 overflow-y-auto no-sb">
+        {/* hero */}
+        <div className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-5" />
+          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
+          <h1 className="mt-2 text-cd-h3 font-bold leading-snug">信頼を、もっと<br/>触れる距離に。</h1>
+          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
+          <div className="mt-4"><Badge>重要</Badge></div>
+        </div>
+
+        <div className="px-5 py-6 space-y-6">
+          {/* hook card */}
+          <div className="rounded-2xl border border-warm-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
+              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
+            </div>
+            <p className="text-cd-h6 font-bold text-neutral-800 leading-relaxed">
+              働けなくなっても、<br/>つみたては止めない。
+            </p>
+            <p className="mt-2 text-caption text-neutral-500 leading-relaxed">
+              就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
+            </p>
+            <div className="mt-4 rounded-lg border border-warm-200 overflow-hidden bg-white">
+              <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+            </div>
+          </div>
+
+          {/* value points */}
+          <div className="space-y-3">
+            {[
+              { i: Ic.shield, t: "申込みは10分", d: "クレジットカード払い。入力は最小限。" },
+              { i: Ic.chart,  t: "マイページでかんたん運用管理", d: "保険料の変更、給付額の変更、ご請求、控除証明書。" },
+              { i: Ic.heart,  t: "少額から、毎月", d: "月額数百円から。いつでも見直し可能。" },
+            ].map((v, k) => (
+              <div key={k} className="flex items-start gap-3 rounded-xl border border-warm-200 bg-white p-4">
+                <div className="grid place-items-center w-10 h-10 rounded-full bg-primary-10 text-primary-600 shrink-0">
+                  <v.i className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-cd-h7 font-bold text-neutral-800">{v.t}</p>
+                  <p className="text-caption text-neutral-500 leading-relaxed">{v.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* premium teaser */}
+          <div className="flex items-end justify-between rounded-xl bg-warm-100 px-5 py-4">
+            <span className="text-caption text-neutral-500">保険料</span>
+            <span className="text-neutral-800"><span className="font-en text-cd-h2 font-semibold">480</span><span className="text-cd-h7"> 円 / 月〜</span></span>
+          </div>
+        </div>
+      </div>
+
+      <ActionBar>
+        <Btn kind="cta" onClick={() => go(1)}>つぎへ<Ic.chevR className="w-4 h-4" /></Btn>
+        <p className="text-center text-caption text-neutral-400">引受保険会社 / 重要事項は申込前にご確認ください</p>
+      </ActionBar>
+    </>
+  );
+}
+
+/* ============================================================
+   SCREEN 2 — プラン選択
    ============================================================ */
 export const PLANS: Plan[] = [
   { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
@@ -295,8 +342,8 @@ export const PLANS: Plan[] = [
 
 export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean; onSelect: () => void }) {
   return (
-    <button onClick={onSelect} className={`w-full text-left rounded-2xl border bg-white p-4 transition ${selected ? "border-primary ring-2 ring-primary/30" : "border-warm-200"}`}>
-      <div className="flex items-start justify-between gap-3">
+    <button onClick={onSelect} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition ${selected ? "border-primary ring-2 ring-primary/30" : "border-warm-200"}`}>
+      <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-warm-50 border-warm-200"}`}>
         <div className="flex items-center gap-2">
           <span className={`grid place-items-center w-5 h-5 rounded-full border-2 ${selected ? "border-primary bg-primary text-white" : "border-warm-300"}`}>
             {selected && <Ic.check className="w-3 h-3" />}
@@ -305,26 +352,44 @@ export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean
         </div>
         {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
       </div>
-      <p className="mt-2 text-caption text-neutral-500">{p.lead}</p>
-      <div className="mt-3 flex items-baseline justify-end gap-1 text-neutral-800">
-        <span className="font-en text-cd-h4 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
+      <div className="p-4">
+        <p className="text-caption text-neutral-500">{p.lead}</p>
+        <div className="mt-3 flex items-baseline justify-end gap-1 text-neutral-800">
+          <span className="font-en text-cd-h4 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
+        </div>
+        <ul className="mt-3 space-y-1.5 border-t border-warm-200 pt-3">
+          {p.feat.map((f, i) => (
+            <li key={i} className="flex items-center gap-2 text-caption text-neutral-600">
+              <Ic.check className="w-3.5 h-3.5 text-primary shrink-0" />{f.replace(/¥([\d,]+)/g, "$1 円")}
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="mt-3 space-y-1.5 border-t border-warm-200 pt-3">
-        {p.feat.map((f, i) => (
-          <li key={i} className="flex items-center gap-2 text-caption text-neutral-600">
-            <Ic.check className="w-3.5 h-3.5 text-primary shrink-0" />{f.replace(/¥([\d,]+)/g, "$1 円")}
-          </li>
-        ))}
-      </ul>
     </button>
   );
 }
 
 /* Divider used inside combined (multi-section) pages */
-export function StepSection({ label, children }: { label: string; children: React.ReactNode }) {
+export function StepSection({ label, n, big, children }: { label: string; n?: number; big?: boolean; children: React.ReactNode }) {
+  if (big) {
+    return (
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          {n != null && (
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-cd-h6 font-bold shrink-0">{n}</span>
+          )}
+          <h2 className="text-cd-h5 font-bold text-neutral-800">{label}</h2>
+        </div>
+        {children}
+      </section>
+    );
+  }
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
+        {n != null && (
+          <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-cd-h6 font-bold shrink-0">{n}</span>
+        )}
         <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
         <span className="flex-1 h-px bg-warm-200" />
       </div>
@@ -334,7 +399,513 @@ export function StepSection({ label, children }: { label: string; children: Reac
 }
 
 /* ============================================================
-   共有部品 — 確認 Row / 金額体裁 / シミュレーション
+   iOS風 ドラムロール 日付ピッカー（年・月・日）
+   慣性スクロール＋中央スナップ＋選択行ハイライトを再現
+   ============================================================ */
+const WHEEL_ITEM = 38;            // 各行の高さ(px)
+const WHEEL_VISIBLE = 5;          // 表示行数（奇数）
+const WHEEL_H = WHEEL_ITEM * WHEEL_VISIBLE;
+const WHEEL_PAD = (WHEEL_H - WHEEL_ITEM) / 2;
+
+function WheelCol({ items, index, onChange, flex, align }: { items: string[]; index: number; onChange: (i: number) => void; flex?: number; align?: "end" | "center" }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [cur, setCur] = useState(index);
+  const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const programmatic = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const target = index * WHEEL_ITEM;
+    if (Math.abs(el.scrollTop - target) > 1) {
+      programmatic.current = true;
+      el.scrollTop = target;
+      setCur(index);
+      setTimeout(() => { programmatic.current = false; }, 60);
+    }
+  }, [index, items.length]);
+
+  const handleScroll = () => {
+    const el = ref.current;
+    if (!el) return;
+    const live = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
+    if (live !== cur) setCur(live);
+    if (programmatic.current) return;
+    if (settle.current) clearTimeout(settle.current);
+    settle.current = setTimeout(() => {
+      const i = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
+      el.scrollTo({ top: i * WHEEL_ITEM, behavior: "smooth" });
+      if (i !== index) onChange(i);
+    }, 90);
+  };
+
+  return (
+    <div ref={ref} onScroll={handleScroll}
+      className="no-sb overflow-y-scroll"
+      style={{
+        height: WHEEL_H, flex: flex || 1, scrollSnapType: "y mandatory",
+        WebkitOverflowScrolling: "touch",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 26%, #000 74%, transparent)",
+        maskImage: "linear-gradient(to bottom, transparent, #000 26%, #000 74%, transparent)",
+      }}>
+      <div style={{ height: WHEEL_PAD }} />
+      {items.map((it, i) => {
+        const dist = Math.abs(i - cur);
+        return (
+          <div key={i} className="grid select-none"
+            style={{
+              height: WHEEL_ITEM, scrollSnapAlign: "center",
+              alignItems: "center", justifyItems: align === "end" ? "end" : "center",
+              paddingRight: align === "end" ? 2 : 0,
+              fontSize: dist === 0 ? 19 : 17,
+              fontWeight: dist === 0 ? 700 : 400,
+              color: dist === 0 ? "var(--neutral-color-800, #1f2937)"
+                   : dist === 1 ? "var(--neutral-color-500, #6b7280)"
+                   : "var(--neutral-color-300, #cbd5e1)",
+              opacity: dist >= 3 ? 0.4 : 1,
+              transition: "font-size .12s, color .12s",
+            }}>
+            {it}
+          </div>
+        );
+      })}
+      <div style={{ height: WHEEL_PAD }} />
+    </div>
+  );
+}
+
+function daysInMonth(y: number, m: number) { return new Date(y, m, 0).getDate(); }
+
+function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }) {
+  const NOW = new Date();
+  const MIN_Y = 1925, MAX_Y = NOW.getFullYear();
+  const years: number[] = []; for (let v = MAX_Y; v >= MIN_Y; v--) years.push(v);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  const init = value ? value.split("-").map(Number) : [1990, 1, 1];
+  const [yy, setYy] = useState(init[0]);
+  const [mm, setMm] = useState(init[1]);
+  const [dd, setDd] = useState(init[2]);
+
+  useEffect(() => {
+    if (!open) return;
+    const v = value ? value.split("-").map(Number) : [1990, 1, 1];
+    setYy(v[0]); setMm(v[1]); setDd(v[2]);
+  }, [open]);
+
+  const dim = daysInMonth(yy, mm);
+  const days = Array.from({ length: dim }, (_, i) => i + 1);
+  useEffect(() => { if (dd > dim) setDd(dim); }, [yy, mm]);
+
+  if (!open) return null;
+  const yIdx = years.indexOf(yy);
+  const mIdx = months.indexOf(mm);
+  const dIdx = days.indexOf(dd);
+
+  return (
+    <div className="absolute inset-0 z-50">
+      <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
+      <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl flex flex-col">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-warm-200">
+          <button onClick={onClose} className="text-cd-h7 text-neutral-500 px-1 py-1">キャンセル</button>
+          <span className="text-caption font-bold text-neutral-700">生年月日</span>
+          <button onClick={() => onDone(`${yy}-${pad2(mm)}-${pad2(dd)}`)}
+            className="text-cd-h7 font-bold text-primary-600 px-1 py-1">完了</button>
+        </div>
+        <div className="relative px-3 py-2">
+          <div className="pointer-events-none absolute left-3 right-3 rounded-lg bg-warm-100/70 border-y border-warm-200"
+            style={{ top: WHEEL_PAD + 8, height: WHEEL_ITEM }} />
+          <div className="relative flex">
+            <div className="flex items-center" style={{ flex: 1.5 }}>
+              <WheelCol items={years.map((v) => `${v}`)} index={yIdx} onChange={(i) => setYy(years[i])} align="end" />
+              <span className="shrink-0 w-5 pl-1 text-caption text-neutral-500 font-medium">年</span>
+            </div>
+            <div className="flex items-center" style={{ flex: 1 }}>
+              <WheelCol items={months.map((v) => `${v}`)} index={mIdx} onChange={(i) => setMm(months[i])} align="end" />
+              <span className="shrink-0 w-5 pl-1 text-caption text-neutral-500 font-medium">月</span>
+            </div>
+            <div className="flex items-center" style={{ flex: 1 }}>
+              <WheelCol items={days.map((v) => `${v}`)} index={dIdx} onChange={(i) => setDd(days[i])} align="end" />
+              <span className="shrink-0 w-5 pl-1 text-caption text-neutral-500 font-medium">日</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function pad2(n: number) { return String(n).padStart(2, "0"); }
+function fmtBirth(v: string) {
+  if (!v) return "";
+  const [y, m, d] = v.split("-").map(Number);
+  return `${y}年 ${m}月 ${d}日`;
+}
+
+/* ============================================================
+   STEP 2 — プラン選択 ＋ 補償内容 ＋ 不足分メール送信（1ページ）
+   ============================================================ */
+export function ScreenOverview({ go }: { go: Go }) {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [solid, setSolid] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
+  const bindScroll = (el: HTMLDivElement | null) => {
+    if (!el) return;
+    const marked = el as HTMLDivElement & { __bound?: boolean };
+    if (marked.__bound) return;
+    marked.__bound = true;
+    el.addEventListener("scroll", () => {
+      const h = heroRef.current;
+      setSolid(el.scrollTop >= (h ? h.offsetHeight - 16 : 220));
+      setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
+    }, { passive: true });
+  };
+  return (
+    <>
+      <AppBar title="保険" brandVisible={solid} />
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
+
+        {/* ---- イントロ / ヒーロー ---- */}
+        <div ref={heroRef} className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
+          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
+          <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
+          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">将来に向けた資産形成のためのほけん</p>
+        </div>
+
+        {/* progress — sticks to top once the blue hero scrolls out of view */}
+        <div className="sticky top-0 z-30">
+          <Steps n={1} go={go} />
+        </div>
+
+        <div className="px-5 pt-6">
+          {/* hook card */}
+          <div className="space-y-6">
+            <div className="-mx-1">
+              <div className="flex items-center justify-end gap-3 mb-2">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[9px] text-neutral-400 leading-none whitespace-nowrap">引受保険会社</span>
+                  <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+                </div>
+              </div>
+              <p className="text-cd-h5 font-bold text-neutral-800 leading-relaxed">
+                資産形成中の「もしも」に<br/>そなえる保障が<br/>THEOで新登場！
+              </p>
+              <div className="mt-5 flex flex-col items-center gap-4">
+                <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-7" />
+                <div className="w-full grid grid-cols-3 gap-3">
+                {[
+                  { svg: <Ic.featSavings className="w-9 h-9" />, t: "積立も\nあんしんに" },
+                  { svg: <Ic.featTuition className="w-9 h-9" />, t: "学資保険\nの代わりにも" },
+                  { svg: <Ic.featCare className="w-9 h-9" />, t: "もしもの\n備えに" },
+                ].map((f, k) => (
+                  <div key={k} className="flex flex-col items-center text-center gap-2">
+                    <div className="text-primary">{f.svg}</div>
+                    <p className="text-caption font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
+                  </div>
+                ))}
+                </div>
+              </div>
+              <div className="mt-4 overflow-hidden">
+                <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+              </div>
+
+              {/* 商品概要（図版の下） */}
+              <div className="mt-6 space-y-6">
+                <div className="text-center">
+                  <a className="text-button-500 font-bold text-cd-h7 underline underline-offset-2 cursor-pointer">詳細なサービス内容はこちら</a>
+                </div>
+                <div className="text-center">
+                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">保険名称</span>
+                  <p className="mt-2 text-cd-h7 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+                </div>
+                <div className="text-center">
+                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">保障期間</span>
+                  <p className="mt-2 text-cd-h7 text-neutral-700">5年〜40年（最大）</p>
+                  <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
+                </div>
+                <div className="rounded-2xl border border-warm-300 bg-warm-50 px-4 py-5 text-center">
+                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">お申し込みのまえに</span>
+                  <p className="mt-2 text-cd-h7 text-neutral-700">お手続きの際に必要となる書類をご準備ください</p>
+                  <div className="mt-4 flex flex-col items-center gap-3 px-4 py-2">
+                    <Ic.cardArt className="w-20 h-auto text-primary-500" />
+                    <span className="text-cd-h7 font-bold text-neutral-800">ご本人名義のクレジットカード</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 区切り — 商品概要と誘導ブロックを分離 */}
+            <div className="-mx-1 border-t border-warm-200"></div>
+
+            {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
+            <div className="-mx-5 bg-primary-10 px-5 pt-5 pb-3">
+              <div>
+                <div className="flex items-end justify-between gap-3">
+                  <div>
+                    <p className="text-caption text-neutral-500">保険料</p>
+                    <p className="text-neutral-900"><span className="font-en text-cd-h2 font-bold text-primary-700">480</span><span className="text-cd-h7 font-bold"> 円 / 月〜</span></p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold text-primary-700 shadow-sm"><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2 border-t border-primary-100 pt-3">
+                  {[
+                    { i: Ic.shield, t: "引受 T&D" },
+                    { i: Ic.card,   t: "クレカ払い対応" },
+                    { i: Ic.doc,    t: "最短10分" },
+                  ].map((b, k) => (
+                    <div key={k} className="flex flex-col items-center gap-1 text-center">
+                      <b.i className="w-5 h-5 text-primary-600" />
+                      <span className="text-[11px] font-medium text-neutral-600 leading-tight">{b.t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-7 flex flex-col items-center gap-0.5">
+                <p className="text-caption font-bold text-primary-700">まずはプランを選んでみましょう</p>
+                <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <ActionBar solid>
+        <Btn kind="cta" onClick={() => go(1)}>プランを選ぶ<Ic.chevR className="w-4 h-4" /></Btn>
+      </ActionBar>
+    </>
+  );
+}
+
+export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen }: { go: Go; sel: string; setSel: SetStr; m: number; setM: SetNum; y: number; setY: SetNum; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean }) {
+  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  const [agree, setAgree] = useState(initialAgree ?? false);
+  const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
+  const [birth, setBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const sendSecRef = useRef<HTMLDivElement>(null);
+  const [showSend, setShowSend] = useState(false);
+  const bindScroll = (el: HTMLDivElement | null) => {
+    if (!el) return;
+    const marked = el as HTMLDivElement & { __bound?: boolean };
+    if (marked.__bound) return;
+    marked.__bound = true;
+    el.addEventListener("scroll", () => {
+      const sec = sendSecRef.current;
+      if (sec) {
+        const secTop = sec.getBoundingClientRect().top;
+        const contBottom = el.getBoundingClientRect().bottom;
+        setShowSend(secTop < contBottom - 64);
+      }
+    }, { passive: true });
+  };
+  return (
+    <>
+      <AppBar title="保険" onBack={() => go(0)} />
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
+        <div className="sticky top-0 z-30">
+          <Steps n={2} go={go} />
+        </div>
+        <div className="px-5 pt-6 pb-0 space-y-8">
+          {/* ---- プラン選択 ---- */}
+        <StepSection label="プランを選ぶ" n={1} big>
+          <div>
+            <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
+          </div>
+          {PLANS.map((p) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
+          ))}
+          <p className="text-caption text-neutral-500 leading-relaxed px-1">
+            ※ 保険料は年齢・性別により変動します。
+          </p>
+        </StepSection>
+
+        {/* ---- 保険料シミュレーション ---- */}
+        <div className="-mx-5 px-5 py-6" style={{ background: "var(--warm-100)" }}>
+        <StepSection label="保険料シミュレーション" n={2} big>
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen}
+            infoSlot={
+              <div className="space-y-4 pb-5 mb-5 border-b border-warm-200">
+                <div>
+                  <h3 className="text-cd-h7 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
+                  <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                  <button type="button" onClick={() => setPickerOpen(true)}
+                    className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-cd-h7 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
+                    <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
+                    <Ic.chevR className="w-4 h-4 shrink-0 text-neutral-400 rotate-90" />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-caption font-medium text-neutral-600">性別<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                  <div className="flex gap-2">
+                    {["男性", "女性"].map((g) => (
+                      <button key={g} onClick={() => setGender(g)}
+                        className={`flex-1 h-11 rounded-lg border text-cd-h7 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600"}`}>{g}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            } />
+        </StepSection>
+        </div>
+
+        {/* ---- 申し込みをする（2ステップ） ---- */}
+        <div className="-mx-5 px-5 py-6" style={{ background: "#e7edf7" }}>
+        <StepSection label="申し込みをする" n={3} big>
+          {/* STEP 1 — メールアドレスのご入力 */}
+          <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
+            <h3 className="text-cd-h7 font-bold text-neutral-800">メールアドレスのご入力</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">
+              ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
+            </p>
+            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+          </div>
+
+          {/* STEP 2 — 事前同意事項のご確認 */}
+          <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
+            <h3 className="text-cd-h7 font-bold text-neutral-800">事前同意事項のご確認</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
+            <button onClick={() => setNoticeOpen(true)}
+              className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+              <span className="flex items-center gap-2.5 min-w-0">
+                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
+                <span className="text-cd-h7 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
+              </span>
+              <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
+            </button>
+            <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left pt-1">
+              <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                {agree && <Ic.check className="w-3 h-3" />}
+              </span>
+              <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
+            </button>
+          </div>
+        </StepSection>
+        </div>
+        </div>
+      </div>
+
+      <ActionBar bg={showSend ? "#e7edf7" : undefined}>
+        <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
+          <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
+          申込みには、ご本人様名義のクレジットカードが必要です
+        </div>
+        {showSend && (
+          <div className="fade-in space-y-2">
+            <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
+            {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+          </div>
+        )}
+      </ActionBar>
+
+      {/* 生年月日ドラムロール（iOS風） */}
+      <DateDrumSheet open={pickerOpen} value={birth}
+        onClose={() => setPickerOpen(false)}
+        onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
+
+      {/* 重要事項ボトムシート */}
+      {noticeOpen && (
+        <div className="absolute inset-0 z-40">
+          <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
+          <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
+              <h3 className="flex items-center gap-2 text-cd-h6 font-bold text-neutral-800">
+                <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
+                重要事項・事前同意事項
+              </h3>
+              <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div className="px-5 py-4 overflow-y-auto no-sb space-y-5">
+              <p className="text-caption text-neutral-500 leading-relaxed">
+                お申込み前に、以下の内容を必ずご確認ください。
+              </p>
+
+              <div className="space-y-5">
+                <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
+                  <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
+                  事前同意事項
+                </p>
+                <p className="text-caption text-neutral-500 leading-relaxed">お申し込み前にご確認ください。</p>
+                <section className="space-y-1.5">
+                  <h4 className="text-cd-h7 font-bold text-neutral-800">この保険について</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・株式会社三菱ＵＦＪ銀行を団体契約者とし、Money Canvas会員の皆さま、会員のご家族を被保険者とする団体契約です。Money Canvas会員の資格を喪失された場合、保険契約は解約いただく、もしくは更新できませんので、ご注意ください。また、保険証券を請求する権利、保険契約を解約する権利等は原則として株式会社 三菱ＵＦＪ銀行が有します。</li>
+                    <li>・この契約は、申込み日が17日までの場合は、翌月1日（0時）より補償が開始し、申込み日が18日から末日までの場合は、翌々月1日（0時）より補償が開始します。</li>
+                    <li>・満期日までにご加入者から更新しない旨のお申出がなければ、団体の取り決めにより原則自動更新されます。</li>
+                  </ul>
+                </section>
+                <section className="space-y-1.5">
+                  <h4 className="text-cd-h7 font-bold text-neutral-800">個人情報の取扱いについて</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・団体契約者である株式会社三菱ＵＦＪ銀行は、お客さまにご入力いただく個人情報を、以下の目的で利用させていただきます。</li>
+                    <li>・お客さまに関する情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
+                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+            <div className="px-5 py-3 border-t border-warm-200">
+              <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ============================================================
+   SCREEN — PINコード認証（メールのURLから遷移して入力）
+   ============================================================ */
+export function ScreenPin({ go }: { go: Go }) {
+  const [pin, setPin] = useState("");
+  return (
+    <>
+      <AppBar title="保険" onBack={() => go(1)} />
+      <div className="flex-1 overflow-y-auto no-sb">
+        <Steps n={3} go={go} />
+        <div className="px-5 py-8 flex flex-col items-center text-center">
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
+          <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          </div>
+          <h1 className="text-cd-h4 font-bold text-neutral-800">PINコードの入力</h1>
+          <p className="mt-3 text-cd-h7 text-neutral-600 leading-relaxed">
+            ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載の6桁のPINコードを入力してください。
+          </p>
+
+          <input
+            value={pin}
+            onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+            inputMode="numeric"
+            placeholder="______"
+            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-warm-50 text-center font-en font-semibold text-cd-h2 tracking-[0.45em] text-neutral-800"
+          />
+
+          <button className="mt-4 text-caption text-button-500 underline underline-offset-2">PINコードを再送する</button>
+        </div>
+      </div>
+      <ActionBar>
+        <p className="text-caption text-neutral-500 leading-relaxed px-1">
+          本お手続きは「THEO つみたて安心ほけん」のお申し込みです。<br/>
+          <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
+        </p>
+        <Btn kind="cta" onClick={() => go(3)} disabled={pin.length < 6}>認証する</Btn>
+        {pin.length < 6 && <p className="text-center text-caption text-neutral-400">6桁のPINコードを入力してください</p>}
+      </ActionBar>
+    </>
+  );
+}
+
+/* ============================================================
+   SCREEN 3 — 補償内容の確認
    ============================================================ */
 export function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
   return (
@@ -359,22 +930,10 @@ export function FeatValue({ v }: { v?: string }) {
   );
 }
 
-// Shared 積立スライダー（Simulator と 申込フォームの修正シートで共用）
-export function SimSliders({
-  m,
-  setM,
-  y,
-  setY,
-  onInput,
-}: {
-  m: number;
-  setM: SetNum;
-  y: number;
-  setY: SetNum;
-  onInput?: () => void;
-}) {
+// Shared積立スライダー（Simulator と 申込フォームの修正シートで共用）
+export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: SetNum; y: number; setY: SetNum; onInput?: () => void }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
-  const sliderStyle: React.CSSProperties = { accentColor: "var(--primary-color-500)" };
+  const sliderStyle = { accentColor: "var(--primary-color-500)" };
   const onM = (e: React.ChangeEvent<HTMLInputElement>) => { setM(+e.target.value); onInput && onInput(); };
   const onY = (e: React.ChangeEvent<HTMLInputElement>) => { setY(+e.target.value); onInput && onInput(); };
   return (
@@ -419,7 +978,7 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const annual = m * 12;
   const maxBenefit = annual * y;
-  const rows: { n: number; age: number; premium: number; benefit: number; cum: number }[] = [];
+  const rows = [];
   for (let n = 0; n <= y; n++) {
     const age = startAge + n;
     const benefit = annual * (y - n);
@@ -467,14 +1026,15 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   );
 }
 
-export function Simulator({ m, setM, y, setY, initialSimOpen }: { m: number; setM: SetNum; y: number; setY: SetNum; initialSimOpen?: boolean }) {
+export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot }: { m: number; setM: SetNum; y: number; setY: SetNum; initialSimOpen?: boolean; infoSlot?: React.ReactNode }) {
   const [open, setOpen] = useState(initialSimOpen ?? false);
   return (
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
-      <SectionLabel>保険料シミュレーション</SectionLabel>
       <p className="text-caption text-neutral-600 leading-relaxed mb-5">
         保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。
       </p>
+
+      {infoSlot}
 
       <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setOpen(true)} />
 
@@ -495,314 +1055,48 @@ export function Simulator({ m, setM, y, setY, initialSimOpen }: { m: number; set
 }
 
 /* ============================================================
-   STEP 2 — プラン選択 ＋ 補償内容 ＋ 不足分メール送信（1ページ）
+   SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenStep2({
-  go,
-  sel,
-  setSel,
-  m,
-  setM,
-  y,
-  setY,
-  initialNoticeOpen,
-  initialAgree,
-  initialSimOpen,
-}: {
-  go: Go;
-  sel: string;
-  setSel: SetStr;
-  m: number;
-  setM: SetNum;
-  y: number;
-  setY: SetNum;
-  initialNoticeOpen?: boolean;
-  initialAgree?: boolean;
-  initialSimOpen?: boolean;
-}) {
+export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame }: { go: Go; sel: string; m: number; setM: SetNum; y: number; setY: SetNum; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
-  const [agree, setAgree] = useState(initialAgree ?? false);
-  const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [solid, setSolid] = useState(false);
-  const bindScroll = (el: HTMLDivElement | null) => {
-    const node = el as (HTMLDivElement & { __theoBound?: boolean }) | null;
-    if (!node || node.__theoBound) return;
-    node.__theoBound = true;
-    node.addEventListener("scroll", () => {
-      const h = heroRef.current;
-      setSolid(node.scrollTop >= (h ? h.offsetHeight - 16 : 220));
-    }, { passive: true });
-  };
-  return (
-    <>
-      <AppBar title="保険" brandVisible={solid} />
-      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
-
-        {/* ---- イントロ / ヒーロー ---- */}
-        <div ref={heroRef} className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
-          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
-          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO ご利用者さま向け、<br/><span className="font-bold">保険のお申込み</span>ページです。</p>
-        </div>
-
-        {/* progress — sticks to top once the blue hero scrolls out of view */}
-        <div className="sticky top-0 z-30">
-          <Steps n={1} />
-        </div>
-
-        <div className="px-5 py-6 space-y-8">
-          {/* hook card */}
-          <div className="space-y-6">
-            <div className="-mx-1">
-              <div className="flex items-center justify-between gap-3 mb-2">
-                <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
-                <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
-              </div>
-              <p className="text-cd-h5 font-bold text-neutral-800 leading-relaxed">
-                働けなくなっても、<br/>つみたては止めない。
-              </p>
-              <p className="mt-2 text-cd-h7 text-neutral-500 leading-relaxed">
-                就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
-              </p>
-              <div className="mt-4 overflow-hidden">
-                <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
-              </div>
-            </div>
-
-            {/* value points */}
-            <div className="space-y-3">
-              {[
-                { i: Ic.shield, t: "申込みは10分", d: "クレジットカード払い。入力は最小限。" },
-                { i: Ic.chart,  t: "マイページでかんたん運用管理", d: "保険料の変更、給付額の変更、ご請求、控除証明書。" },
-                { i: Ic.heart,  t: "少額から、毎月", d: "月額数百円から。いつでも見直し可能。" },
-              ].map((v, k) => (
-                <div key={k} className="flex items-start gap-3 rounded-xl border border-warm-200 bg-white p-4">
-                  <div className="grid place-items-center w-10 h-10 rounded-full bg-primary-10 text-primary-600 shrink-0">
-                    <v.i className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-cd-h7 font-bold text-neutral-800">{v.t}</p>
-                    <p className="text-caption text-neutral-500 leading-relaxed">{v.d}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ---- プラン選択 ---- */}
-        <StepSection label="プラン選択">
-          <div>
-            <h2 className="text-cd-h5 font-bold text-neutral-800">プランを選ぶ</h2>
-            <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
-          </div>
-          {PLANS.map((p) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
-          ))}
-          <p className="text-caption text-neutral-500 leading-relaxed px-1">
-            ※ 保険料は年齢・性別により変動します。
-          </p>
-        </StepSection>
-
-        {/* ---- 補償内容 ---- */}
-        <StepSection label="補償内容">
-          <div className="rounded-2xl border border-warm-200 bg-white p-5">
-            <SectionLabel>補償項目</SectionLabel>
-            <div className="py-3 border-b border-warm-200">
-              <p className="text-caption text-neutral-500">保険名称</p>
-              <p className="mt-0.5 text-cd-h7 font-medium text-neutral-900">無配当特定疾病障害介護保証保険（団体型）</p>
-            </div>
-            {plan.feat.map((f, i) => {
-              const [k, v] = f.split("：");
-              return (
-                <div key={i} className="flex items-center justify-between py-3 border-b border-warm-200 last:border-0">
-                  <span className="text-caption text-neutral-500">{k}</span>
-                  <FeatValue v={v || "—"} />
-                </div>
-              );
-            })}
-            <div className="flex items-center justify-between py-3 border-b border-warm-200 last:border-0">
-              <span className="text-caption text-neutral-500">保険料（月額）</span>
-              <span className="text-neutral-800">
-                <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{plan.price.replace("¥", "")}</span>
-                <span className="text-caption"> 円 / 月</span>
-              </span>
-            </div>
-          </div>
-
-          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} />
-
-          <div className="rounded-2xl border border-warm-200 bg-white p-5">
-            <SectionLabel>ご確認事項</SectionLabel>
-            {["重要事項説明書（契約概要・注意喚起情報）", "ご契約のしおり・約款", "個人情報の取扱いについて"].map((t, i) => (
-              <button key={i} className="flex items-center justify-between w-full py-3 border-b border-warm-200 last:border-0 text-left">
-                <span className="flex items-center gap-2 text-cd-h7 text-neutral-700"><Ic.doc className="w-4 h-4 text-neutral-400" />{t}</span>
-                <Ic.chevR className="w-4 h-4 text-neutral-400" />
-              </button>
-            ))}
-          </div>
-        </StepSection>
-
-        {/* ---- 不足分メール送信 / 事前同意 ---- */}
-        <StepSection label="不足分メール送信">
-          <p className="text-cd-h7 text-neutral-700 leading-relaxed">
-            ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
-          </p>
-
-          <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
-
-          <div>
-            <h3 className="text-cd-h6 font-bold text-neutral-800">事前同意事項</h3>
-            <p className="text-caption text-neutral-500 mt-1">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
-
-            <button onClick={() => setNoticeOpen(true)}
-              className="mt-3 flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
-              <span className="flex items-center gap-2.5 min-w-0">
-                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
-                <span className="text-cd-h7 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
-              </span>
-              <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
-            </button>
-          </div>
-
-          <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left">
-            <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
-              {agree && <Ic.check className="w-3 h-3" />}
-            </span>
-            <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-          </button>
-        </StepSection>
-        </div>
-      </div>
-
-      <ActionBar>
-        <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
-          <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
-          申込みには、ご本人様名義のクレジットカードが必要です
-        </div>
-        <Btn kind="cta" onClick={() => go(1)} disabled={!agree}>上記に同意してメールを送信</Btn>
-        {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
-      </ActionBar>
-
-      {/* 重要事項ボトムシート */}
-      {noticeOpen && (
-        <div className="absolute inset-0 z-40">
-          <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
-          <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
-              <h3 className="flex items-center gap-2 text-cd-h6 font-bold text-neutral-800">
-                <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
-                重要事項・事前同意事項
-              </h3>
-              <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
-              </button>
-            </div>
-            <div className="px-5 py-4 overflow-y-auto no-sb space-y-5">
-              <p className="text-caption text-neutral-500 leading-relaxed">
-                お申込み前に、以下の内容を必ずご確認ください。
-              </p>
-              <section className="space-y-1.5">
-                <h4 className="text-cd-h7 font-bold text-neutral-800">契約概要・注意喚起情報</h4>
-                <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                  <li>・本保険は団体契約であり、所定の会員資格を喪失された場合、保険契約は解約となり、更新はできません。</li>
-                  <li>・申込み日が17日までの場合は翌月1日（0時）より、18日から末日までの場合は翌々月1日（0時）より補償が開始します。</li>
-                  <li>・満期日までに更新しない旨のお申し出がなければ、団体の取り決めにより原則自動更新されます。</li>
-                  <li>・告知義務があります。事実と異なる告知をされた場合、ご契約が解除され保険金をお支払いできないことがあります。</li>
-                </ul>
-              </section>
-              <section className="space-y-2">
-                <h4 className="text-cd-h7 font-bold text-neutral-800">関連書類</h4>
-                {["重要事項説明書（契約概要・注意喚起情報）", "ご契約のしおり・約款", "個人情報の取扱いについて"].map((t, i) => (
-                  <button key={i} className="flex items-center justify-between w-full rounded-xl border border-warm-200 bg-warm-50 px-3.5 py-3 text-left">
-                    <span className="flex items-center gap-2 text-cd-h7 text-neutral-700"><Ic.doc className="w-4 h-4 text-neutral-400" />{t}</span>
-                    <Ic.chevR className="w-4 h-4 text-neutral-400" />
-                  </button>
-                ))}
-              </section>
-
-              <div className="border-t border-warm-200 pt-4 space-y-5">
-                <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
-                  <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
-                  事前同意事項
-                </p>
-                <section className="space-y-1.5">
-                  <h4 className="text-cd-h7 font-bold text-neutral-800">この保険について</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・本保険は団体契約であり、所定の会員資格を喪失された場合、保険契約は解約となり、更新はできませんのでご注意ください。</li>
-                    <li>・この契約は、申込み日が17日までの場合は翌月1日（0時）より、18日から末日までの場合は翌々月1日（0時）より補償が開始します。</li>
-                    <li>・満期日までに更新しない旨のお申し出がなければ、団体の取り決めにより原則自動更新されます。</li>
-                  </ul>
-                </section>
-                <section className="space-y-1.5">
-                  <h4 className="text-cd-h7 font-bold text-neutral-800">個人情報の取扱いについて</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・ご入力いただく個人情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
-                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
-                  </ul>
-                </section>
-              </div>
-            </div>
-            <div className="px-5 py-3 border-t border-warm-200">
-              <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* ============================================================
-   STEP 3 — 申込フォーム
-   ============================================================ */
-export function ScreenForm({
-  go,
-  sel,
-  m,
-  setM,
-  y,
-  setY,
-  initialEditOpen,
-  initialSheetRes,
-  initialSame,
-}: {
-  go: Go;
-  sel: string;
-  m: number;
-  setM: SetNum;
-  y: number;
-  setY: SetNum;
-  initialEditOpen?: boolean;
-  initialSheetRes?: boolean;
-  initialSame?: boolean;
-}) {
-  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
-  const [nat, setNat] = useState("jp");
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
   const yen = (v: number) => v.toLocaleString("ja-JP");
+  const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
 
-  // 契約者住所（受取人「契約者と同じ」用の自動入力値）
-  const holder = { zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", bldg: "丸の内ビル 10F" };
+  // 契約者住所（受取人「契約者と同じ」でコピーされる値。初期値はTHEO口座から自動入力）
+  const [holder, setHolder] = useState({ zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", bldg: "丸の内ビル 10F" });
+  const setH = (k: "zip" | "pref" | "town" | "bldg") => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h) => ({ ...h, [k]: e.target.value }));
+
+  // ページ下部到達で CTA ブロックを薄ブルーに
+  const [atBottom, setAtBottom] = useState(false);
+  const bindScroll = (el: HTMLDivElement | null) => {
+    if (!el) return;
+    const marked = el as HTMLDivElement & { __bound?: boolean };
+    if (marked.__bound) return;
+    marked.__bound = true;
+    el.addEventListener("scroll", () => {
+      setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
+    }, { passive: true });
+  };
 
   return (
     <>
-      <AppBar title="お申込み" onBack={() => go(0)} />
-      <Steps n={2} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">
+      <AppBar title="お申込み" onBack={() => go(2)} />
+      <Steps n={3} go={go} />
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">
         <div className="flex items-start gap-3 px-1 pt-1">
           <span className="grid place-items-center w-6 h-6 mt-0.5 rounded-full bg-[color:var(--success)] text-white shrink-0">
             <Ic.check className="w-3.5 h-3.5" />
           </span>
           <p className="text-cd-h7 text-neutral-700 leading-relaxed">
-            <span className="font-bold text-[color:var(--success)]">メールアドレスを認証しました。</span><br/>
+            <span className="font-bold text-[color:var(--success)]">PINコードを認証しました。</span><br/>
             ご契約者さまと保険金受取人さまの情報入力をお願いします。
           </p>
         </div>
-        <div className="rounded-xl bg-primary-10 px-4 py-3 flex items-center gap-2 text-caption text-primary-700">
+        <h2 className="text-cd-h5 font-bold text-neutral-800 pt-1">情報ご入力</h2>
+        <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
           <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
         </div>
 
@@ -816,28 +1110,17 @@ export function ScreenForm({
           </div>
           <LockedField label="生年月日" value="1990 / 01 / 01" />
           <LockedField label="性別" value="男性" />
-          <div className="flex flex-col gap-1.5">
-            <span className="text-caption font-medium text-neutral-600">国籍 <span className="text-[color:var(--secondary-color-700)]">*</span></span>
-            <div className="grid grid-cols-2 gap-3">
-              {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
-                <button key={k} onClick={() => setNat(k)}
-                  className={`h-11 rounded-lg border text-cd-h7 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
 
           <SubLabel>連絡先</SubLabel>
-          <Field label="郵便番号" placeholder="100-0001" required hint="郵便番号から住所を自動入力します" />
-          <Select label="都道府県" required value="東京都" options={PREFS} hint="郵便番号で自動入力" />
-          <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" required hint="町名まで自動入力されます" />
-          <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" />
+          <Field label="郵便番号" placeholder="100-0001" required hint="郵便番号から住所を自動入力します" value={holder.zip} onChange={setH("zip")} />
+          <Select label="都道府県" required value={holder.pref} options={PREFS} hint="郵便番号で自動入力" onChange={setH("pref")} />
+          <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" required hint="町名まで自動入力されます" value={holder.town} onChange={setH("town")} />
+          <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={holder.bldg} onChange={setH("bldg")} />
           <Field label="電話番号" placeholder="090-0000-0000" required />
         </GroupCard>
 
         {/* 保険金受取人グループ */}
-        <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" icon={Ic.heart}>
+        <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" icon={Ic.heartHand}>
           <Field label="氏名" placeholder="山田 花子" />
 
           <button onClick={() => setSame((s) => !s)} className="flex items-center gap-2.5 w-full text-left pt-1">
@@ -847,14 +1130,14 @@ export function ScreenForm({
             <span className="text-caption text-neutral-700">住所は契約者と同じ</span>
           </button>
 
-          <div key={same ? "same" : "diff"} className="space-y-3">
+          <div key={same ? `same-${holder.zip}-${holder.pref}-${holder.town}-${holder.bldg}` : "diff"} className="space-y-3">
             <Field label="郵便番号" placeholder="100-0001" value={same ? holder.zip : undefined} disabled={same} />
             <Select label="都道府県" value={same ? holder.pref : "都道府県を選択"} options={PREFS} disabled={same} />
             <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" value={same ? holder.town : undefined} disabled={same} />
             <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={same ? holder.bldg : undefined} disabled={same} />
           </div>
 
-          <Select label="続柄" required value="続柄を選択" options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母", "その他"]} />
+          <Select label="続柄" required value="続柄を選択" options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} />
           <Field label="電話番号" placeholder="090-0000-0000" />
         </GroupCard>
 
@@ -865,10 +1148,10 @@ export function ScreenForm({
 
       </div>
 
-      <ActionBar>
-        <div className="rounded-xl border border-warm-200 bg-warm-50 px-3.5 py-2">
+      <ActionBar bg={atBottom ? "#e7edf7" : undefined}>
+        <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-warm-50"}`}>
           <div className="flex items-center justify-between gap-2">
-            <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">積立内容</span>
+            <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
             <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium text-button-500">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
               修正
@@ -882,7 +1165,7 @@ export function ScreenForm({
             <span className="text-neutral-700 tabular-nums">{y}年</span>
           </div>
         </div>
-        <Btn kind="button" onClick={() => go(2)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
+        <Btn kind="button" onClick={() => go(4)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
       </ActionBar>
 
       {/* 修正ボトムシート */}
@@ -923,7 +1206,7 @@ export function ScreenForm({
 }
 
 /* ============================================================
-   STEP 4 — 内容確認 ＋ お支払い登録（1ページ）
+   SCREEN 5 — 内容確認
    ============================================================ */
 // 重要事項（5項目）— ①〜④は添付内容、⑤は契約のしおり・約款
 export const AGREE_ITEMS: AgreeItemData[] = [
@@ -995,13 +1278,33 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
-    t: "ご契約のしおり・約款の確認",
+    t: "被保険者の確認",
     blocks: [
-      { p: "ご契約のしおり・約款の内容を確認し、同意します。" },
+      { p: "該当するいずれかにチェックを入れてください。" },
+    ],
+  },
+  {
+    t: "重要事項説明の確認",
+    blocks: [
+      { p: "以下の重要事項説明書をご確認ください。" },
+      { download: "重要事項説明書" },
+    ],
+  },
+  {
+    t: "意向の確認",
+    blocks: [
+      { p: "シミュレーションをもとにT＆Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。" },
       { ul: [
-        "保障内容、保険期間、保険料、保険金等のお支払い・お支払いできない場合、解約・自動更新、クーリング・オフ等についてご確認ください。",
+        "障害・介護プランを選択した場合\n積立期間中における障害・介護状態にそなえたい",
+        "がんプランを選択した場合\n積立期間中におけるがんにそなえたい",
+        "安心セットを選択した場合\n積立期間中における障害・介護状態、がんにそなえたい",
       ] },
-      { note: "※本項目の正式な掲載文面は別途ご提供ください（仮テキスト）。" },
+    ],
+  },
+  {
+    t: "ほけん商品のお問い合わせについて",
+    blocks: [
+      { p: "本サービスはT＆Dフィナンシャル生命のほけん商品となります。詳細なほけん商品のお問い合わせについてはT＆Dフィナンシャル生命へお問い合わせください。" },
     ],
   },
 ];
@@ -1021,6 +1324,12 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
           </ul>
         );
         if (b.link) return <a key={i} href={b.link} target="_blank" rel="noreferrer" className="block text-caption text-button-500 underline break-all leading-relaxed">{b.link}</a>;
+        if (b.download) return (
+          <a key={i} href="#" onClick={(e) => e.preventDefault()} className="inline-flex items-center gap-1.5 text-caption font-medium text-button-500 underline underline-offset-2">
+            {b.download}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </a>
+        );
         if (b.note) return <div key={i} className="rounded-lg border border-warm-200 bg-warm-50 p-3 text-caption text-neutral-700 leading-relaxed whitespace-pre-line">{b.note}</div>;
         if (b.table) return (
           <div key={i} className="rounded-lg border border-warm-200 overflow-hidden">
@@ -1042,28 +1351,16 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
   );
 }
 
-export function AgreeItem({
-  num,
-  item,
-  open,
-  onToggle,
-  checked,
-  onCheck,
-}: {
-  num: string;
-  item: AgreeItemData;
-  open: boolean;
-  onToggle: () => void;
-  checked: boolean;
-  onCheck: () => void;
-}) {
+export function AgreeItem({ num, item, open, onToggle, checked, onCheck, children }: { num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }) {
   return (
     <div className={`rounded-xl border bg-white overflow-hidden ${checked ? "border-primary-200" : "border-warm-200"}`}>
       <div className="flex items-center gap-2.5 px-3 py-3">
-        <button onClick={onCheck} aria-label="同意チェック"
-          className={`grid place-items-center w-5 h-5 rounded border-2 shrink-0 ${checked ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
-          {checked && <Ic.check className="w-3 h-3" />}
-        </button>
+        {onCheck && (
+          <button onClick={onCheck} aria-label="同意チェック"
+            className={`grid place-items-center w-5 h-5 rounded border-2 shrink-0 ${checked ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+            {checked && <Ic.check className="w-3 h-3" />}
+          </button>
+        )}
         <button onClick={onToggle} className="flex-1 flex items-center justify-between gap-2 text-left">
           <span className="text-cd-h7 font-bold text-neutral-800 leading-snug"><span className="text-primary-600 mr-1">{num}</span>{item.t}</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
@@ -1073,40 +1370,25 @@ export function AgreeItem({
       <div style={{ maxHeight: open ? "2600px" : "0px", opacity: open ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
         <div className="px-3 pt-3 pb-3.5 border-t border-warm-200 max-h-80 overflow-y-auto no-sb space-y-2.5">
           <AgreeBlocks blocks={item.blocks} />
+          {children}
         </div>
       </div>
     </div>
   );
 }
 
-export function ScreenStep4({
-  go,
-  sel,
-  m,
-  y,
-  initialOpenIdx,
-  initialChecks,
-  initialAcctOpen,
-}: {
-  go: Go;
-  sel: string;
-  m: number;
-  y: number;
-  initialOpenIdx?: number;
-  initialChecks?: boolean[];
-  initialAcctOpen?: boolean;
-}) {
+export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
-  const [checks, setChecks] = useState(initialChecks ?? [false, false, false, false, false]);
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
-  const [acctOpen, setAcctOpen] = useState(initialAcctOpen ?? false);
-  const all = checks.every(Boolean);
-  const toggleCheck = (i: number) => setChecks((a) => a.map((v, k) => (k === i ? !v : v)));
+  const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
+  const [nat, setNat] = useState("jp");
+  const [jpLang, setJpLang] = useState("");
+  const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   return (
     <>
-      <AppBar title="内容確認・お支払い登録" onBack={() => go(1)} />
-      <Steps n={3} />
+      <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
+      <Steps n={4} go={go} />
       <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">
         <StepSection label="内容確認">
         <h2 className="text-cd-h5 font-bold text-neutral-800">お申込み内容</h2>
@@ -1114,9 +1396,9 @@ export function ScreenStep4({
         <div className="rounded-2xl border border-warm-200 bg-white p-5">
           <SectionLabel>積立内容</SectionLabel>
           <Row k="契約プラン" v={plan.name} strong />
-          <Row k="毎月の積立金額（希望給付額）" v={`${yen(m)} 円`} />
-          <Row k="保障期間" v={`${y} 年`} />
-          <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} />
+          <Row k="毎月の積立金額（希望給付額）" v={`${yen(m)} 円`} strong />
+          <Row k="保障期間" v={`${y} 年`} strong />
+          <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
           <Row k="保険期間" v="1年（自動更新）" />
         </div>
 
@@ -1148,58 +1430,124 @@ export function ScreenStep4({
           <Row k="コード" v="TDF-0000-0000" />
         </div>
 
-        <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
-          <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-caption text-neutral-600">5項目すべてご確認・同意ください</span></div>
-          <div className="space-y-2.5">
-            {AGREE_ITEMS.map((it, i) => (
-              <AgreeItem key={i} num={"①②③④⑤"[i]} item={it} open={openIdx === i}
-                onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}
-                checked={checks[i]} onCheck={() => toggleCheck(i)} />
-            ))}
-          </div>
-          <p className="mt-3 text-caption text-neutral-500 text-right tabular-nums">{checks.filter(Boolean).length} / 5 確認済み</p>
-        </div>
         </StepSection>
 
-        <StepSection label="お支払い登録">
+        <StepSection label="お支払い">
+          <h2 className="text-cd-h5 font-bold text-neutral-800">保険料のお支払いについて</h2>
+          <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
+
+          <div>
+            <h3 className="text-cd-h7 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
+            <p className="mt-1.5 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+          </div>
+
+          {/* accordion ⑥ クレジットカードのお支払いについて */}
           <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
-            <button onClick={() => setAcctOpen((o) => !o)} className="flex items-center justify-between w-full px-5 py-4 text-left">
-              <h3 className="text-cd-h6 font-bold text-neutral-800">引落口座設定</h3>
-              <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${acctOpen ? "rotate-180" : ""}`}>
-                <Ic.chevR className="w-4 h-4 rotate-90" />
-              </span>
+            <button onClick={() => setPayIdx((o) => (o === 0 ? -1 : 0))} className="flex items-center justify-between w-full px-4 py-4 text-left">
+              <h4 className="text-cd-h7 font-bold text-neutral-800">クレジットカードのお支払いについて</h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 0 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
-            <div style={{ maxHeight: acctOpen ? "600px" : "0px", opacity: acctOpen ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-              <div className="px-5 pb-5">
-                <p className="text-caption text-neutral-600 leading-relaxed">
-                  下記「クレジットカード登録開始」ボタンより、お客様の取引金融機関のWEB口座振替受付サービスサイトへリンクします。引落口座の設定手続きを開始してください。
-                </p>
-                <ul className="mt-3 space-y-2">
+            <div style={{ maxHeight: payIdx === 0 ? "2000px" : "0px", opacity: payIdx === 0 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3 space-y-2.5">
+                <ul className="space-y-2.5">
+                  <li className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>カード名義人は被保険者さま本人名義に限ります。</span></li>
+                  <li className="text-caption text-neutral-600 leading-relaxed">
+                    <span className="flex gap-1.5"><span className="text-neutral-400 shrink-0">・</span><span>以下のマークのあるクレジットカードをご指定いただけます。</span></span>
+                    <div className="flex flex-wrap gap-1.5 mt-2 ml-3.5">
+                      {["VISA", "Mastercard", "JCB", "AMEX", "Diners"].map((c) => (
+                        <span key={c} className="rounded border border-warm-300 bg-warm-50 px-2 py-1 text-[10px] font-en font-semibold tracking-wide text-neutral-600">{c}</span>
+                      ))}
+                    </div>
+                  </li>
                   {[
-                    "お客様と取引金融機関との間で、印鑑なしに直接口座振替の設定を行うことが可能です。",
-                    "引落口座の設定が完了していない場合はつみたて購入を開始することができません。また、一部の地方銀行、信用組合、労働金庫等ではご利用することができませんので、ご注意ください。",
+                    "今後の保険料のお支払は、ご指定いただきましたクレジットカードの発行会社が定める会員規約に基づいて行われます。",
+                    "クレジットカード支払につきましては、クレジットカード支払規定に基づいて行いますので、お申し込みの前に必ずご一読ください。",
+                    "クレジットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
+                    "クレジットカードの発行会社が保険料相当額をT&Dフィナンシャル生命に入金させ、ご加入者さまの利用口座から保険料相当額のお振り替えをおこなう仕組みになっております。したがって、ご契約の消滅（解約・死亡等）または、T&Dフィナンシャル生命にお払込みが完了された場合でも、翌月以降に保険料相当額の決済（クレジットカードの発行会社によるお振り替え）が発生することがあります。",
+                    "保険料相当額の決済日はクレジットカードの発行会社によって異なります。決済日は、直接クレジットカードの発行会社にお問い合わせください。",
+                    "ご利用のクレジットカード番号・カード有効期限等が変更された場合、すみやかに保険のマイページより変更ください。（ご指定いただきましたクレジットカードの発行会社によっては、クレジットカードによる保険料のお支払いができなくなる場合があります。）",
                   ].map((t, i) => (
-                    <li key={i} className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed">
-                      <span className="text-neutral-400 shrink-0">・</span><span>{t}</span>
-                    </li>
+                    <li key={i} className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>{t}</span></li>
                   ))}
                 </ul>
-                <p className="mt-3 text-caption text-neutral-600 leading-relaxed">
-                  登録できない金融機関一覧は<a className="text-button-500 underline font-medium">こちら</a>からご確認ください。
-                </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed space-y-1">
-            <p>※ 収納代行会社（GMOペイメントゲートウェイ）のサイトへ遷移します。</p>
-            <p>※ 引落口座の設定を行った後、登録内容が表示されない場合は、<a className="text-button-500 underline">こちら</a>を押して画面を更新してください。</p>
+          {/* accordion ⑦ クレジットカード支払規定 */}
+          <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
+            <button onClick={() => setPayIdx((o) => (o === 1 ? -1 : 1))} className="flex items-center justify-between w-full px-4 py-4 text-left">
+              <h4 className="text-cd-h7 font-bold text-neutral-800">クレジットカード支払規定</h4>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 1 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div style={{ maxHeight: payIdx === 1 ? "2000px" : "0px", opacity: payIdx === 1 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3">
+                <ul className="space-y-2.5">
+                  {[
+                    "私がT&Dフィナンシャル生命保険株式会社（以下「T&Dフィナンシャル生命」といいます。）と締結した生命保険契約の保険料は、私が指定する私名義のクレジットカード（以下「指定カード」といいます。）で指定カード発行会社の会員規約に基づいて支払います。",
+                    "私がT&Dフィナンシャル生命に対し申し出をしない限り、保険料を前項と同様に指定カード発行会社の会員規約に基づいて、継続して支払います。",
+                    "私は指定カード発行会社により、私が届け出た会員番号・有効期限が更新された場合であっても、保険料を異議なく支払います。",
+                    "会員資格喪失等により、指定カード発行会社から指定カードによる保険料の支払いを停止されても異議はありません。",
+                    "指定カードの会員番号や有効期限が変更となった場合、私に事前に通知することなく、新しい会員番号や有効期限が指定カード発行会社よりT&Dフィナンシャル生命に通知されても、異議はありません。",
+                    "私は指定カードの会員番号や有効期限が変更となった場合、すみやかにT&Dフィナンシャル生命に通知します。",
+                    "指定カードで支払った保険料については領収証は請求いたしません。",
+                  ].map((t, i) => (
+                    <li key={i} className="flex gap-1.5 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>{t}</span></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
+
         </StepSection>
+
+        <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
+          <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-cd-h6 font-bold text-neutral-800">重要事項をご確認ください</span></div>
+          <div className="space-y-2.5">
+            {AGREE_ITEMS.map((it, i) => (
+              <AgreeItem key={i} num={"①②③④⑤⑥⑦⑧"[i]} item={it} open={openIdx === i}
+                onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}>
+                {i === 4 && (
+                  <div className="space-y-4 pt-1">
+                    <div className="grid grid-cols-2 gap-3">
+                      {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
+                        <button key={k} onClick={() => setNat(k)}
+                          className={`h-11 rounded-lg border text-cd-h7 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                    {nat === "other" && (
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-[color:var(--secondary-color-700)]">*</span></span>
+                        <div className="grid grid-cols-2 gap-3">
+                          {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
+                            <button key={k} onClick={() => setJpLang(k)}
+                              className={`h-11 rounded-lg border text-cd-h7 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                              {l}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </AgreeItem>
+            ))}
+          </div>
+
+          {/* 単一の確認・同意チェック（重要事項エリア内下部） */}
+          <button onClick={() => setAgreed((a) => !a)} className="flex items-start gap-3 w-full text-left rounded-xl border-2 border-warm-200 bg-white p-4 mt-3 transition-colors">
+            <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+              {agreed && <Ic.check className="w-3 h-3" />}
+            </span>
+            <span className="text-cd-h7 text-neutral-700 leading-relaxed">①④⑤⑥⑦⑧について確認、②③について同意する</span>
+          </button>
+        </div>
       </div>
       <ActionBar>
-        <Btn kind="cta" onClick={() => go(3)} disabled={!all}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
-        {!all && <p className="text-center text-caption text-neutral-400">5項目すべてチェックすると進めます</p>}
+        <Btn kind="cta" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+        {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
       </ActionBar>
     </>
   );
@@ -1259,8 +1607,8 @@ export function ScreenCardInput({ go }: { go: Go }) {
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(4)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
-        <button onClick={() => go(2)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
+        <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
+        <button onClick={() => go(4)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
       </div>
     </>
   );
@@ -1292,8 +1640,8 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(5)}>この内容で申込</Btn>
-        <button onClick={() => go(3)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
+        <Btn kind="button" onClick={() => go(7)}>この内容で申込</Btn>
+        <button onClick={() => go(5)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
       </div>
     </>
   );
@@ -1318,7 +1666,7 @@ export function ScreenDone({ go }: { go: Go }) {
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
         <div className="sticky top-0 z-30">
-          <Steps n={4} />
+          <Steps n={5} go={go} />
         </div>
 
         <div className="px-5 py-6 space-y-5">
