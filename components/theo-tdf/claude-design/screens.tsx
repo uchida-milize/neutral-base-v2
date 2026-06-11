@@ -12,26 +12,38 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Badge as UIBadge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+
 /* ============================================================
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.3-handoff / kumikomi.html (インライン版) (2026-06-11 取り込み)
-   ※ この版では screens.jsx が古いキャッシュとなっており、最新の編集は
-     kumikomi.html (単一ファイル版) 側に保存されていたため、そちらを正とした。
+   原典: TD 組込1.3-handoff (kumikomi.html / screens.jsx 同期版) (2026-06-11 取り込み)
 
-   8 画面 / 5 ステップ。1.3 の主な変更:
-   - 商品概要の特徴アイコン / グループアイコンを lucide 風 SVG → 専用 <img> アセットに差し替え
-   - hero 図版を hero-chart.png に / 各種マージン微調整 / ボタン高さ h-16
-   - 給付予想額テーブルの月払保険料を選択プランの実額に / 縦書きヘッダ
-   - 完了画面「このあとの流れ」の下向き矢印を番号バッジ中央に配置
-   - 完了画面の誤字「メーあるアドレス」→「メールアドレス」
+   ★ shadcn ラッパー方針 (Phase B / 2026-06-11):
+     共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
+     components/ui の shadcn primitive (Button / Badge / Input / Label / Card)
+     へ委譲する「アダプタ層」になっている。screens 側の呼び出し (<Btn> 等) は
+     不変なので Claude Design からの再取り込みパイプラインは維持されつつ、
+     shadcn の lineage を獲得し /theo-tdf/components のカタログと構造的に一致する。
+     ※ この shadcn 化は scripts の取り込み (port) 時に自動適用される。
+     ※ Select はネイティブ <select> のまま (Radix Select は controlled/UX が
+       大きく変わるため、モバイル WF の意図に合わせ現状維持)。
+     ※ AppBar / Steps / Phone / ActionBar / DateDrumSheet / WheelCol /
+       PlanCard / ExtBar は shadcn に対応物が無いモバイル UI 固有部品のため
+       独自実装を維持 (HANDOFF §10.2 の許容例外)。
+
+   8 画面 / 5 ステップ。商品概要 → プラン選択 → PIN認証 → 申込フォーム →
+   内容確認・お支払い → カード入力/確認(外部) → 完了。
 
    ポート時の変更点:
    - "use client"、ESM import / text-h{2-7}→text-cd-h{2-7} / assets→/assets/theo-tdf/
    - bg-success → bg-[color:var(--success)] / el.__bound 型安全キャスト
-   - ローカル dark toggle は削除 (サイト共通 ThemeToggle が制御)
-   - 一部 inline hex (#065FE3=primary-500 / #054EBA=primary-600) は Claude Design 出力に忠実に保持
+   - 一部 inline hex (#065FE3=primary-500 / #054EBA=primary-600) は出力に忠実に保持
    ============================================================ */
 
 export type Plan = {
@@ -88,15 +100,16 @@ export const Ic = {
 
 /* ---------------- ATOMS ---------------- */
 export function Badge({ children, tone = "secondary" }: { children: React.ReactNode; tone?: "secondary" | "primary" | "warm" }) {
-  const map = {
+  // shadcn <Badge> へ委譲。tone でブランド色の淡色面を当てる。
+  const tint: Record<string, string> = {
     secondary: "bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)]",
     primary: "bg-primary-10 text-primary-700",
     warm: "bg-warm-100 text-neutral-500",
   };
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-caption font-medium ${map[tone]}`}>
+    <UIBadge variant="secondary" className={`rounded-full border-transparent px-2.5 py-1 text-caption font-medium ${tint[tone]}`}>
       {children}
-    </span>
+    </UIBadge>
   );
 }
 
@@ -106,19 +119,25 @@ export function PH({ className = "", label }: { className?: string; label: strin
 
 // Buttons — cta (申込/前進), button (通常), outline (罫線)
 export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "danger" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
-  const base = "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 h-16 text-cd-h7 font-bold transition-colors active:scale-[.99]";
-  const kinds = {
+  // shadcn <Button> へ委譲。kind→variant + ブランド色 className。
+  const tint: Record<string, string> = {
     cta: "bg-button-500 text-white hover:bg-button-600",
     button: "bg-button-500 text-white hover:bg-button-600",
     danger: "bg-cta-500 text-white hover:bg-cta-600",
     outline: "border border-button-500 bg-white text-button-500 hover:bg-button-10",
     ghost: "text-neutral-500 hover:text-neutral-800",
   };
+  const variant = kind === "outline" ? "outline" : kind === "ghost" ? "ghost" : "default";
   return (
-    <button onClick={onClick} disabled={disabled} style={{ opacity: disabled ? 0.4 : 1 }}
-      className={`${base} ${kinds[kind]} ${full ? "w-full" : ""} ${disabled ? "cursor-not-allowed" : ""}`}>
+    <Button
+      type="button"
+      variant={variant}
+      onClick={onClick}
+      disabled={disabled}
+      className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-cd-h7 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
+    >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -189,8 +208,9 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 
 // 入力グループの囲い（契約者情報 / 保険金受取人 など）
 export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode; className?: string; iconSrc?: string }) {
+  // shadcn <Card> + <CardContent> へ委譲。ヘッダーはブランド淡色帯。
   return (
-    <section className={`rounded-2xl border border-warm-200 bg-white overflow-hidden shadow-sm ${className || ""}`}>
+    <Card className={`gap-0 overflow-hidden rounded-2xl border-warm-200 bg-white py-0 shadow-sm ${className || ""}`}>
       <div className="flex items-center gap-3 px-5 py-3.5 bg-primary-10 border-b border-primary-100">
         {iconSrc ? (
           <img src={iconSrc} alt="" className="w-7 h-7 shrink-0" />
@@ -202,8 +222,8 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
-      <div className="p-5 space-y-3">{children}</div>
-    </section>
+      <CardContent className="p-5 space-y-3">{children}</CardContent>
+    </Card>
   );
 }
 
@@ -229,12 +249,15 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
 
 // Wireframe form field
 export function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
+  // shadcn <Label> + <Input> へ委譲。
+  const id = React.useId();
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-caption font-medium text-neutral-600">
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id} className="text-caption font-medium text-neutral-600">
         {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
-      </span>
-      <input
+      </Label>
+      <Input
+        id={id}
         placeholder={placeholder}
         defaultValue={value}
         onChange={onChange}
@@ -242,21 +265,27 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
         className={`fld h-11 rounded-lg border px-3 text-cd-h7 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
       />
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
-    </label>
+    </div>
   );
 }
 
 // Read-only / locked display field（入力済み・変更不可）
 export function LockedField({ label, value }: { label: string; value: string }) {
+  // shadcn <Label> + 無効化した <Input> へ委譲 (表示専用)。
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="flex items-center gap-2 text-caption font-medium text-neutral-600">
+      <Label className="text-caption font-medium text-neutral-600">
         {label}
         <span className="inline-flex items-center gap-1 rounded-full bg-warm-200 px-2 py-0.5 text-[10px] font-medium text-neutral-500">変更不可</span>
-      </span>
-      <div className="flex items-center justify-between h-11 rounded-lg border border-warm-200 bg-warm-200/60 px-3 text-cd-h7 text-neutral-500">
-        <span>{value}</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-neutral-400"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </Label>
+      <div className="relative">
+        <Input
+          value={value}
+          readOnly
+          disabled
+          className="fld h-11 rounded-lg border border-warm-200 bg-warm-200/60 px-3 pr-9 text-cd-h7 text-neutral-500"
+        />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
       </div>
     </div>
   );
