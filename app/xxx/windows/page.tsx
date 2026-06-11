@@ -25,7 +25,7 @@ export default function TdfPrototypeCanvasPage() {
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Screens
           </p>
-          <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+          <h1 className="mt-2 text-display-3 font-semibold tracking-tight sm:text-display-2">
             スクリーン
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -54,7 +54,7 @@ export default function TdfPrototypeCanvasPage() {
               <p className="font-mono text-caption text-muted-foreground">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <h3 className="mt-1 text-h7 font-semibold">{step.label}</h3>
+              <h3 className="mt-1 text-h4 font-semibold">{step.label}</h3>
             </figcaption>
             <TdfFlowScreenStatic index={i} />
           </figure>

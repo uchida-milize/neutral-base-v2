@@ -28,7 +28,7 @@ export default function TheoTdfHome() {
     <>
       {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
       <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
-        <section className="relative overflow-hidden rounded-2xl bg-[#065fe3] text-white transition-colors duration-300">
+        <section className="relative overflow-hidden rounded-2xl bg-primary-500 text-white transition-colors duration-300">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,116,141,0.40),transparent_55%)]"
@@ -42,7 +42,7 @@ export default function TheoTdfHome() {
               <ShieldCheck className="size-3" />
               THEO × T&Dファイナンシャル · 組込申込
             </Badge>
-            <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
+            <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
               <JpText>つみたて安心ほけん、その先の安心まで。</JpText>
             </h1>
             <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
@@ -65,7 +65,7 @@ export default function TheoTdfHome() {
             <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
               Pages
             </p>
-            <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
+            <h2 className="mt-2 text-h2 font-semibold tracking-tight">
               このシステムの 4 つのページ
             </h2>
           </div>
@@ -125,7 +125,7 @@ function NavCard({
         <div className="min-w-0">
           <Card className="border-0 bg-transparent p-0 shadow-none">
             <CardHeader className="p-0">
-              <CardTitle className="text-h7">{title}</CardTitle>
+              <CardTitle className="text-h4">{title}</CardTitle>
             </CardHeader>
             <CardContent className="p-0 pt-2">
               <CardDescription className="text-body">{desc}</CardDescription>

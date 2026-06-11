@@ -604,12 +604,12 @@ export function UikitCatalog() {
 
           <Section title="Slider" desc="数値範囲の選択">
             <div className="space-y-6">
-              <Field label="音量" htmlFor="sl-volume">
-                <Slider id="sl-volume" defaultValue={[60]} max={100} step={1} />
+              <Field label="音量">
+                <Slider aria-label="音量" defaultValue={[60]} max={100} step={1} />
               </Field>
-              <Field label="価格帯（レンジ）" htmlFor="sl-range">
+              <Field label="価格帯（レンジ）">
                 <Slider
-                  id="sl-range"
+                  aria-label="価格帯（レンジ）"
                   defaultValue={[20, 80]}
                   max={100}
                   step={5}

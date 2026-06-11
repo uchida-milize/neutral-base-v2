@@ -67,7 +67,7 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
       <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">
         Embedded Insurance
       </p>
-      <h1 className="mt-1 text-cd-h5 font-bold text-neutral-800">THEO 組込保険</h1>
+      <h1 className="mt-1 text-h4 font-bold text-neutral-800">THEO 組込保険</h1>
       <p className="text-caption text-neutral-400 mt-0.5">
         ワイヤーフレーム / 全{TOTAL_STEPS}ステップ
       </p>
@@ -107,7 +107,7 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
                 </span>
                 <span className="min-w-0">
                   <span
-                    className={`block text-cd-h7 leading-tight flex items-center gap-1.5 ${
+                    className={`block text-h6 leading-tight flex items-center gap-1.5 ${
                       active ? "font-bold text-neutral-800" : "text-neutral-600"
                     }`}
                   >

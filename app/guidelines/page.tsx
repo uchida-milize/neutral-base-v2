@@ -125,7 +125,7 @@ function SectionHeading({
         </p>
         {audience ? <AudienceBadge audience={audience} /> : null}
       </div>
-      <h2 className="mt-2 text-[1.8rem] font-semibold leading-tight tracking-tight">
+      <h2 className="mt-2 text-h2 font-semibold leading-tight tracking-tight">
         <JpText>{title}</JpText>
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -244,7 +244,7 @@ function Pipeline() {
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader className="pb-2">
-          <CardTitle className="text-h7">テナントごとのカスタマイズ</CardTitle>
+          <CardTitle className="text-h4">テナントごとのカスタマイズ</CardTitle>
           <CardDescription>
             顧客企業のブランドカラーは <code>components/&lt;tenant&gt;/tokens.css</code> で
             上書きします。<code>.&lt;tenant&gt;-scope</code> クラスでスコープされているので、
@@ -283,7 +283,7 @@ function PipelineGroupCard({ group }: { group: PipelineGroup }) {
       </span>
 
       {/* グループタイトル (役割の長文ラベル) */}
-      <h3 className="mt-3 text-h7 font-semibold leading-tight">{group.title}</h3>
+      <h3 className="mt-3 text-h4 font-semibold leading-tight">{group.title}</h3>
 
       {/* やること (1 つ or 2 つ) — code sample 付きの詳細版 */}
       <div className="mt-4 space-y-3">
@@ -399,8 +399,8 @@ function Architecture() {
             className="rounded-lg border border-border bg-card p-4 text-card-foreground transition-colors duration-300"
           >
             <div className="flex items-center gap-2">
-              <span className="text-h7" aria-hidden>{l.icon}</span>
-              <h3 className="text-h7 font-semibold">{l.title}</h3>
+              <span className="text-h4" aria-hidden>{l.icon}</span>
+              <h3 className="text-h4 font-semibold">{l.title}</h3>
               <Badge variant="outline" className="font-mono text-tiny">
                 {l.who}
               </Badge>
@@ -420,7 +420,7 @@ function Architecture() {
       {/* file tree */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader className="pb-2">
-          <CardTitle className="text-h7">file tree (一覧)</CardTitle>
+          <CardTitle className="text-h4">file tree (一覧)</CardTitle>
           <CardDescription>
             主要ファイルのみ抜粋。完全版は GitHub リポジトリで参照してください。
           </CardDescription>
@@ -435,7 +435,7 @@ function Architecture() {
       {/* 技術スタック */}
       <Card className="mt-4 transition-colors duration-300">
         <CardHeader className="pb-2">
-          <CardTitle className="text-h7">技術スタックの位置づけ</CardTitle>
+          <CardTitle className="text-h4">技術スタックの位置づけ</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-1.5 text-body text-muted-foreground">
@@ -479,7 +479,7 @@ function Hero() {
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         Guidelines
       </p>
-      <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+      <h1 className="mt-2 text-display-3 font-semibold tracking-tight sm:text-display-2">
         デザインガイドライン
       </h1>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -543,11 +543,11 @@ function Principles() {
             key={p.n}
             className="flex gap-4 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300"
           >
-            <span className="font-chillax text-h6 font-semibold text-primary">
+            <span className="font-chillax text-h4 font-semibold text-primary">
               {p.n}
             </span>
             <div className="space-y-1">
-              <h3 className="text-h7 font-semibold">{p.title}</h3>
+              <h3 className="text-h4 font-semibold">{p.title}</h3>
               <p className="text-body text-muted-foreground">{p.body}</p>
             </div>
           </li>
@@ -606,7 +606,7 @@ function Tokens() {
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader className="pb-2">
-          <CardTitle className="text-h7">命名規約</CardTitle>
+          <CardTitle className="text-h4">命名規約</CardTitle>
           <CardDescription>
             生のスケール (例: <code>--secondary-color-500</code>) はトークン定義ファイル内でだけ使い、
             コンポーネントには公開しないこと。
@@ -657,13 +657,16 @@ function SemanticSwatch({
 /* ---------------------------------------------------------------- */
 
 const TYPE_SCALE = [
-  { name: "H1", token: "text-h1", px: 56, use: "ランディングのキャッチ" },
-  { name: "H2", token: "text-h2", px: 48, use: "ヒーロー見出し" },
-  { name: "H3", token: "text-h3", px: 40, use: "セクション見出し (大)" },
-  { name: "H4", token: "text-h4", px: 32, use: "ページタイトル" },
-  { name: "H5", token: "text-h5", px: 24, use: "セクション見出し" },
-  { name: "H6", token: "text-h6", px: 20, use: "サブセクション" },
-  { name: "H7", token: "text-h7", px: 18, use: "カードタイトル" },
+  { name: "Display 1", token: "text-display-1", px: 56, use: "ランディングのキャッチ" },
+  { name: "Display 2", token: "text-display-2", px: 48, use: "ヒーロー見出し" },
+  { name: "Display 3", token: "text-display-3", px: 40, use: "セクション見出し (大)" },
+  { name: "Display 4", token: "text-display-4", px: 32, use: "ページタイトル" },
+  { name: "H1", token: "text-h1", px: 34, use: "画面内最大見出し" },
+  { name: "H2", token: "text-h2", px: 28, use: "セクション見出し" },
+  { name: "H3", token: "text-h3", px: 24, use: "カードタイトル / サブセクション" },
+  { name: "H4", token: "text-h4", px: 20, use: "小見出し" },
+  { name: "H5", token: "text-h5", px: 18, use: "ラベル大" },
+  { name: "H6", token: "text-h6", px: 16, use: "ラベル / Body LG と同サイズ" },
   { name: "Body LG", token: "text-body-lg", px: 16, use: "本文 (リード)" },
   { name: "Body", token: "text-body", px: 14, use: "本文 (標準)" },
   { name: "Caption", token: "text-caption", px: 12, use: "補助・タグ" },
@@ -675,8 +678,8 @@ function Typography() {
     <Section id="type">
       <SectionHeading
         eyebrow="Typography"
-        title="11 段階のフォントスケール"
-        description="Figma の size.json から取り込んだ 11 段階。導入先のフォントファミリーは差し替え可能ですが、サイズと階層関係は共通とします。"
+        title="Display + UI の 14 段階フォントスケール"
+        description="Display (Hero/LP 用 4 段) + UI Heading (画面/モバイル用 6 段) + Body/Caption の計 14 段。導入先のフォントファミリーは差し替え可能ですが、サイズと階層関係は共通とします。"
         audience="both"
       />
       <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
@@ -737,7 +740,7 @@ function Accessibility() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <AccessibilityIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">コントラスト比</CardTitle>
+              <CardTitle className="text-h4">コントラスト比</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -752,7 +755,7 @@ function Accessibility() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <TypeIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">タッチ・キーボード</CardTitle>
+              <CardTitle className="text-h4">タッチ・キーボード</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -792,7 +795,7 @@ function Components() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <ComponentIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">追加するときの基準</CardTitle>
+              <CardTitle className="text-h4">追加するときの基準</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -810,7 +813,7 @@ function Components() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <PaletteIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">カラーの当て方</CardTitle>
+              <CardTitle className="text-h4">カラーの当て方</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -848,7 +851,7 @@ function ThemeAndResponsive() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <MoonIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">テーマ切替の挙動</CardTitle>
+              <CardTitle className="text-h4">テーマ切替の挙動</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -865,7 +868,7 @@ function ThemeAndResponsive() {
         </Card>
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">レスポンシブ規則</CardTitle>
+            <CardTitle className="text-h4">レスポンシブ規則</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
@@ -906,7 +909,7 @@ function BrandSatellites() {
             <Badge variant="secondary">XXX</Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
-          <h3 className="mt-3 text-h7 font-semibold">
+          <h3 className="mt-3 text-h4 font-semibold">
             XXX 専用ガイドライン
           </h3>
           <p className="mt-2 text-body text-muted-foreground">
@@ -917,7 +920,7 @@ function BrandSatellites() {
 
         <div className="rounded-lg border border-dashed border-border p-6 text-muted-foreground transition-colors duration-300">
           <Badge variant="outline">Coming soon</Badge>
-          <h3 className="mt-3 text-h7 font-semibold text-foreground">
+          <h3 className="mt-3 text-h4 font-semibold text-foreground">
             他社向けガイドライン
           </h3>
           <p className="mt-2 text-body">

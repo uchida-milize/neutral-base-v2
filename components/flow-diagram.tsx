@@ -65,9 +65,9 @@ const STEPS: FlowStep[] = [
 ];
 
 const ACCENT_CLASSES: Record<FlowStep["accent"], string> = {
-  input:  "bg-[color:var(--secondary-color-10,#eff5ff)]",
-  design: "bg-[color:var(--primary-color-10,#eef0f4)]",
-  deploy: "bg-[color:var(--button-color-50,#eaecf5)]",
+  input:  "bg-secondary-10",
+  design: "bg-primary-10",
+  deploy: "bg-button-50",
   export: "bg-muted/40",
 };
 
@@ -129,7 +129,7 @@ function FlowNode({ step }: { step: FlowStep }) {
       </span>
 
       {/* タイトル */}
-      <h3 className="mt-4 text-h7 font-semibold leading-tight">{step.title}</h3>
+      <h3 className="mt-4 text-h4 font-semibold leading-tight">{step.title}</h3>
 
       {/* sub — 文頭にアイコンを文章サイズで添える */}
       <p className="mt-1 text-caption font-medium text-primary">

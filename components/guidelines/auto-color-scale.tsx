@@ -108,7 +108,7 @@ export function AutoColorScale({
   return (
     <Card className="overflow-hidden transition-colors duration-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-h7 font-mono">{title}</CardTitle>
+        <CardTitle className="text-h4 font-mono">{title}</CardTitle>
         <CardDescription>{subtitle}</CardDescription>
       </CardHeader>
       <CardContent>

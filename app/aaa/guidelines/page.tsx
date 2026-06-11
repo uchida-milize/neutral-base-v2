@@ -118,7 +118,7 @@ function SectionHeading({
         </p>
         {audience ? <AudienceBadge audience={audience} /> : null}
       </div>
-      <h2 className="mt-2 text-[1.8rem] font-semibold leading-tight tracking-tight">
+      <h2 className="mt-2 text-h2 font-semibold leading-tight tracking-tight">
         <JpText>{title}</JpText>
       </h2>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -157,7 +157,7 @@ function HeroSection() {
       <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
         Guidelines
       </p>
-      <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+      <h1 className="mt-2 text-display-3 font-semibold tracking-tight sm:text-display-2">
         デザインガイドライン
       </h1>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
@@ -222,7 +222,7 @@ function BrandPillars() {
                 <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                   <Icon className="size-4" aria-hidden />
                 </span>
-                <CardTitle className="text-h7">{title}</CardTitle>
+                <CardTitle className="text-h4">{title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -277,7 +277,7 @@ function ColorRules() {
       {/* Tailwind マッピング表 (token → Tailwind class → CSS var → 実際の値) */}
       <Card className="mt-8 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">token → Tailwind class → CSS var の対応表</CardTitle>
+          <CardTitle className="text-h4">token → Tailwind class → CSS var の対応表</CardTitle>
           <CardDescription>
             デザイナーが指す色 (Figma の primary-color-500) と、開発者が書くコード (className=&quot;bg-primary&quot;) と、ブラウザに渡る CSS の値が、どう繋がっているか。Tailwind v4 の <code>@theme inline</code> が CSS Variable をそのまま utility class として公開しているため、3 つは常に同期します。
           </CardDescription>
@@ -351,7 +351,7 @@ function ColorRules() {
       {/* テナント生スケールへの直接アクセス */}
       <Card className="mt-4 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">テナント生スケールへの直接アクセス</CardTitle>
+          <CardTitle className="text-h4">テナント生スケールへの直接アクセス</CardTitle>
           <CardDescription>
             上の semantic だけでは表現できない場合 (グラフの 6 色目を出したい等) に使う、生スケールへの直接参照。可能な限り上の semantic を優先し、これは「最終手段」として位置づけます。
           </CardDescription>
@@ -364,7 +364,7 @@ function ColorRules() {
 }
 
 /* React / Tailwind: arbitrary value で参照 */
-<div className="bg-[color:var(--primary-color-300)]">
+<div className="bg-primary-300">
   ...
 </div>`}</pre>
         </CardContent>
@@ -373,7 +373,7 @@ function ColorRules() {
       {/* Tailwind class でのコードスニペット — 開発者がコピペで使える */}
       <Card className="mt-4 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">コードスニペット (コピペ用)</CardTitle>
+          <CardTitle className="text-h4">コードスニペット (コピペ用)</CardTitle>
           <CardDescription>
             よくあるパターン。<strong className="text-foreground">直接 hex を書かない</strong>こと
             (Figma 側の値変更時に追従できなくなるため)。Tailwind utility か CSS var を経由。
@@ -385,12 +385,12 @@ function ColorRules() {
             preview={
               <div className="rounded-md bg-primary px-4 py-3 text-primary-foreground">
                 <p className="text-caption font-medium opacity-80">Embedded Insurance</p>
-                <p className="text-h7 font-semibold">信頼を、もっと触れる距離に。</p>
+                <p className="text-h4 font-semibold">信頼を、もっと触れる距離に。</p>
               </div>
             }
             code={`<header className="rounded-md bg-primary px-4 py-3 text-primary-foreground">
   <p className="text-caption opacity-80">Embedded Insurance</p>
-  <p className="text-h7 font-semibold">信頼を、もっと触れる距離に。</p>
+  <p className="text-h4 font-semibold">信頼を、もっと触れる距離に。</p>
 </header>`}
           />
 
@@ -399,14 +399,14 @@ function ColorRules() {
             preview={
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-md bg-[color:var(--cta-color-500)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--cta-color-600)]"
+                className="inline-flex items-center justify-center rounded-md bg-cta-500 px-4 py-2 text-sm font-semibold text-white hover:bg-cta-600"
               >
                 申込を確定する
               </button>
             }
             code={`<button className="inline-flex items-center justify-center rounded-md
-  bg-[color:var(--cta-color-500)] px-4 py-2 text-sm font-semibold text-white
-  hover:bg-[color:var(--cta-color-600)]">
+  bg-cta-500 px-4 py-2 text-sm font-semibold text-white
+  hover:bg-cta-600">
   申込を確定する
 </button>`}
           />
@@ -416,14 +416,14 @@ function ColorRules() {
             preview={
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-md bg-[color:var(--button-color-500)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--button-color-600)]"
+                className="inline-flex items-center justify-center rounded-md bg-button-500 px-4 py-2 text-sm font-semibold text-white hover:bg-button-600"
               >
                 変更を保存
               </button>
             }
             code={`<button className="inline-flex items-center justify-center rounded-md
-  bg-[color:var(--button-color-500)] px-4 py-2 text-sm font-semibold text-white
-  hover:bg-[color:var(--button-color-600)]">
+  bg-button-500 px-4 py-2 text-sm font-semibold text-white
+  hover:bg-button-600">
   変更を保存
 </button>`}
           />
@@ -433,15 +433,15 @@ function ColorRules() {
             preview={
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-md border border-[color:var(--button-color-500)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--button-color-500)] hover:bg-[color:var(--button-color-50)]"
+                className="inline-flex items-center justify-center rounded-md border border-button-500 bg-white px-4 py-2 text-sm font-semibold text-button-500 hover:bg-button-50"
               >
                 変更を保存
               </button>
             }
             code={`<button className="inline-flex items-center justify-center rounded-md
-  border border-[color:var(--button-color-500)] bg-white px-4 py-2
-  text-sm font-semibold text-[color:var(--button-color-500)]
-  hover:bg-[color:var(--button-color-50)]">
+  border border-button-500 bg-white px-4 py-2
+  text-sm font-semibold text-button-500
+  hover:bg-button-50">
   変更を保存
 </button>`}
           />
@@ -449,13 +449,13 @@ function ColorRules() {
           <SnippetCard
             label="⑤ 重要ラベル / バッジ (Cyan secondary)"
             preview={
-              <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--secondary-color-10)] px-3 py-1 text-caption font-medium text-[color:var(--secondary-color-700)]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-secondary-10 px-3 py-1 text-caption font-medium text-secondary-700">
                 重要
               </span>
             }
             code={`<span className="inline-flex items-center gap-1 rounded-full
-  bg-[color:var(--secondary-color-10)] px-3 py-1
-  text-caption font-medium text-[color:var(--secondary-color-700)]">
+  bg-secondary-10 px-3 py-1
+  text-caption font-medium text-secondary-700">
   重要
 </span>`}
           />
@@ -464,7 +464,7 @@ function ColorRules() {
             label="⑥ Card (汎用、ブランドに依存しない)"
             preview={
               <div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
-                <p className="text-h7 font-semibold">タイトル</p>
+                <p className="text-h4 font-semibold">タイトル</p>
                 <p className="mt-1 text-body text-muted-foreground">
                   本文。<code className="text-foreground">bg-card</code> / <code className="text-foreground">text-card-foreground</code> /{" "}
                   <code className="text-foreground">border-border</code> は全テナント共通の semantic です。
@@ -472,7 +472,7 @@ function ColorRules() {
               </div>
             }
             code={`<div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
-  <p className="text-h7 font-semibold">タイトル</p>
+  <p className="text-h4 font-semibold">タイトル</p>
   <p className="mt-1 text-body text-muted-foreground">本文</p>
 </div>`}
           />
@@ -480,7 +480,7 @@ function ColorRules() {
       </Card>
 
       <div className="mt-6 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
-        <h3 className="text-h7 font-semibold">テナント差し替え点</h3>
+        <h3 className="text-h4 font-semibold">テナント差し替え点</h3>
         <p className="mt-2 text-body text-muted-foreground">
           顧客企業が変えるのは 4 つのスケール (<code>--primary-color-*</code>、
           <code>--secondary-color-*</code>、<code>--button-color-*</code>、
@@ -542,7 +542,7 @@ function ButtonRules() {
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">1 画面 1 つだけ、の規律</CardTitle>
+          <CardTitle className="text-h4">1 画面 1 つだけ、の規律</CardTitle>
           <CardDescription>
             赤 (cta) とティール (primary) が同一画面に並ぶのは原則禁止。並べる場合は赤を 1 つに絞り、ティールは neutral / outline に降格させること。
           </CardDescription>
@@ -599,14 +599,15 @@ function ButtonRules() {
 /* ---------------------------------------------------------------- */
 
 const FONT_SCALE = [
-  { name: "h1", token: "--text-h1", px: 28, use: "ページ最大タイトル" },
-  { name: "h2", token: "--text-h2", px: 22, use: "セクション見出し" },
-  { name: "h3", token: "--text-h3", px: 18, use: "サブセクション" },
-  { name: "h4", token: "--text-h4", px: 16, use: "カードタイトル" },
-  { name: "body-lg", token: "--text-body-lg", px: 15, use: "本文 (リード)" },
+  { name: "h1", token: "--text-h1", px: 34, use: "画面内最大見出し" },
+  { name: "h2", token: "--text-h2", px: 28, use: "セクション見出し" },
+  { name: "h3", token: "--text-h3", px: 24, use: "カードタイトル" },
+  { name: "h4", token: "--text-h4", px: 20, use: "小見出し" },
+  { name: "h5", token: "--text-h5", px: 18, use: "ラベル大" },
+  { name: "h6", token: "--text-h6", px: 16, use: "ラベル" },
+  { name: "body-lg", token: "--text-body-lg", px: 16, use: "本文 (リード)" },
   { name: "body", token: "--text-body", px: 14, use: "本文 (標準)" },
   { name: "caption", token: "--text-caption", px: 12, use: "メタデータ・ラベル" },
-  { name: "eyebrow", token: "--text-eyebrow", px: 11, use: "セクション eyebrow (uppercase)" },
 ];
 
 function TypographyRules() {
@@ -614,8 +615,8 @@ function TypographyRules() {
     <Section id="type">
       <SectionHeading
         eyebrow="Typography"
-        title="モバイル基準の 8 段スケール"
-        description="td-tokens.css は 'モバイルチューニング済み' のスケール。ワイヤーフレームでは 7–10px が混在していたものを下限 12px に引き上げ、業務系の可読性を確保しています。フォントは Geist Sans + Noto Sans JP のセルフホスト構成。"
+        title="UI Heading + Body の 9 段スケール"
+        description="画面内最大見出し (h1 = 34px) から ラベル (h6 = 16px) まで 6 段の UI Heading + Body/Caption の計 9 段。フォントは Zen Kaku Gothic New + Geist Sans。"
         audience="both"
       />
       <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
@@ -657,7 +658,7 @@ function TypographyRules() {
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">フォントスタック</CardTitle>
+            <CardTitle className="text-h4">フォントスタック</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1.5 text-body text-muted-foreground">
             <p>
@@ -680,7 +681,7 @@ function TypographyRules() {
         </Card>
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">禁止事項</CardTitle>
+            <CardTitle className="text-h4">禁止事項</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1.5 text-body text-muted-foreground">
             <p>Tailwind の任意スケール (text-xl / text-2xl 等) は使わない。必ず <code>text-h*</code> / <code>text-body*</code> を使う。</p>
@@ -714,7 +715,7 @@ function AccessibilityRules() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <AccessibilityIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">コントラスト比</CardTitle>
+              <CardTitle className="text-h4">コントラスト比</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -739,7 +740,7 @@ function AccessibilityRules() {
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
                 <TypeIcon className="size-4" />
               </span>
-              <CardTitle className="text-h7">フォントサイズ</CardTitle>
+              <CardTitle className="text-h4">フォントサイズ</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
@@ -760,7 +761,7 @@ function AccessibilityRules() {
 
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">タッチターゲット</CardTitle>
+            <CardTitle className="text-h4">タッチターゲット</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
@@ -773,7 +774,7 @@ function AccessibilityRules() {
 
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">フォーカス可視化</CardTitle>
+            <CardTitle className="text-h4">フォーカス可視化</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
@@ -791,7 +792,7 @@ function AccessibilityRules() {
       {/* 視認性プレビュー */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">サイズ感の比較 (XXX 推奨)</CardTitle>
+          <CardTitle className="text-h4">サイズ感の比較 (XXX 推奨)</CardTitle>
           <CardDescription>
             60 代以上の主要導線は左の body-lg を既定としてください。
           </CardDescription>
@@ -847,7 +848,7 @@ function RadiusAndShadow() {
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h7">シャドウは 5 段階</CardTitle>
+          <CardTitle className="text-h4">シャドウは 5 段階</CardTitle>
           <CardDescription>
             xs / sm / md / lg / navy (深さに応じて) 。navy シャドウは Primary
             ボタンの hover / featured カードで限定使用。
@@ -880,7 +881,7 @@ function RadiusBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-2">
       <div
-        className="h-16 border border-border bg-[#0f766e]/10 transition-colors duration-300 dark:bg-[#2dd4bf]/15"
+        className="h-16 border border-border bg-primary-500/10 transition-colors duration-300 dark:bg-primary-300/15"
         style={{ borderRadius: radius }}
       />
       <p className="text-body font-medium">{label}</p>
@@ -906,7 +907,7 @@ function ContentRules() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">言語・トーン</CardTitle>
+            <CardTitle className="text-h4">言語・トーン</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>日本語が一次言語。コンポーネント名は英語、UI 文言は日本語。</p>
@@ -921,7 +922,7 @@ function ContentRules() {
 
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">具体例</CardTitle>
+            <CardTitle className="text-h4">具体例</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
@@ -949,7 +950,7 @@ function ContentRules() {
 
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">ケース・記号</CardTitle>
+            <CardTitle className="text-h4">ケース・記号</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
@@ -963,7 +964,7 @@ function ContentRules() {
 
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-h7">雰囲気 (Vibe)</CardTitle>
+            <CardTitle className="text-h4">雰囲気 (Vibe)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>業務系・金融系のフォーマル。エンタープライズ管理画面のトーン。</p>

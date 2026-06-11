@@ -258,14 +258,21 @@
   --chart-gray:          #6b6f89;
   --chart-gray-light:    #f0f1f3;
 
-  /* -------- Figma size: font-size (h1..h7, body, caption, tiny) -------- */
-  --text-h1:        3.5rem;   /* 56px */
-  --text-h2:        3rem;     /* 48px */
-  --text-h3:        2.5rem;   /* 40px */
-  --text-h4:        2rem;     /* 32px */
-  --text-h5:        1.5rem;   /* 24px */
-  --text-h6:        1.25rem;  /* 20px */
-  --text-h7:        1.2rem;   /* 19.2px — 段落見出し / CardTitle、h2 (24px) の 80% */
+  /* -------- Display scale — Hero / デザインシステム説明ページ用の大型スケール -------- */
+  --text-display-1: 3.5rem;   /* 56px — ランディングのキャッチ */
+  --text-display-2: 3rem;     /* 48px — ヒーロー見出し */
+  --text-display-3: 2.5rem;   /* 40px — セクション見出し (大) */
+  --text-display-4: 2rem;     /* 32px — ページタイトル */
+
+  /* -------- UI Heading scale — プロトタイプ画面 / モバイル UI 用スケール -------- */
+  --text-h1:        2.125rem; /* 34px — 画面内最大見出し */
+  --text-h2:        1.75rem;  /* 28px — セクション見出し */
+  --text-h3:        1.5rem;   /* 24px — カードタイトル / サブセクション */
+  --text-h4:        1.25rem;  /* 20px — 小見出し */
+  --text-h5:        1.125rem; /* 18px — ラベル大 */
+  --text-h6:        1rem;     /* 16px — ラベル (body-lg と同サイズ) */
+
+  /* -------- Body scale -------- */
   --text-body-lg:   1rem;     /* 16px */
   --text-body:      0.875rem; /* 14px */
   --text-caption:   0.75rem;  /* 12px */
@@ -496,26 +503,10 @@
   --color-table-base-5: var(--table-base-5);
   --color-table-base-6: var(--table-base-6);
 
-  /* Figma primitives → bg-secondary-color-500, text-danger-red-700, ... */
-  --color-secondary-color-10:  var(--secondary-color-10);
-  --color-secondary-color-50:  var(--secondary-color-50);
-  --color-secondary-color-100: var(--secondary-color-100);
-  --color-secondary-color-200: var(--secondary-color-200);
-  --color-secondary-color-300: var(--secondary-color-300);
-  --color-secondary-color-400: var(--secondary-color-400);
-  --color-secondary-color-500: var(--secondary-color-500);
-  --color-secondary-color-600: var(--secondary-color-600);
-  --color-secondary-color-700: var(--secondary-color-700);
-
-  --color-primary-color-10:  var(--primary-color-10);
-  --color-primary-color-50:  var(--primary-color-50);
-  --color-primary-color-100: var(--primary-color-100);
-  --color-primary-color-200: var(--primary-color-200);
-  --color-primary-color-300: var(--primary-color-300);
-  --color-primary-color-400: var(--primary-color-400);
-  --color-primary-color-500: var(--primary-color-500);
-  --color-primary-color-600: var(--primary-color-600);
-  --color-primary-color-700: var(--primary-color-700);
+  /* Figma primitives (danger-red, warning-amber, success-green, neutral-gray, chart) →
+   * 下段の各 --color-danger-red-* 等から Tailwind utility が自動生成される。
+   * NOTE: --color-primary-color-* / --color-secondary-color-* は廃止。
+   *       Tailwind 準拠の短縮形 bg-primary-500 / bg-secondary-500 等を使うこと。 */
 
   --color-danger-red-50:  var(--danger-red-50);
   --color-danger-red-100: var(--danger-red-100);
@@ -616,14 +607,17 @@
   --color-stroke-danger:  var(--border-danger);
   --color-stroke-success: var(--border-success);
 
-  /* Figma font sizes → text-h1, text-body-lg, ... */
+  /* Font sizes → Tailwind utility (text-display-1, text-h1, text-body-lg, ...) */
+  --text-display-1: var(--text-display-1);
+  --text-display-2: var(--text-display-2);
+  --text-display-3: var(--text-display-3);
+  --text-display-4: var(--text-display-4);
   --text-h1:       var(--text-h1);
   --text-h2:       var(--text-h2);
   --text-h3:       var(--text-h3);
   --text-h4:       var(--text-h4);
   --text-h5:       var(--text-h5);
   --text-h6:       var(--text-h6);
-  --text-h7:       var(--text-h7);
   --text-body-lg:  var(--text-body-lg);
   --text-body:     var(--text-body);
   --text-caption:  var(--text-caption);
@@ -648,10 +642,8 @@
   --font-chillax: "Chillax", var(--font-geist-sans), "Noto Sans JP", sans-serif;
 
   /* ===============================================================
-   * Claude Design 出力 (theo-tdf prototype) との互換用ユーティリティ
-   * - 短縮色名: bg-primary-{step}, bg-button-{step}, bg-cta-{step}, bg-warm-{step}
-   *   (既存の bg-primary-color-{step} のエイリアスとして提供)
-   * - コンパクト text scale: text-cd-h7 (16px) 〜 text-cd-h2 (34px)
+   * Tailwind 準拠の短縮色ユーティリティ (正式)
+   * - bg-primary-{step}, bg-secondary-{step}, bg-button-{step}, bg-cta-{step}, bg-warm-{step}
    * - font-jp / font-en: Claude Design 出力の日本語/英数字フォント切替
    * =============================================================== */
   --color-primary-10:  var(--primary-color-10);
@@ -699,18 +691,8 @@
   --color-warm-200: var(--warm-200);
   --color-warm-300: var(--warm-300);
 
-  --text-cd-h2: 34px;
-  --text-cd-h2--line-height: 1.2;
-  --text-cd-h3: 28px;
-  --text-cd-h3--line-height: 1.3;
-  --text-cd-h4: 24px;
-  --text-cd-h4--line-height: 1.35;
-  --text-cd-h5: 20px;
-  --text-cd-h5--line-height: 1.45;
-  --text-cd-h6: 18px;
-  --text-cd-h6--line-height: 1.5;
-  --text-cd-h7: 16px;
-  --text-cd-h7--line-height: 1.55;
+  /* --text-cd-h* 廃止 → text-h1〜text-h6 (UI Heading scale) に統合。
+   * port.py 変換スクリプトで text-h{2-7} → text-h{1-6} へ変換する。 */
 
   --font-jp: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   --font-en: "Geist", var(--font-geist-sans), -apple-system, sans-serif;

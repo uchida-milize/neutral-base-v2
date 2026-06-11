@@ -82,7 +82,7 @@ function ScreenCell({
         <p className="text-caption font-mono text-muted-foreground">
           {String(screen.index).padStart(2, "0")}
         </p>
-        <h3 className="mt-1 text-h7 font-semibold">{screen.title}</h3>
+        <h3 className="mt-1 text-h4 font-semibold">{screen.title}</h3>
         {screen.description ? (
           <p className="mt-1 text-caption text-muted-foreground">
             {screen.description}

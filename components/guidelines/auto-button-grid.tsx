@@ -38,7 +38,7 @@ export function AutoButtonGrid() {
         example={
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-[10px] bg-[color:var(--cta-color-500)] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_var(--cta-color-500)] hover:bg-[color:var(--cta-color-600)]"
+            className="inline-flex items-center justify-center rounded-[10px] bg-cta-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_var(--cta-color-500)] hover:bg-cta-600"
           >
             申込を確定する
           </button>
@@ -52,13 +52,13 @@ export function AutoButtonGrid() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] bg-[color:var(--button-color-500)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--button-color-600)]"
+              className="inline-flex items-center justify-center rounded-[10px] bg-button-500 px-4 py-2 text-sm font-semibold text-white hover:bg-button-600"
             >
               変更を保存
             </button>
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-[10px] border border-[color:var(--button-color-500)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--button-color-500)] hover:bg-[color:var(--button-color-10)]"
+              className="inline-flex items-center justify-center rounded-[10px] border border-button-500 bg-white px-4 py-2 text-sm font-semibold text-button-500 hover:bg-button-10"
             >
               下書き保存
             </button>
@@ -98,7 +98,7 @@ export function AutoButtonGrid() {
         example={
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-[10px] bg-[color:var(--cta-color-500)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[color:var(--cta-color-600)]"
+            className="inline-flex items-center justify-center rounded-[10px] bg-cta-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cta-600"
           >
             アカウントを削除
           </button>
@@ -123,7 +123,7 @@ function ButtonShowcase({
     <Card className="transition-colors duration-300">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-h7 font-mono">{name}</CardTitle>
+          <CardTitle className="text-h4 font-mono">{name}</CardTitle>
           <Badge variant="outline" className="font-mono text-tiny">
             {token}
           </Badge>

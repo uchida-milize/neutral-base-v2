@@ -103,7 +103,7 @@ export function AutoTenantCard({
           </Badge>
           <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
         </div>
-        <h3 className="mt-3 flex items-center gap-2 text-h7 font-semibold">
+        <h3 className="mt-3 flex items-center gap-2 text-h4 font-semibold">
           <BrandDots />
           {title}
         </h3>

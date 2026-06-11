@@ -41,7 +41,7 @@ import { Card, CardContent } from "@/components/ui/card";
    内容確認・お支払い → カード入力/確認(外部) → 完了。
 
    ポート時の変更点:
-   - "use client"、ESM import / text-h{2-7}→text-cd-h{2-7} / assets→/assets/theo-tdf/
+   - "use client"、ESM import / text-h{2-7}→text-h{1-6} (cd-h* は text-h* に統合) / assets→/assets/theo-tdf/
    - bg-success → bg-[color:var(--success)] / el.__bound 型安全キャスト
    - 一部 inline hex (#065FE3=primary-500 / #054EBA=primary-600) は出力に忠実に保持
    ============================================================ */
@@ -102,7 +102,7 @@ export const Ic = {
 export function Badge({ children, tone = "secondary" }: { children: React.ReactNode; tone?: "secondary" | "primary" | "warm" }) {
   // shadcn <Badge> へ委譲。tone でブランド色の淡色面を当てる。
   const tint: Record<string, string> = {
-    secondary: "bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)]",
+    secondary: "bg-secondary-10 text-secondary-700",
     primary: "bg-primary-10 text-primary-700",
     warm: "bg-warm-100 text-neutral-500",
   };
@@ -134,7 +134,7 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
       variant={variant}
       onClick={onClick}
       disabled={disabled}
-      className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-cd-h7 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
+      className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-h6 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
     >
       {children}
     </Button>
@@ -156,8 +156,8 @@ export function AppBar({ title, onBack, brandVisible = true }: { title?: string;
           {onBack ? <Ic.chevL className="w-5 h-5" /> : <span className="w-5" />}
         </button>
         <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
-          <span className="font-en font-semibold tracking-[0.1em] text-cd-h7">THEO</span>
-          <span className="text-cd-h7 font-medium truncate">つみたて安心ほけん</span>
+          <span className="font-en font-semibold tracking-[0.1em] text-h6">THEO</span>
+          <span className="text-h6 font-medium truncate">つみたて安心ほけん</span>
           <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;THEO&gt;</span>
         </div>
         <span className="w-9 shrink-0" />
@@ -218,7 +218,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
           <Icon className="w-7 h-7 text-primary-600 shrink-0" />
         ) : null}
         <div className="min-w-0">
-          <p className="text-cd-h7 font-bold text-neutral-800 leading-tight">{title}</p>
+          <p className="text-h6 font-bold text-neutral-800 leading-tight">{title}</p>
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
@@ -254,7 +254,7 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor={id} className="text-caption font-medium text-neutral-600">
-        {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
+        {label}{required && <span className="text-secondary-700 ml-0.5">*</span>}
       </Label>
       <Input
         id={id}
@@ -262,7 +262,7 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
         defaultValue={value}
         onChange={onChange}
         disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-cd-h7 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
+        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
       />
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </div>
@@ -283,7 +283,7 @@ export function LockedField({ label, value }: { label: string; value: string }) 
           value={value}
           readOnly
           disabled
-          className="fld h-11 rounded-lg border border-warm-200 bg-warm-200/60 px-3 pr-9 text-cd-h7 text-neutral-500"
+          className="fld h-11 rounded-lg border border-warm-200 bg-warm-200/60 px-3 pr-9 text-h6 text-neutral-500"
         />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
       </div>
@@ -296,11 +296,11 @@ export function Select({ label, required, hint, value, onChange, options = [], d
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
-        {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
+        {label}{required && <span className="text-secondary-700 ml-0.5">*</span>}
       </span>
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
-          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-cd-h7 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}>
+          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-h6 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><path d="M6 9l6 6 6-6"/></svg>
@@ -324,8 +324,8 @@ export function ScreenIntro({ go }: { go: Go }) {
         <div className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
           <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-5" />
           <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 text-cd-h3 font-bold leading-snug">信頼を、もっと<br/>触れる距離に。</h1>
-          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
+          <h1 className="mt-2 text-h2 font-bold leading-snug">信頼を、もっと<br/>触れる距離に。</h1>
+          <p className="mt-3 text-h6 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
@@ -336,7 +336,7 @@ export function ScreenIntro({ go }: { go: Go }) {
               <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
               <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
             </div>
-            <p className="text-cd-h6 font-bold text-neutral-800 leading-relaxed">
+            <p className="text-h5 font-bold text-neutral-800 leading-relaxed">
               働けなくなっても、<br/>つみたては止めない。
             </p>
             <p className="mt-2 text-caption text-neutral-500 leading-relaxed">
@@ -359,7 +359,7 @@ export function ScreenIntro({ go }: { go: Go }) {
                   <v.i className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-cd-h7 font-bold text-neutral-800">{v.t}</p>
+                  <p className="text-h6 font-bold text-neutral-800">{v.t}</p>
                   <p className="text-caption text-neutral-500 leading-relaxed">{v.d}</p>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           {/* premium teaser */}
           <div className="flex items-end justify-between rounded-xl bg-warm-100 px-5 py-4">
             <span className="text-caption text-neutral-500">保険料</span>
-            <span className="text-neutral-800"><span className="font-en text-cd-h2 font-semibold">480</span><span className="text-cd-h7"> 円 / 月〜</span></span>
+            <span className="text-neutral-800"><span className="font-en text-h1 font-semibold">480</span><span className="text-h6"> 円 / 月〜</span></span>
           </div>
         </div>
       </div>
@@ -402,14 +402,14 @@ export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean
           <span className={`grid place-items-center w-5 h-5 rounded-full border-2 ${selected ? "border-primary bg-primary text-white" : "border-warm-300"}`}>
             {selected && <Ic.check className="w-3 h-3" />}
           </span>
-          <span className="text-cd-h7 font-bold text-neutral-800">{p.name}</span>
+          <span className="text-h6 font-bold text-neutral-800">{p.name}</span>
         </div>
         {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
       </div>
       <div className="p-4">
         <p className="text-caption text-neutral-500">{p.lead}</p>
         <div className="mt-3 flex items-baseline justify-end gap-1 text-neutral-800">
-          <span className="font-en text-cd-h4 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
+          <span className="font-en text-h3 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
         </div>
         <ul className="mt-3 space-y-1.5 border-t border-warm-200 pt-3">
           {p.feat.map((f, i) => (
@@ -430,9 +430,9 @@ export function StepSection({ label, n, big, className, children }: { label: str
       <section className={`space-y-4 ${className || ""}`}>
         <div className="flex items-center gap-3">
           {n != null && (
-            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-cd-h6 font-bold shrink-0">{n}</span>
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
           )}
-          <h2 className="text-cd-h5 font-bold text-neutral-800">{label}</h2>
+          <h2 className="text-h4 font-bold text-neutral-800">{label}</h2>
         </div>
         {children}
       </section>
@@ -442,7 +442,7 @@ export function StepSection({ label, n, big, className, children }: { label: str
     <section className="space-y-4">
       <div className="flex items-center gap-2.5">
         {n != null && (
-          <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-cd-h6 font-bold shrink-0">{n}</span>
+          <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
         )}
         <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
         <span className="flex-1 h-px bg-warm-200" />
@@ -564,10 +564,10 @@ function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value:
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl flex flex-col">
         <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-warm-200">
-          <button onClick={onClose} className="text-cd-h7 text-neutral-500 px-1 py-1">キャンセル</button>
+          <button onClick={onClose} className="text-h6 text-neutral-500 px-1 py-1">キャンセル</button>
           <span className="text-caption font-bold text-neutral-700">生年月日</span>
           <button onClick={() => onDone(`${yy}-${pad2(mm)}-${pad2(dd)}`)}
-            className="text-cd-h7 font-bold text-primary-600 px-1 py-1">完了</button>
+            className="text-h6 font-bold text-primary-600 px-1 py-1">完了</button>
         </div>
         <div className="relative px-3 py-2">
           {/* 中央の選択バンド */}
@@ -629,7 +629,7 @@ export function ScreenOverview({ go }: { go: Go }) {
           <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
           <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
           <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
-          <p className="mt-3 text-cd-h7 leading-relaxed opacity-90">将来に向けた資産形成のためのほけん</p>
+          <p className="mt-3 text-h6 leading-relaxed opacity-90">将来に向けた資産形成のためのほけん</p>
         </div>
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
@@ -647,7 +647,7 @@ export function ScreenOverview({ go }: { go: Go }) {
                   <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
                 </div>
               </div>
-              <p className="text-cd-h5 font-bold text-neutral-800 leading-relaxed">
+              <p className="text-h4 font-bold text-neutral-800 leading-relaxed">
                 資産形成中の「もしも」に<br/>そなえる保障がTHEOで新登場！
               </p>
               <div className="mt-10 flex flex-col items-center gap-4">
@@ -672,18 +672,18 @@ export function ScreenOverview({ go }: { go: Go }) {
               {/* 商品概要（図版の下） */}
               <div className="mt-6 space-y-6 mb-9">
                 <div className="text-right">
-                  <a className="inline-flex items-center gap-1.5 font-bold text-cd-h7 cursor-pointer" style={{ color: "#054EBA" }}>
+                  <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer" style={{ color: "#054EBA" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
                     詳細なサービス内容はこちら
                   </a>
                 </div>
                 <div className="text-left">
-                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
-                  <p className="mt-2 text-cd-h7 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+                  <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
+                  <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
                 </div>
                 <div className="text-left">
-                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
-                  <p className="mt-2 text-cd-h7 text-neutral-700">5年〜40年（最大）</p>
+                  <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
+                  <p className="mt-2 text-h6 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
                 </div>
               </div>
@@ -693,8 +693,8 @@ export function ScreenOverview({ go }: { go: Go }) {
             <div className="-mx-5 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
               <div className="mb-12">
                 <div className="text-center">
-                  <span className="inline-block text-cd-h4 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
-                  <p className="mt-2 text-cd-h7 text-neutral-500">お手続きの際に必要となる書類を<br/>ご準備ください</p>
+                  <span className="inline-block text-h3 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
+                  <p className="mt-2 text-h6 text-neutral-500">お手続きの際に必要となる書類を<br/>ご準備ください</p>
                 </div>
                 <div className="mt-2 flex flex-col items-center gap-1 px-4">
                   <Ic.cardArt className="w-20 h-auto text-primary-500" />
@@ -703,14 +703,14 @@ export function ScreenOverview({ go }: { go: Go }) {
               </div>
               <div className="border-t border-primary-100 mb-[45px]"></div>
               <div className="text-center mb-5">
-                <h2 className="text-cd-h4 font-bold text-neutral-900 leading-snug text-balance">3つのプランから選ぶだけ</h2>
-                <p className="mt-2 text-cd-h7 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
+                <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">3つのプランから選ぶだけ</h2>
+                <p className="mt-2 text-h6 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
               </div>
               <div>
                 <div className="flex flex-col items-center text-center gap-3">
                   <div>
                     <p className="text-caption text-neutral-500">保険料</p>
-                    <p className="text-neutral-900"><span className="font-en text-cd-h2 font-bold" style={{ color: "#054EBA" }}>480</span><span className="text-cd-h7 font-bold"> 円 / 月〜</span></p>
+                    <p className="text-neutral-900"><span className="font-en text-h1 font-bold" style={{ color: "#054EBA" }}>480</span><span className="text-h6 font-bold"> 円 / 月〜</span></p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold shadow-sm" style={{ color: "#054EBA" }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
                 </div>
@@ -766,28 +766,28 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-5">
             <div>
-              <h2 className="text-cd-h4 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
-              <p className="mt-2 text-cd-h7 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
+              <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
+              <p className="mt-2 text-h6 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
             </div>
             <div className="space-y-4">
               <div>
-                <h3 className="text-cd-h7 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
+                <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
                 <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-secondary-700 ml-0.5">*</span></span>
                 <button type="button" onClick={() => setPickerOpen(true)}
-                  className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-cd-h7 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
+                  className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
                   <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
                   <Ic.chevR className="w-4 h-4 shrink-0 text-neutral-400 rotate-90" />
                 </button>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">性別<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">性別<span className="text-secondary-700 ml-0.5">*</span></span>
                 <div className="flex gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
-                      className={`flex-1 h-11 rounded-lg border text-cd-h7 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600"}`}>{g}</button>
+                      className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600"}`}>{g}</button>
                   ))}
                 </div>
               </div>
@@ -819,7 +819,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         <StepSection label="申し込みをする" n={3} big className="mt-8">
           {/* STEP 1 — メールアドレスのご入力 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
-            <h3 className="text-cd-h7 font-bold text-neutral-800">メールアドレスのご入力</h3>
+            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">
               ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
             </p>
@@ -828,15 +828,15 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
 
           {/* STEP 2 — 事前同意事項のご確認 */}
           <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
-            <h3 className="text-cd-h7 font-bold text-neutral-800">事前同意事項のご確認</h3>
+            <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
             <button onClick={() => setNoticeOpen(true)}
-              className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+              className="flex items-center justify-between w-full rounded-xl border-2 border-secondary-200 bg-secondary-10 px-4 py-4 text-left transition hover:border-secondary-300">
               <span className="flex items-center gap-2.5 min-w-0">
-                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
-                <span className="text-cd-h7 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
+                <span className="rounded-full bg-secondary-600 text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
+                <span className="text-h6 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
               </span>
-              <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
+              <Ic.chevR className="w-5 h-5 text-secondary-600 shrink-0" />
             </button>
             <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left pt-1">
               <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
@@ -874,8 +874,8 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
-              <h3 className="flex items-center gap-2 text-cd-h6 font-bold text-neutral-800">
-                <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
+              <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
+                <span className="rounded-full bg-secondary-10 text-secondary-700 px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
               </h3>
               <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
@@ -888,13 +888,13 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
               </p>
 
               <div className="space-y-5">
-                <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
+                <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
                   <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
                   事前同意事項
                 </p>
                 <p className="text-caption text-neutral-500 leading-relaxed">お申し込み前にご確認ください。</p>
                 <section className="space-y-1.5">
-                  <h4 className="text-cd-h7 font-bold text-neutral-800">この保険について</h4>
+                  <h4 className="text-h6 font-bold text-neutral-800">この保険について</h4>
                   <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
                     <li>・株式会社三菱ＵＦＪ銀行を団体契約者とし、Money Canvas会員の皆さま、会員のご家族を被保険者とする団体契約です。Money Canvas会員の資格を喪失された場合、保険契約は解約いただく、もしくは更新できませんので、ご注意ください。また、保険証券を請求する権利、保険契約を解約する権利等は原則として株式会社 三菱ＵＦＪ銀行が有します。</li>
                     <li>・この契約は、申込み日が17日までの場合は、翌月1日（0時）より補償が開始し、申込み日が18日から末日までの場合は、翌々月1日（0時）より補償が開始します。</li>
@@ -902,7 +902,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                   </ul>
                 </section>
                 <section className="space-y-1.5">
-                  <h4 className="text-cd-h7 font-bold text-neutral-800">個人情報の取扱いについて</h4>
+                  <h4 className="text-h6 font-bold text-neutral-800">個人情報の取扱いについて</h4>
                   <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
                     <li>・団体契約者である株式会社三菱ＵＦＪ銀行は、お客さまにご入力いただく個人情報を、以下の目的で利用させていただきます。</li>
                     <li>・お客さまに関する情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
@@ -936,8 +936,8 @@ export function ScreenPin({ go }: { go: Go }) {
           <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-5">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           </div>
-          <h1 className="text-cd-h4 font-bold text-neutral-800">PINコードの入力</h1>
-          <p className="mt-3 text-cd-h7 text-neutral-600 leading-relaxed">
+          <h1 className="text-h3 font-bold text-neutral-800">PINコードの入力</h1>
+          <p className="mt-3 text-h6 text-neutral-600 leading-relaxed">
             ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載の6桁のPINコードを入力してください。
           </p>
 
@@ -946,7 +946,7 @@ export function ScreenPin({ go }: { go: Go }) {
             onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
             inputMode="numeric"
             placeholder="______"
-            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-warm-50 text-center font-en font-semibold text-cd-h2 tracking-[0.45em] text-neutral-800"
+            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-warm-50 text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
           />
 
           <button className="mt-4 text-caption text-button-500 underline underline-offset-2">PINコードを再送する</button>
@@ -971,7 +971,7 @@ export function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }
   return (
     <div className="flex items-center justify-between py-3 border-b border-warm-200 last:border-0">
       <span className="text-caption text-neutral-500">{k}</span>
-      <span className={`text-cd-h7 ${strong ? "font-bold text-neutral-900" : "text-neutral-700"}`}>{v}</span>
+      <span className={`text-h6 ${strong ? "font-bold text-neutral-900" : "text-neutral-700"}`}>{v}</span>
     </div>
   );
 }
@@ -979,12 +979,12 @@ export function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }
 // 補償項目の金額表示を「50,000 円」体裁（大きな数字＋円）に整形
 export function FeatValue({ v }: { v?: string }) {
   const m = (v || "").match(/^(.*?)¥([\d,]+)(.*)$/);
-  if (!m) return <span className="text-cd-h7 text-neutral-700">{v}</span>;
+  if (!m) return <span className="text-h6 text-neutral-700">{v}</span>;
   const [, pre, num, post] = m;
   return (
     <span className="text-neutral-700 whitespace-nowrap">
       {pre && <span className="text-caption text-neutral-500">{pre}</span>}
-      <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{num}</span>
+      <span className="font-en text-h4 font-semibold text-primary-600 tabular-nums">{num}</span>
       <span className="text-caption"> 円{post}</span>
     </span>
   );
@@ -1000,9 +1000,9 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Set
     <>
       <div className="mb-5">
         <div className="flex items-start justify-between gap-2">
-          <span className="text-cd-h7 font-medium text-neutral-800 leading-snug">毎月の積立金額<br/><span className="text-caption text-neutral-500">（ご希望給付額）</span></span>
+          <span className="text-h6 font-medium text-neutral-800 leading-snug">毎月の積立金額<br/><span className="text-caption text-neutral-500">（ご希望給付額）</span></span>
           <span className="text-neutral-800">
-            <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{yen(m)}</span>
+            <span className="font-en text-h4 font-semibold text-primary-600 tabular-nums">{yen(m)}</span>
             <span className="text-caption"> 円</span>
           </span>
         </div>
@@ -1015,9 +1015,9 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Set
 
       <div className="mb-1">
         <div className="flex items-baseline justify-between">
-          <span className="text-cd-h7 font-medium text-neutral-800">保障期間</span>
+          <span className="text-h6 font-medium text-neutral-800">保障期間</span>
           <span className="text-neutral-800">
-            <span className="font-en text-cd-h5 font-semibold text-primary-600 tabular-nums">{y}</span>
+            <span className="font-en text-h4 font-semibold text-primary-600 tabular-nums">{y}</span>
             <span className="text-caption"> 年</span>
           </span>
         </div>
@@ -1051,8 +1051,8 @@ export function BenefitTable({ m, y, plan }: { m: number; y: number; plan?: Plan
       <div className="flex items-center justify-between rounded-xl bg-primary-10 px-4 py-3">
         <span className="text-caption font-medium text-primary-700">最大給付金額　0年目</span>
         <span className="text-primary-600">
-          <span className="font-en text-cd-h3 font-semibold tabular-nums">{man(maxBenefit)}</span>
-          <span className="text-cd-h7"> 万円</span>
+          <span className="font-en text-h2 font-semibold tabular-nums">{man(maxBenefit)}</span>
+          <span className="text-h6"> 万円</span>
         </span>
       </div>
       <div className="mt-3 rounded-xl border border-warm-200 overflow-hidden">
@@ -1109,7 +1109,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 
       <button onClick={() => setOpen((o) => !o)}
         className="flex items-center justify-between w-full mt-4 pt-4 border-t border-warm-200 text-left">
-        <span className="text-cd-h7 font-bold text-neutral-800">給付予想額をみる</span>
+        <span className="text-h6 font-bold text-neutral-800">給付予想額をみる</span>
         <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${open ? "rotate-180" : ""}`}>
           <Ic.chevR className="w-4 h-4 rotate-90" />
         </span>
@@ -1156,10 +1156,10 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
       <Steps n={3} go={go} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">
         <div>
-          <h2 className="text-cd-h4 font-bold text-neutral-900 leading-snug text-balance">認証が完了しました。</h2>
-          <p className="mt-2 text-cd-h7 text-neutral-600 leading-relaxed" style={{ textWrap: "pretty" }}>あと少しで、お申し込みは完了です。ご契約者さま・保険金受取人さまの情報をご入力ください。</p>
+          <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">認証が完了しました。</h2>
+          <p className="mt-2 text-h6 text-neutral-600 leading-relaxed" style={{ textWrap: "pretty" }}>あと少しで、お申し込みは完了です。ご契約者さま・保険金受取人さまの情報をご入力ください。</p>
         </div>
-        <h2 className="text-cd-h5 font-bold text-neutral-800 pt-1">情報ご入力</h2>
+        <h2 className="text-h4 font-bold text-neutral-800 pt-1">情報ご入力</h2>
         <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
           <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
         </div>
@@ -1238,7 +1238,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setEditOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
-              <h3 className="text-cd-h6 font-bold text-neutral-800">積立内容を修正</h3>
+              <h3 className="text-h5 font-bold text-neutral-800">積立内容を修正</h3>
               <button onClick={() => setEditOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
@@ -1249,7 +1249,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
               {/* シミュレーション結果（アコーディオン） */}
               <button onClick={() => setSheetRes((o) => !o)}
                 className="flex items-center justify-between w-full mt-2 pt-4 border-t border-warm-200 text-left">
-                <span className="text-cd-h7 font-bold text-neutral-800">給付予想額をみる</span>
+                <span className="text-h6 font-bold text-neutral-800">給付予想額をみる</span>
                 <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${sheetRes ? "rotate-180" : ""}`}>
                   <Ic.chevR className="w-4 h-4 rotate-90" />
                 </span>
@@ -1426,7 +1426,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
           </button>
         )}
         <button onClick={onToggle} className="flex-1 flex items-center justify-between gap-2 text-left">
-          <span className="text-cd-h7 font-bold text-neutral-800 leading-snug"><span className="text-primary-600 mr-1">{num}</span>{item.t}</span>
+          <span className="text-h6 font-bold text-neutral-800 leading-snug"><span className="text-primary-600 mr-1">{num}</span>{item.t}</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
             className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -1455,7 +1455,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
       <Steps n={4} go={go} />
       <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">
         <StepSection label="内容確認">
-        <h2 className="text-cd-h5 font-bold text-neutral-800">お申込み内容</h2>
+        <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
         <div className="rounded-2xl border border-warm-200 bg-white p-5">
           <SectionLabel>積立内容</SectionLabel>
@@ -1475,7 +1475,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
           <Row k="国籍" v="日本国籍" />
           <div className="flex flex-col gap-0.5 py-3 border-b border-warm-200">
             <span className="text-caption text-neutral-500">住所</span>
-            <span className="text-cd-h7 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
+            <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
           </div>
           <Row k="電話番号" v="090-0000-0000" />
           <Row k="メールアドレス" v="samplename@sample.co.jp" />
@@ -1497,18 +1497,18 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
         </StepSection>
 
         <StepSection label="お支払い">
-          <h2 className="text-cd-h5 font-bold text-neutral-800">保険料のお支払いについて</h2>
+          <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
           <div>
-            <h3 className="text-cd-h7 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
+            <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
             <p className="mt-1.5 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
           <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
             <button onClick={() => setPayIdx((o) => (o === 0 ? -1 : 0))} className="flex items-center justify-between w-full px-4 py-4 text-left">
-              <h4 className="text-cd-h7 font-bold text-neutral-800">クレジットカードのお支払いについて</h4>
+              <h4 className="text-h6 font-bold text-neutral-800">クレジットカードのお支払いについて</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 0 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div style={{ maxHeight: payIdx === 0 ? "2000px" : "0px", opacity: payIdx === 0 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
@@ -1541,7 +1541,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
           {/* accordion ⑦ クレジットカード支払規定 */}
           <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
             <button onClick={() => setPayIdx((o) => (o === 1 ? -1 : 1))} className="flex items-center justify-between w-full px-4 py-4 text-left">
-              <h4 className="text-cd-h7 font-bold text-neutral-800">クレジットカード支払規定</h4>
+              <h4 className="text-h6 font-bold text-neutral-800">クレジットカード支払規定</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 1 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div style={{ maxHeight: payIdx === 1 ? "2000px" : "0px", opacity: payIdx === 1 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
@@ -1565,8 +1565,8 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
 
         </StepSection>
 
-        <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
-          <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-cd-h6 font-bold text-neutral-800">重要事項をご確認ください</span></div>
+        <div className="rounded-2xl border border-secondary-100 bg-secondary-10 p-4">
+          <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-h5 font-bold text-neutral-800">重要事項をご確認ください</span></div>
           <div className="space-y-2.5">
             {AGREE_ITEMS.map((it, i) => (
               <AgreeItem key={i} num={"①②③④⑤⑥⑦⑧"[i]} item={it} open={openIdx === i}
@@ -1576,18 +1576,18 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
                     <div className="grid grid-cols-2 gap-3">
                       {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
                         <button key={k} onClick={() => setNat(k)}
-                          className={`h-11 rounded-lg border text-cd-h7 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                          className={`h-11 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
                           {l}
                         </button>
                       ))}
                     </div>
                     {nat === "other" && (
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-[color:var(--secondary-color-700)]">*</span></span>
+                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-secondary-700">*</span></span>
                         <div className="grid grid-cols-2 gap-3">
                           {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
                             <button key={k} onClick={() => setJpLang(k)}
-                              className={`h-11 rounded-lg border text-cd-h7 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                              className={`h-11 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
                               {l}
                             </button>
                           ))}
@@ -1601,11 +1601,11 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
           </div>
 
           {/* 単一の確認・同意チェック（重要事項エリア内下部） */}
-          <button onClick={() => setAgreed((a) => !a)} className="flex items-start gap-3 w-full text-left rounded-xl bg-[color:var(--secondary-color-10)] p-4 mt-3 transition-colors">
+          <button onClick={() => setAgreed((a) => !a)} className="flex items-start gap-3 w-full text-left rounded-xl bg-secondary-10 p-4 mt-3 transition-colors">
             <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-cd-h7 text-neutral-700 leading-relaxed">①④⑤⑥⑦⑧について確認、②③について同意する</span>
+            <span className="text-h6 text-neutral-700 leading-relaxed">①④⑤⑥⑦⑧について確認、②③について同意する</span>
           </button>
         </div>
       </div>
@@ -1638,9 +1638,9 @@ export function ScreenCardInput({ go }: { go: Go }) {
     <>
       <ExtBar url="payment.gmo-pg.com" />
       <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 py-5 space-y-4">
-        <h2 className="text-cd-h6 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
+        <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
-          <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
+          <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
             <span className="w-1.5 h-3.5 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力ください
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
@@ -1686,9 +1686,9 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
     <>
       <ExtBar url="payment.gmo-pg.com" />
       <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 py-5 space-y-4">
-        <h2 className="text-cd-h6 font-bold text-neutral-800">お申込み内容の確認（外部リンク）</h2>
+        <h2 className="text-h5 font-bold text-neutral-800">お申込み内容の確認（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
-          <p className="flex items-center gap-2 text-cd-h7 font-bold text-neutral-800">
+          <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
             <span className="w-1.5 h-3.5 bg-[color:var(--success)] rounded-[1px]" />ご登録内容
           </p>
           <div>
@@ -1724,7 +1724,7 @@ export function ScreenDone({ go }: { go: Go }) {
           <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white/15 mb-4">
             <Ic.check className="w-8 h-8" />
           </div>
-          <h2 className="text-cd-h4 font-bold">お申込が完了しました</h2>
+          <h2 className="text-h3 font-bold">お申込が完了しました</h2>
           <p className="mt-2 text-caption opacity-90">受付番号　THEO-2026-000482</p>
         </div>
 
@@ -1735,7 +1735,7 @@ export function ScreenDone({ go }: { go: Go }) {
 
         <div className="px-5 py-6 space-y-5">
           <div className="px-1">
-            <p className="text-cd-h7 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="text-h6 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。
@@ -1754,7 +1754,7 @@ export function ScreenDone({ go }: { go: Go }) {
                 <div className="grid grid-cols-[1.75rem_1fr] gap-x-3">
                   <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
                   <div className="pb-1">
-                    <p className="text-cd-h7 font-bold text-neutral-800">{t}</p>
+                    <p className="text-h6 font-bold text-neutral-800">{t}</p>
                     <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
                   </div>
                   {idx < arr.length - 1 && (

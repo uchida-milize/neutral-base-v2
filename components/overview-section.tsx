@@ -26,7 +26,7 @@ export function OverviewSection({
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Overview
         </p>
-        <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
+        <h2 className="mt-2 text-h2 font-semibold tracking-tight">
           30 秒で分かるこのシステム
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
@@ -124,7 +124,7 @@ function RoleGroup({
       </span>
 
       {/* タイトル (役割の長文ラベル) */}
-      <h3 className="mt-3 text-h7 font-semibold leading-tight">{title}</h3>
+      <h3 className="mt-3 text-h4 font-semibold leading-tight">{title}</h3>
 
       {/* このグループが担当する作業 (順番付けない、並列のリスト) */}
       <div className="mt-4 space-y-2">

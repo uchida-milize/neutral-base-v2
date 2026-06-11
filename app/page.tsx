@@ -64,7 +64,7 @@ function Hero() {
           <LayersIcon className="size-3" />
           Common Design System
         </Badge>
-        <h1 className="mt-4 text-h2 font-semibold leading-tight tracking-tight sm:text-h1">
+        <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
           <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
         </h1>
         <p className="mt-4 max-w-[940px] text-body leading-[1.8] text-muted-foreground sm:text-body-lg">
@@ -88,7 +88,7 @@ function CoreSection() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Pages
         </p>
-        <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
+        <h2 className="mt-2 text-h2 font-semibold tracking-tight">
           汎用システムの 2 ページ
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
@@ -138,7 +138,7 @@ function CoreCard({
         </span>
         <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
       </div>
-      <h3 className="mt-3 text-h7 font-semibold">{title}</h3>
+      <h3 className="mt-3 text-h4 font-semibold">{title}</h3>
       <p className="mt-2 text-body text-muted-foreground">{desc}</p>
     </Link>
   );
@@ -209,7 +209,7 @@ function TenantsSection() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Tenants
         </p>
-        <h2 className="mt-2 text-[1.8rem] font-semibold tracking-tight">
+        <h2 className="mt-2 text-h2 font-semibold tracking-tight">
           ブランド別の運用
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
@@ -238,7 +238,7 @@ function TenantsSection() {
             </Badge>
             <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
           </div>
-          <h3 className="mt-3 text-h7 font-semibold text-foreground">
+          <h3 className="mt-3 text-h4 font-semibold text-foreground">
             他社テナントの追加方法
           </h3>
           <p className="mt-2 text-body">

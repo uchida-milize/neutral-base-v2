@@ -29,7 +29,7 @@ export default function UikitPage() {
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Components
           </p>
-          <h1 className="mt-2 text-h3 font-semibold tracking-tight sm:text-h2">
+          <h1 className="mt-2 text-display-3 font-semibold tracking-tight sm:text-display-2">
             汎用コンポーネントセット
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
