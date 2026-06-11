@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element --
-   Claude Design 出力のプロトタイプ。<img> は logo / chart の静的アセット用で軽量。 */
+   Claude Design 出力のプロトタイプ。<img> は logo / chart / アイコンの静的アセット用で軽量。 */
 /* eslint-disable @typescript-eslint/no-unused-expressions --
    `onInput && onInput()` 等のパターンが多数あり、Claude Design 由来のスタイル維持のため許容。 */
 /* eslint-disable @typescript-eslint/no-unused-vars --
@@ -16,18 +16,22 @@ import { useState, useRef, useEffect } from "react";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.1-handoff.tar.gz / project/screens.jsx (2026-06-10 取り込み)
+   原典: TD 組込1.3-handoff / kumikomi.html (インライン版) (2026-06-11 取り込み)
+   ※ この版では screens.jsx が古いキャッシュとなっており、最新の編集は
+     kumikomi.html (単一ファイル版) 側に保存されていたため、そちらを正とした。
 
-   8 画面 / 5 ステップ構成。商品概要 → プラン選択 → PIN認証 →
-   申込フォーム → 内容確認・お支払い → カード入力/確認(外部) → 完了。
+   8 画面 / 5 ステップ。1.3 の主な変更:
+   - 商品概要の特徴アイコン / グループアイコンを lucide 風 SVG → 専用 <img> アセットに差し替え
+   - hero 図版を hero-chart.png に / 各種マージン微調整 / ボタン高さ h-16
+   - 給付予想額テーブルの月払保険料を選択プランの実額に / 縦書きヘッダ
+   - 完了画面「このあとの流れ」の下向き矢印を番号バッジ中央に配置
+   - 完了画面の誤字「メーあるアドレス」→「メールアドレス」
 
    ポート時の変更点:
-   - "use client"、ESM import (UMD React から)
-   - text-h{2-7} → text-cd-h{2-7} に置換 (Claude Design の 16-34px scale)
-   - アセットパス assets/... → /assets/theo-tdf/...
-   - bg-success → bg-[color:var(--success)] (globals.css の theo-tdf-cd 区画で定義)
-   - el.__bound 動的プロパティへ型安全なキャストを付与
-   - ローカル dark toggle は削除 (サイト共通 ThemeToggle が <html data-theme> を制御)
+   - "use client"、ESM import / text-h{2-7}→text-cd-h{2-7} / assets→/assets/theo-tdf/
+   - bg-success → bg-[color:var(--success)] / el.__bound 型安全キャスト
+   - ローカル dark toggle は削除 (サイト共通 ThemeToggle が制御)
+   - 一部 inline hex (#065FE3=primary-500 / #054EBA=primary-600) は Claude Design 出力に忠実に保持
    ============================================================ */
 
 export type Plan = {
@@ -79,7 +83,7 @@ export const Ic = {
   featSavings: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>,
   featTuition: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 4L2.5 8.5 12 13l9.5-4.5L12 4z"/><path d="M6 10.5V15c0 1.4 2.7 2.7 6 2.7s6-1.3 6-2.7v-4.5"/><path d="M21.5 8.5v5"/></svg>,
   featCare: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 9.2c-1.5-1.6-3.9-1-3.9 1 0 1.6 2 3 3.9 4.3 1.9-1.3 3.9-2.7 3.9-4.3 0-2-2.4-2.6-3.9-1z"/><path d="M3 15.5l3.2-1.3a2 2 0 0 1 1.5 0l2.4 1a2 2 0 0 0 1.5 0L18 12.6a1.4 1.4 0 0 1 1.8.7 1.4 1.4 0 0 1-.6 1.8l-5.4 3.1a3 3 0 0 1-2.4.3L3 16.4"/><path d="M3 14v6"/></svg>,
-  cardArt: (p: { className?: string }) => <svg viewBox="0 0 64 42" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="3" width="60" height="36" rx="5"/><rect x="9" y="11" width="12" height="9" rx="1.6"/><path d="M9 30h12M27 30h8M41 30h6"/><path d="M44 12h11"/></svg>,
+  cardArt: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...p}><path d="M18 4.5H6C3.71 4.5 2.5 5.71 2.5 8V16C2.5 18.29 3.71 19.5 6 19.5H18C20.29 19.5 21.5 18.29 21.5 16V8C21.5 5.71 20.29 4.5 18 4.5ZM6 5.5H18C19.729 5.5 20.5 6.271 20.5 8V9.5H3.5V8C3.5 6.271 4.271 5.5 6 5.5ZM18 18.5H6C4.271 18.5 3.5 17.729 3.5 16V10.5H20.5V16C20.5 17.729 19.729 18.5 18 18.5ZM10.5 15C10.5 15.276 10.276 15.5 10 15.5H7C6.724 15.5 6.5 15.276 6.5 15C6.5 14.724 6.724 14.5 7 14.5H10C10.276 14.5 10.5 14.724 10.5 15Z"/></svg>,
 };
 
 /* ---------------- ATOMS ---------------- */
@@ -102,7 +106,7 @@ export function PH({ className = "", label }: { className?: string; label: strin
 
 // Buttons — cta (申込/前進), button (通常), outline (罫線)
 export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "danger" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
-  const base = "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 h-[72px] text-cd-h7 font-bold transition-colors active:scale-[.99]";
+  const base = "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 h-16 text-cd-h7 font-bold transition-colors active:scale-[.99]";
   const kinds = {
     cta: "bg-button-500 text-white hover:bg-button-600",
     button: "bg-button-500 text-white hover:bg-button-600",
@@ -184,11 +188,15 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // 入力グループの囲い（契約者情報 / 保険金受取人 など）
-export function GroupCard({ title, sub, icon: Icon, children, className }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode; className?: string }) {
+export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode; className?: string; iconSrc?: string }) {
   return (
     <section className={`rounded-2xl border border-warm-200 bg-white overflow-hidden shadow-sm ${className || ""}`}>
       <div className="flex items-center gap-3 px-5 py-3.5 bg-primary-10 border-b border-primary-100">
-        {Icon && <Icon className="w-7 h-7 text-primary-600 shrink-0" />}
+        {iconSrc ? (
+          <img src={iconSrc} alt="" className="w-7 h-7 shrink-0" />
+        ) : Icon ? (
+          <Icon className="w-7 h-7 text-primary-600 shrink-0" />
+        ) : null}
         <div className="min-w-0">
           <p className="text-cd-h7 font-bold text-neutral-800 leading-tight">{title}</p>
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
@@ -306,7 +314,7 @@ export function ScreenIntro({ go }: { go: Go }) {
               就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
             </p>
             <div className="mt-4 rounded-lg border border-warm-200 overflow-hidden bg-white">
-              <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+              <img src="/assets/theo-tdf/hero-chart.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
             </div>
           </div>
 
@@ -430,6 +438,7 @@ function WheelCol({ items, index, onChange, flex, align }: { items: string[]; in
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const programmatic = useRef(false);
 
+  // 外部から index が変わったら、その行へスクロールを合わせる
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -446,10 +455,10 @@ function WheelCol({ items, index, onChange, flex, align }: { items: string[]; in
     const el = ref.current;
     if (!el) return;
     const live = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
-    if (live !== cur) setCur(live);
+    if (live !== cur) setCur(live);          // スクロール中もハイライトを追従
     if (programmatic.current) return;
     if (settle.current) clearTimeout(settle.current);
-    settle.current = setTimeout(() => {
+    settle.current = setTimeout(() => {       // 指を離して止まったらスナップ＋確定
       const i = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
       el.scrollTo({ top: i * WHEEL_ITEM, behavior: "smooth" });
       if (i !== index) onChange(i);
@@ -491,12 +500,12 @@ function WheelCol({ items, index, onChange, flex, align }: { items: string[]; in
   );
 }
 
-function daysInMonth(y: number, m: number) { return new Date(y, m, 0).getDate(); }
+function daysInMonth(y: number, m: number) { return new Date(y, m, 0).getDate(); } // m: 1-12
 
 function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }) {
   const NOW = new Date();
   const MIN_Y = 1925, MAX_Y = NOW.getFullYear();
-  const years: number[] = []; for (let v = MAX_Y; v >= MIN_Y; v--) years.push(v);
+  const years: number[] = []; for (let v = MAX_Y; v >= MIN_Y; v--) years.push(v); // 新しい年が上
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   const init = value ? value.split("-").map(Number) : [1990, 1, 1];
@@ -504,6 +513,7 @@ function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value:
   const [mm, setMm] = useState(init[1]);
   const [dd, setDd] = useState(init[2]);
 
+  // シートを開くたびに現在値で初期化
   useEffect(() => {
     if (!open) return;
     const v = value ? value.split("-").map(Number) : [1990, 1, 1];
@@ -512,6 +522,7 @@ function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value:
 
   const dim = daysInMonth(yy, mm);
   const days = Array.from({ length: dim }, (_, i) => i + 1);
+  // 月末日を超えたら丸める（例: 3/31 → 2月 で 2/28 に）
   useEffect(() => { if (dd > dim) setDd(dim); }, [yy, mm]);
 
   if (!open) return null;
@@ -530,9 +541,11 @@ function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value:
             className="text-cd-h7 font-bold text-primary-600 px-1 py-1">完了</button>
         </div>
         <div className="relative px-3 py-2">
+          {/* 中央の選択バンド */}
           <div className="pointer-events-none absolute left-3 right-3 rounded-lg bg-warm-100/70 border-y border-warm-200"
             style={{ top: WHEEL_PAD + 8, height: WHEEL_ITEM }} />
           <div className="relative flex">
+            {/* 各列：数字ホイール（右寄せ）＋ 専用ラベル列。重なりを防止 */}
             <div className="flex items-center" style={{ flex: 1.5 }}>
               <WheelCol items={years.map((v) => `${v}`)} index={yIdx} onChange={(i) => setYy(years[i])} align="end" />
               <span className="shrink-0 w-5 pl-1 text-caption text-neutral-500 font-medium">年</span>
@@ -599,7 +612,7 @@ export function ScreenOverview({ go }: { go: Go }) {
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
-              <div className="flex items-center justify-end gap-3 mb-2">
+              <div className="flex items-center justify-end gap-3 mb-4">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[9px] text-neutral-400 leading-none whitespace-nowrap">引受保険会社</span>
                   <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
@@ -608,79 +621,73 @@ export function ScreenOverview({ go }: { go: Go }) {
               <p className="text-cd-h5 font-bold text-neutral-800 leading-relaxed">
                 資産形成中の「もしも」に<br/>そなえる保障がTHEOで新登場！
               </p>
-              <div className="mt-5 flex flex-col items-center gap-4">
-                <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-7" />
+              <div className="mt-10 flex flex-col items-center gap-4">
+                <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-[42px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
-                  { svg: <Ic.featSavings className="w-9 h-9" />, t: "積立も\nあんしんに" },
-                  { svg: <Ic.featTuition className="w-9 h-9" />, t: "学資保険\nの代わりにも" },
-                  { svg: <Ic.featCare className="w-9 h-9" />, t: "もしもの\n備えに" },
+                  { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-9 h-9" />, t: "積立も\nあんしんに" },
+                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-9 h-9" />, t: "学資保険\nの代わりにも" },
+                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-9 h-9" />, t: "もしもの\n備えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
-                    <div className="text-primary">{f.svg}</div>
+                    <div className="text-primary" style={{width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#065FE3'}}>{f.svg}</div>
                     <p className="text-caption font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
                   </div>
                 ))}
                 </div>
               </div>
-              <div className="mt-4 overflow-hidden">
+              <div className="mt-6 overflow-hidden">
                 <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
               </div>
 
               {/* 商品概要（図版の下） */}
-              <div className="mt-6 space-y-6">
-                <div className="text-center">
-                  <a className="text-button-500 font-bold text-cd-h7 underline underline-offset-2 cursor-pointer">詳細なサービス内容はこちら</a>
+              <div className="mt-6 space-y-6 mb-9">
+                <div className="text-right">
+                  <a className="inline-flex items-center gap-1.5 font-bold text-cd-h7 cursor-pointer" style={{ color: "#054EBA" }}>
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                    詳細なサービス内容はこちら
+                  </a>
                 </div>
-                <div className="text-center">
-                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">保険名称</span>
+                <div className="text-left">
+                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
                   <p className="mt-2 text-cd-h7 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
                 </div>
-                <div className="text-center">
-                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">保障期間</span>
+                <div className="text-left">
+                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
                   <p className="mt-2 text-cd-h7 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
-                </div>
-                <div className="rounded-2xl border border-warm-300 bg-warm-50 px-4 py-5 text-center">
-                  <span className="inline-block text-cd-h6 font-bold text-neutral-800 bg-primary-10 px-2 py-0.5 rounded">お申し込みのまえに</span>
-                  <p className="mt-2 text-cd-h7 text-neutral-700">お手続きの際に必要となる書類をご準備ください</p>
-                  <div className="mt-4 flex flex-col items-center gap-3 px-4 py-2">
-                    <Ic.cardArt className="w-20 h-auto text-primary-500" />
-                    <span className="text-cd-h7 font-bold text-neutral-800">ご本人名義のクレジットカード</span>
-                  </div>
                 </div>
               </div>
             </div>
 
             {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-5 mt-8 bg-primary-10 px-5 pt-10 pb-3">
+            <div className="-mx-5 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
+              <div className="mb-12">
+                <div className="text-center">
+                  <span className="inline-block text-cd-h4 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
+                  <p className="mt-2 text-cd-h7 text-neutral-500">お手続きの際に必要となる書類を<br/>ご準備ください</p>
+                </div>
+                <div className="mt-2 flex flex-col items-center gap-1 px-4">
+                  <Ic.cardArt className="w-20 h-auto text-primary-500" />
+                  <span className="text-[11px] font-medium text-neutral-600">ご本人名義のクレジットカード</span>
+                </div>
+              </div>
+              <div className="border-t border-primary-100 mb-[45px]"></div>
               <div className="text-center mb-5">
                 <h2 className="text-cd-h4 font-bold text-neutral-900 leading-snug text-balance">3つのプランから選ぶだけ</h2>
                 <p className="mt-2 text-cd-h7 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
               </div>
               <div>
-                <div className="flex items-end justify-between gap-3">
+                <div className="flex flex-col items-center text-center gap-3">
                   <div>
                     <p className="text-caption text-neutral-500">保険料</p>
-                    <p className="text-neutral-900"><span className="font-en text-cd-h2 font-bold text-primary-700">480</span><span className="text-cd-h7 font-bold"> 円 / 月〜</span></p>
+                    <p className="text-neutral-900"><span className="font-en text-cd-h2 font-bold" style={{ color: "#054EBA" }}>480</span><span className="text-cd-h7 font-bold"> 円 / 月〜</span></p>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold text-primary-700 shadow-sm"><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
-                </div>
-                <div className="mt-3 grid grid-cols-3 gap-2 pt-3">
-                  {[
-                    { i: Ic.shield, t: "引受 T&D" },
-                    { i: Ic.card,   t: "クレカ払い対応" },
-                    { i: Ic.doc,    t: "最短10分" },
-                  ].map((b, k) => (
-                    <div key={k} className="flex flex-col items-center gap-1 text-center">
-                      <b.i className="w-5 h-5 text-primary-600" />
-                      <span className="text-[11px] font-medium text-neutral-600 leading-tight">{b.t}</span>
-                    </div>
-                  ))}
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold shadow-sm" style={{ color: "#054EBA" }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
                 </div>
               </div>
               <div className="mt-7 flex flex-col items-center gap-0.5">
-                <p className="text-caption font-bold text-primary-700">まずはプランを選んでみましょう</p>
+                <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
                 <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
               </div>
             </div>
@@ -774,7 +781,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         {/* ---- 保険料シミュレーション ---- */}
         <div className="-mx-5 px-5 py-6 relative" style={{ background: "var(--warm-100)" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
-          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : undefined} />
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : undefined} plan={plan} />
         </StepSection>
         </div>
 
@@ -996,19 +1003,19 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Set
 }
 
 // 給付予想額テーブル（m, y から算出）
-export function BenefitTable({ m, y }: { m: number; y: number }) {
+export function BenefitTable({ m, y, plan }: { m: number; y: number; plan?: Plan }) {
   const startAge = 30;
   const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const annual = m * 12;
   const maxBenefit = annual * y;
+  const premiumPerMonth = plan && plan.price ? parseInt(plan.price.replace(/[^0-9]/g, ""), 10) : 0;
   const rows = [];
   for (let n = 0; n <= y; n++) {
     const age = startAge + n;
     const benefit = annual * (y - n);
     const cum = annual * n;
-    const premium = Math.round(benefit * 0.00025 * (1 + (age - startAge) * 0.01));
-    rows.push({ n, age, premium, benefit, cum });
+    rows.push({ n, age, premium: premiumPerMonth, benefit, cum });
   }
   return (
     <>
@@ -1024,8 +1031,8 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
           <table className="w-full text-caption tabular-nums">
             <thead className="sticky top-0 bg-warm-100 text-neutral-500">
               <tr>
-                {["経過", "年齢", "月払\n保険料", "給付金額", "合計積立"].map((h) => (
-                  <th key={h} className="font-medium text-center px-2.5 py-2 whitespace-pre-line align-middle">{h}</th>
+                {["経\n過", "年\n齢", "月払\n保険料", "給付\n金額", "合計\n積立"].map((h) => (
+                  <th key={h} className="font-medium text-center px-2.5 py-1.5 whitespace-pre-line align-middle text-[12px]">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -1050,7 +1057,7 @@ export function BenefitTable({ m, y }: { m: number; y: number }) {
   );
 }
 
-export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName }: { m: number; setM: SetNum; y: number; setY: SetNum; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string }) {
+export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan }: { m: number; setM: SetNum; y: number; setY: SetNum; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string; plan?: Plan }) {
   const [open, setOpen] = useState(initialSimOpen ?? false);
   const shouldShowLabel = planName && ['安心セット', 'がん', '障害・介護'].includes(planName);
   return (
@@ -1081,7 +1088,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 
       <div style={{ maxHeight: open ? "1600px" : "0px", opacity: open ? 1 : 0, marginTop: open ? "16px" : "0px" }}
         className="overflow-hidden transition-all duration-300 ease-out">
-        <BenefitTable m={m} y={y} />
+        <BenefitTable m={m} y={y} plan={plan} />
       </div>
     </div>
   );
@@ -1129,7 +1136,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
         </div>
 
         {/* 契約者情報グループ */}
-        <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" icon={Ic.user} className="-mt-5">
+        <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-5">
           <div className="grid grid-cols-2 gap-3">
             <Field label="姓" placeholder="山田" required />
             <Field label="名" placeholder="太郎" required />
@@ -1148,7 +1155,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
         </GroupCard>
 
         {/* 保険金受取人グループ */}
-        <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" icon={Ic.heartHand}>
+        <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" iconSrc="/assets/theo-tdf/letter-heart-square.svg">
           <Field label="氏名" placeholder="山田 花子" />
 
           <button onClick={() => setSame((s) => !s)} className="flex items-center gap-2.5 w-full text-left pt-1">
@@ -1220,7 +1227,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
               </button>
               <div style={{ maxHeight: sheetRes ? "1600px" : "0px", opacity: sheetRes ? 1 : 0, marginTop: sheetRes ? "16px" : "0px" }}
                 className="overflow-hidden transition-all duration-300 ease-out">
-                <BenefitTable m={m} y={y} />
+                <BenefitTable m={m} y={y} plan={plan} />
               </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
@@ -1715,18 +1722,18 @@ export function ScreenDone({ go }: { go: Go }) {
               ["3", "初回保険料の引落し・保険開始", "翌月以降、THEO のご登録口座より。"],
             ].map(([n, t, d], idx, arr) => (
               <div key={n}>
-                <div className="flex items-start gap-3">
+                <div className="grid grid-cols-[1.75rem_1fr] gap-x-3">
                   <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
-                  <div>
+                  <div className="pb-1">
                     <p className="text-cd-h7 font-bold text-neutral-800">{t}</p>
                     <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
                   </div>
+                  {idx < arr.length - 1 && (
+                    <div className="flex justify-center items-center py-1.5 text-primary-300" style={{ marginTop: "-20px" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                    </div>
+                  )}
                 </div>
-                {idx < arr.length - 1 && (
-                  <div className="flex pl-[0.6rem] py-2 text-primary-300">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-                  </div>
-                )}
               </div>
             ))}
             </div>
