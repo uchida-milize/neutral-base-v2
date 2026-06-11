@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年5月28日 (午前: 初稿、午後: theo-tdf テナント構築 + 自動色反映パイプライン整備、セクション 9 参照)
+最終更新: 2026年6月11日 (THEO 組込フロー 8画面5ステップ版の取り込み + 共通 atom の shadcn ラッパー化。最新はセクション 11 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -1035,10 +1035,108 @@ theo-tdf の Claude Design 取り込みでは、最初に上記テンプレを�
 
 theo-tdf の既存 `screens.tsx` (1125 行) は引き続き運用可能だが、構造的には「独自 atom set + shadcn primitives 」の並列状態。完全統合は HANDOFF.md §6 Priority 5 周辺 (= Phase B コンポーネント差し替え) で実施予定 (お客様要望時に着手)。
 
+> **✅ 2026-06-11 解消済み**: この identity 問題は §11.4「Phase B (shadcn ラッパー化)」で解消しました。共通 atom が shadcn primitives へ委譲するアダプタ層になり、`/theo-tdf/components` のカタログと構造的に一致しています。詳細は §11 を参照。
+
 #### 次回セッション以降の予防策
 
 新規 prototype を Claude Design で作る時、§10.2 (strengthened版) を**毎回最初に**貼ること。これにより:
 - ✅ Claude Design の生成コードが shadcn-based になる
 - ✅ Cowork 統合時にそのまま使える (= retrofit 作業不要)
 - ✅ Figma 書き戻し時に identity 保持が容易になる
+
+---
+
+## 11. セッションログ 2026-06-11 (THEO 組込フロー 1.1〜1.3 取り込み + shadcn ラッパー化)
+
+このセッションは、Claude Design で更新された THEO 組込保険の申込フローを複数回取り込み、最後に「プロトタイプを shadcn に寄せる (Phase B)」までを実施した。
+
+### 11.1 取り込みフローの変遷 (8画面 / 5ステップ構成の確立)
+
+theo-tdf の `/prototype` `/windows` を、Claude Design の最新出力に合わせて段階的に更新:
+
+| 版 | 主な内容 |
+|---|---|
+| 6画面版 (旧) | プラン選択 / 申込フォーム / 内容確認 / カード入力・確認(外部) / 完了 |
+| **8画面 5ステップ版 (現行)** | **商品概要** → プラン選択 → **PINコード認証** → 申込フォーム → 内容確認・お支払い → カード入力・確認(外部) → 完了 |
+
+現行版の主な UI 要素:
+- ステッパーは**番号付き円＋連結線**型 (到達済みステップはタップで遷移可能、`STEP_TO_SCREEN` で画面対応)
+- ボタン体系: 通常 CTA は**ブルー** (`button-500`)、申込確定など強調は赤の **`danger`** バリアント、高さ `h-16`
+- 商品概要: 「3つのプランから選ぶだけ」見出しバンド + 特徴3アイコン + 保険料バンド
+- プラン選択: 生年月日の **iOS 風ドラムロール日付ピッカー** (`DateDrumSheet` / `WheelCol`)
+- シミュレーター: 選択プランのラベルチップ + 給付予想額テーブル (月払保険料は選択プランの実額、縦書きヘッダ)
+- 内容確認: 重要事項 **8項目**アコーディオン (被保険者確認の国籍分岐含む) + クレカ規定アコーディオン
+- 完了: ステッパー 5/5 + 「このあとの流れ」(矢印を番号バッジ中央に配置)
+- 新規アイコンアセット (`public/assets/theo-tdf/`): `activity-heart-circle.svg` / `graduation-cap.svg` / `hand-holding-heart.svg` / `hero-chart.png` / `info-circle.svg` / `letter-heart-square.svg` / `person-heart.svg` / `logo_theo_insurance_blue.svg`
+
+### 11.2 ★重要★ Claude Design エクスポートの罠: `screens.jsx` が古いキャッシュになる
+
+**症状**: 複数回 (5回) にわたり別々の share URL / zip を取り込んだが、`screens.jsx` がすべて**バイト単位で同一** (md5 一致) で、お客様が編集画面で見ている変更が反映されなかった。
+
+**原因**: このプロジェクトでは、Claude Design の編集が**単一ファイル版 `kumikomi.html` (インライン版) 側に保存**され、分割版 `screens.jsx` は**古いキャッシュのまま取り残されていた**。`screens.jsx` だけを見ていると「変更なし」と誤判定する。
+
+**解決の決め手**: `kumikomi.html` の `<script type="text/babel" data-presets="react">` ブロックを抽出して `screens.jsx` と diff したところ、`kumikomi.html` 側にだけ最新の編集 (アイコン差し替え / マージン / テーブル / 完了画面文言など) が入っていた。
+
+**確定した運用ルール**:
+- このプロジェクトは **`kumikomi.html` (単一ファイル版) が真の最新**。取り込みは必ず `kumikomi.html` のインライン JS を基準にする。
+- お客様には **「Implement: kumikomi.html」+ zip 添付** の形で渡してもらうのが最も確実 (API 経由 share URL だと古い `screens.jsx` 主体のバンドルになることがある)。
+- 取り込み前に必ず **md5 / 行単位で diff** し、本当に差分があるか機械的に確認する。
+- → その後お客様が Claude Design 側でプロジェクトの **分割ファイルを最新と同期**する対応を実施。以降は `screens.jsx` ≡ `kumikomi.html` (diff 0) になった。
+
+### 11.3 取り込みの機械化 (`port` 変換スクリプト)
+
+`kumikomi.html` / `screens.jsx` の JSX を repo の `components/theo-tdf/claude-design/screens.tsx` (TSX) へ機械変換する Python スクリプトを使用 (作業用 `/tmp/port.py`、セッション間で揮発するため再生成して使う)。変換内容:
+- `"use client"` 付与、UMD React → ESM import
+- `text-h{2-7}` → `text-cd-h{2-7}` (Claude Design のコンパクトスケール)
+- `src="assets/..."` / `iconSrc="assets/..."` → `/assets/theo-tdf/...`
+- `bg-success` → `bg-[color:var(--success)]`
+- `el.__bound` 動的プロパティへ型安全キャスト、`useRef(null)` の型付け
+- 全 top-level 関数/定数に TS 型 + `export` 付与 (signature 辞書で一括置換)
+- ローカル dark toggle 削除 (サイト共通 `ThemeToggle` が `<html data-theme>` を制御)
+- `app.jsx` は実質不変のため `app-shell.tsx` (FLOW 定義) は手動同期
+
+検証は毎回 `./node_modules/.bin/tsc --noEmit` + `eslint` + 生hex/旧スケール/旧パス混入の grep チェック。
+
+### 11.4 Phase B: 共通 atom を shadcn primitives にラッパー化 (§10.5 の identity 問題を解消)
+
+**方針 (お客様承認済み)**: 「Atom を shadcn ラッパー化」。screens 側の呼び出し (`<Btn>` 等) は不変のまま、atom の**中身**を `components/ui` の shadcn primitive へ委譲するアダプタ層にした。これにより **Claude Design 再取り込みパイプラインを壊さずに** shadcn の lineage を獲得し、`/theo-tdf/components` のカタログと構造的に一致する。
+
+| 独自 atom | 委譲先 shadcn |
+|---|---|
+| `Btn` | `<Button>` (kind→variant + ブランド色 className) |
+| `Badge` | `<Badge>` (tone→淡色面 className) |
+| `Field` | `<Label>` + `<Input>` |
+| `LockedField` | `<Label>` + 無効化 `<Input>` |
+| `GroupCard` | `<Card>` + `<CardContent>` |
+
+**維持 (shadcn 化しない)**:
+- `Select`: ネイティブ `<select>` のまま (Radix Select は controlled/UX が大きく変わり、モバイル WF の意図とずれるため)
+- `AppBar` / `Steps` / `Phone` / `ActionBar` / `DateDrumSheet` / `WheelCol` / `PlanCard` / `ExtBar`: shadcn に対応物がないモバイル UI 固有部品 (§10.2 の許容例外)
+
+**重要**: この shadcn 化は **`port` 変換スクリプトに焼き込んだ** (atom 本体を正規表現で丸ごと shadcn ラッパー版に差し替え)。よって**今後 Claude Design から再取り込みしても自動的に shadcn ラッパーが適用される** = 「Claude Design がマスター」運用と shadcn 準拠が両立する。
+
+トレードオフ: atom の**見た目**は今後ラッパー側が支配するため、Claude Design 側で atom 自体を再スタイルしても反映されない (ブランド色は `tokens.css` 経由で従来どおり追従する)。これは shadcn 準拠の意図的な帰結。
+
+### 11.5 本セッションで変更されたファイル
+
+- `components/theo-tdf/claude-design/screens.tsx` — 8画面5ステップ版 + shadcn ラッパー化 (全面更新)
+- `components/theo-tdf/claude-design/app-shell.tsx` — FLOW を 8画面5ステップに更新 (商品概要・PIN追加)
+- `app/theo-tdf/windows/page.tsx` — 8画面 + 状態バリアント5枚に更新
+- `app/theo-tdf/prototype/page.tsx` — メタ情報更新
+- `app/globals.css` — `.theo-tdf-cd` に `--success` 変数追加、ダーク時の secondary 罫線追加
+- `public/assets/theo-tdf/` — 新規アイコン/図版アセット8点追加
+
+### 11.6 次セッションの作業候補
+
+1. **`/init-brand-tokens` (Priority 2) の本実装** — まだ未着手。
+2. **`/import-claude-design` (Priority 3) のスキル化** — 本セッションの `port` 変換ロジックがほぼ仕様。`kumikomi.html` インライン JS 抽出 + TSX 変換 + shadcn ラッパー適用を 1 スキルにまとめる。
+3. **`/export-to-figma` (Priority 5)** — atom が shadcn lineage を持ったので、Figma Master Component への書き戻し前提が整った。
+4. **`Select` の shadcn 化検討** — 必要なら Radix Select へ移行 (controlled 化が必要)。
+5. **`new-tenant.sh` への波及** — theo-tdf の claude-design 構造を雛形化するか検討。
+
+### 11.7 本セッションで判明した運用上の注意 (追加)
+
+18. **Claude Design の分割ファイル (`screens.jsx`) はキャッシュで古くなることがある** → 単一ファイル版 `kumikomi.html` を正とし、取り込み前に md5/行 diff で実差分を必ず確認。zip 添付 + 「Implement: kumikomi.html」が最も確実。
+19. **`/tmp` の作業ファイル (port.py 等) はセッション/呼び出し間で揮発する** → 重要な変換ロジックは HANDOFF か repo の `scripts/` に残すべき (現状は本ログに要点を記載)。
+20. **shadcn Button/Input/Card は `cn()` で className 後勝ち** → `h-16 md:h-16` のように `md:` 派生も明示しないと、デスクトップ幅でデフォルトサイズに戻る点に注意。
 
