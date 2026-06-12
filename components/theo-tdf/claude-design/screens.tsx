@@ -507,11 +507,13 @@ export function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean;
     if (!open) return;
     const v = value ? value.split("-").map(Number) : [1990, 1, 1];
     setYy(v[0]); setMm(v[1]); setDd(v[2]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const dim = daysInMonth(yy, mm);
   const days = Array.from({ length: dim }, (_, i) => i + 1);
   // 月末日を超えたら丸める（例: 3/31 → 2月 で 2/28 に）
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (dd > dim) setDd(dim); }, [yy, mm]);
 
   if (!open) return null;
