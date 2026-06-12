@@ -1720,7 +1720,7 @@ export function ScreenDone({ go }: { go: Go }) {
           <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
           {/* ヒーローコンテンツ */}
-          <div className="px-5 pt-4 pb-12 text-center">
+          <div className="px-5 pt-[66px] pb-12 text-center">
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-5 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />

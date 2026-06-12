@@ -177,7 +177,7 @@ function Phone({
         <div className="relative w-full h-full rounded-[34px] overflow-hidden bg-warm-50 flex flex-col">
           {heroTop ? (
             /* status bar — hero 画面では絶対配置・透明背景でヒーロー画像に重ねる */
-            <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-white">
+            <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
               <span>9:41</span>
               <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`} />
               <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
