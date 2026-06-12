@@ -31,6 +31,7 @@ const buttonVariants = cva(
         // Figma: component/Button Small — mobile 36px / desktop 32px (mobile-first)
         sm: "h-9 md:h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-12 md:h-10 rounded-md px-6 has-[>svg]:px-4",
+        cta: "h-16 px-5",
         icon: "size-11 md:size-9",
       },
     },

@@ -84,8 +84,8 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
     ghost:   "bg-transparent text-neutral-600 hover:bg-warm-100",
   };
   return (
-    <Button onClick={onClick} disabled={disabled}
-      className={cn("h-16 rounded-xl text-h6 font-bold", full && "w-full", variantMap[kind] ?? variantMap.button)}>
+    <Button onClick={onClick} disabled={disabled} size="cta"
+      className={cn("rounded-xl text-h6 font-bold", full && "w-full", variantMap[kind] ?? variantMap.button)}>
       {children}
     </Button>
   );
@@ -593,11 +593,6 @@ export function ScreenOverview({ go }: { go: Go }) {
         <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
-          {/* フェイクステータスバー（Phone側は非表示、ここで描画） */}
-          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
-            <span>9:41</span>
-            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-          </div>
           {/* インラインAppBar - スクロール後にsolid化 */}
           <div className="sticky top-0 z-20 transition-colors duration-200"
                style={solid ? { background: 'var(--primary-color, #054EBA)' } : { background: 'transparent' }}>
@@ -1724,11 +1719,6 @@ export function ScreenDone({ go }: { go: Go }) {
         <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
           <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {/* フェイクステータスバー */}
-          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700">
-            <span>9:41</span>
-            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-          </div>
           {/* ヒーローコンテンツ */}
           <div className="px-5 pt-4 pb-12 text-center">
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
