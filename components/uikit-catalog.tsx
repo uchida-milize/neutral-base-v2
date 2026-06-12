@@ -1001,7 +1001,7 @@ function Field({
   children,
 }: {
   label: string;
-  htmlFor: string;
+  htmlFor?: string;
   hint?: string;
   hintTone?: "muted" | "danger";
   children: React.ReactNode;

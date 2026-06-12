@@ -11,7 +11,7 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
-
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -22,28 +22,18 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.3-handoff (kumikomi.html / screens.jsx 同期版) (2026-06-11 取り込み)
+   原典: TD 組込1.3-handoff (kumikomi.html) (2026-06-12 取り込み)
 
    ★ shadcn ラッパー方針 (Phase B / 2026-06-11):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
-     components/ui の shadcn primitive (Button / Badge / Input / Label / Card)
-     へ委譲する「アダプタ層」になっている。screens 側の呼び出し (<Btn> 等) は
-     不変なので Claude Design からの再取り込みパイプラインは維持されつつ、
-     shadcn の lineage を獲得し /theo-tdf/components のカタログと構造的に一致する。
-     ※ この shadcn 化は scripts の取り込み (port) 時に自動適用される。
-     ※ Select はネイティブ <select> のまま (Radix Select は controlled/UX が
-       大きく変わるため、モバイル WF の意図に合わせ現状維持)。
-     ※ AppBar / Steps / Phone / ActionBar / DateDrumSheet / WheelCol /
-       PlanCard / ExtBar は shadcn に対応物が無いモバイル UI 固有部品のため
-       独自実装を維持 (HANDOFF §10.2 の許容例外)。
-
-   8 画面 / 5 ステップ。商品概要 → プラン選択 → PIN認証 → 申込フォーム →
-   内容確認・お支払い → カード入力/確認(外部) → 完了。
+     components/ui の shadcn primitive へ委譲するアダプタ層。
 
    ポート時の変更点:
-   - "use client"、ESM import / text-h{2-7}→text-h{1-6} (cd-h* は text-h* に統合) / assets→/assets/theo-tdf/
-   - bg-success → bg-[color:var(--success)] / el.__bound 型安全キャスト
-   - 一部 inline hex (#065FE3=primary-500 / #054EBA=primary-600) は出力に忠実に保持
+   - "use client"、ESM import
+   - text-h{2-7}→text-h{1-6} (cd-h* は text-h* に統合)
+   - assets→/assets/theo-tdf/
+   - bg-success → bg-[color:var(--success)]
+   - el.__bound 型安全キャスト
    ============================================================ */
 
 export type Plan = {
@@ -72,74 +62,100 @@ export type AgreeItemData = {
 type Go = (n: number) => void;
 type SetNum = React.Dispatch<React.SetStateAction<number>>;
 type SetStr = React.Dispatch<React.SetStateAction<string>>;
-
-/* ============================================================
-   THEO 組込保険 — Screens + shared wireframe atoms
-   ============================================================ */
-
-/* ---------------- ICONS (line / wireframe) ---------------- */
-export const Ic = {
-  chevL: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 18l-6-6 6-6"/></svg>,
-  chevR: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M9 18l6-6-6-6"/></svg>,
-  chevD: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 9l6 6 6-6"/></svg>,
-  menu:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...p}><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
-  shield:(p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg>,
-  chart: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 19V5M4 19h16M8 16v-4M13 16V9M18 16v-7"/></svg>,
-  doc:   (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9.5 13h6M9.5 16.5h6"/></svg>,
-  check: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 6L9 17l-5-5"/></svg>,
-  heart: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M19 5.5c-1.8-1.7-4.6-1.5-6.3.3L12 6.5l-.7-.7C9.6 4 6.8 3.8 5 5.5c-2 1.9-2 5 0 7l7 6.8 7-6.8c2-2 2-5.1 0-7z"/></svg>,
-  user:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-  tag:   (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1"/></svg>,
-  card:  (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
-  heartHand: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 12.8C9.3 11 7.4 9.4 7.4 7.3c0-1.5 1.2-2.6 2.6-2.6.9 0 1.6.4 2 1 .4-.6 1.1-1 2-1 1.4 0 2.6 1.1 2.6 2.6 0 2.1-1.9 3.7-4.6 5.5z"/><path d="M3.6 16.4c1.3 2.5 4.4 3.9 8.4 3.9s7.1-1.4 8.4-3.9"/></svg>,
-  featSavings: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>,
-  featTuition: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 4L2.5 8.5 12 13l9.5-4.5L12 4z"/><path d="M6 10.5V15c0 1.4 2.7 2.7 6 2.7s6-1.3 6-2.7v-4.5"/><path d="M21.5 8.5v5"/></svg>,
-  featCare: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 9.2c-1.5-1.6-3.9-1-3.9 1 0 1.6 2 3 3.9 4.3 1.9-1.3 3.9-2.7 3.9-4.3 0-2-2.4-2.6-3.9-1z"/><path d="M3 15.5l3.2-1.3a2 2 0 0 1 1.5 0l2.4 1a2 2 0 0 0 1.5 0L18 12.6a1.4 1.4 0 0 1 1.8.7 1.4 1.4 0 0 1-.6 1.8l-5.4 3.1a3 3 0 0 1-2.4.3L3 16.4"/><path d="M3 14v6"/></svg>,
-  cardArt: (p: { className?: string }) => <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...p}><path d="M18 4.5H6C3.71 4.5 2.5 5.71 2.5 8V16C2.5 18.29 3.71 19.5 6 19.5H18C20.29 19.5 21.5 18.29 21.5 16V8C21.5 5.71 20.29 4.5 18 4.5ZM6 5.5H18C19.729 5.5 20.5 6.271 20.5 8V9.5H3.5V8C3.5 6.271 4.271 5.5 6 5.5ZM18 18.5H6C4.271 18.5 3.5 17.729 3.5 16V10.5H20.5V16C20.5 17.729 19.729 18.5 18 18.5ZM10.5 15C10.5 15.276 10.276 15.5 10 15.5H7C6.724 15.5 6.5 15.276 6.5 15C6.5 14.724 6.724 14.5 7 14.5H10C10.276 14.5 10.5 14.724 10.5 15Z"/></svg>,
-};
-
-/* ---------------- ATOMS ---------------- */
 export function Badge({ children, tone = "secondary" }: { children: React.ReactNode; tone?: "secondary" | "primary" | "warm" }) {
-  // shadcn <Badge> へ委譲。tone でブランド色の淡色面を当てる。
-  const tint: Record<string, string> = {
-    secondary: "bg-secondary-10 text-secondary-700",
-    primary: "bg-primary-10 text-primary-700",
-    warm: "bg-warm-100 text-neutral-500",
+  const cls: Record<string, string> = {
+    secondary: "bg-secondary-10 text-secondary-600 border-secondary-100",
+    primary:   "bg-primary-10  text-primary-600  border-primary-100",
+    warm:      "bg-warm-100    text-neutral-600   border-warm-200",
   };
-  return (
-    <UIBadge variant="secondary" className={`rounded-full border-transparent px-2.5 py-1 text-caption font-medium ${tint[tone]}`}>
-      {children}
-    </UIBadge>
-  );
+  return <UIBadge variant="outline" className={cn("rounded-full font-medium", cls[tone] ?? cls.secondary)}>{children}</UIBadge>;
 }
 
 export function PH({ className = "", label }: { className?: string; label: string }) {
-  return <div className={`wf-ph rounded-lg text-caption ${className}`}>{label}</div>;
+  return <div className={cn("rounded-xl bg-warm-100 flex items-center justify-center text-neutral-400 text-caption border border-warm-200", className)}>{label}</div>;
 }
 
-// Buttons — cta (申込/前進), button (通常), outline (罫線)
 export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "danger" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
-  // shadcn <Button> へ委譲。kind→variant + ブランド色 className。
-  const tint: Record<string, string> = {
-    cta: "bg-button-500 text-white hover:bg-button-600",
-    button: "bg-button-500 text-white hover:bg-button-600",
-    danger: "bg-cta-500 text-white hover:bg-cta-600",
-    outline: "border border-button-500 bg-white text-button-500 hover:bg-button-10",
-    ghost: "text-neutral-500 hover:text-neutral-800",
+  const variantMap: Record<string, string> = {
+    cta:     "bg-cta-500 hover:bg-cta-600 text-white",
+    button:  "bg-button-500 hover:bg-button-600 text-white",
+    danger:  "bg-red-600 hover:bg-red-700 text-white",
+    outline: "border border-button-500 text-button-500 bg-transparent hover:bg-button-10",
+    ghost:   "bg-transparent text-neutral-600 hover:bg-warm-100",
   };
-  const variant = kind === "outline" ? "outline" : kind === "ghost" ? "ghost" : "default";
   return (
-    <Button
-      type="button"
-      variant={variant}
-      onClick={onClick}
-      disabled={disabled}
-      className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-h6 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
-    >
+    <Button onClick={onClick} disabled={disabled}
+      className={cn("h-16 rounded-xl text-h6 font-bold", full && "w-full", variantMap[kind] ?? variantMap.button)}>
       {children}
     </Button>
   );
 }
+
+export function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <Label className="text-caption font-medium text-neutral-600">{label}{required && <span className="text-red-500 ml-0.5">*</span>}</Label>
+      <Input placeholder={placeholder} value={value} onChange={onChange} disabled={disabled} className="h-12 rounded-xl border-warm-300 bg-white text-body" />
+      {hint && <p className="text-caption text-neutral-400">{hint}</p>}
+    </div>
+  );
+}
+
+export function LockedField({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <Label className="text-caption font-medium text-neutral-600">{label}</Label>
+      <Input value={value} disabled className="h-12 rounded-xl border-warm-200 bg-warm-50 text-body text-neutral-500" />
+    </div>
+  );
+}
+
+export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode; className?: string; iconSrc?: string }) {
+  return (
+    <Card className={cn("rounded-2xl border-warm-200 shadow-sm", className)}>
+      <CardContent className="pt-4 pb-3 px-4">
+        <div className="flex items-start gap-3 mb-3">
+          {iconSrc ? <img src={iconSrc} alt="" className="w-8 h-8 shrink-0" /> : Icon ? <Icon className="w-8 h-8 shrink-0 text-primary-500" /> : null}
+          <div className="min-w-0">
+            <p className="text-h6 font-bold text-neutral-800 leading-tight">{title}</p>
+            {sub && <p className="text-caption text-neutral-500 mt-0.5">{sub}</p>}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">{children}</div>
+      </CardContent>
+    </Card>
+  );
+}
+
+
+/* ---------------- ICONS (line / wireframe) ---------------- */
+export const Ic: Record<string, (p: React.SVGProps<SVGSVGElement>) => React.ReactElement> = {
+  chevL: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 18l-6-6 6-6"/></svg>,
+  chevR: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M9 18l6-6-6-6"/></svg>,
+  chevD: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 9l6 6 6-6"/></svg>,
+  menu:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...p}><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
+  shield:(p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg>,
+  chart: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 19V5M4 19h16M8 16v-4M13 16V9M18 16v-7"/></svg>,
+  doc:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9.5 13h6M9.5 16.5h6"/></svg>,
+  check: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 6L9 17l-5-5"/></svg>,
+  heart: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M19 5.5c-1.8-1.7-4.6-1.5-6.3.3L12 6.5l-.7-.7C9.6 4 6.8 3.8 5 5.5c-2 1.9-2 5 0 7l7 6.8 7-6.8c2-2 2-5.1 0-7z"/></svg>,
+  user:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  tag:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1"/></svg>,
+  card:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
+  heartHand: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 12.8C9.3 11 7.4 9.4 7.4 7.3c0-1.5 1.2-2.6 2.6-2.6.9 0 1.6.4 2 1 .4-.6 1.1-1 2-1 1.4 0 2.6 1.1 2.6 2.6 0 2.1-1.9 3.7-4.6 5.5z"/><path d="M3.6 16.4c1.3 2.5 4.4 3.9 8.4 3.9s7.1-1.4 8.4-3.9"/></svg>,
+  featSavings: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>,
+  featTuition: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 4L2.5 8.5 12 13l9.5-4.5L12 4z"/><path d="M6 10.5V15c0 1.4 2.7 2.7 6 2.7s6-1.3 6-2.7v-4.5"/><path d="M21.5 8.5v5"/></svg>,
+  featCare: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 9.2c-1.5-1.6-3.9-1-3.9 1 0 1.6 2 3 3.9 4.3 1.9-1.3 3.9-2.7 3.9-4.3 0-2-2.4-2.6-3.9-1z"/><path d="M3 15.5l3.2-1.3a2 2 0 0 1 1.5 0l2.4 1a2 2 0 0 0 1.5 0L18 12.6a1.4 1.4 0 0 1 1.8.7 1.4 1.4 0 0 1-.6 1.8l-5.4 3.1a3 3 0 0 1-2.4.3L3 16.4"/><path d="M3 14v6"/></svg>,
+  cardArt: (p) => <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...p}><path d="M18 4.5H6C3.71 4.5 2.5 5.71 2.5 8V16C2.5 18.29 3.71 19.5 6 19.5H18C20.29 19.5 21.5 18.29 21.5 16V8C21.5 5.71 20.29 4.5 18 4.5ZM6 5.5H18C19.729 5.5 20.5 6.271 20.5 8V9.5H3.5V8C3.5 6.271 4.271 5.5 6 5.5ZM18 18.5H6C4.271 18.5 3.5 17.729 3.5 16V10.5H20.5V16C20.5 17.729 19.729 18.5 18 18.5ZM10.5 15C10.5 15.276 10.276 15.5 10 15.5H7C6.724 15.5 6.5 15.276 6.5 15C6.5 14.724 6.724 14.5 7 14.5H10C10.276 14.5 10.5 14.724 10.5 15Z"/></svg>,
+};
+
+/* ---------------- ATOMS ---------------- */
+
+
+
+
+// Buttons — cta (申込/前進), button (通常), outline (罫線)
+
 
 // Phone app bar (THEO header)
 export function AppBar({ title, onBack, brandVisible = true }: { title?: string; onBack?: () => void; brandVisible?: boolean }) {
@@ -207,25 +223,7 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // 入力グループの囲い（契約者情報 / 保険金受取人 など）
-export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc }: { title: string; sub?: string; icon?: React.ComponentType<{ className?: string }>; children: React.ReactNode; className?: string; iconSrc?: string }) {
-  // shadcn <Card> + <CardContent> へ委譲。ヘッダーはブランド淡色帯。
-  return (
-    <Card className={`gap-0 overflow-hidden rounded-2xl border-warm-200 bg-white py-0 shadow-sm ${className || ""}`}>
-      <div className="flex items-center gap-3 px-5 py-3.5 bg-primary-10 border-b border-primary-100">
-        {iconSrc ? (
-          <img src={iconSrc} alt="" className="w-7 h-7 shrink-0" />
-        ) : Icon ? (
-          <Icon className="w-7 h-7 text-primary-600 shrink-0" />
-        ) : null}
-        <div className="min-w-0">
-          <p className="text-h6 font-bold text-neutral-800 leading-tight">{title}</p>
-          {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
-        </div>
-      </div>
-      <CardContent className="p-5 space-y-3">{children}</CardContent>
-    </Card>
-  );
-}
+
 
 // グループ内の小見出し（区切り）
 export function SubLabel({ children }: { children: React.ReactNode }) {
@@ -248,55 +246,17 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
 }
 
 // Wireframe form field
-export function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
-  // shadcn <Label> + <Input> へ委譲。
-  const id = React.useId();
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id} className="text-caption font-medium text-neutral-600">
-        {label}{required && <span className="text-secondary-700 ml-0.5">*</span>}
-      </Label>
-      <Input
-        id={id}
-        placeholder={placeholder}
-        defaultValue={value}
-        onChange={onChange}
-        disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
-      />
-      {hint && <span className="text-caption text-neutral-400">{hint}</span>}
-    </div>
-  );
-}
+
 
 // Read-only / locked display field（入力済み・変更不可）
-export function LockedField({ label, value }: { label: string; value: string }) {
-  // shadcn <Label> + 無効化した <Input> へ委譲 (表示専用)。
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label className="text-caption font-medium text-neutral-600">
-        {label}
-        <span className="inline-flex items-center gap-1 rounded-full bg-warm-200 px-2 py-0.5 text-[10px] font-medium text-neutral-500">変更不可</span>
-      </Label>
-      <div className="relative">
-        <Input
-          value={value}
-          readOnly
-          disabled
-          className="fld h-11 rounded-lg border border-warm-200 bg-warm-200/60 px-3 pr-9 text-h6 text-neutral-500"
-        />
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-      </div>
-    </div>
-  );
-}
+
 
 // Wireframe select (dropdown)
 export function Select({ label, required, hint, value, onChange, options = [], disabled }: { label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
-        {label}{required && <span className="text-secondary-700 ml-0.5">*</span>}
+        {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
       </span>
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
@@ -310,7 +270,7 @@ export function Select({ label, required, hint, value, onChange, options = [], d
   );
 }
 
-export const PREFS: string[] = ["都道府県を選択","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+const PREFS = ["都道府県を選択","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
 
 /* ============================================================
    SCREEN 1 — イントロ / ヒーロー
@@ -321,11 +281,11 @@ export function ScreenIntro({ go }: { go: Go }) {
       <AppBar title="保険" />
       <div className="flex-1 overflow-y-auto no-sb">
         {/* hero */}
-        <div className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-5" />
-          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 text-h2 font-bold leading-snug">信頼を、もっと<br/>触れる距離に。</h1>
-          <p className="mt-3 text-h6 leading-relaxed opacity-90">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
+        <div className="px-5 pt-6 pb-8" style={{ backgroundImage: "url('/assets/theo-tdf/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-5" />
+          <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500">Embedded Insurance</p>
+          <h1 className="mt-2 text-h2 font-bold leading-snug text-neutral-800">信頼を、もっと<br/>触れる距離に。</h1>
+          <p className="mt-3 text-h6 leading-relaxed text-neutral-700">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
@@ -369,7 +329,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           {/* premium teaser */}
           <div className="flex items-end justify-between rounded-xl bg-warm-100 px-5 py-4">
             <span className="text-caption text-neutral-500">保険料</span>
-            <span className="text-neutral-800"><span className="font-en text-h1 font-semibold">480</span><span className="text-h6"> 円 / 月〜</span></span>
+            <span className="text-neutral-800"><span className="font-en text-h1 font-semibold" style={{ color: '#065fe3' }}>480</span><span className="text-h6"> 円 / 月〜</span></span>
           </div>
         </div>
       </div>
@@ -385,7 +345,7 @@ export function ScreenIntro({ go }: { go: Go }) {
 /* ============================================================
    SCREEN 2 — プラン選択
    ============================================================ */
-export const PLANS: Plan[] = [
+const PLANS = [
   { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
     feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "免責期間：60日"] },
   { id: "b", name: "がん", price: "¥980", lead: "初めてがんと診断された場合に、給付金が支払われます",
@@ -461,7 +421,7 @@ const WHEEL_VISIBLE = 5;          // 表示行数（奇数）
 const WHEEL_H = WHEEL_ITEM * WHEEL_VISIBLE;
 const WHEEL_PAD = (WHEEL_H - WHEEL_ITEM) / 2;
 
-function WheelCol({ items, index, onChange, flex, align }: { items: string[]; index: number; onChange: (i: number) => void; flex?: number; align?: "end" | "center" }) {
+export function WheelCol({ items, index, onChange, flex, align }: { items: string[]; index: number; onChange: (i: number) => void; flex?: string; align?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [cur, setCur] = useState(index);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -486,7 +446,7 @@ function WheelCol({ items, index, onChange, flex, align }: { items: string[]; in
     const live = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
     if (live !== cur) setCur(live);          // スクロール中もハイライトを追従
     if (programmatic.current) return;
-    if (settle.current) clearTimeout(settle.current);
+    if (settle.current != null) clearTimeout(settle.current);
     settle.current = setTimeout(() => {       // 指を離して止まったらスナップ＋確定
       const i = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / WHEEL_ITEM)));
       el.scrollTo({ top: i * WHEEL_ITEM, behavior: "smooth" });
@@ -531,7 +491,7 @@ function WheelCol({ items, index, onChange, flex, align }: { items: string[]; in
 
 function daysInMonth(y: number, m: number) { return new Date(y, m, 0).getDate(); } // m: 1-12
 
-function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }) {
+export function DateDrumSheet({ open, value, onClose, onDone }: { open: boolean; value: string; onClose: () => void; onDone: (d: string) => void }) {
   const NOW = new Date();
   const MIN_Y = 1925, MAX_Y = NOW.getFullYear();
   const years: number[] = []; for (let v = MAX_Y; v >= MIN_Y; v--) years.push(v); // 新しい年が上
@@ -606,34 +566,63 @@ function fmtBirth(v: string) {
    ============================================================ */
 export function ScreenOverview({ go }: { go: Go }) {
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroBgRef = useRef<HTMLImageElement>(null);
   const [solid, setSolid] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const bindScroll = (el: HTMLDivElement | null) => {
     if (!el) return;
-    const marked = el as HTMLDivElement & { __bound?: boolean };
-    if (marked.__bound) return;
-    marked.__bound = true;
+    const b = el as HTMLDivElement & { __bound?: boolean };
+    if (b.__bound) return; b.__bound = true;
     el.addEventListener("scroll", () => {
       const h = heroRef.current;
       setSolid(el.scrollTop >= (h ? h.offsetHeight - 16 : 220));
       setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
+      if (heroBgRef.current) {
+        heroBgRef.current.style.transform = `translateY(${-el.scrollTop * 0.3}px)`;
+      }
     }, { passive: true });
   };
   return (
     <>
-      <AppBar title="保険" brandVisible={solid} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
 
-        {/* ---- イントロ / ヒーロー ---- */}
-        <div ref={heroRef} className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
-          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
-          <p className="mt-3 text-h6 leading-relaxed opacity-90">将来に向けた資産形成のためのほけん</p>
-        </div>
+        {/* ---- ヒーロー（ステータスバー含む、背景画像でスクロール） ---- */}
+        {/* ---- ヒーロー: img で自然な高さ、コンテンツを絶対配置でオーバーレイ ---- */}
+        <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
+          <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* フェイクステータスバー（Phone側は非表示、ここで描画） */}
+          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
+            <span>9:41</span>
+            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+          </div>
+          {/* インラインAppBar - スクロール後にsolid化 */}
+          <div className="sticky top-0 z-20 transition-colors duration-200"
+               style={solid ? { background: 'var(--primary-color, #054EBA)' } : { background: 'transparent' }}>
+            <div className="flex items-center justify-between px-3 h-14">
+              <span className="w-9 shrink-0" />
+              <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
+                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">THEO</span>
+                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
+              </div>
+              <span className="w-9 shrink-0" />
+            </div>
+          </div>
+          {/* ロゴ：絶対配置（上左・ステータスバー直下） */}
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん"
+            style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
+          {/* テキスト：絶対配置 */}
+          <div style={{ position: 'absolute', top: '182px', left: '20px', right: '20px' }}>
+            <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500" style={{ marginLeft: '4px' }}>Embedded Insurance</p>
+            <h1 className="mt-1 font-bold leading-snug text-neutral-800" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px' }}>つみたてながら、<br/>もしもに備える。</h1>
+            <p className="mt-2 text-h6 leading-relaxed text-neutral-700">将来に向けた<br/>資産形成のためのほけん</p>
+          </div>
+          </div>{/* /absolute overlay */}
+        </div>{/* /relative img wrapper */}
 
+        {/* ステッパー直上：hero高さで確定するためスペーサーは不要 */}
         {/* progress — sticks to top once the blue hero scrolls out of view */}
-        <div className="sticky top-0 z-30">
+        <div className="sticky top-0 z-30" style={{ marginTop: '-10px' }}>
           <Steps n={1} go={go} />
         </div>
 
@@ -641,16 +630,18 @@ export function ScreenOverview({ go }: { go: Go }) {
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
-              <div className="flex items-center justify-end gap-3 mb-4">
+              <div className="flex items-center justify-end gap-3 mb-8">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[9px] text-neutral-400 leading-none whitespace-nowrap">引受保険会社</span>
                   <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
                 </div>
               </div>
-              <p className="text-h4 font-bold text-neutral-800 leading-relaxed">
-                資産形成中の「もしも」に<br/>そなえる保障がTHEOで新登場！
-              </p>
-              <div className="mt-10 flex flex-col items-center gap-4">
+              <div className="flex justify-center">
+                <div className="inline-flex items-center px-3.5 py-1.5 rounded-full font-bold text-white" style={{ backgroundColor: '#065fe3', fontSize: '0.82rem' }}>
+                  THEOのお客様限定
+                </div>
+              </div>
+              <div className="mt-4 flex flex-col items-center gap-4">
                 <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-[42px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
@@ -710,7 +701,7 @@ export function ScreenOverview({ go }: { go: Go }) {
                 <div className="flex flex-col items-center text-center gap-3">
                   <div>
                     <p className="text-caption text-neutral-500">保険料</p>
-                    <p className="text-neutral-900"><span className="font-en text-h1 font-bold" style={{ color: "#054EBA" }}>480</span><span className="text-h6 font-bold"> 円 / 月〜</span></p>
+                    <p className="text-neutral-900"><span className="font-en text-h1 font-bold" style={{ color: "#065fe3" }}>480</span><span className="text-h6 font-bold"> 円 / 月〜</span></p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold shadow-sm" style={{ color: "#054EBA" }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
                 </div>
@@ -743,9 +734,8 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
   const [showSend, setShowSend] = useState(false);
   const bindScroll = (el: HTMLDivElement | null) => {
     if (!el) return;
-    const marked = el as HTMLDivElement & { __bound?: boolean };
-    if (marked.__bound) return;
-    marked.__bound = true;
+    const b2 = el as HTMLDivElement & { __bound?: boolean };
+    if (b2.__bound) return; b2.__bound = true;
     el.addEventListener("scroll", () => {
       const sec = sendSecRef.current;
       if (sec) {
@@ -775,15 +765,15 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                 <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-secondary-700 ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
                 <button type="button" onClick={() => setPickerOpen(true)}
                   className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
                   <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
-                  <Ic.chevR className="w-4 h-4 shrink-0 text-neutral-400 rotate-90" />
+                  <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
                 </button>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">性別<span className="text-secondary-700 ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">性別<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
                 <div className="flex gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
@@ -831,12 +821,12 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
             <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
             <button onClick={() => setNoticeOpen(true)}
-              className="flex items-center justify-between w-full rounded-xl border-2 border-secondary-200 bg-secondary-10 px-4 py-4 text-left transition hover:border-secondary-300">
+              className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
               <span className="flex items-center gap-2.5 min-w-0">
-                <span className="rounded-full bg-secondary-600 text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
+                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-0.5 text-[11px] font-bold leading-none shrink-0">重要</span>
                 <span className="text-h6 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
               </span>
-              <Ic.chevR className="w-5 h-5 text-secondary-600 shrink-0" />
+              <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
             </button>
             <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left pt-1">
               <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
@@ -875,7 +865,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
               <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
-                <span className="rounded-full bg-secondary-10 text-secondary-700 px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
+                <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
               </h3>
               <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
@@ -943,7 +933,7 @@ export function ScreenPin({ go }: { go: Go }) {
 
           <input
             value={pin}
-            onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
             inputMode="numeric"
             placeholder="______"
             className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-warm-50 text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
@@ -1093,7 +1083,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
       <div className="flex items-center justify-start gap-3 mb-5">
         {shouldShowLabel && (
-          <span className="flex flex-col items-center justify-center shrink-0 rounded-lg bg-[#EFEFEF] px-2.5 py-2 text-center leading-tight h-full">
+          <span className="flex flex-col items-center justify-center shrink-0 rounded-lg bg-warm-100 px-2.5 py-2 text-center leading-tight h-full">
             <span className="text-[9px] font-bold text-neutral-800">選択プラン</span>
             <span className="text-[11px] font-bold text-primary-600 mt-1">{planName}</span>
           </span>
@@ -1142,9 +1132,8 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
   const [atBottom, setAtBottom] = useState(false);
   const bindScroll = (el: HTMLDivElement | null) => {
     if (!el) return;
-    const marked = el as HTMLDivElement & { __bound?: boolean };
-    if (marked.__bound) return;
-    marked.__bound = true;
+    const b3 = el as HTMLDivElement & { __bound?: boolean };
+    if (b3.__bound) return; b3.__bound = true;
     el.addEventListener("scroll", () => {
       setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
     }, { passive: true });
@@ -1565,7 +1554,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
 
         </StepSection>
 
-        <div className="rounded-2xl border border-secondary-100 bg-secondary-10 p-4">
+        <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
           <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-h5 font-bold text-neutral-800">重要事項をご確認ください</span></div>
           <div className="space-y-2.5">
             {AGREE_ITEMS.map((it, i) => (
@@ -1583,7 +1572,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
                     </div>
                     {nat === "other" && (
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-secondary-700">*</span></span>
+                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-[color:var(--secondary-color-700)]">*</span></span>
                         <div className="grid grid-cols-2 gap-3">
                           {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
                             <button key={k} onClick={() => setJpLang(k)}
@@ -1601,7 +1590,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
           </div>
 
           {/* 単一の確認・同意チェック（重要事項エリア内下部） */}
-          <button onClick={() => setAgreed((a) => !a)} className="flex items-start gap-3 w-full text-left rounded-xl bg-secondary-10 p-4 mt-3 transition-colors">
+          <button onClick={() => setAgreed((a) => !a)} className="flex items-start gap-3 w-full text-left rounded-xl bg-[color:var(--secondary-color-10)] p-4 mt-3 transition-colors">
             <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
@@ -1628,7 +1617,7 @@ export function ExtBar({ url }: { url: string }) {
   );
 }
 
-export const CARD_BRANDS = ["VISA", "Mastercard", "JCB", "AMEX", "Diners", "DC", "NICOS", "UC"];
+const CARD_BRANDS = ["VISA", "Mastercard", "JCB", "AMEX", "Diners", "DC", "NICOS", "UC"];
 
 /* ============================================================
    SCREEN — 外部: クレジットカード情報入力（GMO）
@@ -1715,17 +1704,39 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
    SCREEN 6 — 完了
    ============================================================ */
 export function ScreenDone({ go }: { go: Go }) {
+  const doneBgRef = useRef<HTMLImageElement>(null);
+  const bindDoneScroll = (el: HTMLDivElement | null) => {
+    if (!el) return;
+    const b4 = el as HTMLDivElement & { __bound?: boolean };
+    if (b4.__bound) return; b4.__bound = true;
+    el.addEventListener("scroll", () => {
+      if (doneBgRef.current) {
+        doneBgRef.current.style.transform = `translateY(${-el.scrollTop * 0.3}px)`;
+      }
+    }, { passive: true });
+  };
   return (
     <>
-      <AppBar title="お申込み完了" />
-      <div className="flex-1 overflow-y-auto no-sb">
-        <div className="bg-primary text-primary-foreground px-5 pt-2 pb-10 text-center">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="h-10 mx-auto mb-4 opacity-95" />
-          <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white/15 mb-4">
-            <Ic.check className="w-8 h-8" />
+      <div ref={bindDoneScroll} className="flex-1 overflow-y-auto no-sb">
+        {/* ヒーロー（img＋絶対配置・パララックス） */}
+        <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+          <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+          {/* フェイクステータスバー */}
+          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700">
+            <span>9:41</span>
+            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
-          <h2 className="text-h3 font-bold">お申込が完了しました</h2>
-          <p className="mt-2 text-caption opacity-90">受付番号　THEO-2026-000482</p>
+          {/* ヒーローコンテンツ */}
+          <div className="px-5 pt-4 pb-12 text-center">
+            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
+            <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-5 shadow-sm">
+              <Ic.check className="w-8 h-8 text-primary-600" />
+            </div>
+            <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
+            <p className="mt-2 text-caption text-neutral-500">受付番号　THEO-2026-000482</p>
+          </div>
+          </div>
         </div>
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
@@ -1778,3 +1789,14 @@ export function ScreenDone({ go }: { go: Go }) {
     </>
   );
 }
+
+// Export everything app.jsx depends on. Ic in particular MUST be on window —
+// app.jsx references it, and relying on cross-<script> const sharing is fragile
+// (a single missing binding throws and blanks the entire UI).
+Object.assign(window, {
+  Ic, Badge, PH, Btn, AppBar, Steps, SectionLabel, GroupCard, SubLabel, ActionBar,
+  Field, LockedField, Select, PREFS, StepSection,
+  ScreenIntro, ScreenStep2, ScreenForm, ScreenStep4,
+  ScreenCardInput, ScreenCardConfirm, ScreenDone,
+});
+

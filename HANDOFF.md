@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年6月11日 (THEO 組込フロー 8画面5ステップ版の取り込み + 共通 atom の shadcn ラッパー化。最新はセクション 11 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
+最終更新: 2026年6月12日 (Phase 2 デザインシステム正規化 + Phase 3 Figma Variables 初期セットアップ。最新はセクション 12 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -191,14 +191,33 @@ T&D の例:
 - `className="bg-primary text-primary-foreground"` のような可読性高い記法
 - 生 hex を書かない → Figma 側の色変更が即座に全コンポーネントへ波及
 
-### タイポグラフィ階層
+### タイポグラフィ階層 (Phase 2 更新済み — 2 スケール統一)
 
-| 階層 | サイズ | フォント | 用途 |
-|---|---|---|---|
-| h1 (Hero) | `text-h2` 48px / sm: `text-h1` 56px | Chillax Medium (Latin 120%) | ページ最大タイトル |
-| **h2 (セクション)** | **`text-[1.8rem]` 28.8px** | Chillax Medium (Latin 120%) | セクション見出し |
-| h3 (CardTitle) | `text-h7` 19.2px (= h2 の 80%) | Chillax Medium (Latin 120%) | 段落見出し |
-| body | `text-body` 14px / `text-body-lg` 16px | Geist Sans / Noto Sans JP | 本文 |
+**Display スケール** (LP / Hero 専用):
+
+| トークン | px | 用途 |
+|---|---|---|
+| `text-display-1` | 56px | ランディングのキャッチ |
+| `text-display-2` | 48px | ヒーロー見出し |
+| `text-display-3` | 40px | セクション見出し (大) |
+| `text-display-4` | 32px | ページタイトル |
+
+**UI Heading スケール** (画面 / モバイル 汎用):
+
+| トークン | px | 用途 |
+|---|---|---|
+| `text-h1` | 34px | 画面内最大見出し |
+| `text-h2` | 28px | セクション見出し |
+| `text-h3` | 24px | カードタイトル / サブセクション |
+| `text-h4` | 20px | 小見出し |
+| `text-h5` | 18px | ラベル大 |
+| `text-h6` | 16px | ラベル / Body LG と同サイズ |
+| `text-body-lg` | 16px | 本文 (リード) |
+| `text-body` | 14px | 本文 (標準) |
+| `text-caption` | 12px | 補助・タグ |
+| `text-tiny` | 10px | メタ情報 |
+
+> ⚠️ `text-h7` / `text-[1.8rem]` / `text-cd-h*` は **廃止済み**。旧称を書いた JSX は Phase 2 で全置換済み。
 
 セクション間スペーシング: `mt-30` (120px)。Hero h1 に `leading-tight` で 2 行以上の折り返し時の行間を約 80% に。
 
@@ -512,6 +531,8 @@ T&D カードを XXX より左に配置 (左上)。各カードのタイトル�
 ### Priority 4 — Figma Variables との同期スキル
 
 **スキル: `/sync-figma-tokens`**
+
+> **✅ 2026-06-12 Phase 3 (初回セットアップ) 完了**: Claude Code + Figma MCP で Figma ファイルに `Color` コレクションを作成。5 テナント × 40 変数 = 200 セル、WEB コード構文 (`var()` ラッパー) で登録済み。詳細は §12 参照。
 
 入力: Figma file URL (Master-Components ファイル)
 
@@ -971,7 +992,7 @@ Figma 書き戻しで Component Instance ではなく "detached frame" になり
      → 必ず token (bg-primary-500 等) を経由
 
   ❌ 独自 font-size の埋め込み (text-[14px])
-     → text-body / text-cd-h7 等のスケールを
+     → text-body / text-h4 等のスケールを (text-cd-h* / text-h7 は廃止済み)
 
   ❌ shadcn を import せず、見た目だけ似せた独自 <button> を書く
      → 後の Figma 書き戻しで identity が失われるため厳禁
@@ -1139,4 +1160,168 @@ theo-tdf の `/prototype` `/windows` を、Claude Design の最新出力に合�
 18. **Claude Design の分割ファイル (`screens.jsx`) はキャッシュで古くなることがある** → 単一ファイル版 `kumikomi.html` を正とし、取り込み前に md5/行 diff で実差分を必ず確認。zip 添付 + 「Implement: kumikomi.html」が最も確実。
 19. **`/tmp` の作業ファイル (port.py 等) はセッション/呼び出し間で揮発する** → 重要な変換ロジックは HANDOFF か repo の `scripts/` に残すべき (現状は本ログに要点を記載)。
 20. **shadcn Button/Input/Card は `cn()` で className 後勝ち** → `h-16 md:h-16` のように `md:` 派生も明示しないと、デスクトップ幅でデフォルトサイズに戻る点に注意。
+
+---
+
+## 12. セッションログ 2026-06-12 (Phase 2 デザインシステム正規化 + Phase 3 Figma Variables 初期セットアップ)
+
+### 12.1 Phase 2 実施内容: タイポグラフィスケール統一 + Tailwind 準拠トークン正規化
+
+前セッション (§9) で確定した設計方針に基づき、Python 移行スクリプト (`migrate.py`) を実行して全ファイルを一括変換した。
+
+**タイポグラフィ: 旧 1 スケール → 新 2 スケール体制**
+
+| 旧 | 新 | 備考 |
+|---|---|---|
+| `text-h1` 56px | `text-display-2` 48px → LP Hero 用 | Hero タイトルは display スケールへ |
+| `text-h2` 48px | `text-display-2` | |
+| `text-h3` 40px | `text-display-3` | |
+| `text-h4` 32px | `text-display-4` | |
+| `text-h5` 24px | `text-h3` 24px | UI スケールで継続 |
+| `text-h6` 20px | `text-h4` 20px | |
+| `text-h7` 19.2px | `text-h4` 20px (最近似) | **廃止** |
+| `text-[1.8rem]` 28.8px | `text-h2` 28px | 生値 → 廃止 |
+| `text-cd-h{2-7}` | `text-h{1-6}` | Claude Design コンパクトスケール → 廃止 |
+
+`globals.css` での CSS 変数定義:
+```css
+/* Display scale (LP/Hero) */
+--text-display-1: 3.5rem;   /* 56px */
+--text-display-2: 3rem;     /* 48px */
+--text-display-3: 2.5rem;   /* 40px */
+--text-display-4: 2rem;     /* 32px */
+
+/* UI Heading scale (画面/モバイル汎用) */
+--text-h1:        2.125rem; /* 34px */
+--text-h2:        1.75rem;  /* 28px */
+--text-h3:        1.5rem;   /* 24px */
+--text-h4:        1.25rem;  /* 20px */
+--text-h5:        1.125rem; /* 18px */
+--text-h6:        1rem;     /* 16px */
+```
+
+**Tailwind 準拠トークン正規化**
+
+- `bg-[color:var(--secondary-color-*)]` → `bg-secondary-*` (全 JSX)
+- `bg-[color:var(--cta-color-500)]` 等 → `bg-cta-*` (全 JSX)
+- `@theme inline` から冗長な `--color-primary-color-*` / `--color-secondary-color-*` エントリを除去 (Tailwind v4 では `--primary-*` をそのまま utility として公開できる)
+- 生 hex の埋め込みを grep チェックし残置ゼロを確認
+
+**Slider アクセシビリティ修正**
+
+`components/uikit-catalog.tsx` の Slider セクション:
+```tsx
+// 修正前: Radix SliderPrimitive.Root は <span> なので <label for> のターゲットにならない
+<Field label="音量" htmlFor="sl-volume">
+  <Slider id="sl-volume" defaultValue={[60]} />
+</Field>
+
+// 修正後: aria-label を直接付与
+<Field label="音量">
+  <Slider aria-label="音量" defaultValue={[60]} />
+</Field>
+```
+
+**検証**
+```bash
+./node_modules/.bin/tsc --noEmit
+# Exit 0 — 型エラーなし
+```
+
+### 12.2 Phase 2 で変更されたファイル
+
+- `app/globals.css` — Display/UI Heading 2 スケール定義、`@theme inline` 簡素化
+- `app/guidelines/page.tsx` — `TYPE_SCALE` 配列を 14 エントリ版に更新
+- `app/{xxx,aaa,acme,td-financial,theo-tdf}/guidelines/page.tsx` — `FONT_SCALE` 配列を 9 エントリ版 (h1〜h6 + body-lg/body/caption) に更新
+- `components/theo-tdf/claude-design/screens.tsx` — `text-cd-h{2-7}` → `text-h{1-6}`、`bg-[color:var(--secondary-*)]` → `bg-secondary-*`
+- `components/theo-tdf/claude-design/app-shell.tsx` — 同上
+- `components/flow-diagram.tsx` — `bg-[color:var(--secondary-color-10,#...)]` → `bg-secondary-10`、`text-h7` 廃止
+- `components/guidelines/auto-button-grid.tsx` — `bg-[color:var(--cta-*)]` → `bg-cta-*`
+- `components/guidelines/auto-color-scale.tsx` — `text-h7` 廃止
+- `components/auto-tenant-card.tsx` — `text-h7` 廃止
+- `components/mock-viewer/canvas-grid.tsx` — `text-h7` 廃止
+- `components/uikit-catalog.tsx` — Slider aria-label 修正
+
+### 12.3 Phase 2 スクリプト実行で判明した罠
+
+**FONT_SCALE / TYPE_SCALE の二重変換問題**
+
+`migrate.py` は上から順に正規表現で全文変換するため、タイポグラフィ置換が実行された後に FONT_SCALE 配列の `token` フィールド (`"--text-h1"` 等) が誤変換されてしまった。
+
+- 具体的: `--text-h1` の中の `text-h1` が `text-display-1` に誤変換 → `--text-display-1` になった
+- 修正: `fix_scales.py` で `re.sub(r'const FONT_SCALE = \[.*?\];', NEW_FONT_SCALE, t, flags=re.DOTALL)` によりアレイ丸ごと差し替え
+
+> **教訓**: 同一ファイル内で複数の正規表換パスが走る場合、後続パスが前段の出力に当たってしまう。安全順序 (temp marker 方式) か、アレイ全体置換 (`re.DOTALL`) で対処。
+
+### 12.4 Phase 3: Figma Variables 初期セットアップ (Claude Code 経由)
+
+**Cowork では不可** — Cowork は `dev-mode-mcp-server-dxt` (読み取り専用 Dev Mode MCP) しか持たず、`use_figma` ツールが存在しない。Figma Variables の書き込みには **Claude Code + Figma Desktop の MCP サーバー** が必要。
+
+**セットアップ手順** (参考、Claude Code セッション内で実施):
+```
+claude (Claude Code)
+> /mcp  → figma が接続されていることを確認
+> mcp__figma__authenticate でブラウザ認証
+> 対象 Figma ファイルキーを確認 (ブラウザ URL の /design/<file_key>/ 部分)
+```
+
+**作成した Variables 構造**:
+
+| 項目 | 内容 |
+|---|---|
+| コレクション名 | `Color` |
+| モード (テナント) | `xxx`, `aaa`, `acme`, `td-financial`, `theo-tdf` |
+| 変数数 | 40 個 / モード (primary/secondary/button/cta × 9 段階 + warm × 4 段階) |
+| コード構文 | WEB — `var(--primary-color-10)` 形式 |
+
+**モード別パレット状況**:
+- `xxx` / `aaa` / `acme`: 現状は同一パレット (Teal/Cyan 系)。テナント差別化時に各自の `tokens.css` を参照して更新。
+- `td-financial`: Navy `#003388` / Red `#db0034` / Blue `#344a9c`
+- `theo-tdf`: 独自 4 スケール (tokens.css の実値を転記)
+- `button/10` と `cta/10` が存在しない非 theo-tdf テナントは `/50` 値で暫定埋め (将来確定次第更新)
+
+### 12.5 次回 Figma MCP セッション用プロンプト
+
+次回 Claude Code で Figma Variables の続き作業 (セマンティック alias 層追加、ダーク対応、等) を行う際は以下を冒頭に貼る:
+
+```
+このプロジェクトは neutral-base-v2 デザインシステムです。
+Figma ファイルには Color コレクション (5 モード: xxx/aaa/acme/td-financial/theo-tdf)、
+各 40 変数 (primary-color-10〜700, secondary-color-10〜700, button-color-10〜700,
+cta-color-10〜700, warm-50〜300) が登録済みです。
+コード構文: WEB, var() ラッパー形式。
+
+今回やりたいこと: [ここに作業内容を書く]
+
+Figma MCP の use_figma ツールを使い、Variables を操作してください。
+```
+
+### 12.6 本セッションで判明した運用上の注意 (追加)
+
+21. **Figma Variables の書き込みは Cowork ではできない** → `use_figma` ツールは Claude Code のローカル MCP サーバー (Figma Desktop 必要) でのみ利用可能。Cowork は Dev Mode MCP (読み取りのみ)。
+22. **正規表現移行スクリプトで FONT_SCALE / TYPE_SCALE の token 文字列が誤変換される** → `re.DOTALL` で配列ごと丸ごと差し替えるか、配列内の文字列を変換対象から除外するパターンにする。
+23. **Radix `SliderPrimitive.Root` は `<span>` なので `<label for>` の合法ターゲットではない** → `htmlFor` ではなく `aria-label` を Slider に直接付与する。
+24. **MCP 書き出しは視覚的な画面再現には向かない** → `figma-generate-design` によるコードからの画面書き出しは、構造・Variables バインド・Component Instance は正しく作れるが、レイアウトや細部の視覚再現度が低く毎回手修正が必要になる。**画面の Figma 化には html.to.design + 手動バインドのハイブリッドが最もコスパが高い**。MCP で作った Components / Variables はその「素材」として使う位置づけ。
+
+### 12.7 Figma の位置づけと確定フロー
+
+MCP 書き出し・Write to canvas・html.to.design の3手法を実験した結果、以下を確定した。
+
+**Figma は「参考資料」。Vercel が正。**
+
+```
+Vercel (正・顧客レビュー・開発仕様の基準)
+    ↓  顧客から Figma 納品を求められた時のみ
+html.to.design でサクッと取込 (視覚再現 ★★★★)
+    ↓
+Figma (参考資料として渡す)
+```
+
+| ツール | 視覚再現 | Variables | Components | 結論 |
+|---|---|---|---|---|
+| html.to.design | ★★★★ | ❌ | ❌ | 画面書き出しはこれ一択 |
+| Write to canvas | ★★★ | ❌ | ❌ | 同上、視覚精度は劣る |
+| MCP 書き出し | ★★ | ✅ | ✅ | 画面には使わない |
+
+**MCP (Claude Code) の役割**: Variables と Master Components の「下準備」専任。将来 Figma が「正」になった時のために構造を整えておく資産。画面フレームは作らない。
 
