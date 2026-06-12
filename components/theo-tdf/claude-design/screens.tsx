@@ -335,7 +335,7 @@ export function ScreenIntro({ go }: { go: Go }) {
       </div>
 
       <ActionBar>
-        <Btn kind="cta" onClick={() => go(1)}>つぎへ<Ic.chevR className="w-4 h-4" /></Btn>
+        <Btn kind="button" onClick={() => go(1)}>つぎへ<Ic.chevR className="w-4 h-4" /></Btn>
         <p className="text-center text-caption text-neutral-400">引受保険会社 / 重要事項は申込前にご確認ください</p>
       </ActionBar>
     </>
@@ -714,7 +714,7 @@ export function ScreenOverview({ go }: { go: Go }) {
       </div>
 
       <ActionBar solid>
-        <Btn kind="cta" onClick={() => go(1)}>プランを選ぶ<Ic.chevR className="w-4 h-4" /></Btn>
+        <Btn kind="button" onClick={() => go(1)}>プランを選ぶ<Ic.chevR className="w-4 h-4" /></Btn>
       </ActionBar>
     </>
   );
@@ -844,7 +844,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
         {showSend && (
           <div className="fade-in space-y-2">
-            <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
+            <Btn kind="button" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
             {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
           </div>
         )}
@@ -944,7 +944,7 @@ export function ScreenPin({ go }: { go: Go }) {
           本お手続きは「THEO つみたて安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
-        <Btn kind="cta" onClick={() => go(3)} disabled={pin.length < 6}>認証する</Btn>
+        <Btn kind="button" onClick={() => go(3)} disabled={pin.length < 6}>認証する</Btn>
         {pin.length < 6 && <p className="text-center text-caption text-neutral-400">6桁のPINコードを入力してください</p>}
       </ActionBar>
     </>
