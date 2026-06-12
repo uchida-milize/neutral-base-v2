@@ -1795,10 +1795,12 @@ export function ScreenDone({ go }: { go: Go }) {
 // Export everything app.jsx depends on. Ic in particular MUST be on window —
 // app.jsx references it, and relying on cross-<script> const sharing is fragile
 // (a single missing binding throws and blanks the entire UI).
-Object.assign(window, {
-  Ic, Badge, PH, Btn, AppBar, Steps, SectionLabel, GroupCard, SubLabel, ActionBar,
-  Field, LockedField, Select, PREFS, StepSection,
-  ScreenIntro, ScreenStep2, ScreenForm, ScreenStep4,
-  ScreenCardInput, ScreenCardConfirm, ScreenDone,
-});
+if (typeof window !== "undefined") {
+  Object.assign(window, {
+    Ic, Badge, PH, Btn, AppBar, Steps, SectionLabel, GroupCard, SubLabel, ActionBar,
+    Field, LockedField, Select, PREFS, StepSection,
+    ScreenIntro, ScreenStep2, ScreenForm, ScreenStep4,
+    ScreenCardInput, ScreenCardConfirm, ScreenDone,
+  });
+}
 
