@@ -158,9 +158,11 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
 function Phone({
   children,
   external,
+  heroTop,
 }: {
   children: React.ReactNode;
   external?: boolean;
+  heroTop?: boolean;
 }) {
   const bezel = external ? "bg-neutral-400" : "bg-neutral-900";
   const notch = external ? "bg-neutral-500" : "bg-neutral-900";
@@ -173,19 +175,21 @@ function Phone({
         className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}
       >
         <div className="relative w-full h-full rounded-[34px] overflow-hidden bg-warm-50 flex flex-col">
-          {/* status bar */}
-          <div
-            className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`}
-          >
-            <span>9:41</span>
-            <div
-              className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`}
-            />
-            <span className="flex items-center gap-1">
-              <span>5G</span>
-              <span>100%</span>
-            </span>
-          </div>
+          {heroTop ? (
+            /* status bar — hero 画面では絶対配置・透明背景でヒーロー画像に重ねる */
+            <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-white">
+              <span>9:41</span>
+              <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`} />
+              <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+            </div>
+          ) : (
+            /* status bar — 通常画面では固定高さブロック */
+            <div className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`}>
+              <span>9:41</span>
+              <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`} />
+              <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+            </div>
+          )}
           {children}
         </div>
       </div>
@@ -226,7 +230,7 @@ export function TheoTdfClaudeDesignShell() {
       <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
         <Rail scr={scr} go={go} />
         <main className="py-10 flex flex-col items-center gap-4">
-          <Phone external={external}>{screens[scr]}</Phone>
+          <Phone external={external} heroTop={scr === 0 || scr === 7}>{screens[scr]}</Phone>
           {/* prev / next outside the phone */}
           <div className="flex items-center gap-2">
             <button
