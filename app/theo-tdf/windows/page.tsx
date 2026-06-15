@@ -72,8 +72,8 @@ function StaticScreen({
 /* ---- 画面グループ (見出し + スクリーン一覧) ---- */
 function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
   return (
-    <section>
-      <div className="flex flex-wrap items-center gap-3 mb-8 pb-3 border-b border-warm-200">
+    <section className="flex flex-col gap-6 flex-none">
+      <div className="flex flex-wrap items-center gap-3 pb-3 border-b-2 border-warm-300">
         {group.badge && (
           <span className="font-mono text-[10px] tracking-[0.14em] uppercase rounded-full bg-primary-10 text-primary-600 px-3 py-1 shrink-0">
             {group.badge}
@@ -84,7 +84,7 @@ function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
           {group.screens.length} パターン
         </span>
       </div>
-      <div className="flex flex-wrap items-start gap-x-8 gap-y-10">
+      <div className="flex items-start gap-6">
         {group.screens.map((s) => (
           <StaticScreen key={s.key} label={s.label} height={s.height}>
             {s.el}
@@ -316,8 +316,8 @@ export default function TheoTdfWindowsPage() {
         </header>
       </div>
 
-      {/* 画面グループ一覧 */}
-      <div className="flex flex-col gap-20">
+      {/* 画面グループ一覧 — グループ自体も flex-wrap で横並び可 */}
+      <div className="flex flex-wrap items-start gap-x-8 gap-y-14">
         {GROUPS.map((g) => (
           <ScreenGroupSection key={g.key} group={g} />
         ))}
