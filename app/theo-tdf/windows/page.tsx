@@ -228,17 +228,6 @@ export default function TheoTdfWindowsPage() {
           el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} />,
         },
         {
-          key: "st-agree",
-          label: "重要事項①展開＋全チェック",
-          el: (
-            <ScreenStep4
-              go={noop} sel="c" m={10000} y={15}
-              initialOpenIdx={0}
-              initialChecks={[true, true, true, true, true, true, true, true]}
-            />
-          ),
-        },
-        {
           key: "st-acct",
           label: "お支払い詳細展開",
           el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen />,
@@ -251,6 +240,17 @@ export default function TheoTdfWindowsPage() {
               go={noop} sel="c" m={10000} y={15}
               initialOpenIdx={4}
               initialNat="other"
+            />
+          ),
+        },
+        {
+          key: "st-agree",
+          label: "重要事項①展開＋全チェック・CTA活性",
+          el: (
+            <ScreenStep4
+              go={noop} sel="c" m={10000} y={15}
+              initialOpenIdx={0}
+              initialChecks={[true, true, true, true, true, true, true, true]}
             />
           ),
         },
