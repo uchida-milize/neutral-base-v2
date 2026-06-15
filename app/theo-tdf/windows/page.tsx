@@ -16,43 +16,43 @@ import {
 /**
  * /theo-tdf/windows
  *
- * Claude Design 出力の 6 画面 (4 ステップ + 外部カード承認 2 画面) を
- * 390px 幅で左から右に並べたキャンバス。高さは内容に応じて可変。
- * 画面解像度に合わせて flex-wrap で自動折り返し。
- * 実際にタップで動かしたい場合は /theo-tdf/prototype を参照。
- *
- * Server Component から呼べないため "use client" (各 Screen が useState を持つため)。
+ * 各画面を 390px 幅で表示。画面ごとにグループ化し、
+ * デフォルト状態 + 状態バリアントをまとめて並べる。
+ * 実際にタップして動かしたい場合は /theo-tdf/prototype を参照。
  */
 
 type ScreenDef = {
   key: string;
+  /** 状態バリアント名 (「デフォルト」「重要事項ボトムシート」等) */
   label: string;
   el: React.ReactNode;
-  /** 状態バリアント (ボトムシート等) は 820px 固定高さで描画 */
+  /** ボトムシート等 absolute 配置の状態バリアントは 820px 固定高さで描画 */
   height?: number;
 };
 
+type ScreenGroupDef = {
+  key: string;
+  /** 画面名 */
+  title: string;
+  /** "STEP 1" / "PIN認証" / "外部サイト" 等 */
+  badge?: string;
+  screens: ScreenDef[];
+};
+
+/* ---- 単一の静的スクリーン ---- */
 function StaticScreen({
   label,
-  index,
-  total,
   height,
   children,
 }: {
   label: string;
-  index: number;
-  total: number;
-  /** ボトムシート等 absolute 配置の状態バリアントは 820px 固定にする */
   height?: number;
   children: React.ReactNode;
 }) {
   return (
-    <figure className="flex flex-col items-start gap-3" style={{ width: 390 }}>
+    <figure className="flex flex-col items-start gap-2" style={{ width: 390 }}>
       <figcaption>
-        <p className="font-mono text-caption text-muted-foreground">
-          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </p>
-        <h3 className="mt-1 text-h4 font-semibold">{label}</h3>
+        <p className="text-h6 font-semibold text-foreground">{label}</p>
       </figcaption>
       <div
         className="theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300"
@@ -69,29 +69,232 @@ function StaticScreen({
   );
 }
 
+/* ---- 画面グループ (見出し + スクリーン一覧) ---- */
+function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
+  return (
+    <section>
+      <div className="flex flex-wrap items-center gap-3 mb-8 pb-3 border-b border-warm-200">
+        {group.badge && (
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase rounded-full bg-primary-10 text-primary-600 px-3 py-1 shrink-0">
+            {group.badge}
+          </span>
+        )}
+        <h2 className="text-h3 font-semibold">{group.title}</h2>
+        <span className="text-caption text-muted-foreground">
+          {group.screens.length} パターン
+        </span>
+      </div>
+      <div className="flex flex-wrap items-start gap-x-8 gap-y-10">
+        {group.screens.map((s) => (
+          <StaticScreen key={s.key} label={s.label} height={s.height}>
+            {s.el}
+          </StaticScreen>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function TheoTdfWindowsPage() {
   const noop = () => {};
 
-  const screens: ScreenDef[] = [
-    { key: "overview", label: "商品概要",                el: <ScreenOverview go={noop} /> },
-    { key: "step2",    label: "プラン選択",              el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "pin",      label: "PINコード認証",            el: <ScreenPin go={noop} /> },
-    { key: "form",     label: "申込フォーム",            el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} /> },
-    { key: "step4",    label: "内容確認・お支払い",       el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} /> },
-    { key: "card",     label: "カード入力 (外部)",        el: <ScreenCardInput go={noop} /> },
-    { key: "cardconf", label: "カード確認 (外部)",        el: <ScreenCardConfirm go={noop} /> },
-    { key: "done",     label: "完了",                    el: <ScreenDone go={noop} /> },
-    // ---- 状態バリアント (モーダル / アコーディオン展開状態の Figma 書き出し用) ----
-    { key: "st-notice",  label: "状態① プラン選択 / 重要事項ボトムシート",       height: 820, el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialNoticeOpen /> },
-    { key: "st-sim",     label: "状態② プラン選択 / 給付予想額アコーディオン",   el: <ScreenStep2 go={noop} sel="c" setSel={noop} m={10000} setM={noop} y={15} setY={noop} initialSimOpen /> },
-    { key: "st-edit",    label: "状態③ 申込フォーム / 積立修正シート＋給付予想額", height: 820, el: <ScreenForm go={noop} sel="c" m={10000} setM={noop} y={15} setY={noop} initialEditOpen initialSheetRes /> },
-    { key: "st-agree",   label: "状態④ 内容確認 / 重要事項①展開＋全チェック",    el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialOpenIdx={0} initialChecks={[true, true, true, true, true, true, true, true]} /> },
-    { key: "st-acct",    label: "状態⑤ 内容確認 / お支払い詳細 展開",            el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen /> },
+  const GROUPS: ScreenGroupDef[] = [
+    /* ---- 01 商品概要 ---- */
+    {
+      key: "overview",
+      title: "商品概要",
+      badge: "STEP 1",
+      screens: [
+        {
+          key: "overview",
+          label: "デフォルト",
+          el: <ScreenOverview go={noop} />,
+        },
+      ],
+    },
+
+    /* ---- 02 プラン選択 ---- */
+    {
+      key: "step2",
+      title: "プラン選択",
+      badge: "STEP 2",
+      screens: [
+        {
+          key: "step2",
+          label: "デフォルト",
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+            />
+          ),
+        },
+        {
+          key: "st-notice",
+          label: "重要事項ボトムシート",
+          height: 820,
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialNoticeOpen
+            />
+          ),
+        },
+        {
+          key: "st-sim",
+          label: "給付予想額アコーディオン展開",
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialSimOpen
+            />
+          ),
+        },
+        {
+          key: "st-step2-agreed",
+          label: "同意チェック済・CTA活性",
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialAgree initialShowSend
+            />
+          ),
+        },
+      ],
+    },
+
+    /* ---- 03 PINコード認証 ---- */
+    {
+      key: "pin",
+      title: "PINコード認証",
+      badge: "PIN認証",
+      screens: [
+        {
+          key: "pin",
+          label: "デフォルト",
+          el: <ScreenPin go={noop} />,
+        },
+        {
+          key: "st-pin-ready",
+          label: "666666 入力済・認証ボタン活性",
+          el: <ScreenPin go={noop} initialPin="666666" />,
+        },
+      ],
+    },
+
+    /* ---- 04 申込フォーム ---- */
+    {
+      key: "form",
+      title: "申込フォーム",
+      badge: "STEP 3",
+      screens: [
+        {
+          key: "form",
+          label: "デフォルト",
+          el: (
+            <ScreenForm
+              go={noop} sel="c"
+              m={10000} setM={noop} y={15} setY={noop}
+            />
+          ),
+        },
+        {
+          key: "st-edit",
+          label: "積立修正シート＋給付予想額展開",
+          height: 820,
+          el: (
+            <ScreenForm
+              go={noop} sel="c"
+              m={10000} setM={noop} y={15} setY={noop}
+              initialEditOpen initialSheetRes
+            />
+          ),
+        },
+      ],
+    },
+
+    /* ---- 05 内容確認・お支払い ---- */
+    {
+      key: "step4",
+      title: "内容確認・お支払い",
+      badge: "STEP 4",
+      screens: [
+        {
+          key: "step4",
+          label: "デフォルト",
+          el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} />,
+        },
+        {
+          key: "st-agree",
+          label: "重要事項①展開＋全チェック",
+          el: (
+            <ScreenStep4
+              go={noop} sel="c" m={10000} y={15}
+              initialOpenIdx={0}
+              initialChecks={[true, true, true, true, true, true, true, true]}
+            />
+          ),
+        },
+        {
+          key: "st-acct",
+          label: "お支払い詳細展開",
+          el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen />,
+        },
+        {
+          key: "st-nat-other",
+          label: "被保険者確認・日本国籍以外選択",
+          el: (
+            <ScreenStep4
+              go={noop} sel="c" m={10000} y={15}
+              initialOpenIdx={4}
+              initialNat="other"
+            />
+          ),
+        },
+      ],
+    },
+
+    /* ---- 06 クレジットカード承認（外部） ---- */
+    {
+      key: "card",
+      title: "クレジットカード承認",
+      badge: "外部サイト",
+      screens: [
+        {
+          key: "card",
+          label: "カード情報入力",
+          el: <ScreenCardInput go={noop} />,
+        },
+        {
+          key: "cardconf",
+          label: "カード情報確認",
+          el: <ScreenCardConfirm go={noop} />,
+        },
+      ],
+    },
+
+    /* ---- 07 完了 ---- */
+    {
+      key: "done",
+      title: "完了",
+      badge: "STEP 5",
+      screens: [
+        {
+          key: "done",
+          label: "デフォルト",
+          el: <ScreenDone go={noop} />,
+        },
+      ],
+    },
   ];
 
   return (
     <main className="mx-auto max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
-      <div className="mx-auto mb-10 max-w-5xl">
+      {/* ページヘッダー */}
+      <div className="mx-auto mb-14 max-w-5xl">
         <header className="max-w-3xl">
           <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
             Screens
@@ -100,8 +303,8 @@ export default function TheoTdfWindowsPage() {
             スクリーン
           </h1>
           <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-            各画面は <strong className="text-foreground">390px 幅</strong> · 高さは内容に応じて可変。
-            画面解像度に合わせて自動的に折り返します。実際にタップして動かしたい場合は{" "}
+            各画面は <strong className="text-foreground">390px 幅</strong>・高さは内容に応じて可変。
+            画面ごとにデフォルト状態＋バリアントをグループで表示しています。実際にタップして動かしたい場合は{" "}
             <a
               href="/theo-tdf/prototype"
               className="font-medium text-primary underline-offset-4 hover:underline"
@@ -113,11 +316,10 @@ export default function TheoTdfWindowsPage() {
         </header>
       </div>
 
-      <div className="flex flex-wrap items-start justify-center gap-x-8 gap-y-12">
-        {screens.map((s, i) => (
-          <StaticScreen key={s.key} label={s.label} index={i} total={screens.length} height={s.height}>
-            {s.el}
-          </StaticScreen>
+      {/* 画面グループ一覧 */}
+      <div className="flex flex-col gap-20">
+        {GROUPS.map((g) => (
+          <ScreenGroupSection key={g.key} group={g} />
         ))}
       </div>
     </main>

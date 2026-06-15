@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年6月12日 (Phase 2 デザインシステム正規化 + Phase 3 Figma Variables 初期セットアップ。最新はセクション 12 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
+最終更新: 2026年6月15日 (TD 組込1.3 Vercel デプロイ修正完了。最新はセクション 13 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -1324,4 +1324,37 @@ Figma (参考資料として渡す)
 | MCP 書き出し | ★★ | ✅ | ✅ | 画面には使わない |
 
 **MCP (Claude Code) の役割**: Variables と Master Components の「下準備」専任。将来 Figma が「正」になった時のために構造を整えておく資産。画面フレームは作らない。
+
+---
+
+## 13. セッションログ 2026-06-15 (TD 組込1.3 Vercel デプロイ修正)
+
+### 13.1 実施内容
+
+前セッションで取り込んだ TD 組込1.3 (`screens.tsx`) の Vercel ビルドエラーを順次修正し、正常デプロイを達成した。
+
+### 13.2 修正一覧
+
+| # | エラー | 原因 | 修正 |
+|---|---|---|---|
+| 1 | ESLint `react-hooks/exhaustive-deps` | `DateDrumSheet` の2つの `useEffect` で依存配列が意図的に不完全 | 各 `useEffect` 直前に `// eslint-disable-next-line react-hooks/exhaustive-deps` を追加 |
+| 2 | `ReferenceError: window is not defined` | `Object.assign(window, {...})` がモジュールトップレベルにあり SSR (Node.js) でクラッシュ | `if (typeof window !== "undefined") { ... }` でガード |
+| 3 | ステータスバー二重表示 | `Phone` コンポーネントがステータスバーを描画し、`ScreenOverview`・`ScreenDone` 内にもフェイクステータスバーがあった | screens.tsx 側のフェイクステータスバーを削除 |
+| 4 | CTA ボタン高さが 64px にならない | `Button` の default size に `md:h-9` があり、デスクトップ viewport でボタンが 36px になっていた（Phone 枠内でも viewport 基準のメディアクエリが効く）| `button.tsx` に `cta: "h-16 px-5"` サイズ variant を追加し、`Btn` から `size="cta"` で使用 |
+| 5 | ヒーロー背景がブルーのまま | `Phone` がステータスバーを `shrink-0` ブロックとして描画するためヒーロー画像の上に青帯が残った | `Phone` に `heroTop` prop を追加。`scr===0` (ScreenOverview) と `scr===7` (ScreenDone) では status bar を `absolute z-50` に変更してヒーロー画像に重ねる |
+| 6 | ステータスバー文字が白 | heroTop モードで `text-white` を指定していた | `text-neutral-800` に変更 |
+| 7 | 完了画面ロゴ・コンテンツが見えない | heroTop でステータスバーが絶対配置になり、ヒーローコンテンツが被った | `ScreenDone` のヒーローコンテンツ `pt-4` → `pt-[66px]`（+50px） |
+| 8 | CTA ボタンが赤色 | `kind="cta"` が `bg-cta-500`（赤）を指していた | 内容確認ページ (ScreenStep4) 以外の `kind="cta"` をすべて `kind="button"`（青）に変更 |
+
+### 13.3 gotcha 追記
+
+25. **Tailwind `md:h-*` は viewport 基準** → Phone シミュレーター枠（390px）内のコンポーネントでも、ブラウザ viewport が 768px 以上なら `md:` 接頭辞が効いてしまう。Phone 枠内で常に一定サイズにしたい要素は responsive prefix を使わず固定値か inline style にする。
+26. **SSR で `window` は undefined** → Next.js の static generation 時はモジュール評価が Node.js 上で行われる。`window`/`document` のモジュールトップレベル参照は必ず `typeof window !== "undefined"` でガードする。
+27. **`"use client"` でもモジュールトップレベルは SSR で評価される** → `"use client"` はクライアント側のランタイム実行を指示するが、Next.js の静的ページ生成時にモジュールの import/評価は行われるため `window` 参照は NG。
+
+### 13.4 現在の状態
+
+- Vercel: 正常デプロイ済み
+- `/theo-tdf/prototype`: 8画面クリッカブルプロトタイプ 動作確認済み
+- 残課題: なし（次タスクは別途 Claude Design zip が来た時に §11 フローで対応）
 

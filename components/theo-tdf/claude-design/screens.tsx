@@ -720,7 +720,7 @@ export function ScreenOverview({ go }: { go: Go }) {
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen }: { go: Go; sel: string; setSel: SetStr; m: number; setM: SetNum; y: number; setY: SetNum; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean }) {
+export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend }: { go: Go; sel: string; setSel: SetStr; m: number; setM: SetNum; y: number; setY: SetNum; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -728,7 +728,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
   const [gender, setGender] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const sendSecRef = useRef<HTMLDivElement>(null);
-  const [showSend, setShowSend] = useState(false);
+  const [showSend, setShowSend] = useState(initialShowSend ?? false);
   const bindScroll = (el: HTMLDivElement | null) => {
     if (!el) return;
     const b2 = el as HTMLDivElement & { __bound?: boolean };
@@ -842,12 +842,10 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
           <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
           申込みには、ご本人様名義のクレジットカードが必要です
         </div>
-        {showSend && (
-          <div className="fade-in space-y-2">
-            <Btn kind="button" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
-            {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
-          </div>
-        )}
+        <div className={`space-y-2 transition-opacity duration-300 ${showSend ? "opacity-100" : "opacity-40 pointer-events-none"}`}>
+          <Btn kind="button" onClick={() => go(2)} disabled={!agree || !showSend}>上記に同意してメールを送信</Btn>
+          {showSend && !agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+        </div>
       </ActionBar>
 
       {/* 生年月日ドラムロール（iOS風） */}
@@ -911,8 +909,8 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
 /* ============================================================
    SCREEN — PINコード認証（メールのURLから遷移して入力）
    ============================================================ */
-export function ScreenPin({ go }: { go: Go }) {
-  const [pin, setPin] = useState("");
+export function ScreenPin({ go, initialPin }: { go: Go; initialPin?: string }) {
+  const [pin, setPin] = useState(initialPin ?? "");
   return (
     <>
       <AppBar title="保険" onBack={() => go(1)} />
@@ -1427,13 +1425,13 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean }) {
+export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialNat, initialJpLang }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialNat?: string; initialJpLang?: string }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
   const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
-  const [nat, setNat] = useState("jp");
-  const [jpLang, setJpLang] = useState("");
+  const [nat, setNat] = useState(initialNat ?? "jp");
+  const [jpLang, setJpLang] = useState(initialJpLang ?? "");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   return (
     <>
