@@ -46,7 +46,7 @@ XXX テナント (5 ページ):
 Cowork で内容を編集してもらった後、ローカルのターミナルで:
 
 ```bash
-cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2
+cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
 
 # 変更内容を確認
 git status
@@ -65,7 +65,7 @@ push 後、数十秒で Vercel が再ビルド・再デプロイします。Prod
 このフォルダには大幅な構造変更が入っているため、初回の commit は規模が大きくなります。
 
 ```bash
-cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2
+cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
 
 # .git/index.lock を削除（残っている場合）
 rm -f .git/index.lock
@@ -95,7 +95,7 @@ push が成功すると、Vercel ダッシュボードで自動的にビルド�
 ローカルで開発サーバーを動かしたい場合:
 
 ```bash
-cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2
+cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
 
 # 依存インストール（Cowork 側でも実行済みだが、お客様のローカルでは別途必要）
 npm install
@@ -154,7 +154,7 @@ rm -rf neutral-base
 rm -rf design-system
 
 # 残しておくもの:
-# - neutral-base-v2/       現プロジェクト
+# - neutral-base/       現プロジェクト
 # - MILIZE UIUX Design System20260526.zip   元 Claude Design バンドル
 # - .env.local             VERCEL_TOKEN 用（GitHub-Vercel 連携後はほぼ未使用）
 ```

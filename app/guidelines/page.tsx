@@ -313,7 +313,7 @@ function PipelineGroupCard({ group }: { group: PipelineGroup }) {
 /* ---------------------------------------------------------------- */
 
 function Architecture() {
-  const tree = `neutral-base-v2/
+  const tree = `neutral-base/
 ├── app/
 │   ├── globals.css              # 162 colors + 13 sizes (Figma source)
 │   ├── layout.tsx               # root layout (geist font, theme provider)

@@ -53,7 +53,7 @@ description: |
 ### 2. スクリプト実行
 
 ```bash
-cd <neutral-base-v2 のリポジトリルート>
+cd <neutral-base のリポジトリルート>
 ./scripts/new-tenant.sh <tenant> [--brand-label "..."] [--brand-initial "X"] [--force]
 ```
 

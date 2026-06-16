@@ -91,7 +91,7 @@ XXX 自体は永続的に「お手本テナント」として残す (新規テ�
 | GitHub リポジトリ | `https://github.com/uchida-milize/neutral-base` (Private) |
 | Vercel プロジェクト | `tuchida in milize projects` / `neutral-base` |
 | 本番 URL | `https://neutral-base.vercel.app` (Basic Auth 保護) |
-| ローカル作業フォルダ | `~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2` |
+| ローカル作業フォルダ | `~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base` |
 
 ### Routes (全 18 ページ)
 
@@ -228,7 +228,7 @@ T&D の例:
 ## 3. ファイル構造の概要
 
 ```
-neutral-base-v2/
+neutral-base/
 ├── app/
 │   ├── globals.css                # 162 colors + 13 sizes + 4 tenant scales + Chillax + @layer base
 │   ├── layout.tsx                 # root layout (geist フォント + SiteFooter 統合)
@@ -294,7 +294,7 @@ neutral-base-v2/
 ### 日常の更新フロー
 
 ```bash
-cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base-v2
+cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
 rm -f .git/index.lock              # FUSE で残った場合のみ
 git add -A
 git commit -m "変更の説明"          # 複数行メッセージは時々ハマるので、シンプルな 1 行推奨
@@ -1285,7 +1285,7 @@ claude (Claude Code)
 次回 Claude Code で Figma Variables の続き作業 (セマンティック alias 層追加、ダーク対応、等) を行う際は以下を冒頭に貼る:
 
 ```
-このプロジェクトは neutral-base-v2 デザインシステムです。
+このプロジェクトは neutral-base デザインシステムです。
 Figma ファイルには Color コレクション (5 モード: xxx/aaa/acme/td-financial/theo-tdf)、
 各 40 変数 (primary-color-10〜700, secondary-color-10〜700, button-color-10〜700,
 cta-color-10〜700, warm-50〜300) が登録済みです。
@@ -1418,4 +1418,27 @@ Claude Design の `tweaks-panel.jsx` は host protocol（`postMessage __activate
 
 - `tsc` / `eslint` グリーン。ローカルでの `git add/commit/push` はお客様が実施（Cowork は編集のみ方針）。
 - Cowork サンドボックスでは `next build` が Google Fonts 取得段階で失敗するため未実行（§9.14）。お客様の Mac でビルド & デプロイ確認をお願いします。
+
+### 14.10 Vercel プロジェクト統一 + ローカルフォルダ改名 (2026-06-16)
+
+同一 GitHub リポジトリ (`uchida-milize/neutral-base`) に Vercel プロジェクトが 2 つ連携しており、1 回の push で両方がビルドされていた（`neutral-base` と `neutral-base-v2`、同一コミットを二重デプロイ）。
+
+- **`neutral-base-v2` (Vercel プロジェクト) を削除済み**。本番は **`neutral-base` の 1 本に統一**。URL は `https://neutral-base.vercel.app/theo-tdf`。
+- **ローカル作業フォルダも `neutral-base-v2` → `neutral-base` に改名**（お客様がターミナルで実施）。本ドキュメント／`DEPLOY.md`／`app/guidelines/page.tsx`／`skills/new-tenant/SKILL.md` 内の旧名・旧パス表記を `neutral-base` に一括更新済み。
+- **要対応 — `.vercel/project.json`**: 削除した方のプロジェクト (`"projectName":"neutral-base-v2"` / 旧 projectId) を指したまま残っている。GitHub Integration 経由のデプロイには無関係だが、ローカルで `vercel` CLI を使う場合に誤リンクになる。対処は次のいずれか:
+  - `rm -rf .vercel`（CLI を使わないなら最も簡単。GitHub 連携デプロイには影響なし）
+  - もしくは `vercel link` で `neutral-base` プロジェクトに貼り直す
+- 注意: 環境変数 (`BASIC_AUTH_USER` / `BASIC_AUTH_PASS`) は Vercel プロジェクト単位。残した `neutral-base` 側に設定されていること（誤公開防止の fail-closed）を確認すること。
+
+#### フォルダ改名の手順（お客様ターミナル）
+
+このフォルダは Cowork に接続中のため、改名するとセッションのマウントが切れる。改名は Cowork セッションを閉じてから実施し、改名後に新パスで再接続する:
+
+```bash
+cd ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload
+mv neutral-base-v2 neutral-base
+# 以降の作業フォルダ: ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
+```
+
+git remote はフォルダ名に依存しないため、改名後もそのまま push 可能（remote は `github.com/uchida-milize/neutral-base`）。
 
