@@ -3,8 +3,8 @@
 import * as React from "react";
 
 import {
-  ScreenIntro,
   ScreenOverview,
+  ScreenCombined,
   ScreenStep2,
   ScreenPin,
   ScreenForm,
@@ -100,20 +100,6 @@ export default function TheoTdfWindowsPage() {
   const noop = () => {};
 
   const GROUPS: ScreenGroupDef[] = [
-    /* ---- 00 導入画面 ---- */
-    {
-      key: "intro",
-      title: "導入画面",
-      badge: "NEW",
-      screens: [
-        {
-          key: "intro",
-          label: "デフォルト",
-          el: <ScreenIntro go={noop} />,
-        },
-      ],
-    },
-
     /* ---- 01 商品概要 ---- */
     {
       key: "overview",
@@ -122,8 +108,18 @@ export default function TheoTdfWindowsPage() {
       screens: [
         {
           key: "overview",
-          label: "デフォルト",
+          label: "デフォルト（パターンA）",
           el: <ScreenOverview go={noop} />,
+        },
+        {
+          key: "combined",
+          label: "パターンB（商品概要＋プラン選択統合）",
+          el: (
+            <ScreenCombined
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+            />
+          ),
         },
       ],
     },
@@ -168,13 +164,13 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          key: "st-step2-agreed",
-          label: "同意チェック済・CTA活性",
+          key: "st-step2-verified",
+          label: "メール認証済み（送信案内表示）",
           el: (
             <ScreenStep2
               go={noop} sel="c" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
-              initialAgree initialShowSend
+              emailVerified
             />
           ),
         },
@@ -192,11 +188,6 @@ export default function TheoTdfWindowsPage() {
           label: "デフォルト",
           el: <ScreenPin go={noop} />,
         },
-        {
-          key: "st-pin-ready",
-          label: "666666 入力済・認証ボタン活性",
-          el: <ScreenPin go={noop} initialPin="666666" />,
-        },
       ],
     },
 
@@ -208,11 +199,22 @@ export default function TheoTdfWindowsPage() {
       screens: [
         {
           key: "form",
-          label: "デフォルト",
+          label: "デフォルト（1ページ）",
           el: (
             <ScreenForm
               go={noop} sel="c"
               m={10000} setM={noop} y={15} setY={noop}
+            />
+          ),
+        },
+        {
+          key: "form-split",
+          label: "2ページ分割（契約者ページ）",
+          el: (
+            <ScreenForm
+              go={noop} sel="c"
+              m={10000} setM={noop} y={15} setY={noop}
+              formSplit
             />
           ),
         },
@@ -248,24 +250,13 @@ export default function TheoTdfWindowsPage() {
           el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen />,
         },
         {
-          key: "st-nat-other",
-          label: "被保険者確認・日本国籍以外選択",
-          el: (
-            <ScreenStep4
-              go={noop} sel="c" m={10000} y={15}
-              initialOpenIdx={4}
-              initialNat="other"
-            />
-          ),
-        },
-        {
           key: "st-agree",
-          label: "重要事項①展開＋全チェック・CTA活性",
+          label: "同意項目①展開＋全チェック・CTA活性",
           el: (
             <ScreenStep4
               go={noop} sel="c" m={10000} y={15}
               initialOpenIdx={0}
-              initialChecks={[true, true, true, true, true, true, true, true]}
+              initialChecks={[true, true, true, true, true]}
             />
           ),
         },

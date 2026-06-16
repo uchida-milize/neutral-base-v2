@@ -1358,3 +1358,64 @@ Figma (参考資料として渡す)
 - `/theo-tdf/prototype`: 8画面クリッカブルプロトタイプ 動作確認済み
 - 残課題: なし（次タスクは別途 Claude Design zip が来た時に §11 フローで対応）
 
+---
+
+## 14. セッションログ 2026-06-16 (TD 組込1.4 全刷新取り込み + tweaks パネル移植)
+
+### 14.1 経緯
+
+新しい `TD 組込1.4-handoff.zip` を受領。前回コミット済みの 1.4 とは別物で「画面も画面遷移も全部新しい」状態だったため、**追加/修正ではなく theo-tdf プロトタイプを全刷新（screens / app-shell / windows を丸ごと再生成）**した。
+
+§11.2 の罠どおり、今回も `screens.jsx` ではなく **`kumikomi.html` のインライン JS が真の最新**（screens.jsx と 382 行、app.jsx と 306 行差）。kumikomi を一次ソースに移植。
+
+### 14.2 前コミット版で発見した「粗い取り込み」の是正（重要）
+
+前回の 1.4 コミット (`39a497f` 系) は、HANDOFF が定める 2 つの規約が外れた状態だった。今回の全刷新で是正:
+
+1. **タイポスケール未変換**: `screens.tsx` に `text-h7` が 50 箇所残存。globals.css には `--text-h7` が無く（§12 で廃止）、実質無効クラスになっていた。→ globals.css のコメント通り **`text-h{2-7}` → `text-h{1-6}`**（コンパクトスケール h7=16px → UI Heading h6=16px）へ全面変換。
+2. **shadcn ラッパーの退行**: 共通 atom が素の `<button>`/`<span>` に戻っていた（§11.4 のラッパーが消えていた）。→ 実績ある `c495e75`（Phase B）のラッパー実装をテンプレに、`Btn→Button` / `Badge→Badge` / `Field→Label+Input` / `LockedField→Label+disabled Input` / `GroupCard→Card+CardContent` を再委譲。`cn`/twMerge による後勝ち（`h-16 md:h-16`, `p-5` 等）を踏襲。`Select` はネイティブ維持。
+
+### 14.3 新デザインの主な変更点（1.3→1.4）
+
+- **新画面 `ScreenCombined`（パターンB）**: 商品概要＋プラン選択を 1 画面に統合。
+- **新部品 `FeatValue`**: 補償項目の金額を「50,000 円」体裁に整形。
+- **PIN/メール認証フロー変更**: `ScreenPin` が `onVerified` / `backScr` を持ち、`emailVerified` 状態を App が保持して各画面へ伝播。
+- **申込フォーム 2 ページ分割**: `ScreenForm` に `formSplit`（契約者／受取人の 2 ページ）。
+- **新 `Phone`**: `overviewMode`（scr 0/7 はステータスバー透明・画面側が描画）＋ `screenKey` による `.screen-enter` フェード。
+- 受取人ピッカー・団体特定コード・住所自動入力など細部多数。
+
+### 14.4 tweaks パネルの移植（お客様要望: パネルごと移植）
+
+Claude Design の `tweaks-panel.jsx` は host protocol（`postMessage __activate_edit_mode`）でしか開かない＝ Vercel 単体では出ない。そこで **ランチャー（歯車ボタン）で開閉する自己完結型**に作り替え `components/theo-tdf/claude-design/tweaks-panel.tsx` を新設。プロトタイプ上部に「表示オプション」として常設し、**patternB（統合）/ formSplit（2ページ分割）をその場で切替**できる。`useTweaks` は React state（localStorage 非依存・SSR セーフ）。
+
+### 14.5 変更ファイル
+
+- `components/theo-tdf/claude-design/screens.tsx` — kumikomi screens から全面再生成（shadcn ラッパー + スケール変換 + ScreenCombined/FeatValue）
+- `components/theo-tdf/claude-design/app-shell.tsx` — 新 Phone / tweaks 統合 / patternB・formSplit・emailVerified 配線
+- `components/theo-tdf/claude-design/tweaks-panel.tsx` — 新規（自己完結 tweaks パネル）
+- `app/theo-tdf/windows/page.tsx` — 新 props 体系へ（廃止 props 除去、パターンB・formSplit バリアント追加、StatesGallery の 5 バリアントに整合）
+- `app/theo-tdf/prototype/page.tsx` — metadata 更新（8画面5ステップ・表示オプション・1.4）
+- `app/globals.css` — `.theo-tdf-cd` に `--color-link: #0066d1`（dark `#5b9dff`）追加、`.screen-enter` アニメーション追加
+
+### 14.6 移植スクリプト
+
+`kumikomi.html` → `screens.tsx` の機械変換は Python ポートスクリプトで実施（`"use client"`/ESM import 化、型シグネチャ辞書注入、`text-h{2-7}→{1-6}`、`assets/→/assets/theo-tdf/`、`bg-success→bg-[color:var(--success)]`、`useRef<any>`、atom の shadcn ラッパー差し替え、`export` 付与）。スクリプトは `outputs/port_screens.py` に保存（次回再取り込み時の雛形）。
+
+### 14.7 検証
+
+- `tsc --noEmit`: エラー 0
+- `eslint`（5 ファイル）: クリーン
+- grep: `text-h7` / `text-cd-h` / 未変換 `assets/` / 素 `bg-success` / 廃止 props（initialShowSend/initialPin/initialNat）すべて 0
+- 忠実性照合: kumikomi の UI テキストノード 164 件中、画面本体のコピーは 100% 移植（未一致 7 件はすべて Rail/前後ボタン/StatesGallery 由来＝ app-shell 側に存在）
+
+### 14.8 既知の注意（追加）
+
+28. **コミット済み版が「粗い取り込み」になっていることがある** → 再取り込み時は必ず globals.css の規約（`text-h{2-7}→{1-6}`）と §11.4 shadcn ラッパーが効いているか grep で確認する。素の `<button>` や `text-h7` が出たら退行のサイン。
+29. **tweaks パネルは host 依存** → Claude Design の `tweaks-panel.jsx` をそのまま移植しても Vercel では開かない。ランチャー付きの自己完結版に作り替える。
+30. **`#065fe3` 等のインライン生 hex は設計の意図的指定**（hero の「480 円」やグラデ等）→ `--primary-color-500` と同値だが、デザイン忠実を優先しそのまま温存している。トークン化するなら別途方針決定が必要。
+
+### 14.9 現在の状態
+
+- `tsc` / `eslint` グリーン。ローカルでの `git add/commit/push` はお客様が実施（Cowork は編集のみ方針）。
+- Cowork サンドボックスでは `next build` が Google Fonts 取得段階で失敗するため未実行（§9.14）。お客様の Mac でビルド & デプロイ確認をお願いします。
+

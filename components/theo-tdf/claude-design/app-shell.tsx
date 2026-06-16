@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   Ic,
   ScreenOverview,
+  ScreenCombined,
   ScreenStep2,
   ScreenPin,
   ScreenForm,
@@ -13,19 +14,28 @@ import {
   ScreenCardConfirm,
   ScreenDone,
 } from "@/components/theo-tdf/claude-design/screens";
+import {
+  useTweaks,
+  TweaksPanel,
+  TweakSection,
+  TweakToggle,
+} from "@/components/theo-tdf/claude-design/tweaks-panel";
 
 /* ============================================================
    THEO 組込保険 — App shell (flow rail + phone frame)
-   Claude Design 出力 app.jsx からポート (2026-06-16 更新)
+   Claude Design 出力 (TD 組込1.4 / kumikomi.html) からポート。
+   2026-06-16 全刷新取り込み。
 
-   画面構成 (8 画面 / 5 ステップ):
-   - scr 0: 商品概要 (STEP1) ← hero_bg.png parallax
+   画面構成 (8 index / 5 番号ステップ):
+   - scr 0: 商品概要 (STEP1) — パターンB 時は ScreenCombined に差し替え
    - scr 1: プラン選択 (STEP2)
-   - scr 2: PINコード認証 (番号なし)
-   - scr 3: 申込フォーム (STEP3)
+   - scr 2: PINコード認証 (番号なし) — メール認証
+   - scr 3: 申込フォーム (STEP3) — formSplit 時は 2 ページ
    - scr 4: 内容確認・お支払い (STEP4)
-   - scr 5-6: クレジットカード承認 (外部 GMO、2 画面 / 番号なし)
+   - scr 5-6: クレジットカード承認 (外部 GMO、番号なし)
    - scr 7: 完了 (STEP5)
+
+   tweaks: patternB (商品概要+プラン選択統合) / formSplit (フォーム2ページ分割)
    ============================================================ */
 
 type FlowEntry = {
@@ -38,7 +48,7 @@ type FlowEntry = {
   subs?: string[];
 };
 
-/* Steps: PIN認証・カード承認(外部) は番号なし → 5 numbered steps total. */
+/* PIN認証・カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
   { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
   { key: "step2",    label: "プラン選択",          en: "Plan / Coverage",  scr: [1] },
@@ -49,14 +59,12 @@ const FLOW: FlowEntry[] = [
   { key: "done",     label: "完了",                en: "Complete",         scr: [7] },
 ];
 
-// step number for each FLOW entry (null for non-numbered step)
-const STEP_NUMS = (() => {
+const STEP_NUMS: (number | null)[] = (() => {
   let c = 0;
   return FLOW.map((f) => (f.noNum ? null : ++c));
 })();
 const TOTAL_STEPS = STEP_NUMS.filter((n) => n != null).length;
 
-// Which FLOW step owns a given screen index
 const stepOfScreen = (scr: number) => FLOW.findIndex((f) => f.scr.includes(scr));
 
 function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
@@ -122,24 +130,6 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
                   </span>
                 </span>
               </button>
-              {/* sub-screens for combined steps — only when active */}
-              {active && f.subs && (
-                <div className="ml-[1.85rem] mt-1 mb-1 space-y-0.5 border-l border-warm-200 pl-3">
-                  {f.subs.map((s, j) => {
-                    const sActive = f.scr[j] === scr;
-                    return (
-                      <button
-                        key={j}
-                        onClick={() => go(f.scr[j])}
-                        className="flex items-center gap-2 w-full text-left py-1 group"
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sActive ? "bg-primary" : "bg-warm-300 group-hover:bg-warm-400"}`} />
-                        <span className={`text-caption ${sActive ? "text-primary-700 font-medium" : "text-neutral-500"}`}>{s}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           );
         })}
@@ -157,39 +147,37 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
 function Phone({
   children,
   external,
-  heroTop,
+  overviewMode,
+  screenKey,
 }: {
   children: React.ReactNode;
   external?: boolean;
-  heroTop?: boolean;
+  overviewMode?: boolean;
+  screenKey?: number;
 }) {
   const bezel = external ? "bg-neutral-400" : "bg-neutral-900";
   const notch = external ? "bg-neutral-500" : "bg-neutral-900";
   const status = external
     ? "bg-neutral-600 text-white"
-    : "bg-primary text-primary-foreground";
+    : overviewMode
+      ? "text-neutral-800"
+      : "bg-primary text-primary-foreground";
   return (
     <div className="relative">
-      <div
-        className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}
-      >
+      <div className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}>
         <div className="relative w-full h-full rounded-[34px] overflow-hidden bg-warm-50 flex flex-col">
-          {heroTop ? (
-            /* status bar — hero_bg.png 画面では絶対配置・透明背景 */
-            <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
-              <span>9:41</span>
-              <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`} />
-              <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-            </div>
-          ) : (
-            /* status bar — 通常画面では固定高さブロック */
+          {/* Notch pill — always visible */}
+          <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch} z-30 pointer-events-none`} />
+          {/* Status bar: hidden for overview (screen provides its own inside scroll) */}
+          {!overviewMode && (
             <div className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`}>
               <span>9:41</span>
-              <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch}`} />
               <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>
           )}
-          {children}
+          <div key={screenKey} className="screen-enter flex flex-col flex-1 min-h-0">
+            {children}
+          </div>
         </div>
       </div>
       {external && (
@@ -201,12 +189,25 @@ function Phone({
   );
 }
 
+const TWEAK_DEFAULTS = {
+  patternB: false,
+  formSplit: false,
+};
+
 export function TheoTdfClaudeDesignShell() {
+  const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("a");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
+  const [emailVerified, setEmailVerified] = React.useState(false);
   const NSCR = 8;
+
+  const patternB = tw.patternB;
+  const setPatternB = (v: boolean) => {
+    setTweak("patternB", v);
+    setScr(0);
+  };
 
   const go = (n: number) => {
     setScr(Math.max(0, Math.min(NSCR - 1, n)));
@@ -215,14 +216,17 @@ export function TheoTdfClaudeDesignShell() {
   const curStep = stepOfScreen(scr);
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
   const curStepNo = STEP_NUMS[curStep];
-  // scr 0 (ScreenOverview) uses hero_bg.png → transparent status bar
-  const heroTop = scr === 0;
+  const overviewMode = scr === 0 || scr === 7;
 
   const screens = [
-    <ScreenOverview key="overview" go={go} />,
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
-    <ScreenPin key="pin" go={go} />,
-    <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} />,
+    patternB ? (
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} />
+    ) : (
+      <ScreenOverview key="overview" go={go} />
+    ),
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} />,
+    <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
+    <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} />,
     <ScreenStep4 key="step4" go={go} sel={sel} m={simM} y={simY} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
@@ -234,7 +238,13 @@ export function TheoTdfClaudeDesignShell() {
       <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
         <Rail scr={scr} go={go} />
         <main className="py-10 flex flex-col items-center gap-4">
-          <Phone external={external} heroTop={heroTop}>
+          <TweaksPanel>
+            <TweakSection label="表示パターン" />
+            <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
+            <TweakSection label="申込フォーム" />
+            <TweakToggle label="2ページ分割（契約者／受取人）" value={tw.formSplit} onChange={(v) => setTweak("formSplit", v)} />
+          </TweaksPanel>
+          <Phone external={external} overviewMode={overviewMode} screenKey={scr}>
             {screens[scr]}
           </Phone>
           {/* prev / next outside the phone */}
