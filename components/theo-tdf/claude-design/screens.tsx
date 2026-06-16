@@ -666,46 +666,89 @@ export function ScreenIntro({ go }: { go: Go }) {
 
 /* ============================================================
    SCREEN 1 — 商品概要 (ScreenOverview)
+   hero_bg.png parallax — kumikomi.html 準拠
    ============================================================ */
 export function ScreenOverview({ go }: { go: Go }) {
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroBgRef = useRef<HTMLImageElement>(null);
   const [solid, setSolid] = useState(false);
   const bindScroll = (el: (HTMLDivElement & { __bound?: boolean }) | null) => {
     if (!el || el.__bound) return;
     el.__bound = true;
     el.addEventListener("scroll", () => {
       const h = heroRef.current;
-      setSolid(el.scrollTop >= (h ? h.offsetHeight - 16 : 220));
+      setSolid(el.scrollTop >= (h ? h.offsetHeight - 16 : 500));
+      if (heroBgRef.current) {
+        heroBgRef.current.style.transform = `translateY(${el.scrollTop * 0.4}px)`;
+      }
     }, { passive: true });
   };
   return (
     <>
-      <AppBar title="保険" brandVisible={solid} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
-        <div ref={heroRef} className="bg-primary text-primary-foreground px-5 pt-6 pb-8">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん" className="mb-5" style={{ height: "2.275rem" }} />
-          <p className="font-en text-caption tracking-[0.18em] uppercase opacity-80">Embedded Insurance</p>
-          <h1 className="mt-2 font-bold leading-snug" style={{ fontSize: "36.4px", lineHeight: 1.3 }}>つみたてながら、<br/>もしもに備える。</h1>
-          <p className="mt-3 text-h7 leading-relaxed opacity-90">将来に向けた資産形成のためのほけん</p>
+
+        {/* ヒーロー: hero_bg.png + parallax, 500px tall */}
+        <div ref={heroRef} style={{ position: "relative", height: "500px", overflow: "hidden" }}>
+          <img
+            ref={heroBgRef}
+            src="/assets/theo-tdf/hero_bg.png"
+            alt=""
+            style={{ width: "100%", display: "block", willChange: "transform", transformOrigin: "top center" }}
+          />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column" }}>
+            {/* インライン AppBar — scroll で透明 → solid blue */}
+            <div
+              className="sticky top-0 z-20 transition-colors duration-200"
+              style={solid ? { background: "var(--primary-color, #054EBA)" } : { background: "transparent" }}
+            >
+              <div className="flex items-center justify-between px-3 h-14">
+                <span className="w-9 shrink-0" />
+                <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
+                  <span className="font-en font-semibold tracking-[0.1em] text-h7 text-white">THEO</span>
+                  <span className="text-h7 font-medium truncate text-white">つみたて安心ほけん</span>
+                </div>
+                <span className="w-9 shrink-0" />
+              </div>
+            </div>
+            {/* ロゴ — 絶対配置 */}
+            <img
+              src="/assets/theo-tdf/logo_theo_insurance_blue.svg"
+              alt="THEO つみたて安心ほけん"
+              style={{ position: "absolute", top: "48px", left: "15px", height: "1.9rem" }}
+            />
+            {/* テキスト — 絶対配置 */}
+            <div style={{ position: "absolute", top: "182px", left: "20px", right: "20px" }}>
+              <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500" style={{ marginLeft: "4px" }}>Embedded Insurance</p>
+              <h1 className="mt-1 font-bold leading-snug text-neutral-800" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: "-2px" }}>つみたてながら、<br/>もしもに備える。</h1>
+              <p className="mt-2 text-h7 leading-relaxed text-neutral-700">将来に向けた<br/>資産形成のためのほけん</p>
+            </div>
+          </div>
         </div>
 
-        <div className="sticky top-0 z-30">
+        {/* ステッパー — sticky */}
+        <div className="sticky top-0 z-30" style={{ marginTop: "-10px" }}>
           <Steps n={1} go={go} />
         </div>
 
         <div className="px-5 pt-6">
           <div className="space-y-6">
             <div className="-mx-1">
-              <div className="flex items-center justify-end gap-3 mb-4">
+              <div className="flex items-center justify-end gap-3 mb-8">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[9px] text-neutral-400 leading-none whitespace-nowrap">引受保険会社</span>
                   <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
                 </div>
               </div>
-              <p className="text-h5 font-bold text-neutral-800 leading-relaxed">
-                資産形成中の「もしも」に<br/>そなえる保障がTHEOで新登場！
-              </p>
-              <div className="mt-10 flex flex-col items-center gap-4">
+              {/* THEOのお客様限定バッジ */}
+              <div className="flex justify-center">
+                <div
+                  className="inline-flex items-center px-3.5 py-1.5 rounded-full font-bold text-white"
+                  style={{ backgroundColor: "#065fe3", fontSize: "0.82rem" }}
+                >
+                  THEOのお客様限定
+                </div>
+              </div>
+              <div className="mt-4 flex flex-col items-center gap-4">
                 <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-[42px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                   {[
@@ -714,7 +757,7 @@ export function ScreenOverview({ go }: { go: Go }) {
                     { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
                   ].map((f, k) => (
                     <div key={k} className="flex flex-col items-center text-center gap-2">
-                      <img src={f.src} alt="" className="w-9 h-9" />
+                      <img src={f.src} alt="" className="w-9 h-9" style={{ color: "#065FE3" }} />
                       <p className="text-caption font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
                     </div>
                   ))}

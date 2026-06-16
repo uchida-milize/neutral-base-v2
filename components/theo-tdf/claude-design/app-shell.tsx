@@ -4,6 +4,7 @@ import * as React from "react";
 
 import {
   Ic,
+  ScreenIntro,
   ScreenOverview,
   ScreenStep2,
   ScreenPin,
@@ -18,8 +19,8 @@ import {
    THEO 組込保険 — App shell (flow rail + phone frame)
    Claude Design 出力 app.jsx からポート (2026-06-08 更新)
 
-   画面構成 (8 画面 / 5 ステップ):
-   - Steps: PIN認証 と カード承認(外部) は番号なし → 5 numbered steps total
+   画面構成 (9 画面 / 5 ステップ):
+   - intro: 導入画面 (プリステップ / 番号なし)
    - scr 0: 商品概要 (STEP1)
    - scr 1: プラン選択 (STEP2)
    - scr 2: PINコード認証 (番号なし)
@@ -39,8 +40,9 @@ type FlowEntry = {
   subs?: string[];
 };
 
-/* Steps: PIN認証 と カード承認(外部) は番号なし → 5 numbered steps total. */
+/* Steps: 導入・PIN認証・カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
+  { key: "intro",    label: "導入",                en: "Intro",            noNum: true, scr: [-1] },
   { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
   { key: "step2",    label: "プラン選択",          en: "Plan / Coverage",  scr: [1] },
   { key: "pin",      label: "PINコード認証",        en: "PIN Verify",       noNum: true, scr: [2] },
@@ -146,7 +148,7 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
         })}
       </nav>
       <button
-        onClick={() => go(0)}
+        onClick={() => go(-1)}
         className="mt-8 self-start text-caption text-neutral-400 hover:text-neutral-700 underline underline-offset-2"
       >
         最初からやり直す
@@ -203,16 +205,32 @@ function Phone({
 }
 
 export function TheoTdfClaudeDesignShell() {
+  const [showIntro, setShowIntro] = React.useState(true);
   const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("a");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
   const NSCR = 8;
-  const go = (n: number) => setScr(Math.max(0, Math.min(NSCR - 1, n)));
 
-  const curStep = stepOfScreen(scr);
+  // go() for the main 8-screen flow (scr 0-7).
+  // ScreenIntro lives outside this range as a "pre-step".
+  const go = (n: number) => {
+    if (n < 0) { setShowIntro(true); return; }
+    setShowIntro(false);
+    setScr(Math.max(0, Math.min(NSCR - 1, n)));
+  };
+
+  // go() passed to ScreenIntro: go(1) from ScreenIntro → scr 0 (ScreenOverview)
+  const goIntro = (n: number) => {
+    if (n >= 1) { setShowIntro(false); setScr(0); }
+  };
+
+  const railScr = showIntro ? -1 : scr;
+  const curStep = stepOfScreen(railScr);
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
   const curStepNo = STEP_NUMS[curStep];
+  // ScreenOverview (scr 0) uses hero_bg.png → Phone needs transparent status bar
+  const heroTop = !showIntro && scr === 0;
 
   const screens = [
     <ScreenOverview key="overview" go={go} />,
@@ -228,29 +246,33 @@ export function TheoTdfClaudeDesignShell() {
   return (
     <div className="theo-tdf-cd font-jp min-h-screen w-full bg-warm-100 transition-colors duration-300">
       <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
-        <Rail scr={scr} go={go} />
+        <Rail scr={railScr} go={(n) => n === -1 ? setShowIntro(true) : go(n)} />
         <main className="py-10 flex flex-col items-center gap-4">
-          <Phone external={external} heroTop={scr === 0 || scr === 7}>{screens[scr]}</Phone>
+          <Phone external={external} heroTop={heroTop}>
+            {showIntro ? <ScreenIntro go={goIntro} /> : screens[scr]}
+          </Phone>
           {/* prev / next outside the phone */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => go(scr - 1)}
-              disabled={scr === 0}
+              onClick={() => showIntro ? undefined : (scr === 0 ? setShowIntro(true) : go(scr - 1))}
+              disabled={showIntro}
               className="flex items-center gap-1 rounded-full bg-white border border-warm-200 px-4 h-10 text-caption font-medium text-neutral-600 shadow-sm disabled:opacity-40 hover:border-warm-300"
             >
               <Ic.chevL className="w-4 h-4" />
               前の画面
             </button>
             <span className="font-mono text-caption text-neutral-400 px-2">
-              {external
-                ? "外部サイト（GMO）"
-                : curStepNo == null
-                  ? FLOW[curStep]?.label ?? ""
-                  : `STEP ${curStepNo} / ${TOTAL_STEPS}`}
+              {showIntro
+                ? "導入"
+                : external
+                  ? "外部サイト（GMO）"
+                  : curStepNo == null
+                    ? FLOW[curStep]?.label ?? ""
+                    : `STEP ${curStepNo} / ${TOTAL_STEPS}`}
             </span>
             <button
-              onClick={() => go(scr + 1)}
-              disabled={scr === NSCR - 1}
+              onClick={() => showIntro ? (setShowIntro(false), setScr(0)) : go(scr + 1)}
+              disabled={!showIntro && scr === NSCR - 1}
               className="flex items-center gap-1 rounded-full bg-white border border-warm-200 px-4 h-10 text-caption font-medium text-neutral-600 shadow-sm disabled:opacity-40 hover:border-warm-300"
             >
               次の画面
