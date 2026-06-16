@@ -1,25 +1,30 @@
 // ============================================================
-//  THEO × T&Dフィナンシャル生命 — Figma インポーター (現行 /theo-tdf/windows 準拠)
+//  THEO × T&Dフィナンシャル生命 — Figma 完全逆輸入インポーター
 //  UIUX_Importer / figma_Importer プラグイン向け code.js
-//  生成: 2026-06-16 (TD 組込1.4 全刷新後の windows 全カテゴリ・全バリアント版)
+//  生成: 2026-06-16  ベース: Vercel 公開最新 /theo-tdf/windows (全23画面)
 //
-//  画面 (390×820, カテゴリ別の行レイアウト):
-//   [商品概要]   01 パターンA / 02 パターンB統合 / 03 パターンB+下部CTA(未同意) / 04 パターンB+同意済CTA活性
+//  方針:
+//   - 23画面すべてを省略なしで具体描画（プレースホルダコメント無し）
+//   - スプレッド演算子(...)不使用。Figmaノードへのカスタムプロパティ付与なし
+//     （プロト遷移は正規の node.reactions のみ使用）
+//   - 各画面はコンテンツ全体を表示する可変高さフレーム（クリップ無し）
+//   - Btn / Badge / Field / LockedField / Select / GroupCard / checkbox /
+//     accordion / planCard / simSlider / benefitTable / extBar をすべて描画
+//   - Smart Animate でハッピーパス遷移を結線
+//
+//  23画面（カテゴリ別の行レイアウト）:
+//   [商品概要]   01 パターンA / 02 パターンB統合 / 03 B+下部CTA(未同意) / 04 B+同意済CTA活性
 //   [プラン選択] 05 デフォルト / 06 重要事項シート / 07 給付予想額展開 / 08 下部CTA(未同意) / 09 同意済CTA活性 / 10 メール認証済
 //   [PIN認証]    11 デフォルト / 12 666666入力済・活性
 //   [申込フォーム]13 1ページ / 14 2分割(契約者) / 15 2分割(受取人) / 16 積立修正シート
 //   [内容確認]   17 デフォルト / 18 支払詳細展開 / 19 同意全チェック・CTA活性 / 20 契約者+受取人 両編集
 //   [カード(外部GMO)] 21 入力 / 22 確認
 //   [完了]       23 完了
-//
-//  プロトタイプ(ハッピーパス): 01→05→09→11→12→13→17→19→21→22→23→01
-//  制約: Figma Plugin API 準拠 / ノードへの直接プロパティ拡張禁止 / Smart Animate 遷移
 // ============================================================
 
 (async function () {
   try {
 
-  // ── フォント事前ロード ─────────────────────────────────────────
   await Promise.all([
     figma.loadFontAsync({ family: "Noto Sans JP", style: "Regular" }),
     figma.loadFontAsync({ family: "Noto Sans JP", style: "Medium" }),
@@ -33,14 +38,18 @@
   var C = {
     p500: { r: 0.024, g: 0.373, b: 0.890 },
     p600: { r: 0.020, g: 0.306, b: 0.729 },
+    p700: { r: 0.020, g: 0.247, b: 0.557 },
     p300: { r: 0.184, g: 0.506, b: 0.980 },
-    p10:  { r: 0.914, g: 0.949, b: 0.996 },
     p100: { r: 0.596, g: 0.757, b: 0.988 },
+    p10:  { r: 0.914, g: 0.949, b: 0.996 },
     btn:  { r: 0.000, g: 0.490, b: 1.000 },
+    btn600:{ r: 0.000, g: 0.392, b: 0.835 },
     cta:  { r: 1.000, g: 0.176, b: 0.176 },
     sec:  { r: 1.000, g: 0.455, b: 0.553 },
+    sec700:{ r: 0.804, g: 0.247, b: 0.337 },
     sec10:{ r: 1.000, g: 0.957, b: 0.965 },
-    ctaBlue:{ r: 0.906, g: 0.929, b: 0.969 }, // #e7edf7 下部CTA帯
+    sec100:{ r: 1.000, g: 0.886, b: 0.910 },
+    ctaBlue:{ r: 0.906, g: 0.929, b: 0.969 },
     w50:  { r: 0.980, g: 0.980, b: 0.976 },
     w100: { r: 0.961, g: 0.961, b: 0.957 },
     w200: { r: 0.906, g: 0.898, b: 0.894 },
@@ -54,23 +63,25 @@
     n300: { r: 0.792, g: 0.816, b: 0.855 },
     ex200:{ r: 0.878, g: 0.878, b: 0.878 },
     ex100:{ r: 0.941, g: 0.941, b: 0.941 },
+    ex50: { r: 0.973, g: 0.973, b: 0.973 },
     white:{ r: 1, g: 1, b: 1 },
     succ: { r: 0.122, g: 0.541, b: 0.298 },
+    succ10:{ r: 0.910, g: 0.965, b: 0.933 },
+    link: { r: 0.000, g: 0.400, b: 0.820 },
   };
+  var W = 390;
 
-  // ── ペイントヘルパー ───────────────────────────────────────────
+  // ── ペイント/ファクトリ ───────────────────────────────────────
   function fill(color, opacity) {
     var p = { type: "SOLID", color: color };
     if (opacity !== undefined) p.opacity = opacity;
     return [p];
   }
   function noFill() { return []; }
-
-  // ── ノードファクトリ ───────────────────────────────────────────
-  function frame(name, w, h, bg) {
+  function frame(name, h, bg) {
     var f = figma.createFrame();
     f.name = name;
-    f.resize(w, h);
+    f.resize(W, h || 900);
     f.fills = fill(bg || C.w50);
     f.clipsContent = true;
     return f;
@@ -83,9 +94,9 @@
     parent.appendChild(nd);
     return nd;
   }
-  function rectBorder(parent, x, y, w, h, bg, borderColor, r, bw) {
+  function rectB(parent, x, y, w, h, bg, bc, r, bw) {
     var nd = rect(parent, x, y, w, h, bg, r);
-    nd.strokes = fill(borderColor);
+    nd.strokes = fill(bc);
     nd.strokeWeight = bw || 1;
     nd.strokeAlign = "INSIDE";
     return nd;
@@ -101,8 +112,9 @@
     nd.fills = fill(o.color || C.n800);
     nd.characters = content;
     if (o.w) { nd.textAutoResize = "HEIGHT"; nd.resize(o.w, nd.height || 20); }
+    else nd.textAutoResize = "WIDTH_AND_HEIGHT";
     if (o.center) nd.textAlignHorizontal = "CENTER";
-    if (o.right)  nd.textAlignHorizontal = "RIGHT";
+    if (o.right) nd.textAlignHorizontal = "RIGHT";
     if (o.lh) nd.lineHeight = { unit: "PIXELS", value: o.lh };
     parent.appendChild(nd);
     return nd;
@@ -114,76 +126,114 @@
     parent.appendChild(nd);
     return nd;
   }
+  function chevron(parent, x, y, dir, color, s) {
+    // 簡易シェブロン (› ∨) — テキストグリフで代用
+    txt(parent, x, y, dir === "down" ? "∨" : dir === "up" ? "∧" : "›", { size: s || 14, color: color || C.n400 });
+  }
 
   // ── 共通UIパーツ ──────────────────────────────────────────────
   function statusBar(f, y, light) {
-    // 透明背景のステータスバー (時刻 / 5G 100%)
     var col = light ? C.n800 : C.white;
     txt(f, 16, y + 6, "9:41", { size: 11, med: true, color: col, mono: true });
-    txt(f, 330, y + 6, "5G  100%", { size: 11, med: true, color: col, right: true, w: 44, mono: true });
-    rect(f, 165, y + 4, 60, 16, C.n900, 8); // ノッチ
+    rect(f, 165, y + 4, 60, 16, C.n900, 8);
+    txt(f, 318, y + 6, "5G 100%", { size: 11, med: true, color: col, right: true, w: 56, mono: true });
     return y + 28;
   }
-  function appBar(f, y, opts) {
-    var o = opts || {};
-    var bg = o.gray ? C.ex200 : C.p500;
-    rect(f, 0, y, 390, 52, bg);
-    var label = o.gray ? "payment.gmo-pg.com" : (o.title || "THEO  つみたて安心ほけん");
-    var lc = o.gray ? C.n600 : C.white;
-    txt(f, 0, y + 17, label, { size: 14, bold: !o.gray, color: lc, w: 390, center: true });
+  function appBar(f, y, title) {
+    rect(f, 0, y, W, 52, C.p500);
+    txt(f, 0, y + 8, "THEO", { size: 13, bold: true, color: C.white, w: W, center: true });
+    txt(f, 0, y + 27, title || "つみたて安心ほけん", { size: 11, med: true, color: C.white, w: W, center: true });
     return y + 52;
   }
   function steps(f, y, active) {
-    rect(f, 0, y, 390, 44, C.white);
-    divider(f, 0, y + 43, 390, C.w200);
+    rect(f, 0, y, W, 46, C.white);
+    divider(f, 0, y + 45, W, C.w200);
     var total = 5, cw = 28, lw = 24;
     var totalW = total * cw + (total - 1) * lw;
-    var sx = Math.round((390 - totalW) / 2);
+    var sx = Math.round((W - totalW) / 2);
     for (var i = 1; i <= total; i++) {
       var cx = sx + (i - 1) * (cw + lw);
       var filled = i <= active;
-      rect(f, cx, y + 8, cw, cw, filled ? C.p500 : C.w300, 14);
-      txt(f, cx, y + 14, String(i), { size: 11, bold: true, color: filled ? C.white : C.n400, w: cw, center: true, mono: true });
-      if (i < total) rect(f, cx + cw, y + 21, lw, 2, filled ? C.p500 : C.w200);
+      rect(f, cx, y + 9, cw, cw, filled ? C.p500 : C.w300, 14);
+      txt(f, cx, y + 15, String(i), { size: 11, bold: true, color: filled ? C.white : C.n400, w: cw, center: true, mono: true });
+      if (i < total) rect(f, cx + cw, y + 22, lw, 2, filled ? C.p500 : C.w200);
     }
-    return y + 44;
+    return y + 46;
   }
   function actionBar(f, y, h, bg) {
-    rect(f, 0, y, 390, h, bg || C.white);
-    divider(f, 0, y, 390, C.w200);
+    rect(f, 0, y, W, h, bg || C.white);
+    divider(f, 0, y, W, bg ? C.p100 : C.w200);
+    return y + h;
   }
-  function button(f, x, y, w, label, kind, disabled) {
+  // Btn → shadcn Button 相当。kind: button(青) / danger(赤cta) / outline
+  function Btn(f, x, y, w, label, kind, disabled) {
     var bgc = disabled
-      ? (kind === "danger" ? { r:1.0,g:0.69,b:0.69 } : { r:0.72,g:0.80,b:0.95 })
+      ? (kind === "danger" ? { r: 1.0, g: 0.69, b: 0.69 } : { r: 0.72, g: 0.80, b: 0.95 })
       : kind === "danger" ? C.cta
       : kind === "outline" ? C.white
       : C.btn;
-    var nd = rect(f, x, y, w, 52, bgc, 12);
+    var nd = rect(f, x, y, w, 56, bgc, 14);
     if (kind === "outline") { nd.strokes = fill(C.btn); nd.strokeWeight = 1.5; nd.strokeAlign = "INSIDE"; }
     var fc = kind === "outline" ? C.btn : C.white;
-    txt(f, x, y + 16, label, { size: 15, bold: true, color: fc, w: w, center: true });
-    return y + 52;
+    txt(f, x, y + 18, label, { size: 15, bold: true, color: fc, w: w, center: true });
+    return nd;
+  }
+  // Badge → shadcn Badge 相当 (secondary 淡色)
+  function Badge(f, x, y, label, tone) {
+    var bg = tone === "succ" ? C.succ10 : C.sec10;
+    var fc = tone === "succ" ? C.succ : C.sec700;
+    var w = label.length * 13 + 22;
+    rect(f, x, y, w, 22, bg, 11);
+    txt(f, x, y + 4, label, { size: 11, med: true, color: fc, w: w, center: true });
+    return w;
+  }
+  // Field → Label + Input
+  function Field(f, x, y, w, label, value, required) {
+    txt(f, x, y, label + (required ? " *" : ""), { size: 11, med: true, color: C.n600 });
+    rectB(f, x, y + 18, w, 44, C.white, C.w300, 12, 1);
+    txt(f, x + 12, y + 31, value, { size: 13, color: value ? C.n800 : C.n300 });
+    return y + 74;
+  }
+  // LockedField → 無効化 Input + 「変更不可」
+  function LockedField(f, x, y, w, label, value) {
+    txt(f, x, y, label, { size: 11, med: true, color: C.n600 });
+    Badge(f, x + 90, y - 2, "変更不可", "succ");
+    rectB(f, x, y + 18, w, 44, C.w100, C.w200, 12, 1);
+    txt(f, x + 12, y + 31, value, { size: 13, color: C.n500 });
+    rect(f, x + w - 30, y + 33, 12, 10, C.n400, 2); // 鍵代用
+    return y + 74;
+  }
+  // Select → ネイティブ select 相当
+  function SelectField(f, x, y, w, label, value, required) {
+    txt(f, x, y, label + (required ? " *" : ""), { size: 11, med: true, color: C.n600 });
+    rectB(f, x, y + 18, w, 44, C.white, C.w300, 12, 1);
+    txt(f, x + 12, y + 31, value, { size: 13, color: C.n800 });
+    chevron(f, x + w - 26, y + 28, "down", C.n400, 14);
+    return y + 74;
   }
   function checkbox(f, x, y, checked) {
-    rectBorder(f, x, y, 20, 20, checked ? C.p500 : C.white, checked ? C.p500 : C.w300, 5, 2);
-    if (checked) txt(f, x + 2, y + 3, "✓", { size: 12, bold: true, color: C.white, w: 16, center: true });
+    rectB(f, x, y, 22, 22, checked ? C.p500 : C.white, checked ? C.p500 : C.w300, 6, 2);
+    if (checked) txt(f, x + 3, y + 3, "✓", { size: 13, bold: true, color: C.white, w: 16, center: true });
   }
-  function badge(f, x, y, w, label, tone) {
-    var bg = tone === "succ" ? C.sec10 : C.sec10;
-    rect(f, x, y, w, 22, bg, 11);
-    txt(f, x, y + 4, label, { size: 10, med: true, color: C.sec, w: w, center: true });
+  function checkRow(f, x, y, w, label, checked) {
+    checkbox(f, x, y, checked);
+    txt(f, x + 32, y + 2, label, { size: 12, color: C.n700, w: w - 36, lh: 18 });
   }
-  function dataRow(f, x, y, w, key, value) {
-    txt(f, x, y + 10, key, { size: 11, color: C.n500, w: Math.floor(w * 0.46) });
-    txt(f, x + Math.floor(w * 0.50), y + 8, value, { size: 13, bold: true, color: C.n700, right: true, w: Math.floor(w * 0.48) });
-    divider(f, x, y + 36, w, C.w200);
-    return y + 40;
+  function dataRow(f, x, y, w, key, value, strong) {
+    txt(f, x, y + 11, key, { size: 11, color: C.n500, w: Math.floor(w * 0.42) });
+    txt(f, x + Math.floor(w * 0.44), y + 8, value, { size: strong ? 14 : 13, bold: !!strong, color: strong ? C.n900 : C.n700, right: true, w: Math.floor(w * 0.54) });
+    divider(f, x, y + 38, w, C.w200);
+    return y + 42;
   }
-  function inputField(f, x, y, w, label, placeholder, disabled) {
-    txt(f, x, y, label, { size: 11, med: true, color: C.n600 });
-    rectBorder(f, x, y + 16, w, 44, disabled ? C.w100 : C.white, disabled ? C.w200 : C.w300, 12, 1);
-    txt(f, x + 12, y + 28, placeholder, { size: 13, color: disabled ? C.n400 : C.n300 });
-    return y + 68;
+  // GroupCard → Card + ヘッダ淡色帯。bodyTop を返し、呼び出し側が本体描画後に枠を確定
+  function groupCard(f, x, y, w, h, title, sub) {
+    rectB(f, x, y, w, h, C.white, C.w200, 16, 1);
+    rect(f, x, y, w, 44, C.p10, 0);
+    divider(f, x, y + 44, w, C.p100);
+    rect(f, x + 16, y + 13, 18, 18, C.p500, 5);
+    txt(f, x + 44, y + (sub ? 9 : 14), title, { size: 13, bold: true, color: C.n800 });
+    if (sub) txt(f, x + 44, y + 26, sub, { size: 10, color: C.n500, w: w - 60 });
+    return y + 56;
   }
   function lockIcon(f, bx, by) {
     rect(f, bx, by, 64, 64, C.p10, 32);
@@ -193,8 +243,18 @@
     rect(f, bx + 17, by + 29, 30, 22, C.p500, 5);
     rect(f, bx + 29, by + 35, 6, 12, C.p10, 3);
   }
-
-  // 3プランカード (商品概要パターンB / プラン選択 共用)
+  // accordion 行 (内容確認の同意項目など)
+  function accordionRow(f, x, y, w, label, open, withCheck, checked) {
+    var h = open ? 96 : 52;
+    rectB(f, x, y, w, h, C.white, open ? C.p100 : C.w200, 12, 1);
+    var tx = x + 16;
+    if (withCheck) { checkbox(f, x + 14, y + 15, checked); tx = x + 46; }
+    txt(f, tx, y + 17, label, { size: 12, med: true, color: C.n800, w: w - (tx - x) - 40 });
+    chevron(f, x + w - 28, y + 15, open ? "up" : "down", C.n400, 16);
+    if (open) txt(f, x + 16, y + 50, "（本文）内容を表示しています。記載事項をご確認・ご同意ください。", { size: 11, color: C.n500, w: w - 32, lh: 18 });
+    return y + h + 10;
+  }
+  // 3プランカード
   function planCards(f, y, selId) {
     var plans = [
       { id: "a", name: "障害・介護",  price: "480",   lead: "障害・介護状態になった場合に給付金が支払われます",          tag: null },
@@ -203,34 +263,70 @@
     ];
     for (var i = 0; i < plans.length; i++) {
       var p = plans[i], sel = (p.id === selId);
-      rectBorder(f, 16, y, 358, 104, sel ? C.p10 : C.white, sel ? C.p500 : C.w200, 14, sel ? 2 : 1);
-      rect(f, 16, y, 358, 36, sel ? C.p10 : C.w100, 0);
-      divider(f, 16, y + 36, 358, sel ? C.p100 : C.w200);
+      rectB(f, 16, y, 358, 108, sel ? C.p10 : C.white, sel ? C.p500 : C.w200, 14, sel ? 2 : 1);
+      rect(f, 16, y, 358, 38, sel ? C.p10 : C.w100, 0);
+      divider(f, 16, y + 38, 358, sel ? C.p100 : C.w200);
       checkbox(f, 28, y + 9, sel);
-      txt(f, 58, y + 10, p.name, { size: 14, bold: true, color: C.n800 });
-      if (p.tag) badge(f, 300, y + 8, 64, p.tag);
-      txt(f, 28, y + 46, p.lead, { size: 11, color: C.n500, w: 300 });
-      txt(f, 250, y + 70, p.price, { size: 22, bold: true, color: C.n800, right: true, w: 90, mono: true });
-      txt(f, 344, y + 78, " 円/月", { size: 11, color: C.n500 });
-      y += 116;
+      txt(f, 60, y + 11, p.name, { size: 14, bold: true, color: C.n800 });
+      if (p.tag) Badge(f, 296, y + 9, p.tag);
+      txt(f, 28, y + 48, p.lead, { size: 11, color: C.n500, w: 300 });
+      txt(f, 230, y + 72, p.price, { size: 22, bold: true, color: C.n800, right: true, w: 110, mono: true });
+      txt(f, 344, y + 80, " 円/月", { size: 11, color: C.n500 });
+      y += 120;
     }
     return y;
   }
-
-  // 下部CTA帯 (メール送信 / 申込フォームへ)。agreed=同意済(活性), verified=認証済文言
-  function ctaSendBlock(f, agreed, verified) {
-    var h = 116;
-    var top = 820 - h;
-    actionBar(f, top, h, C.ctaBlue);
-    // 同意チェック行
-    checkbox(f, 20, top + 16, agreed);
-    txt(f, 50, top + 14, "重要事項・事前同意事項を確認・同意します", { size: 12, color: C.n700, w: 320 });
-    var label = verified ? "申込フォームへ進む  ›" : "上記に同意してメールを送信";
-    button(f, 20, top + 50, 350, label, "danger", !agreed);
-    if (!agreed) txt(f, 0, top + 106, "同意いただくと送信できます", { size: 11, color: C.n400, w: 390, center: true });
+  // 積立スライダー2本
+  function simSliders(f, y) {
+    txt(f, 28, y, "毎月の積立金額（ご希望給付額）", { size: 12, med: true, color: C.n800 });
+    txt(f, 230, y - 2, "¥10,000", { size: 18, bold: true, color: C.p600, right: true, w: 116, mono: true });
+    rect(f, 28, y + 26, 334, 6, C.w200, 3); rect(f, 28, y + 26, 140, 6, C.p500, 3);
+    txt(f, 28, y + 40, "5,000円", { size: 10, color: C.n400, mono: true });
+    txt(f, 322, y + 40, "50,000円", { size: 10, color: C.n400, right: true, w: 40, mono: true });
+    txt(f, 28, y + 64, "保障期間", { size: 12, med: true, color: C.n800 });
+    txt(f, 230, y + 62, "15年", { size: 18, bold: true, color: C.p600, right: true, w: 116, mono: true });
+    rect(f, 28, y + 90, 334, 6, C.w200, 3); rect(f, 28, y + 90, 200, 6, C.p500, 3);
+    txt(f, 28, y + 104, "5年", { size: 10, color: C.n400, mono: true });
+    txt(f, 338, y + 104, "30年", { size: 10, color: C.n400, right: true, w: 24, mono: true });
+    return y + 124;
   }
-
-  // ── Smart Animate 遷移リアクション ────────────────────────────
+  // 給付予想額テーブル
+  function benefitTable(f, x, y, w) {
+    var cols = ["経過", "給付予想額", "月払保険料"];
+    for (var c = 0; c < 3; c++) txt(f, x + c * (w / 3), y, cols[c], { size: 10, med: true, color: C.n500, w: w / 3 - 6, center: c > 0 });
+    divider(f, x, y + 20, w, C.w200);
+    var rows = [["5年", "60万円", "1,290円"], ["10年", "60万円", "1,290円"], ["15年", "60万円", "1,290円"], ["20年", "60万円", "1,290円"]];
+    var ry = y + 26;
+    for (var r = 0; r < rows.length; r++) {
+      for (var cc = 0; cc < 3; cc++) txt(f, x + cc * (w / 3), ry, rows[r][cc], { size: 11, color: C.n700, w: w / 3 - 6, center: cc > 0 });
+      ry += 24;
+    }
+    return ry;
+  }
+  // 外部GMO ブラウザバー
+  function extBar(f, y, url) {
+    rect(f, 0, y, W, 44, C.ex200);
+    rect(f, 12, y + 10, W - 24, 24, C.white, 12);
+    txt(f, 28, y + 16, "🔒 " + url, { size: 11, color: C.n600, w: W - 50 });
+    return y + 44;
+  }
+  // 重要事項ボトムシート (オーバーレイ) — 親フレーム最終高さに合わせて全面シェード
+  function noticeSheet(f, fh, title, lead, items, btnLabel) {
+    var sh = rect(f, 0, 0, W, fh, C.n900); sh.opacity = 0.42;
+    var top = Math.max(120, fh - 660);
+    rect(f, 0, top, W, fh - top, C.white, 24);
+    txt(f, 24, top + 26, title, { size: 17, bold: true, color: C.n800 });
+    txt(f, 24, top + 56, lead, { size: 12, color: C.n600, w: 342, lh: 18 });
+    var iy = top + 96;
+    for (var k = 0; k < items.length; k++) {
+      rectB(f, 24, iy, 342, 48, C.white, C.w200, 10, 1);
+      txt(f, 38, iy + 16, items[k], { size: 12, med: true, color: C.n700, w: 280 });
+      chevron(f, 348, iy + 14, "right", C.n400, 16);
+      iy += 56;
+    }
+    Btn(f, 24, fh - 80, 342, btnLabel, "button", false);
+  }
+  // 遷移結線 (正規 reactions のみ)
   function linkFrames(srcNode, dstId) {
     srcNode.reactions = [{
       action: {
@@ -243,396 +339,546 @@
       trigger: { type: "ON_CLICK" },
     }];
   }
+  function endFrame(f, y) { f.resize(W, Math.max(820, Math.round(y))); return f; }
 
   // ============================================================
-  //  [商品概要]
+  //  ヒーロー (商品概要 / パターンB 共通)
   // ============================================================
-  function heroOverview(f) {
-    // ヒーロー (背景帯 + コピー)
-    rect(f, 0, 0, 390, 230, C.p500);
-    var ov = rect(f, 0, 0, 390, 230, C.w50); ov.opacity = 0.12;
+  function heroBlock(f) {
+    rect(f, 0, 0, W, 300, C.p500);
+    var ov = rect(f, 0, 0, W, 300, C.w50); ov.opacity = 0.12;
     statusBar(f, 0, true);
     txt(f, 20, 40, "THEO  つみたて安心ほけん", { size: 12, bold: true, color: C.white });
-    txt(f, 20, 72, "つみたてながら、", { size: 26, bold: true, color: C.n800 });
-    txt(f, 20, 106, "もしもに備える。", { size: 26, bold: true, color: C.n800 });
-    txt(f, 20, 150, "THEOの資産運用に、もしものときの備えをひとつに。", { size: 12, color: C.n700, w: 340 });
-    badge(f, 20, 186, 44, "重要");
-    return 238;
+    txt(f, 20, 78, "つみたてながら、", { size: 27, bold: true, color: C.n900 });
+    txt(f, 20, 114, "もしもに備える。", { size: 27, bold: true, color: C.n900 });
+    txt(f, 20, 162, "将来に向けた\n資産形成のためのほけん", { size: 13, color: C.n700, w: 340, lh: 20 });
+    Badge(f, 20, 218, "THEOのお客様限定");
+    txt(f, 20, 252, "引受保険会社  T&Dフィナンシャル生命保険株式会社", { size: 10, color: C.n600, w: 350 });
+    // 概要カード
+    var y = 320;
+    rectB(f, 16, y, 358, 150, C.white, C.w200, 16, 1);
+    txt(f, 28, y + 16, "詳細なサービス内容はこちら", { size: 13, bold: true, color: C.link });
+    divider(f, 28, y + 44, 334, C.w200);
+    txt(f, 28, y + 56, "保険名称", { size: 10, color: C.n400 });
+    txt(f, 28, y + 72, "無配当特定疾病障害介護保障保険（団体型）", { size: 12, color: C.n700, w: 330 });
+    txt(f, 28, y + 100, "保障期間", { size: 10, color: C.n400 });
+    txt(f, 28, y + 116, "5年〜40年（最大）", { size: 12, color: C.n700, w: 330 });
+    y += 162;
+    // 保険料バンド
+    rect(f, 16, y, 358, 56, C.w100, 14);
+    txt(f, 28, y + 20, "保険料", { size: 12, color: C.n500 });
+    txt(f, 200, y + 10, "480", { size: 28, bold: true, color: C.p500, right: true, w: 130, mono: true });
+    txt(f, 336, y + 20, " 円 / 月〜", { size: 12, color: C.n800 });
+    y += 70;
+    return y;
   }
 
+  // ============================================================
+  //  [商品概要 01-04]
+  // ============================================================
   function drawOverviewA() {
-    var f = frame("商品概要 / パターンA", 390, 820, C.w50);
-    var y = heroOverview(f);
-    // 3つのプランから選ぶだけ バンド
-    rect(f, 16, y, 358, 70, C.w100, 16);
-    txt(f, 28, y + 14, "3つのプランから選ぶだけ", { size: 16, bold: true, color: C.n900 });
-    txt(f, 28, y + 42, "最短10分で、お申し込みが完了します。", { size: 11, color: C.n500, w: 320 });
-    y += 86;
+    var f = frame("01 商品概要 / パターンA", 1000, C.w50);
+    var y = heroBlock(f);
+    txt(f, 20, y, "3つのプランから選ぶだけ", { size: 18, bold: true, color: C.n900 });
+    txt(f, 20, y + 28, "最短10分で、お申し込みが完了します。", { size: 12, color: C.n500, w: 340 });
+    y += 60;
     var feats = [
       ["積立も あんしんに", "働けなくなっても積立は止めない。"],
       ["学資保険の代わりにも", "お子さまの将来の備えにも。"],
-      ["もしもの備えに", "がん・障害・介護に幅広く対応。"],
+      ["もしもの 備えに", "がん・障害・介護に幅広く対応。"],
     ];
     for (var i = 0; i < feats.length; i++) {
-      rectBorder(f, 16, y, 358, 56, C.white, C.w200, 12, 1);
-      rect(f, 28, y + 11, 34, 34, C.p10, 17);
-      txt(f, 72, y + 13, feats[i][0], { size: 13, bold: true, color: C.n800, w: 280 });
-      txt(f, 72, y + 32, feats[i][1], { size: 11, color: C.n500, w: 280 });
-      y += 64;
+      rectB(f, 16, y, 358, 58, C.white, C.w200, 12, 1);
+      rect(f, 28, y + 12, 34, 34, C.p10, 17);
+      txt(f, 74, y + 14, feats[i][0], { size: 13, bold: true, color: C.n800, w: 280 });
+      txt(f, 74, y + 33, feats[i][1], { size: 11, color: C.n500, w: 280 });
+      y += 66;
     }
-    rect(f, 16, y, 358, 48, C.w100, 12);
-    txt(f, 28, y + 16, "保険料", { size: 12, color: C.n500 });
-    txt(f, 210, y + 8, "480", { size: 26, bold: true, color: C.p500, right: true, w: 120, mono: true });
-    txt(f, 336, y + 16, " 円/月〜", { size: 12, color: C.n800 });
-    actionBar(f, 820 - 72, 72);
-    button(f, 20, 820 - 62, 350, "プランを選ぶ  ›", "button", false);
-    return f;
+    txt(f, 28, y + 4, "いつでも見直し・解約OK", { size: 11, med: true, color: C.succ });
+    y += 28;
+    var ab = actionBar(f, y, 76);
+    Btn(f, 20, ab - 66, 350, "プランを選ぶ  ›", "button", false);
+    return endFrame(f, ab);
   }
 
-  // パターンB: 商品概要 + プラン選択 統合。cta=下部CTA帯, agreed=同意済
-  function drawCombined(name, showCta, agreed) {
-    var f = frame(name, 390, 820, C.w50);
-    var y = heroOverview(f);
-    txt(f, 20, y, "プランを選ぶ", { size: 16, bold: true, color: C.n900 });
-    y += 30;
-    y = planCards(f, y, "c");
-    if (showCta) {
-      ctaSendBlock(f, agreed, false);
-    } else {
-      actionBar(f, 820 - 72, 72);
-      button(f, 20, 820 - 62, 350, "このプランで続ける  ›", "button", false);
+  function drawCombined(name, mode) {
+    // mode: "base" | "cta" | "agreed"
+    var f = frame(name, 1400, C.w50);
+    var y = heroBlock(f);
+    // 受け止めコピー + お客様情報
+    txt(f, 20, y, "さっそく、", { size: 20, bold: true, color: C.n900 });
+    txt(f, 20, y + 26, "プランを選んでみましょう", { size: 20, bold: true, color: C.n900 });
+    txt(f, 20, y + 56, "かんたん入力で保険料がすぐわかります", { size: 12, color: C.n500, w: 340 });
+    y += 86;
+    var gy = groupCard(f, 16, y, 358, 170, "生年月日・性別", "お客様情報。保険料の算出に使用します。");
+    SelectField(f, 32, gy + 6, 326, "生年月日", "1990 / 01 / 01", true);
+    var seg = gy + 86;
+    txt(f, 32, seg, "性別", { size: 11, med: true, color: C.n600 });
+    rectB(f, 32, seg + 18, 159, 42, C.p10, C.p500, 10, 1.5); txt(f, 32, seg + 30, "男性", { size: 13, bold: true, color: C.p700, w: 159, center: true });
+    rectB(f, 199, seg + 18, 159, 42, C.white, C.w300, 10, 1); txt(f, 199, seg + 30, "女性", { size: 13, color: C.n600, w: 159, center: true });
+    y += 186;
+    // プラン選択
+    txt(f, 20, y, "ご希望の保障プランをご選択ください", { size: 13, bold: true, color: C.n800 });
+    y = planCards(f, y + 28, "c") ;
+    // 必要書類
+    var dy = groupCard(f, 16, y, 358, 110, "必要書類のご確認");
+    txt(f, 32, dy + 8, "お手続きの際に必要となる書類をご準備ください。", { size: 12, color: C.n600, w: 326 });
+    rect(f, 32, dy + 34, 326, 30, C.sec10, 8);
+    txt(f, 44, dy + 42, "申込みには、ご本人様名義のクレジットカードが必要です", { size: 11, med: true, color: C.sec700, w: 310 });
+    y += 122;
+    // メール + 事前同意
+    var my = groupCard(f, 16, y, 358, 150, "メールアドレスのご入力");
+    txt(f, 32, my + 6, "ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。", { size: 11, color: C.n600, w: 326, lh: 16 });
+    Field(f, 32, my + 44, 326, "メールアドレス", "taro@example.com", true);
+    y += 162;
+    var ey = groupCard(f, 16, y, 358, 130, "事前同意事項のご確認");
+    txt(f, 32, ey + 6, "お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。", { size: 11, color: C.n600, w: 326, lh: 16 });
+    rectB(f, 32, ey + 44, 326, 44, C.white, C.w300, 10, 1);
+    Badge(f, 44, ey + 55, "重要");
+    txt(f, 96, ey + 56, "重要事項・事前同意事項を確認する", { size: 12, med: true, color: C.link, w: 250 });
+    y += 142;
+
+    if (mode === "cta" || mode === "agreed") {
+      var ab2 = actionBar(f, y + 8, 116, C.ctaBlue);
+      checkRow(f, 20, y + 24, 350, "上記の事前同意事項を確認し、同意します", mode === "agreed");
+      Btn(f, 20, y + 58, 350, "上記に同意してメールを送信", "danger", mode !== "agreed");
+      if (mode !== "agreed") txt(f, 0, y + 116, "同意いただくと送信できます", { size: 11, color: C.n400, w: W, center: true });
+      return endFrame(f, ab2);
     }
-    return f;
+    var ab = actionBar(f, y + 8, 76);
+    Btn(f, 20, ab - 66, 350, "このプランで続ける  ›", "button", false);
+    return endFrame(f, ab);
   }
 
   // ============================================================
-  //  [プラン選択]
+  //  [プラン選択 05-10]   opts: notice, sim, cta, agreed, verified
   // ============================================================
   function planBase(name, opts) {
     var o = opts || {};
-    var f = frame(name, 390, 820, C.w50);
-    var y = appBar(f, 0, {});
+    var f = frame(name, 1500, C.w50);
+    var y = statusBar(f, 0, false) - 28;
+    y = appBar(f, 0, "保険");
     y = steps(f, y, 2);
-    rect(f, 0, y, 390, 36, C.p10);
-    txt(f, 16, y + 11, "つみたて安心ほけんのプランをお選びください", { size: 11, color: C.n600, w: 360 });
-    y += 36;
-    y = planCards(f, y + 8, "c");
-    // 保険料シミュレーション
-    rectBorder(f, 16, y + 4, 358, o.sim ? 230 : 92, C.white, C.w200, 16, 1);
-    txt(f, 28, y + 18, "保険料シミュレーション", { size: 13, bold: true, color: C.n800 });
-    txt(f, 28, y + 40, "毎月の積立金額 / 保障期間で給付予想額を確認", { size: 11, color: C.n500, w: 320 });
-    rect(f, 28, y + 60, 334, 6, C.w200, 3); rect(f, 28, y + 60, 180, 6, C.p500, 3);
+    txt(f, 20, y + 16, "さっそく、はじめましょう。", { size: 20, bold: true, color: C.n900 });
+    txt(f, 20, y + 46, "ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。", { size: 12, color: C.n600, w: 350 });
+    y += 78;
+    // 生年月日・性別
+    var gy = groupCard(f, 16, y, 358, 170, "生年月日・性別", "お客様情報。保険料の算出に使用します。");
+    SelectField(f, 32, gy + 6, 326, "生年月日", "1990 / 01 / 01", true);
+    var seg = gy + 86;
+    txt(f, 32, seg, "性別", { size: 11, med: true, color: C.n600 });
+    rectB(f, 32, seg + 18, 159, 42, C.p10, C.p500, 10, 1.5); txt(f, 32, seg + 30, "男性", { size: 13, bold: true, color: C.p700, w: 159, center: true });
+    rectB(f, 199, seg + 18, 159, 42, C.white, C.w300, 10, 1); txt(f, 199, seg + 30, "女性", { size: 13, color: C.n600, w: 159, center: true });
+    y += 186;
+    // プラン選択
+    txt(f, 20, y, "ご希望の保障プランをご選択ください", { size: 13, bold: true, color: C.n800 });
+    y = planCards(f, y + 28, "c");
+    txt(f, 20, y, "※ 保険料は年齢・性別により変動します。", { size: 10, color: C.n400, w: 350 });
+    y += 24;
+    // シミュレーション
+    var simH = o.sim ? 360 : 156;
+    rectB(f, 16, y, 358, simH, C.white, C.w200, 16, 1);
+    txt(f, 28, y + 16, "保険料シミュレーション", { size: 13, bold: true, color: C.n800 });
+    simSliders(f, y + 44);
     if (o.sim) {
-      // 給付予想額テーブル (展開)
-      divider(f, 28, y + 84, 334, C.w200);
-      txt(f, 28, y + 92, "給付予想額（試算）", { size: 12, bold: true, color: C.n700 });
-      var cols = ["経過", "給付予想額", "月払保険料"];
-      for (var c = 0; c < 3; c++) txt(f, 28 + c * 112, y + 116, cols[c], { size: 10, color: C.n500, w: 108 });
-      var rows = [["5年", "¥600,000", "¥1,290"], ["10年", "¥600,000", "¥1,290"], ["15年", "¥600,000", "¥1,290"]];
-      for (var r = 0; r < rows.length; r++) {
-        var ry = y + 138 + r * 26;
-        for (var cc = 0; cc < 3; cc++) txt(f, 28 + cc * 112, ry, rows[r][cc], { size: 11, color: C.n700, w: 108 });
-      }
-    }
-    // 下部CTA
-    if (o.cta || o.agreed || o.verified) {
-      ctaSendBlock(f, o.agreed || o.verified, o.verified);
+      divider(f, 28, y + 178, 334, C.w200);
+      txt(f, 28, y + 190, "給付予想額（試算）", { size: 12, bold: true, color: C.n700 });
+      benefitTable(f, 28, y + 216, 334);
+      txt(f, 28, y + 330, "※ 表示金額は試算であり、実際の保険料・給付額を保証するものではありません。", { size: 10, color: C.n400, w: 334, lh: 14 });
     } else {
-      actionBar(f, 820 - 64, 64);
-      txt(f, 0, 820 - 44, "下までスクロールすると申込みに進めます", { size: 11, color: C.n400, w: 390, center: true });
+      rectB(f, 28, y + 116, 334, 30, C.w50, C.w200, 8, 1);
+      txt(f, 0, y + 122, "給付予想額をみる  ∨", { size: 12, med: true, color: C.link, w: 358, center: true });
     }
-    // 重要事項ボトムシート (オーバーレイ)
+    y += simH + 12;
+    // メール + 事前同意
+    var my = groupCard(f, 16, y, 358, 150, "メールアドレスのご入力");
+    txt(f, 32, my + 6, "ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。", { size: 11, color: C.n600, w: 326, lh: 16 });
+    Field(f, 32, my + 44, 326, "メールアドレス", o.verified ? "taro@example.com" : "", true);
+    if (o.verified) { Badge(f, 32, my + 118, "メールアドレスの認証は完了しています", "succ"); }
+    y += 162;
+    var ey = groupCard(f, 16, y, 358, 130, "事前同意事項のご確認");
+    txt(f, 32, ey + 6, "お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。", { size: 11, color: C.n600, w: 326, lh: 16 });
+    rectB(f, 32, ey + 44, 326, 44, C.white, C.w300, 10, 1);
+    Badge(f, 44, ey + 55, "重要");
+    txt(f, 96, ey + 56, "重要事項・事前同意事項を確認する", { size: 12, med: true, color: C.link, w: 250 });
+    y += 142;
+
+    var fh;
+    if (o.cta || o.agreed || o.verified) {
+      var agreed = !!(o.agreed || o.verified);
+      var ab = actionBar(f, y + 8, 124, C.ctaBlue);
+      checkRow(f, 20, y + 24, 350, "上記の事前同意事項を確認し、同意します", agreed);
+      var label = o.verified ? "申込フォームへ進む  ›" : "上記に同意してメールを送信";
+      Btn(f, 20, y + 58, 350, label, "danger", !agreed);
+      if (!agreed) txt(f, 0, y + 120, "同意いただくと送信できます", { size: 11, color: C.n400, w: W, center: true });
+      fh = ab;
+    } else {
+      var ab0 = actionBar(f, y + 8, 60);
+      txt(f, 0, y + 30, "下までスクロールすると申込みに進めます", { size: 11, color: C.n400, w: W, center: true });
+      fh = ab0;
+    }
+    endFrame(f, fh);
     if (o.notice) {
-      var sh = rect(f, 0, 0, 390, 820, C.n900); sh.opacity = 0.4;
-      rect(f, 0, 250, 390, 570, C.white, 24);
-      txt(f, 24, 280, "重要事項・事前同意事項", { size: 16, bold: true, color: C.n800 });
-      txt(f, 24, 314, "お申し込み前に、以下の内容を必ずご確認ください。", { size: 12, color: C.n600, w: 340 });
-      var items = ["申込に関する注意事項の確認", "個人情報のお取り扱いについて", "ペーパーレス申込の同意", "契約概要・注意喚起情報", "契約のしおり・約款"];
-      var iy = 352;
-      for (var k = 0; k < items.length; k++) {
-        rectBorder(f, 24, iy, 342, 46, C.white, C.w200, 10, 1);
-        txt(f, 38, iy + 15, items[k], { size: 12, med: true, color: C.n700, w: 280 });
-        txt(f, 320, iy + 15, "›", { size: 16, color: C.n400 });
-        iy += 54;
-      }
-      button(f, 24, 760, 342, "確認同意しました", "button", false);
+      noticeSheet(f, f.height,
+        "重要事項・事前同意事項",
+        "お申込み前に、以下の内容を必ずご確認ください。",
+        ["この保険について", "個人情報の取扱いについて", "事前同意事項", "契約概要・注意喚起情報", "契約のしおり・約款"],
+        "確認同意しました");
     }
     return f;
   }
 
   // ============================================================
-  //  [PIN認証]
+  //  [PIN認証 11-12]
   // ============================================================
   function drawPin(name, filled) {
-    var f = frame(name, 390, 820, C.w50);
-    var y = appBar(f, 0, {});
+    var f = frame(name, 820, C.w50);
+    var y = appBar(f, 0, "保険");
     y = steps(f, y, 3);
-    y += 32;
+    y += 36;
     lockIcon(f, 163, y);
     y += 84;
-    txt(f, 0, y, "PINコードの入力", { size: 22, bold: true, color: C.n800, w: 390, center: true });
+    txt(f, 0, y, "PINコードの入力", { size: 22, bold: true, color: C.n800, w: W, center: true });
     y += 36;
-    txt(f, 30, y, "ご登録のメールアドレスに送信した6桁のPINコードを入力してください。", { size: 12, color: C.n600, w: 330, center: true, lh: 20 });
-    y += 56;
-    rectBorder(f, 65, y, 260, 56, C.w50, C.w300, 12, 1);
-    txt(f, 65, y + 14, filled ? "6 6 6 6 6 6" : "______", { size: 26, bold: true, color: filled ? C.n800 : C.n300, w: 260, center: true, mono: true });
+    txt(f, 30, y, "ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載の6桁のPINコードを入力してください。", { size: 12, color: C.n600, w: 330, center: true, lh: 20 });
+    y += 72;
+    rectB(f, 65, y, 260, 56, C.white, C.w300, 12, 1);
+    txt(f, 65, y + 13, filled ? "6 6 6 6 6 6" : "_ _ _ _ _ _", { size: 26, bold: true, color: filled ? C.n800 : C.n300, w: 260, center: true, mono: true });
     y += 76;
-    txt(f, 0, y, "PINコードを再送する", { size: 11, color: C.btn, w: 390, center: true });
-    actionBar(f, 820 - 116, 116);
-    txt(f, 20, 820 - 104, "本お手続きは「THEO つみたて安心ほけん」のお申し込みです。", { size: 11, color: C.n500, w: 350 });
-    button(f, 65, 820 - 64, 260, "認証する", "danger", !filled);
-    if (!filled) txt(f, 0, 820 - 8, "6桁のPINコードを入力してください", { size: 11, color: C.n400, w: 390, center: true });
-    return f;
+    txt(f, 0, y, "PINコードを再送する", { size: 11, color: C.link, w: W, center: true });
+    y += 40;
+    var ab = actionBar(f, 820 - 132, 132);
+    txt(f, 20, 820 - 120, "本お手続きは「THEO つみたて安心ほけん」のお申し込みです。", { size: 11, color: C.n500, w: 350 });
+    txt(f, 20, 820 - 102, "引受保険会社：T&Dフィナンシャル生命保険株式会社", { size: 10, color: C.n400, w: 350 });
+    txt(f, 20, 820 - 70, "← 戻る", { size: 12, med: true, color: C.link });
+    Btn(f, 90, 820 - 76, 240, "認証する", "danger", !filled);
+    if (!filled) txt(f, 0, 820 - 18, "6桁のPINコードを入力してください", { size: 11, color: C.n400, w: W, center: true });
+    return endFrame(f, 820);
   }
 
   // ============================================================
-  //  [申込フォーム]   mode: "single" | "p1" | "p2" | "edit"
+  //  [申込フォーム 13-16]   mode: single | p1 | p2 | edit
   // ============================================================
   function drawForm(name, mode) {
-    var f = frame(name, 390, 820, C.w50);
+    var f = frame(name, 1500, C.w50);
     var title = mode === "p1" ? "お申込み (1/2)" : mode === "p2" ? "お申込み (2/2)" : "お申込み";
-    var y = appBar(f, 0, { title: "THEO  つみたて安心ほけん" });
+    var y = appBar(f, 0, "つみたて安心ほけん");
     y = steps(f, y, 3);
-    rect(f, 0, y, 390, 32, C.p10);
-    txt(f, 16, y + 9, title, { size: 12, bold: true, color: C.p600, w: 360 });
-    y += 40;
+    // 受け止め
+    rect(f, 0, y, W, 60, C.succ10);
+    txt(f, 20, y + 12, "認証が完了しました。", { size: 13, bold: true, color: C.succ });
+    txt(f, 20, y + 32, "あと少しで、お申し込みは完了です。", { size: 11, color: C.n600, w: 350 });
+    y += 72;
+    rect(f, 0, y, W, 30, C.p10);
+    txt(f, 16, y + 8, title, { size: 12, bold: true, color: C.p600, w: 360 });
+    y += 42;
 
     if (mode !== "p2") {
-      // 契約者情報
-      rectBorder(f, 16, y, 358, mode === "p1" ? 250 : 188, C.white, C.w200, 16, 1);
-      rect(f, 16, y, 358, 40, C.p10, 0);
-      txt(f, 28, y + 12, "契約者情報", { size: 14, bold: true, color: C.n800 });
-      var iy = y + 52;
-      iy = inputField(f, 28, iy, 334, "氏名", "山田 太郎", false);
-      iy = inputField(f, 28, iy, 334, "生年月日", "1990 / 01 / 01", false);
-      if (mode === "p1") iy = inputField(f, 28, iy, 334, "ご住所", "東京都千代田区丸の内1-1-1", false);
-      y += (mode === "p1" ? 250 : 188) + 12;
+      var ch = mode === "p1" ? 320 : 252;
+      var cy = groupCard(f, 16, y, 358, ch, "情報ご入力", "THEO 口座情報の一部を自動入力しています。");
+      var iy = cy + 6;
+      iy = LockedField(f, 32, iy, 326, "氏名", "山田 太郎");
+      iy = LockedField(f, 32, iy, 326, "フリガナ", "ヤマダ タロウ");
+      iy = SelectField(f, 32, iy, 326, "生年月日", "1990 / 01 / 01", true);
+      if (mode === "p1") { iy = Field(f, 32, iy, 326, "ご住所", "東京都千代田区丸の内1-1-1", true); }
+      y += ch + 12;
+      // 連絡先
+      var ly = groupCard(f, 16, y, 358, 120, "連絡先");
+      Field(f, 32, ly + 6, 326, "電話番号", "090-1234-5678", true);
+      y += 132;
     }
     if (mode !== "p1") {
-      // 保険金受取人
-      rectBorder(f, 16, y, 358, 196, C.white, C.w200, 16, 1);
-      rect(f, 16, y, 358, 40, C.p10, 0);
-      txt(f, 28, y + 12, "保険金受取人", { size: 14, bold: true, color: C.n800 });
-      var jy = y + 52;
-      checkbox(f, 28, jy, true); txt(f, 54, jy + 1, "契約者と同じ", { size: 12, color: C.n700 });
-      jy += 32;
-      jy = inputField(f, 28, jy, 334, "氏名", "山田 太郎", true);
-      jy = inputField(f, 28, jy, 334, "続柄", "本人", true);
-      y += 208;
+      var jy = groupCard(f, 16, y, 358, 290, "保険金受取人情報", "保険金をお受け取りになる方の情報をご入力ください。");
+      checkRow(f, 32, jy + 6, 326, "住所は契約者と同じ", true);
+      var ky = jy + 40;
+      ky = Field(f, 32, ky, 326, "氏名", "山田 花子", true);
+      ky = SelectField(f, 32, ky, 158, "生年月日", "1992/05", true);
+      txt(f, 206, jy + 40, "性別", { size: 11, med: true, color: C.n600 });
+      rectB(f, 206, jy + 58, 152, 44, C.white, C.w300, 10, 1); txt(f, 206, jy + 70, "女性", { size: 13, color: C.n800, w: 152, center: true });
+      ky = Field(f, 32, ky + 40, 326, "続柄", "配偶者", true);
+      y += 302;
     }
     if (mode === "single" || mode === "edit") {
-      // 積立内容 (修正シート起点)
-      rectBorder(f, 16, y, 358, 70, C.white, C.w200, 16, 1);
-      txt(f, 28, y + 14, "積立内容", { size: 13, bold: true, color: C.n800 });
-      txt(f, 28, y + 38, "毎月 ¥10,000 / 保障期間 15年", { size: 12, color: C.n600 });
-      txt(f, 320, y + 26, "編集", { size: 12, med: true, color: C.btn });
-      y += 82;
+      // 保険内容
+      var hy = groupCard(f, 16, y, 358, 110, "保険内容");
+      txt(f, 32, hy + 8, "毎月 ¥10,000 ／ 保障期間 15年", { size: 13, color: C.n700 });
+      txt(f, 32, hy + 32, "安心セット（障害・介護＋がん）", { size: 12, color: C.n500 });
+      rectB(f, 250, hy + 4, 108, 34, C.white, C.btn, 10, 1.5);
+      txt(f, 250, hy + 12, "修正", { size: 12, med: true, color: C.btn, w: 108, center: true });
+      y += 122;
+      // 団体特定コード
+      var ty = groupCard(f, 16, y, 358, 100, "団体特定コード");
+      Field(f, 32, ty + 6, 326, "団体特定コード（任意）", "", false);
+      y += 112;
     }
 
-    // フッターCTA
     var label = mode === "p1" ? "保険金受取人情報へ  ›" : "入力内容を確認する  ›";
-    actionBar(f, 820 - 72, 72);
-    button(f, 20, 820 - 62, 350, label, "button", false);
+    var ab = actionBar(f, y + 8, 92);
+    txt(f, 20, y + 22, "← 戻る", { size: 12, med: true, color: C.link });
+    Btn(f, 20, y + 42, 350, label, "button", false);
+    endFrame(f, ab);
 
-    // 積立修正シート (オーバーレイ)
     if (mode === "edit") {
-      var sh = rect(f, 0, 0, 390, 820, C.n900); sh.opacity = 0.4;
-      rect(f, 0, 300, 390, 520, C.white, 24);
-      txt(f, 24, 330, "積立内容の修正", { size: 16, bold: true, color: C.n800 });
-      txt(f, 24, 372, "毎月の積立金額", { size: 12, med: true, color: C.n700 });
-      txt(f, 250, 366, "¥10,000", { size: 18, bold: true, color: C.p600, right: true, w: 116, mono: true });
-      rect(f, 24, 400, 342, 6, C.w200, 3); rect(f, 24, 400, 150, 6, C.p500, 3);
-      txt(f, 24, 430, "保障期間", { size: 12, med: true, color: C.n700 });
-      txt(f, 250, 424, "15年", { size: 18, bold: true, color: C.p600, right: true, w: 116, mono: true });
-      rect(f, 24, 458, 342, 6, C.w200, 3); rect(f, 24, 458, 200, 6, C.p500, 3);
-      // 給付予想額
-      rect(f, 24, 490, 342, 120, C.w100, 12);
-      txt(f, 38, 504, "給付予想額（試算）", { size: 12, bold: true, color: C.n700 });
-      var er = [["5年", "¥600,000"], ["10年", "¥1,200,000"], ["15年", "¥1,800,000"]];
-      for (var e = 0; e < er.length; e++) {
-        txt(f, 38, 528 + e * 24, er[e][0], { size: 11, color: C.n500, w: 120 });
-        txt(f, 220, 528 + e * 24, er[e][1], { size: 12, bold: true, color: C.n700, right: true, w: 130, mono: true });
-      }
-      button(f, 24, 748, 342, "この内容で更新", "button", false);
+      var fh = f.height;
+      var sh = rect(f, 0, 0, W, fh, C.n900); sh.opacity = 0.42;
+      var top = fh - 560;
+      rect(f, 0, top, W, fh - top, C.white, 24);
+      txt(f, 24, top + 24, "積立内容を修正", { size: 17, bold: true, color: C.n800 });
+      simSliders(f, top + 64);
+      txt(f, 24, top + 198, "給付予想額をみる", { size: 12, med: true, color: C.link });
+      rect(f, 24, top + 222, 342, 150, C.w100, 12);
+      txt(f, 38, top + 234, "給付予想額（試算）", { size: 12, bold: true, color: C.n700 });
+      benefitTable(f, 38, top + 260, 314);
+      Btn(f, 24, fh - 78, 342, "この内容で更新", "button", false);
     }
     return f;
   }
 
   // ============================================================
-  //  [内容確認・お支払い]  opts: acct, agree(=同意展開+全チェック+CTA活性), editBoth
+  //  [内容確認 17-20]   opts: acct, agree, editBoth
   // ============================================================
   function drawStep4(name, opts) {
     var o = opts || {};
-    var f = frame(name, 390, 820, C.w50);
-    var y = appBar(f, 0, {});
+    var f = frame(name, 1700, C.w50);
+    var y = appBar(f, 0, "保険");
     y = steps(f, y, 4);
     y += 12;
-    // 申込内容サマリ
-    rectBorder(f, 16, y, 358, 96, C.white, C.w200, 16, 1);
+    txt(f, 20, y, "お申込み内容", { size: 16, bold: true, color: C.n900 });
+    y += 32;
+    // 積立内容サマリ
+    rectB(f, 16, y, 358, 100, C.white, C.w200, 16, 1);
     var ry = y + 12;
-    ry = dataRow(f, 28, ry, 334, "契約プラン", "安心セット");
-    ry = dataRow(f, 28, ry, 334, "毎月の積立金額", "¥10,000");
-    y += 108;
+    ry = dataRow(f, 28, ry, 334, "契約プラン", "安心セット", true);
+    ry = dataRow(f, 28, ry, 334, "毎月の積立金額", "¥10,000", true);
+    y += 112;
 
-    // 契約者情報 / 保険金受取人 (両編集 = editBoth)
-    var blocks = [["契約者情報", o.editBoth], ["保険金受取人", o.editBoth]];
-    for (var b = 0; b < blocks.length; b++) {
-      var open = blocks[b][1];
-      var bh = open ? 150 : 70;
-      rectBorder(f, 16, y, 358, bh, C.white, open ? C.p100 : C.w200, 16, 1);
-      txt(f, 28, y + 14, blocks[b][0], { size: 12, bold: true, color: C.n900, mono: true });
-      txt(f, 320, y + 13, open ? "保存" : "編集", { size: 12, med: true, color: open ? C.white : C.btn });
-      if (open) {
-        rect(f, 312, y + 9, 50, 24, C.p500, 8);
-        txt(f, 312, y + 14, "保存", { size: 11, med: true, color: C.white, w: 50, center: true });
-        var ey = y + 44;
-        ey = inputField(f, 28, ey, 334, "氏名", "山田 太郎", false);
-        ey = inputField(f, 28, ey, 334, "住所", "契約者と同じ", false);
-      } else {
-        txt(f, 28, y + 40, "山田 太郎 / 東京都千代田区…", { size: 12, color: C.n600, w: 320 });
-      }
-      y += bh + 12;
+    // 契約者情報
+    var k1 = o.editBoth;
+    var ch1 = k1 ? 200 : 96;
+    rectB(f, 16, y, 358, ch1, C.white, k1 ? C.p100 : C.w200, 16, 1);
+    txt(f, 28, y + 14, "契約者情報", { size: 12, bold: true, color: C.n900, mono: true });
+    if (k1) {
+      txt(f, 250, y + 13, "キャンセル", { size: 11, color: C.n500 });
+      rect(f, 312, y + 9, 50, 24, C.p500, 8); txt(f, 312, y + 14, "保存", { size: 11, med: true, color: C.white, w: 50, center: true });
+      var e1 = y + 44;
+      e1 = Field(f, 28, e1, 334, "氏名", "山田 太郎", false);
+      e1 = Field(f, 28, e1, 334, "住所", "東京都千代田区丸の内１丁目 丸の内ビル 10F", false);
+    } else {
+      txt(f, 320, y + 13, "編集", { size: 12, med: true, color: C.btn });
+      dataRow(f, 28, y + 36, 334, "氏名", "山田 太郎");
+      txt(f, 28, y + 70, "住所  東京都千代田区丸の内１丁目 丸の内ビル 10F", { size: 11, color: C.n600, w: 330 });
     }
+    y += ch1 + 12;
 
-    // お支払い詳細 (acct 展開)
-    rectBorder(f, 16, y, 358, o.acct ? 150 : 56, C.white, C.w200, 16, 1);
-    txt(f, 28, y + 18, "お支払い詳細", { size: 13, bold: true, color: C.n800 });
-    txt(f, 340, y + 16, o.acct ? "−" : "＋", { size: 16, color: C.n400 });
+    // 保険金受取人
+    var k2 = o.editBoth;
+    var ch2 = k2 ? 196 : 96;
+    rectB(f, 16, y, 358, ch2, C.white, k2 ? C.p100 : C.w200, 16, 1);
+    txt(f, 28, y + 14, "保険金受取人", { size: 12, bold: true, color: C.n900, mono: true });
+    if (k2) {
+      txt(f, 250, y + 13, "キャンセル", { size: 11, color: C.n500 });
+      rect(f, 312, y + 9, 50, 24, C.p500, 8); txt(f, 312, y + 14, "保存", { size: 11, med: true, color: C.white, w: 50, center: true });
+      var e2 = y + 44;
+      e2 = Field(f, 28, e2, 334, "氏名", "山田 花子", false);
+      e2 = Field(f, 28, e2, 334, "住所", "契約者と同じ", false);
+    } else {
+      txt(f, 320, y + 13, "編集", { size: 12, med: true, color: C.btn });
+      dataRow(f, 28, y + 36, 334, "氏名", "山田 花子");
+      dataRow(f, 28, y + 70, 334, "続柄", "配偶者");
+    }
+    y += ch2 + 12;
+
+    // 団体特定コード
+    rectB(f, 16, y, 358, 56, C.white, C.w200, 16, 1);
+    dataRow(f, 28, y + 10, 334, "団体特定コード", "—");
+    y += 68;
+
+    // 保険料のお支払いについて (acct 展開)
+    var ah = o.acct ? 200 : 96;
+    rectB(f, 16, y, 358, ah, C.white, C.w200, 16, 1);
+    txt(f, 28, y + 14, "保険料のお支払いについて", { size: 13, bold: true, color: C.n800 });
+    txt(f, 28, y + 36, "クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。", { size: 11, color: C.n500, w: 320, lh: 16 });
+    chevron(f, 344, y + 14, o.acct ? "up" : "down", C.n400, 16);
     if (o.acct) {
-      var ay = y + 48;
-      ay = dataRow(f, 28, ay, 334, "初回お支払い", "2026/07/01");
+      divider(f, 28, y + 76, 334, C.w200);
+      var ay = y + 84;
       ay = dataRow(f, 28, ay, 334, "お支払い方法", "クレジットカード");
+      ay = dataRow(f, 28, ay, 334, "初回お支払い", "2026 / 07 / 01");
+      ay = dataRow(f, 28, ay, 334, "お支払い金額", "¥1,290 / 月");
     }
-    y += (o.acct ? 150 : 56) + 12;
+    y += ah + 12;
 
-    // 重要事項 同意 (agree=①展開)
-    rectBorder(f, 16, y, 358, o.agree ? 150 : 56, C.white, o.agree ? C.p100 : C.w200, 14, 1);
-    checkbox(f, 28, y + 18, !!o.agree);
-    txt(f, 58, y + 18, "① 申込に関する注意事項の確認", { size: 12, med: true, color: C.n800, w: 280 });
-    txt(f, 348, y + 16, o.agree ? "−" : "＋", { size: 16, color: C.n400 });
-    if (o.agree) txt(f, 58, y + 48, "申込内容・告知事項に相違ないことを確認します。…（本文）", { size: 11, color: C.n500, w: 300, lh: 18 });
+    // 重要事項アコーディオン (8項目, agree 時に①展開)
+    txt(f, 20, y, "重要事項をご確認ください", { size: 13, bold: true, color: C.n800 });
+    Badge(f, 220, y - 2, "重要");
+    y += 26;
+    var items = [
+      "① 申込に関する注意事項の確認",
+      "② 個人情報のお取り扱いについて",
+      "③ ペーパーレス申込の同意",
+      "④ 契約概要のご確認",
+      "⑤ 注意喚起情報のご確認",
+      "⑥ クレジットカードのお支払いについて",
+      "⑦ 契約のしおり・約款",
+      "⑧ 被保険者の告知・確認",
+    ];
+    for (var i = 0; i < items.length; i++) {
+      var open = (o.agree && i === 0);
+      var checked = !!o.agree;
+      y = accordionRow(f, 16, y, 358, items[i], open, true, checked);
+    }
+    // ⑥ クレジットカード支払規定の補足 (常時)
+    rectB(f, 16, y, 358, 110, C.white, C.w200, 12, 1);
+    txt(f, 28, y + 12, "クレジットカードのお支払いについて", { size: 12, bold: true, color: C.n800 });
+    txt(f, 28, y + 34, "カード名義人は被保険者さま本人名義に限ります。以下のマークのあるクレジットカードをご指定いただけます。", { size: 11, color: C.n500, w: 320, lh: 16 });
+    var brands = ["VISA", "Master", "JCB", "AMEX"];
+    for (var b = 0; b < brands.length; b++) { rectB(f, 28 + b * 70, y + 74, 60, 24, C.white, C.w300, 5, 1); txt(f, 28 + b * 70, y + 79, brands[b], { size: 9, med: true, color: C.n600, w: 60, center: true, mono: true }); }
+    y += 122;
+    // 被保険者確認
+    rectB(f, 16, y, 358, 70, C.white, C.w200, 12, 1);
+    checkRow(f, 28, y + 14, 334, "日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる", !!o.agree);
+    y += 82;
 
     // フッター
-    actionBar(f, 820 - 96, 96);
+    var fh2;
     if (o.agree) {
-      checkbox(f, 20, 820 - 84, true);
-      txt(f, 50, 820 - 84, "すべての項目を確認・同意しました", { size: 12, color: C.n700, w: 320 });
-      button(f, 20, 820 - 56, 350, "クレジットカード登録開始", "danger", false);
+      var ab = actionBar(f, y + 8, 116);
+      checkRow(f, 20, y + 24, 350, "①④⑤⑥⑦⑧について確認、②③について同意する", true);
+      txt(f, 20, y + 56, "← 戻る", { size: 12, med: true, color: C.link });
+      Btn(f, 20, y + 50, 350, "クレジットカード登録開始", "danger", false);
+      fh2 = ab;
     } else {
-      button(f, 20, 820 - 56, 350, "クレジットカード登録開始", "danger", true);
-      txt(f, 0, 820 - 92, "すべての重要事項に同意すると進めます", { size: 11, color: C.n400, w: 390, center: true });
+      var ab0 = actionBar(f, y + 8, 116);
+      checkRow(f, 20, y + 24, 350, "①④⑤⑥⑦⑧について確認、②③について同意する", false);
+      Btn(f, 20, y + 50, 350, "クレジットカード登録開始", "danger", true);
+      txt(f, 0, y + 110, "上記に確認・同意すると進めます", { size: 11, color: C.n400, w: W, center: true });
+      fh2 = ab0;
     }
-    return f;
+    return endFrame(f, fh2);
   }
 
   // ============================================================
-  //  [カード承認 (外部GMO)]
+  //  [カード承認 外部GMO 21-22]
   // ============================================================
   function drawCardInput() {
-    var f = frame("カード入力（外部GMO）", 390, 820, C.ex100);
-    var y = appBar(f, 0, { gray: true });
-    rect(f, 0, y, 390, 44, C.ex50);
-    txt(f, 16, y + 14, "🔒 安全な通信で保護されています", { size: 11, color: C.n500, w: 360 });
+    var f = frame("21 カード入力（外部GMO）", 900, C.ex100);
+    var y = extBar(f, 0, "payment.gmo-pg.com");
+    rect(f, 0, y, W, 44, C.ex50);
+    txt(f, 16, y + 14, "クレジットカード設定（外部リンク）", { size: 12, bold: true, color: C.n700, w: 360 });
     y += 60;
-    txt(f, 20, y, "クレジットカード情報の入力", { size: 16, bold: true, color: C.n800 });
-    y += 36;
-    rect(f, 16, y, 358, 60, C.white, 12);
-    txt(f, 28, y + 14, "お支払い金額（月額）", { size: 12, color: C.n500 });
-    txt(f, 250, y + 16, "¥1,290", { size: 16, bold: true, color: C.n800, right: true, w: 110, mono: true });
-    y += 76;
-    var fields = [["カード番号", "1234 5678 9012 3456"], ["有効期限", "MM / YY"], ["セキュリティコード", "***"], ["カード名義", "TARO YAMADA"]];
-    for (var i = 0; i < fields.length; i++) y = inputField(f, 20, y, 350, fields[i][0], fields[i][1], false);
-    actionBar(f, 820 - 72, 72);
-    button(f, 20, 820 - 62, 350, "確認画面へ進む", "button", false);
-    return f;
+    txt(f, 20, y, "クレジットカード情報を入力ください", { size: 15, bold: true, color: C.n800 });
+    y += 34;
+    rect(f, 16, y, 358, 56, C.white, 12);
+    txt(f, 28, y + 12, "お支払い金額（月額）", { size: 12, color: C.n500 });
+    txt(f, 250, y + 14, "¥1,290", { size: 16, bold: true, color: C.n800, right: true, w: 110, mono: true });
+    y += 72;
+    y = Field(f, 20, y, 350, "カード番号", "1234 5678 9012 3456", true);
+    y = Field(f, 20, y, 165, "有効期限", "MM / YY", true);
+    Field(f, 205, y - 74, 165, "セキュリティコード", "***", true);
+    y = Field(f, 20, y, 350, "カード名義", "TARO YAMADA", true);
+    txt(f, 20, y, "使用できるクレジットカード", { size: 11, med: true, color: C.n600 });
+    var brands = ["VISA", "Master", "JCB", "AMEX", "Diners"];
+    for (var b = 0; b < brands.length; b++) { rectB(f, 20 + b * 70, y + 20, 60, 26, C.white, C.w300, 5, 1); txt(f, 20 + b * 70, y + 26, brands[b], { size: 9, med: true, color: C.n600, w: 60, center: true, mono: true }); }
+    y += 64;
+    var ab = actionBar(f, y + 8, 92);
+    Btn(f, 20, y + 18, 350, "確認画面へ進む", "button", false);
+    txt(f, 0, y + 78, "キャンセルして戻る", { size: 12, color: C.link, w: W, center: true });
+    return endFrame(f, ab);
   }
   function drawCardConfirm() {
-    var f = frame("カード確認（外部GMO）", 390, 820, C.ex100);
-    var y = appBar(f, 0, { gray: true });
-    y += 24;
-    txt(f, 20, y, "入力内容の確認", { size: 16, bold: true, color: C.n800 });
-    y += 40;
-    rect(f, 16, y, 358, 200, C.white, 12);
-    var ry = y + 16;
+    var f = frame("22 カード確認（外部GMO）", 900, C.ex100);
+    var y = extBar(f, 0, "payment.gmo-pg.com");
+    rect(f, 0, y, W, 44, C.ex50);
+    txt(f, 16, y + 14, "お申込み内容の確認（外部リンク）", { size: 12, bold: true, color: C.n700, w: 360 });
+    y += 60;
+    txt(f, 20, y, "ご登録内容", { size: 15, bold: true, color: C.n800 });
+    y += 34;
+    rect(f, 16, y, 358, 188, C.white, 12);
+    var ry = y + 14;
     ry = dataRow(f, 28, ry, 334, "カード番号", "**** **** **** 3456");
     ry = dataRow(f, 28, ry, 334, "有効期限", "12 / 28");
     ry = dataRow(f, 28, ry, 334, "カード名義", "TARO YAMADA");
-    ry = dataRow(f, 28, ry, 334, "お支払い金額", "¥1,290 / 月");
-    y += 220;
-    txt(f, 20, y, "上記内容で登録します。よろしければ確定してください。", { size: 12, color: C.n600, w: 350, lh: 20 });
-    actionBar(f, 820 - 72, 72);
-    button(f, 20, 820 - 62, 350, "この内容で申込", "danger", false);
-    return f;
+    ry = dataRow(f, 28, ry, 334, "お支払い金額", "¥1,290 / 月", true);
+    y += 204;
+    txt(f, 20, y, "上記の内容で申込します。「この内容で申込」を押すと、お申込みが確定し、初回のお支払い手続きが行われます。", { size: 12, color: C.n600, w: 350, lh: 20 });
+    y += 64;
+    var ab = actionBar(f, y + 8, 92);
+    Btn(f, 20, y + 18, 350, "この内容で申込", "danger", false);
+    txt(f, 0, y + 78, "入力内容を修正する", { size: 12, color: C.link, w: W, center: true });
+    return endFrame(f, ab);
   }
 
   // ============================================================
-  //  [完了]
+  //  [完了 23]
   // ============================================================
   function drawDone() {
-    var f = frame("完了", 390, 820, C.w50);
-    rect(f, 0, 0, 390, 300, C.p500);
-    var ov = rect(f, 0, 0, 390, 300, C.w50); ov.opacity = 0.08;
+    var f = frame("23 完了", 900, C.w50);
+    rect(f, 0, 0, W, 300, C.p500);
+    var ov = rect(f, 0, 0, W, 300, C.w50); ov.opacity = 0.08;
     statusBar(f, 0, false);
-    txt(f, 0, 70, "THEO  つみたて安心ほけん", { size: 13, bold: true, color: C.white, w: 390, center: true });
+    txt(f, 0, 70, "THEO  つみたて安心ほけん", { size: 13, bold: true, color: C.white, w: W, center: true });
     rect(f, 163, 104, 64, 64, C.white, 32);
     rect(f, 177, 127, 10, 20, C.p500, 2);
     rect(f, 187, 137, 22, 10, C.p500, 2);
-    txt(f, 0, 178, "お申込が完了しました", { size: 22, bold: true, color: C.n800, w: 390, center: true });
-    txt(f, 0, 208, "受付番号  THEO-2026-000482", { size: 12, color: C.n500, w: 390, center: true });
+    txt(f, 0, 178, "お申込が完了しました", { size: 22, bold: true, color: C.n800, w: W, center: true });
+    txt(f, 0, 208, "受付番号　THEO-2026-000482", { size: 12, color: C.n500, w: W, center: true });
     steps(f, 300, 5);
-    var sy = 356;
+    var sy = 360;
     txt(f, 20, sy, "THEO つみたて安心ほけんのお申込が完了しました。", { size: 14, bold: true, color: C.n800, w: 350 });
     sy += 32;
     txt(f, 20, sy, "受付確認メールをご確認ください。査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。", { size: 12, color: C.n600, w: 350, lh: 20 });
-    sy += 56;
-    rectBorder(f, 16, sy, 358, 184, C.white, C.w200, 16, 1);
+    sy += 60;
+    rectB(f, 16, sy, 358, 196, C.white, C.w200, 16, 1);
     txt(f, 28, sy + 14, "このあとの流れ", { size: 10, color: C.n400, mono: true });
     var flows = [
       ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
       ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
       ["3", "初回保険料の引落し・保険開始", "翌月以降、THEOのご登録口座より。"],
     ];
-    var fy = sy + 40;
+    var fy = sy + 42;
     for (var i = 0; i < flows.length; i++) {
       rect(f, 28, fy, 28, 28, C.p10, 14);
       txt(f, 28, fy + 6, flows[i][0], { size: 12, bold: true, color: C.p500, w: 28, center: true, mono: true });
-      txt(f, 66, fy + 4, flows[i][1], { size: 13, bold: true, color: C.n800, w: 280 });
-      txt(f, 66, fy + 20, flows[i][2], { size: 11, color: C.n500, w: 280 });
-      fy += 48;
+      txt(f, 66, fy + 4, flows[i][1], { size: 13, bold: true, color: C.n800, w: 290 });
+      txt(f, 66, fy + 22, flows[i][2], { size: 11, color: C.n500, w: 290 });
+      fy += 50;
     }
-    actionBar(f, 820 - 72, 72);
-    button(f, 20, 820 - 62, 350, "マイページに戻る", "button", false);
-    return f;
+    sy += 208;
+    txt(f, 20, sy, "保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。", { size: 11, color: C.n500, w: 350, lh: 16 });
+    sy += 44;
+    var ab = actionBar(f, sy + 8, 76);
+    Btn(f, 20, sy + 18, 350, "マイページに戻る", "button", false);
+    return endFrame(f, ab);
   }
 
   // ============================================================
-  //  生成 + 行レイアウト (カテゴリ別)
+  //  生成 + カテゴリ別 行レイアウト
   // ============================================================
   var S = {
     ovA:        drawOverviewA(),
-    comb:       drawCombined("商品概要 / パターンB（統合）", false, false),
-    combCta:    drawCombined("商品概要 / パターンB 下部CTA（未同意）", true, false),
-    combAgreed: drawCombined("商品概要 / パターンB 同意済・CTA活性", true, true),
+    comb:       drawCombined("02 商品概要 / パターンB（統合）", "base"),
+    combCta:    drawCombined("03 商品概要 / パターンB 下部CTA（未同意）", "cta"),
+    combAgreed: drawCombined("04 商品概要 / パターンB 同意済・CTA活性", "agreed"),
 
-    plan:       planBase("プラン選択 / デフォルト", {}),
-    planNotice: planBase("プラン選択 / 重要事項シート", { notice: true }),
-    planSim:    planBase("プラン選択 / 給付予想額展開", { sim: true }),
-    planCta:    planBase("プラン選択 / 下部CTA（未同意）", { cta: true }),
-    planAgreed: planBase("プラン選択 / 同意済・CTA活性", { agreed: true }),
-    planVerif:  planBase("プラン選択 / メール認証済・申込へ", { verified: true }),
+    plan:       planBase("05 プラン選択 / デフォルト", {}),
+    planNotice: planBase("06 プラン選択 / 重要事項シート", { notice: true }),
+    planSim:    planBase("07 プラン選択 / 給付予想額展開", { sim: true }),
+    planCta:    planBase("08 プラン選択 / 下部CTA（未同意）", { cta: true }),
+    planAgreed: planBase("09 プラン選択 / 同意済・CTA活性", { agreed: true }),
+    planVerif:  planBase("10 プラン選択 / メール認証済・申込へ", { verified: true }),
 
-    pin:        drawPin("PIN認証 / デフォルト", false),
-    pinFilled:  drawPin("PIN認証 / 666666入力済・活性", true),
+    pin:        drawPin("11 PIN認証 / デフォルト", false),
+    pinFilled:  drawPin("12 PIN認証 / 666666入力済・活性", true),
 
-    form:       drawForm("申込フォーム / 1ページ", "single"),
-    formP1:     drawForm("申込フォーム / 2分割(契約者)", "p1"),
-    formP2:     drawForm("申込フォーム / 2分割(受取人)", "p2"),
-    formEdit:   drawForm("申込フォーム / 積立修正シート", "edit"),
+    form:       drawForm("13 申込フォーム / 1ページ", "single"),
+    formP1:     drawForm("14 申込フォーム / 2分割(契約者)", "p1"),
+    formP2:     drawForm("15 申込フォーム / 2分割(受取人)", "p2"),
+    formEdit:   drawForm("16 申込フォーム / 積立修正シート", "edit"),
 
-    step4:      drawStep4("内容確認 / デフォルト", {}),
-    step4Acct:  drawStep4("内容確認 / 支払詳細展開", { acct: true }),
-    step4Agree: drawStep4("内容確認 / 同意全チェック・CTA活性", { agree: true }),
-    step4Edit:  drawStep4("内容確認 / 契約者+受取人 両編集", { editBoth: true }),
+    step4:      drawStep4("17 内容確認 / デフォルト", {}),
+    step4Acct:  drawStep4("18 内容確認 / 支払詳細展開", { acct: true }),
+    step4Agree: drawStep4("19 内容確認 / 同意全チェック・CTA活性", { agree: true }),
+    step4Edit:  drawStep4("20 内容確認 / 契約者+受取人 両編集", { editBoth: true }),
 
     card:       drawCardInput(),
     cardConf:   drawCardConfirm(),
@@ -648,18 +894,20 @@
     [S.card, S.cardConf],
     [S.done],
   ];
-  var gapX = 56, gapY = 120, rowY = 0, all = [];
+  var gapX = 64, gapY = 140, rowY = 0, all = [];
   for (var r = 0; r < rows.length; r++) {
+    var maxH = 0, x = 0;
     for (var i = 0; i < rows[r].length; i++) {
-      rows[r][i].x = i * (390 + gapX);
+      rows[r][i].x = x;
       rows[r][i].y = rowY;
+      x += W + gapX;
+      if (rows[r][i].height > maxH) maxH = rows[r][i].height;
       all.push(rows[r][i]);
     }
-    rowY += 820 + gapY;
+    rowY += maxH + gapY;
   }
 
   // Smart Animate 遷移 (ハッピーパス)
-  // 商品概要 → プラン選択 → 同意済CTA → PIN → 666666 → 申込フォーム → 内容確認 → 全チェックCTA → カード入力 → カード確認 → 完了 → 商品概要
   var flow = [
     [S.ovA, S.plan], [S.plan, S.planAgreed], [S.planAgreed, S.pin], [S.pin, S.pinFilled],
     [S.pinFilled, S.form], [S.form, S.step4], [S.step4, S.step4Agree], [S.step4Agree, S.card],
@@ -668,7 +916,7 @@
   for (var fi = 0; fi < flow.length; fi++) linkFrames(flow[fi][0], flow[fi][1].id);
 
   figma.viewport.scrollAndZoomIntoView(all);
-  figma.closePlugin("✅ THEO " + all.length + "画面を生成しました（全カテゴリ・全バリアント＋遷移）");
+  figma.closePlugin("✅ THEO " + all.length + "画面を完全生成しました（全カテゴリ・全バリアント＋遷移）");
 
   } catch (err) {
     figma.closePlugin("❌ エラー: " + String(err && err.message ? err.message : err));

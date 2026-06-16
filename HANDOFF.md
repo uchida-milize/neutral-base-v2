@@ -1467,3 +1467,17 @@ windows の各カードは原則 **`height` 指定なし＝全展開**（コン�
 
 - 検証: `tsc --noEmit` エラー0 / `eslint` クリーン。
 
+### 14.12 Figma インポータープラグイン (`my-app/`) の整備・再生成 (2026-06-16)
+
+Figma に画面をコピーする手描き型インポータープラグインを `my-app/` に整備した。
+
+- `my-app/code.js` — Figma Plugin API で画面フレームを生成するスクリプト。
+- `my-app/manifest.json` — プラグイン定義（`main: code.js` / `editorType: figma` / api 1.0.0）。Figma → Plugins → Development → **Import plugin from manifest…** で `my-app/manifest.json` を選んで実行。
+- 構成: フォントロード → カラーマップ `C`(theo-tdf tokens) → ヘルパー(frame/rect/txt/appBar/steps/button/checkbox/inputField/dataRow/lockIcon/linkFrames) → 画面ビルダー → 行レイアウト → Smart Animate 遷移 → `figma.closePlugin`。
+- **現行 `/theo-tdf/windows` の全カテゴリ・全バリアント=23フレーム**を生成（商品概要A/パターンB±CTA、プラン選択6状態、PIN2状態、申込フォーム4状態[1ページ/契約者/受取人/積立修正シート]、内容確認4状態[支払詳細/同意全チェック/両編集]、カード入力・確認、完了）。カテゴリ別の行レイアウトで配置。
+- ハッピーパスのプロトタイプ遷移付き（商品概要→プラン選択→同意済CTA→PIN→入力済→申込フォーム→内容確認→全チェックCTA→カード入力→確認→完了→ループ）。
+- 再生成スクリプトは `scripts/port-claude-design-1.4.py` とは別系統（こちらは Figma 用の手描き表現）。**視覚は簡易ワイヤーフレーム水準**（§12.7 のとおり、ピクセル忠実が要るなら html.to.design で Vercel の `/theo-tdf/windows` を取り込むのが本筋。この code.js は編集可能レイヤー＋遷移付きの素材用途）。
+- 検証: `node --check code.js` 構文OK（Figma ランタイムでの実行は手元で要確認）。
+- 注意: 旧 `UIUX_Importer` プラグインは削除済み。`manifest.json` は repo の `my-app/` に置いた（プラグインフォルダ側）。`figma_Importer_2` を使う場合は両ファイルをコピーする。
+
+> **2026-06-16 完全版に再生成**: 23画面すべてを省略なしで具体描画する完全版に置き換え（約920行）。お客様の絶対死守ルールに準拠 — (1) プレースホルダ/省略コメント無し・全画面全コンポーネント描画、(2) **スプレッド演算子(`...`)不使用**（Figma クラッシュ回避）、(3) **Figma ノードへのカスタムプロパティ付与なし**（`Object is not extensible` 回避。プロト遷移は正規の `node.reactions` のみ）、(4) 各画面はコンテンツ全体を表示する**可変高さフレーム**（クリップ無し）、(5) Btn/Badge/Field/LockedField/Select/GroupCard/checkbox/accordion/planCard/simSlider/benefitTable/extBar を実装。CTA ラベルは実 `screens.tsx` と一致（クレジットカード登録開始 / この内容で申込 / 確認画面へ進む 等）。検証: `node --check` OK、`...`0件・省略コメント0件・`.__`カスタムプロパティ0件。
