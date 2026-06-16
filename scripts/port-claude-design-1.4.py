@@ -53,6 +53,35 @@ def transform(t):
 body = transform(body)
 screen_combined = transform(screen_combined)
 
+# ---- windows (Screens ページ) 用 initial props 注入 ----
+# 静的バリアント表示のため、kumikomi に無い initial 系 props を追加して
+# useState の初期値に流し込む。destructure は inject_type 前に増やしておく。
+body = body.replace(
+    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified })",
+    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, emailVerified })")
+body = body.replace(
+    "function ScreenPin({ go, onVerified, backScr = 1 })",
+    "function ScreenPin({ go, onVerified, backScr = 1, initialPin })")
+body = body.replace(
+    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen })",
+    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin })")
+screen_combined = screen_combined.replace(
+    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified })",
+    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, initialAgree, initialShowSend })")
+# useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
+body = body.replace("const [showSend, setShowSend] = useState(false);",
+                    "const [showSend, setShowSend] = useState(initialShowSend ?? false);")
+body = body.replace('const [pin, setPin] = useState("");',
+                    'const [pin, setPin] = useState(initialPin ?? "");')
+body = body.replace("const [editKiyaku, setEditKiyaku] = useState(false);",
+                    "const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);")
+body = body.replace("const [editJuushin, setEditJuushin] = useState(false);",
+                    "const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);")
+screen_combined = screen_combined.replace("const [showSend, setShowSend] = useState(false);",
+                    "const [showSend, setShowSend] = useState(initialShowSend ?? false);")
+screen_combined = screen_combined.replace("const [agree, setAgree] = useState(false);",
+                    "const [agree, setAgree] = useState(initialAgree ?? false);")
+
 # ---- ATOM shadcn-wrapper replacements (proven template c495e75, text-h6) ----
 ATOMS = {}
 ATOMS["Badge"] = '''function Badge({ children, tone = "secondary" }: { children: React.ReactNode; tone?: "secondary" | "primary" | "warm" }) {
@@ -186,8 +215,8 @@ TYPE = {
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; emailVerified?: boolean }",
-  "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; emailVerified?: boolean }",
+  "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
   "SimSliders": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }",
@@ -196,13 +225,13 @@ TYPE = {
   "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
-  "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean }",
+  "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }",
   "ExtBar": "{ url: string }",
   "ScreenCardInput": "{ go: Go }",
   "ScreenCardConfirm": "{ go: Go }",
   "ScreenDone": "{ go: Go }",
   "ScreenIntro": "{ go: Go }",
-  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean }",
+  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; initialAgree?: boolean; initialShowSend?: boolean }",
 }
 
 def inject_type(t, name, typ):

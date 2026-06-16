@@ -121,6 +121,30 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          key: "combined-cta",
+          label: "パターンB / ページ下部CTA（デザイン状態・未同意）",
+          height: 820,
+          el: (
+            <ScreenCombined
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialShowSend
+            />
+          ),
+        },
+        {
+          key: "combined-agreed",
+          label: "パターンB / 同意チェック済・CTA活性",
+          height: 820,
+          el: (
+            <ScreenCombined
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialShowSend initialAgree
+            />
+          ),
+        },
       ],
     },
 
@@ -164,13 +188,38 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          key: "st-step2-verified",
-          label: "メール認証済み（送信案内表示）",
+          key: "st-step2-cta",
+          label: "ページ下部CTA（未同意・送信ボタン非活性）",
+          height: 820,
           el: (
             <ScreenStep2
               go={noop} sel="c" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
-              emailVerified
+              initialShowSend
+            />
+          ),
+        },
+        {
+          key: "st-step2-agreed",
+          label: "同意チェック済・CTA活性",
+          height: 820,
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialShowSend initialAgree
+            />
+          ),
+        },
+        {
+          key: "st-step2-verified",
+          label: "メール認証済み・申込フォームへ進む",
+          height: 820,
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialShowSend initialAgree emailVerified
             />
           ),
         },
@@ -185,8 +234,14 @@ export default function TheoTdfWindowsPage() {
       screens: [
         {
           key: "pin",
-          label: "デフォルト",
+          label: "デフォルト（未入力・認証ボタン非活性）",
           el: <ScreenPin go={noop} />,
+        },
+        {
+          key: "pin-filled",
+          label: "「666666」入力済・認証ボタン活性",
+          height: 820,
+          el: <ScreenPin go={noop} initialPin="666666" />,
         },
       ],
     },
@@ -257,6 +312,16 @@ export default function TheoTdfWindowsPage() {
               go={noop} sel="c" m={10000} y={15}
               initialOpenIdx={0}
               initialChecks={[true, true, true, true, true]}
+            />
+          ),
+        },
+        {
+          key: "st-edit-both",
+          label: "契約者情報＋保険金受取人 両方編集展開",
+          el: (
+            <ScreenStep4
+              go={noop} sel="c" m={10000} y={15}
+              initialEditKiyaku initialEditJuushin
             />
           ),
         },

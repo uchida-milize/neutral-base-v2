@@ -768,7 +768,7 @@ export function ScreenOverview({ go }: { go: Go }) {
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; emailVerified?: boolean }) {
+export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, emailVerified }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; emailVerified?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -776,7 +776,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
   const [gender, setGender] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const sendSecRef = useRef<any>(null);
-  const [showSend, setShowSend] = useState(false);
+  const [showSend, setShowSend] = useState(initialShowSend ?? false);
   const bindScroll = (el: any) => {
     if (!el || el.__bound) return;
     el.__bound = true;
@@ -971,8 +971,8 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
 /* ============================================================
    SCREEN — PINコード認証（メールのURLから遷移して入力）
    ============================================================ */
-export function ScreenPin({ go, onVerified, backScr = 1 }: { go: Go; onVerified?: () => void; backScr?: number }) {
-  const [pin, setPin] = useState("");
+export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }) {
+  const [pin, setPin] = useState(initialPin ?? "");
   return (
     <>
       <AppBar title="保険" onBack={() => go(backScr)} />
@@ -1550,7 +1550,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean }) {
+export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
@@ -1558,8 +1558,8 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
   const [nat, setNat] = useState("jp");
   const [jpLang, setJpLang] = useState("");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
-  const [editKiyaku, setEditKiyaku] = useState(false);
-  const [editJuushin, setEditJuushin] = useState(false);
+  const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
+  const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
   return (
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
@@ -1978,15 +1978,15 @@ export function ScreenDone({ go }: { go: Go }) {
 // app.jsx references it, and relying on cross-<script> const sharing is fragile
 // (a single missing binding throws and blanks the entire UI).
 
-export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean }) {
+export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, initialAgree, initialShowSend }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; initialAgree?: boolean; initialShowSend?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
-  const [agree, setAgree] = useState(false);
+  const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(false);
   const [birth, setBirth] = useState("");
   const [gender, setGender] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const sendSecRef = useRef<any>(null);
-  const [showSend, setShowSend] = useState(false);
+  const [showSend, setShowSend] = useState(initialShowSend ?? false);
   const heroBgRef = useRef<any>(null);
   const [solid, setSolid] = useState(false);
   const bindScroll = (el: any) => {

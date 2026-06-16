@@ -1442,3 +1442,20 @@ mv neutral-base-v2 neutral-base
 
 git remote はフォルダ名に依存しないため、改名後もそのまま push 可能（remote は `github.com/uchida-milize/neutral-base`）。
 
+> ⚠️ **gotcha #31 — git は必ず `…/Upload/neutral-base` の中で打つ**: 改名後にひとつ上の `Upload` で git を実行すると、`Upload` に `.git` が無いため親をたどって**ホーム (`~`) の迷子 git リポジトリ**を拾う（ホームが誤って `git init` されていた）。`git rev-parse --show-toplevel` が `…/neutral-base` を返すか最初に確認する。迷子リポジトリは `rm -rf ~/.git` で除去可（コミット0・リモート無しなら無害）。
+
+### 14.11 スクリーンページ (`/theo-tdf/windows`) の状態バリアント拡充 (2026-06-16)
+
+「スクリーンページはページ挙動の確認ではなく、各パターンを表現するカテゴリ」というお客様方針に合わせ、静的に開いた状態を再現できるよう各画面に `initial*` props を追加し、windows に5バリアントを追加した。
+
+| 追加 props | 対象 | windows バリアント |
+|---|---|---|
+| `initialShowSend` | `ScreenStep2` / `ScreenCombined` | パターンB ページ下部CTA、プラン選択 ページ下部CTA |
+| `initialAgree` | `ScreenCombined` (ScreenStep2 は既存) | 同意チェック済・CTA活性（パターンB / プラン選択） |
+| `initialPin` | `ScreenPin` | 「666666」入力済・認証ボタン活性 |
+| `initialEditKiyaku` / `initialEditJuushin` | `ScreenStep4` | 契約者情報＋保険金受取人 両方編集展開 |
+
+- これらは **`scripts/port-claude-design-1.4.py` にも反映済み**（「windows 用 initial props 注入」ブロック + TYPE 辞書）。再取り込み時も自動で付与され、スクリプト再生成結果は現行 `screens.tsx` とバイト一致を確認済み。
+- CTA は `showSend`（スクロール下端到達）が true でないと描画されないため、CTA 状態の表示には `initialShowSend` が必須。`disabled={!agree}` なので活性表示には `initialAgree` も併用する。
+- 検証: `tsc --noEmit` エラー0 / `eslint` クリーン。
+
