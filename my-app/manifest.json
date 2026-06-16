@@ -1,0 +1,11 @@
+{
+  "name": "THEO UIUX Importer",
+  "id": "theo-uiux-importer",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
