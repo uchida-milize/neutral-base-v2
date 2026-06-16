@@ -123,8 +123,7 @@ export default function TheoTdfWindowsPage() {
         },
         {
           key: "combined-cta",
-          label: "パターンB / ページ下部CTA（デザイン状態・未同意）",
-          height: 820,
+          label: "パターンB / ページ下部CTA（未同意）",
           el: (
             <ScreenCombined
               go={noop} sel="c" setSel={noop}
@@ -136,7 +135,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "combined-agreed",
           label: "パターンB / 同意チェック済・CTA活性",
-          height: 820,
           el: (
             <ScreenCombined
               go={noop} sel="c" setSel={noop}
@@ -190,7 +188,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-cta",
           label: "ページ下部CTA（未同意・送信ボタン非活性）",
-          height: 820,
           el: (
             <ScreenStep2
               go={noop} sel="c" setSel={noop}
@@ -202,7 +199,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-agreed",
           label: "同意チェック済・CTA活性",
-          height: 820,
           el: (
             <ScreenStep2
               go={noop} sel="c" setSel={noop}
@@ -214,7 +210,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-verified",
           label: "メール認証済み・申込フォームへ進む",
-          height: 820,
           el: (
             <ScreenStep2
               go={noop} sel="c" setSel={noop}
@@ -240,7 +235,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "pin-filled",
           label: "「666666」入力済・認証ボタン活性",
-          height: 820,
           el: <ScreenPin go={noop} initialPin="666666" />,
         },
       ],
@@ -270,6 +264,17 @@ export default function TheoTdfWindowsPage() {
               go={noop} sel="c"
               m={10000} setM={noop} y={15} setY={noop}
               formSplit
+            />
+          ),
+        },
+        {
+          key: "form-split-2",
+          label: "2ページ分割（保険金受取人ページ）",
+          el: (
+            <ScreenForm
+              go={noop} sel="c"
+              m={10000} setM={noop} y={15} setY={noop}
+              formSplit initialFormPage={2}
             />
           ),
         },

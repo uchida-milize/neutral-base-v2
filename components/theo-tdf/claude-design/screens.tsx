@@ -1178,7 +1178,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean }) {
+export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
@@ -1197,7 +1197,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
 
   // ページ下部到達で CTA ブロックを薄ブルーに
   const [atBottom, setAtBottom] = useState(false);
-  const [formPage, setFormPage] = useState(1);
+  const [formPage, setFormPage] = useState(initialFormPage ?? 1);
   const bindScroll = (el: any) => {
     if (!el || el.__bound) return;
     el.__bound = true;

@@ -1454,8 +1454,16 @@ git remote はフォルダ名に依存しないため、改名後もそのまま
 | `initialAgree` | `ScreenCombined` (ScreenStep2 は既存) | 同意チェック済・CTA活性（パターンB / プラン選択） |
 | `initialPin` | `ScreenPin` | 「666666」入力済・認証ボタン活性 |
 | `initialEditKiyaku` / `initialEditJuushin` | `ScreenStep4` | 契約者情報＋保険金受取人 両方編集展開 |
+| `initialFormPage` | `ScreenForm` | 2ページ分割の **受取人ページ**（`initialFormPage={2}`） |
 
 - これらは **`scripts/port-claude-design-1.4.py` にも反映済み**（「windows 用 initial props 注入」ブロック + TYPE 辞書）。再取り込み時も自動で付与され、スクリプト再生成結果は現行 `screens.tsx` とバイト一致を確認済み。
 - CTA は `showSend`（スクロール下端到達）が true でないと描画されないため、CTA 状態の表示には `initialShowSend` が必須。`disabled={!agree}` なので活性表示には `initialAgree` も併用する。
+- `ScreenForm` の `formPage` は `ScreenOverview` にも同名 state があるため、port スクリプトでは ScreenForm 固有のコメント文脈で限定置換している（ScreenOverview 側は `useState(1)` のまま）。
+
+#### スクリーンページの表示方針（重要）
+
+windows の各カードは原則 **`height` 指定なし＝全展開**（コンテンツ全体を上から下まで表示）で並べる。CTA / 同意チェック等の状態は「枠に収めてスクロール位置で見せる」のではなく、全展開した上で ON/OFF を表現する（お客様方針）。
+- `height: 820`（スマホ枠固定）を使うのは **ボトムシート等の absolute 配置オーバーレイのみ**（`st-notice` 重要事項シート、`st-edit` 積立修正シート）。それ以外（CTA 表示・同意済・PIN 入力済など）は height を付けない。
+
 - 検証: `tsc --noEmit` エラー0 / `eslint` クリーン。
 

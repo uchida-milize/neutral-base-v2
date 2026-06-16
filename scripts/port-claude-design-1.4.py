@@ -65,10 +65,17 @@ body = body.replace(
 body = body.replace(
     "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen })",
     "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin })")
+body = body.replace(
+    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false })",
+    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 })")
 screen_combined = screen_combined.replace(
     "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified })",
     "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, initialAgree, initialShowSend })")
 # useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
+# formPage は ScreenOverview と ScreenForm の両方に存在するため、ScreenForm 固有のコメント文脈で限定置換する。
+body = body.replace(
+    "// ページ下部到達で CTA ブロックを薄ブルーに\n  const [atBottom, setAtBottom] = useState(false);\n  const [formPage, setFormPage] = useState(1);",
+    "// ページ下部到達で CTA ブロックを薄ブルーに\n  const [atBottom, setAtBottom] = useState(false);\n  const [formPage, setFormPage] = useState(initialFormPage ?? 1);")
 body = body.replace("const [showSend, setShowSend] = useState(false);",
                     "const [showSend, setShowSend] = useState(initialShowSend ?? false);")
 body = body.replace('const [pin, setPin] = useState("");',
@@ -222,7 +229,7 @@ TYPE = {
   "SimSliders": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }",
   "BenefitTable": "{ m: number; y: number; plan: Plan | undefined }",
   "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined }",
-  "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean }",
+  "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
   "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }",
