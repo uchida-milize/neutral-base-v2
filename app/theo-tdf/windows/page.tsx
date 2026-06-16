@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import {
+  ScreenIntro,
   ScreenOverview,
   ScreenStep2,
   ScreenPin,
@@ -99,6 +100,20 @@ export default function TheoTdfWindowsPage() {
   const noop = () => {};
 
   const GROUPS: ScreenGroupDef[] = [
+    /* ---- 00 導入画面 ---- */
+    {
+      key: "intro",
+      title: "導入画面",
+      badge: "NEW",
+      screens: [
+        {
+          key: "intro",
+          label: "デフォルト",
+          el: <ScreenIntro go={noop} />,
+        },
+      ],
+    },
+
     /* ---- 01 商品概要 ---- */
     {
       key: "overview",
