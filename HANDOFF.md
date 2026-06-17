@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年6月15日 (TD 組込1.3 Vercel デプロイ修正完了。最新はセクション 13 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
+最終更新: 2026年6月17日 (TD 組込1.4 再取り込み[配色リフレッシュ] + theo-tdf ダーク廃止 + ガイドライン刷新 + 追補修正完了。最新はセクション 16 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -1532,3 +1532,54 @@ Figma に画面をコピーする手描き型インポータープラグイン�
 ### 15.5 補足
 - Figma Plugin API 経路の代替として `my-app/code.js`（23画面完全版・遷移付き）も維持（§14.12）。MCP 直接描画と二者択一ではなく、状況に応じて使い分け。
 - `my-app/manifest.json` は code.js プラグイン用。MCP 経路では不要。
+
+---
+
+## 16. セッションログ 2026-06-17 (TD 組込1.4 再取り込み[配色リフレッシュ] + theo-tdf ダーク廃止 + ガイドライン刷新 + 追補修正)
+
+### 16.1 経緯
+新しい `TD 組込1.4-handoff` zip（再エクスポート）を受領。`screens.jsx`(1694行)/`app.jsx`(202行) は §11.2 の罠どおり古いキャッシュ（`ScreenCombined`・tweaks・patternB/formSplit 欠落）で、**`kumikomi.html` のインライン JS(2373行) が真の最新**。構造・遷移・画面数は前コミット版と同一で、**差分はフォーム周りの配色のみ＝部分修正**。kumikomi から再生成して取り込んだ。
+
+### 16.2 port スクリプトの同期（★重要★）
+リポジトリの `scripts/port-claude-design-1.4.py` が**現行コミット版 `screens.tsx` より古く**、素で再生成するとボタングラデ等が退行する状態だった。以下を port スクリプトに焼き込み、**再生成結果が `screens.tsx` とバイト一致**することを毎回確認する運用に確定:
+- `ATOMS["Btn"]` を青/赤グラデ版へ（cta/button=`#075FE3→#64B0F7`、danger=`#E83A3C→#F66A6C`、`style={gradStyle}`）
+- `HEADER_GRAD_CSS`/`STATUS`/`APPBAR` に `React.CSSProperties` 型注釈
+- 入力パスを argv 化（`python3 scripts/port-claude-design-1.4.py <kumikomi.html> [out]`、既定 OUT は repo 相対 `components/theo-tdf/claude-design/screens.tsx`）
+
+### 16.3 1.4 配色リフレッシュの実差分（約70行・すべて装飾）
+入力/フィールド背景 `bg-warm-50→bg-white`、無効→`bg-[#EFEFEF]`、プランカード選択 `border-primary-300`、ステップ番号バッジを青グラデ `#075FE3→#03CDFE`、性別/国籍/言語チップ・生年月日ピッカー・PIN 欄の白背景化、ヒーロー影の青み付け。構造/コピー/コンポーネント変更なし。アセットは全点 repo とバイト一致で追加なし。
+
+### 16.4 ダークモード廃止（theo-tdf のみ／保険商品のため）
+- `app/globals.css` の `[data-theme="dark"] .theo-tdf-cd` 上書きブロック（約68行）を削除。ライトの `.theo-tdf-cd`（`--success`/`--color-link`）と `.screen-enter` は保持。
+- `components/theo-tdf/tokens.css` の `.dark .theo-tdf-scope` を削除。
+- `components/site-header.tsx`: `tenant.pathPrefix === "/theo-tdf"` のとき `ThemeToggle` を非表示。
+- `components/theo-tdf/force-light.tsx`（新規）+ `app/theo-tdf/layout.tsx`: マウント時に `<html>` の `dark` クラスを除去し `data-theme=light` を付与（他ページでダークにしたまま client 遷移してきた場合の保険）。
+- 他テナント（xxx/aaa/td-financial/acme）のダークは**無傷**（グローバル `.dark` トークン・`ThemeToggle` 維持）。
+
+### 16.5 ガイドライン/コンポーネントの theo-tdf 仕様化
+- `/theo-tdf/{guidelines,components}` と `layout.tsx` コメントに残っていた雛形（XXX/Teal/Cyan/Amber/`#0f766e`/`#d97706`）を実仕様へ全置換: **Ink Blue `#065fe3` / Coral `#ff748d` / THEO Blue `#007dff` / 純赤 `#ff2d2d`**。ブランド名は「THEO「つみたて安心ほけん」／ THEO × T&Dファイナンシャル」。コントラスト記載は実測（Ink Blue on 白 ≈ 5.6:1）へ修正し、誇張表現を排除。
+- `components/theo-tdf/brand-gradients.tsx`（新規・**単一ソース**）でグラデ/中立面ショーケースを作成し、guidelines の Buttons セクションと components ページ上部から参照。hex は `screens.tsx` と一致させること。
+
+### 16.6 追補修正（お客様要望。すべて port スクリプトにも焼き込み・再生成バイト一致確認）
+- パターンB「さっそく、プランを選んでみましょう」橋渡しバナー: `bg-primary`（単色）→ ヘッダーと同じ青グラデ `#075FE3→#64B0F7`。
+- **ヘッダーグラデの右端切れ**: `HEADER_GRAD_CSS` の `backgroundSize` を `"366px 89px"→"100% 89px"`。原因は windows が Phone 枠なしの **390px 幅**で描画され、固定 366px+`no-repeat` だと右 24px が空くため（プロト枠内は `p-3` で内容 366px だったため露見せず）。縦 89px（status33+appbar56 の連続グラデ）は維持。
+- **テキスト入力の薄ブルー**: theo-tdf の `--warm-50` が `#f2fbfe`（青み面色）。`Field` atom の**活性時のみ** `bg-warm-50→bg-white`（非活性 `bg-warm-200/60`・`LockedField` は維持）。
+
+### 16.7 リポジトリ衛生
+- `.gitignore` に `.fuse_hidden*`（GoogleDrive FUSE シャドウ）と `.claude/settings.local.json`（マシン固有ローカル設定）を追加。
+- 既に追跡済みだった `.fuse_hidden*`（42個）はお客様ターミナルで `git rm $(git ls-files '*fuse_hidden*')` → 削除コミット。
+
+### 16.8 検証
+- `tsc --noEmit` 0 / `eslint` 0 / 残骸 grep 0（`text-h7`・`text-cd-h`・生 `assets/`・素 `bg-success`・雛形語 XXX/Teal/Amber）。
+- port 再生成結果が `screens.tsx` とバイト一致（焼き込み確認の定番手順）。
+- kumikomi の UI テキスト網羅: 画面本体 100%（未一致は app-shell の Rail/前後ボタン/StatesGallery 由来）。
+
+### 16.9 既知の注意（追加）
+33. **theo-tdf の `--warm-50` は `#f2fbfe`（青み面色）** → テキスト入力には `bg-warm-50` を使わず `bg-white` を使う（薄ブルー化を防ぐ）。
+34. **ヘッダーグラデは枠なし幅（windows 390px）でも全幅を覆うよう `backgroundSize` 幅を `100%` にする** → 固定 px は枠依存で右端が切れる。縦は連続グラデのため `89px` を維持。
+35. **port スクリプトはコミット版 `screens.tsx` より古くなることがある** → 再取り込み前に「port 再生成 → `screens.tsx` と diff」でバイト一致を確認し、退行（グラデ消失等）があれば ATOM テンプレ/transform を先に同期する。
+36. **GoogleDrive(FUSE) は `.fuse_hidden*` を生成し、まれに git に取り込まれる** → `.gitignore` 済み。Cowork からは FUSE 制約で削除不可、お客様ターミナルで `git rm`。
+
+### 16.10 現在の状態 / 次タスク
+- `tsc`/`eslint` グリーン。git は未 push（お客様がターミナルで `add -A`→`commit`→`push`。FUSE シャドウ削除も同コミットに同梱可）。
+- 次タスク（さらなるデザイン更新の取り込み）用キックオフプロンプトは本セッションのチャット参照。windows（スクリーン）ページへ **「プラン選択 / ツールチップ1つ展開」** と **新 tweak「積立金額・保障期間をプランより先に」** のバリアント書き出し要望あり（initial props / 新 tweak フラグはコンポーネント＋port スクリプト両方へ §14.11 同様に焼き込むこと）。
