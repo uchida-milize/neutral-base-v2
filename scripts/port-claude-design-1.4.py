@@ -60,6 +60,11 @@ screen_combined = transform(screen_combined)
 for _hg in ("HEADER_GRAD_CSS", "HEADER_GRAD_STATUS", "HEADER_GRAD_APPBAR"):
     body = body.replace("const %s = {" % _hg, "const %s: React.CSSProperties = {" % _hg)
 
+# ---- ヘッダーグラデの右端切れ対策: 固定幅 366px → 100% (お客様要望 2026-06-17) ----
+# kumikomi の 366px は Phone 枠 (p-3 → 内容 366px) 前提。枠の無い windows (390px 幅) では
+# 右 24px がグラデ無しで切れるため、幅を 100% にして全幅を覆う (縦 89px の連続性は維持)。
+body = body.replace('backgroundSize: "366px 89px"', 'backgroundSize: "100% 89px"')
+
 # ---- windows (Screens ページ) 用 initial props 注入 ----
 # 静的バリアント表示のため、kumikomi に無い initial 系 props を追加して
 # useState の初期値に流し込む。destructure は inject_type 前に増やしておく。
@@ -181,7 +186,7 @@ ATOMS["Field"] = '''function Field({ label, placeholder, required, hint, value, 
         defaultValue={value}
         onChange={onChange}
         disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
+        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}
       />
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </div>

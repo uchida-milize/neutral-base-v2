@@ -147,7 +147,7 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 // 共有グラデーション: ステータスバー(33px)+ヘッダー(56px) を1枚の連続グラデとして描画
 export const HEADER_GRAD_CSS: React.CSSProperties = {
   backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)",
-  backgroundSize: "366px 89px",
+  backgroundSize: "100% 89px",
   backgroundRepeat: "no-repeat",
 };
 export const HEADER_GRAD_STATUS: React.CSSProperties = { ...HEADER_GRAD_CSS, backgroundPosition: "0 0" };
@@ -271,7 +271,7 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
         defaultValue={value}
         onChange={onChange}
         disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}
+        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}
       />
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </div>
