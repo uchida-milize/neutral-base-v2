@@ -691,7 +691,7 @@ export function ScreenOverview({ go }: { go: Go }) {
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-5 pt-6">
+        <div className="px-5 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
@@ -841,7 +841,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         <div className="sticky top-0 z-30">
           <Steps n={2} go={go} />
         </div>
-        <div className="px-5 pt-6 pb-0 space-y-8">
+        <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-5">
             <div>
@@ -1045,7 +1045,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
       <AppBar title="保険" onBack={() => go(backScr)} />
       <div className="flex-1 overflow-y-auto no-sb">
         <Steps n={3} go={go} />
-        <div className="px-5 py-8 flex flex-col items-center text-center">
+        <div className="px-5 py-8 flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
           <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-5">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
@@ -1279,7 +1279,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
       <Steps n={3} go={go} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         {(!formSplit || formPage === 1) && (<>
         <div>
           <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">認証が完了しました。</h2>
@@ -1631,7 +1631,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
       <Steps n={4} go={go} />
-      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">
+      <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="内容確認">
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
@@ -1999,7 +1999,7 @@ export function ScreenDone({ go }: { go: Go }) {
           <Steps n={5} go={go} />
         </div>
 
-        <div className="px-5 py-6 space-y-5">
+        <div className="px-5 py-6 space-y-5" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <div className="px-1">
             <p className="text-h6 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">

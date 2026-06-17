@@ -143,6 +143,22 @@ def wire_tip(t):
 body = wire_tip(body)
 screen_combined = wire_tip(screen_combined)
 
+# ---- 各画面コンテンツ背景の白→薄ブルー縦グラデ (Claude Design / ScreenCombined と統一) ----
+# ScreenCombined は kumikomi 側で既に content に gradient を持つ。他のフロー画面にも
+# hero / ヘッダ+ステッパー直下のコンテンツ起点コンテナへ同じグラデを適用する (お客様要望 2026-06-17)。
+# 外部 GMO カード画面 (bg-neutral-100 グレー) は対象外。
+_SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
+_grad_targets = [
+    '<div className="px-5 pt-6 pb-0 space-y-8">',                          # ScreenStep2 (ヘッダ+ステッパー下)
+    '<div className="px-5 py-8 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下)
+    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">',  # ScreenForm
+    '<div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">',  # ScreenStep4 (ステッパー下)
+    '<div className="px-5 pt-6">',                                         # ScreenOverview (hero+ステッパー下)
+    '<div className="px-5 py-6 space-y-5">',                               # ScreenDone (hero+ステッパー下)
+]
+for _t in _grad_targets:
+    body = must_replace(body, _t, _t[:-1] + _SCREEN_GRAD + ">")
+
 # ---- ATOM shadcn-wrapper replacements (proven template c495e75, text-h6) ----
 ATOMS = {}
 ATOMS["Badge"] = '''function Badge({ children, tone = "secondary" }: { children: React.ReactNode; tone?: "secondary" | "primary" | "warm" }) {
