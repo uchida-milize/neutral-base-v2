@@ -42,3 +42,9 @@ next-env.d.ts
 
 # Cowork sandbox leftovers
 _tmp_*
+
+# Google Drive (FUSE) シャドウファイル — 開いたまま削除/置換されたファイルの残骸
+.fuse_hidden*
+
+# Claude Code / Cowork のローカル設定 (マシン固有・コミット不要)
+.claude/settings.local.json

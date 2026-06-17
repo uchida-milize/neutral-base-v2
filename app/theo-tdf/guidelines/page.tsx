@@ -29,29 +29,32 @@ import {
 import { JpText } from "@/components/jp-text";
 import { AutoColorScale, AutoWarmScale } from "@/components/guidelines/auto-color-scale";
 import { AutoButtonGrid } from "@/components/guidelines/auto-button-grid";
+import { BrandGradients } from "@/components/theo-tdf/brand-gradients";
 
 /* =================================================================
- * /guidelines/td — XXX 社専用デザインガイドライン
+ * /theo-tdf/guidelines — THEO × T&Dファイナンシャル 組込デザインガイドライン
  *
- * このページは uploads/MILIZE UIUX Design System (Bundle).zip 内の `td-tokens.css` と
- * `ui_kits/portal/*` の運用ルールを一次ソースとして書き起こしたものです。
+ * THEO「つみたて安心ほけん」(T&Dファイナンシャル生命) の組込申込フロー向け。
+ * 色トークンは components/theo-tdf/tokens.css を一次ソースとする。
  *
- * テナント差し替えポイント (色トークン):
- *   --primary-color-500 #0f766e — primary navy (ブランド基調)
- *   --secondary-color-500    #0891b2 — info / link / secondary
- *   --button-color-500         #d97706 — submit-CTA red (申込確定/前進)
- *   --warm-50             #fafaf9 — premium / featured surface
+ * カラートークン (anchor):
+ *   --primary-color-500   #065fe3 — Ink Blue (ブランド基調 / ヘッダー / ヒーロー)
+ *   --secondary-color-500 #ff748d — Coral (アクセント / 重要バッジ / リンク)
+ *   --button-color-500    #007dff — THEO Blue (通常 filled / 前進。実機は青グラデ #075FE3→#64B0F7)
+ *   --cta-color-500       #ff2d2d — 純赤 (申込確定。1 画面 1 つ。danger は赤グラデ #E83A3C→#F66A6C)
+ *   --warm-50             — premium / featured surface
  *
  * 設計の特徴:
- *   - Primary は赤ではなく "ティール"。ブランド基調を担うのは深い紺。
- *   - 申込/前進だけは "アンバー (amber)" を採用。danger とは別物として運用。
- *   - dark mode の surface は無彩色 (zinc) — ブランド色の影響を受けない汎用設計。
+ *   - Primary は Ink Blue。ブランド基調を担う。
+ *   - 通常ボタン / 前進は THEO Blue (実機は青グラデーション)。
+ *   - 申込確定だけは純赤。装飾には使わない (1 画面 1 つ)。
+ *   - 保険商品のため常時ライト固定 (ダークモードは廃止)。
  * ================================================================= */
 
 export const metadata: Metadata = {
-  title: "XXX ガイドライン | Design System",
+  title: "ガイドライン | THEO × T&Dファイナンシャル 組込",
   description:
-    "XXX社 (サンプル架空企業)のブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティの公式ガイドライン。",
+    "THEO「つみたて安心ほけん」(T&Dファイナンシャル生命) の組込申込フローのブランドアイデンティティ (信頼・誠実・モダン・クリーン) と Embedded Insurance トークンに基づくカラー・タイポグラフィ・アクセシビリティのガイドライン。",
 };
 
 export default function TdGuidelinesPage() {
@@ -161,17 +164,17 @@ function HeroSection() {
         デザインガイドライン
       </h1>
       <p className="mt-3 text-body text-muted-foreground sm:text-body-lg">
-        XXX社のデジタル体験は、金融・保険領域で求められる
+        THEO「つみたて安心ほけん」の組込申込フローは、金融・保険領域で求められる
         <strong className="text-foreground">「誠実さ」</strong>と、
         現代の Web / アプリに求められる
         <strong className="text-foreground">「クリーンさ」</strong>を両立させます。
         本ガイドラインは <code>tokens.css</code> と
-        Portal UI Kit の運用を、実装に落とすための公式ルールです。
+        申込フロー画面の運用を、実装に落とすためのルールです。
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge variant="secondary" className="gap-1.5">
           <ShieldCheck className="size-3" />
-          XXX · Embedded Insurance
+          THEO × T&amp;Dファイナンシャル · Embedded Insurance
         </Badge>
       </div>
     </header>
@@ -186,12 +189,12 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: "信頼 (Trust)",
-    body: "Primary はティール (#0f766e)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
+    body: "Primary は Ink Blue (#065fe3)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
   },
   {
     icon: SparklesIcon,
     title: "誠実 (Sincerity)",
-    body: "誇張・煽り表現は使わない。CTA のアンバー (#d97706) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
+    body: "誇張・煽り表現は使わない。申込確定の純赤 (#ff2d2d) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
   },
   {
     icon: PaletteIcon,
@@ -244,8 +247,8 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="Teal 基調 + Cyan アクセント + Teal 通常ボタン + Amber CTA"
-        description="XXX のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        title="Ink Blue 基調 + Coral アクセント + THEO Blue 通常ボタン + 純赤 CTA"
+        description="THEO × T&Dファイナンシャル のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
         audience="both"
       />
 
@@ -298,7 +301,7 @@ function ColorRules() {
                   <TableCell>ブランド主要色 (primary)</TableCell>
                   <TableCell><code className="font-mono">bg-primary</code> / <code className="font-mono">text-primary</code> / <code className="font-mono">ring-primary</code></TableCell>
                   <TableCell className="font-mono text-caption">var(--primary)</TableCell>
-                  <TableCell className="text-right font-mono text-caption">#0f766e Teal</TableCell>
+                  <TableCell className="text-right font-mono text-caption">#065fe3 Ink Blue</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>primary 上の文字色</TableCell>
@@ -359,8 +362,8 @@ function ColorRules() {
         <CardContent>
           <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`/* CSS: 直接 var() で参照 */
 .my-chart-bar-2 {
-  background: var(--primary-color-300);  /* teal-300 */
-  border-color: var(--secondary-color-500); /* cyan-600 */
+  background: var(--primary-color-300);  /* Ink Blue 300 */
+  border-color: var(--secondary-color-500); /* Coral 500 */
 }
 
 /* React / Tailwind: arbitrary value で参照 */
@@ -381,7 +384,7 @@ function ColorRules() {
         </CardHeader>
         <CardContent className="space-y-4">
           <SnippetCard
-            label="① ヘッダー / ヒーロー (Teal primary)"
+            label="① ヘッダー / ヒーロー (Ink Blue primary)"
             preview={
               <div className="rounded-md bg-primary px-4 py-3 text-primary-foreground">
                 <p className="text-caption font-medium opacity-80">Embedded Insurance</p>
@@ -395,7 +398,7 @@ function ColorRules() {
           />
 
           <SnippetCard
-            label="② CTA 申込ボタン (Amber)"
+            label="② CTA 申込ボタン (純赤)"
             preview={
               <button
                 type="button"
@@ -412,7 +415,7 @@ function ColorRules() {
           />
 
           <SnippetCard
-            label="③ 通常ボタン (Teal, 色面)"
+            label="③ 通常ボタン (THEO Blue, 色面)"
             preview={
               <button
                 type="button"
@@ -429,7 +432,7 @@ function ColorRules() {
           />
 
           <SnippetCard
-            label="④ 通常ボタン (Teal, 罫線)"
+            label="④ 通常ボタン (THEO Blue, 罫線)"
             preview={
               <button
                 type="button"
@@ -447,7 +450,7 @@ function ColorRules() {
           />
 
           <SnippetCard
-            label="⑤ 重要ラベル / バッジ (Cyan secondary)"
+            label="⑤ 重要ラベル / バッジ (Coral secondary)"
             preview={
               <span className="inline-flex items-center gap-1 rounded-full bg-secondary-10 px-3 py-1 text-caption font-medium text-secondary-700">
                 重要
@@ -524,7 +527,7 @@ function SnippetCard({
 // ScaleBlock は AutoColorScale (components/guidelines/auto-color-scale.tsx) に統合済み。
 
 /* ---------------------------------------------------------------- */
-/* 4. ボタン運用 (XXX の核)                                            */
+/* 4. ボタン運用 (theo-tdf の核)                                        */
 /* ---------------------------------------------------------------- */
 
 function ButtonRules() {
@@ -533,18 +536,29 @@ function ButtonRules() {
       <SectionHeading
         eyebrow="Buttons"
         title="5 種類のボタンを意味で使い分ける"
-        description="XXX 専用のボタン体系は td-tokens.css の --button-* に定義されています。「赤 = 申込/前進」「ティール = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。"
+        description="theo-tdf のボタン体系は tokens.css の --button-* / --cta-* に定義されています。「純赤 = 申込/前進」「THEO Blue = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。実機の通常ボタンは青グラデ (#075FE3→#64B0F7)、申込確定は赤グラデ (#E83A3C→#F66A6C) で描画します。"
         audience="both"
       />
 
       {/* 5 種ボタン (テナントの tokens.css の値を自動反映) */}
       <AutoButtonGrid />
 
+      {/* グラデーション & 新中立面 (TD 組込1.4 で追加) */}
+      <div className="mt-8 space-y-3">
+        <h3 className="text-h4 font-semibold">グラデーション &amp; 中立面（TD 組込1.4）</h3>
+        <p className="max-w-3xl text-body text-muted-foreground">
+          実機プロトタイプでは、通常 CTA・申込確定ボタンと、ステッパーの番号バッジ・アプリヘッダーに青系グラデーションを使用します。
+          無効フィールドやプラン選択帯・補償ラベルなどの中立面は <code>#EFEFEF</code> に統一しました。
+          値は申込フロー画面（<code>claude-design/screens.tsx</code>）と一致します。
+        </p>
+        <BrandGradients />
+      </div>
+
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
           <CardTitle className="text-h4">1 画面 1 つだけ、の規律</CardTitle>
           <CardDescription>
-            赤 (cta) とティール (primary) が同一画面に並ぶのは原則禁止。並べる場合は赤を 1 つに絞り、ティールは neutral / outline に降格させること。
+            純赤 (cta) と通常ボタン (THEO Blue) が同一画面で主役を争うのは原則禁止。並べる場合は純赤を 1 つに絞り、通常ボタンは neutral / outline に降格させること。
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -569,7 +583,7 @@ function ButtonRules() {
                   <TableCell className="text-muted-foreground">cta + neutral の主従関係</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>cta 赤 と primary ティールを同列</TableCell>
+                  <TableCell>cta 純赤 と 通常ボタン THEO Blue を同列</TableCell>
                   <TableCell><Badge variant="destructive">NG</Badge></TableCell>
                   <TableCell className="text-muted-foreground">どちらが主か判断できなくなる</TableCell>
                 </TableRow>
@@ -704,7 +718,7 @@ function AccessibilityRules() {
       <SectionHeading
         eyebrow="Accessibility"
         title="20 代から 70 代までを一枚の UI で支える"
-        description="XXX のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        description="theo-tdf (THEO「つみたて安心ほけん」) のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
         audience="both"
       />
 
@@ -727,9 +741,8 @@ function AccessibilityRules() {
               UI コンポーネント (ボタンの外周線、フォームの境界): 3 : 1 以上。
             </p>
             <p>
-              ティール <code>#0f766e</code> on 白 = <strong>11.6 : 1</strong>、
-              button-color <code>#d97706</code> on 白 = <strong>5.4 : 1</strong>。
-              いずれも本文しきい値を超える設計。
+              Ink Blue <code>#065fe3</code> on 白 = <strong>5.6 : 1</strong>（本文 AA 4.5:1 をクリア）。
+              通常ボタンは白文字を青系の面・グラデーション上に置くため、ラベルは太字かつ 16px 以上を維持し、申込確定の純赤は面積を絞って使う。
             </p>
           </CardContent>
         </Card>
@@ -792,7 +805,7 @@ function AccessibilityRules() {
       {/* 視認性プレビュー */}
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>
-          <CardTitle className="text-h4">サイズ感の比較 (XXX 推奨)</CardTitle>
+          <CardTitle className="text-h4">サイズ感の比較 (theo-tdf 推奨)</CardTitle>
           <CardDescription>
             60 代以上の主要導線は左の body-lg を既定としてください。
           </CardDescription>
@@ -811,7 +824,7 @@ function AccessibilityRules() {
             </p>
           </div>
           <div className="rounded-md border border-border p-4 transition-colors duration-300">
-            <p className="text-caption font-medium" style={{ color: "#d97706" }}>
+            <p className="text-caption font-medium" style={{ color: "var(--cta-color-600)" }}>
               非推奨 (caption 12px)
             </p>
             <p className="mt-2" style={{ fontSize: 12 }}>
@@ -900,7 +913,7 @@ function ContentRules() {
       <SectionHeading
         eyebrow="Voice & Content"
         title="コピーは事実から、語尾は『です・ます』"
-        description="XXX のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        description="theo-tdf のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
         audience="designer"
       />
 
@@ -986,8 +999,8 @@ function Footer() {
     <footer className="mt-30 border-t border-border pt-8 transition-colors duration-300">
       <div className="flex flex-col gap-3 text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © XXX Design System · 一次ソース:{" "}
-          <code>td-tokens.css</code> + <code>ui_kits/portal/*</code>
+          © THEO × T&amp;Dファイナンシャル 組込 · 一次ソース:{" "}
+          <code>tokens.css</code> + <code>claude-design/screens.tsx</code>
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
@@ -997,7 +1010,7 @@ function Footer() {
             <Link href="/theo-tdf/prototype">Prototype を試す</Link>
           </Button>
           <Button asChild size="sm" variant="ghost">
-            <Link href="/theo-tdf">XXX 入口へ</Link>
+            <Link href="/theo-tdf">theo-tdf 入口へ</Link>
           </Button>
         </div>
       </div>

@@ -249,8 +249,13 @@ function SiteHeaderInner() {
                 </Link>
               );
             })}
-            <span className="ml-2 hidden sm:inline-block h-5 w-px bg-border" />
-            <ThemeToggle />
+            {/* theo-tdf は保険商品のため常時ライト固定 → テーマトグルを出さない */}
+            {tenant.pathPrefix !== "/theo-tdf" && (
+              <>
+                <span className="ml-2 hidden sm:inline-block h-5 w-px bg-border" />
+                <ThemeToggle />
+              </>
+            )}
           </nav>
         )}
       </div>

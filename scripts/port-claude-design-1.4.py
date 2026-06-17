@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Port TD 組込1.4 kumikomi.html screens -> repo screens.tsx (shadcn wrapper, typed)."""
-import re, sys
+import re, sys, os
 
-KUMI = "/sessions/youthful-gifted-hypatia/mnt/outputs/td14/td-1-4/project/kumikomi.html"
-OUT  = "/sessions/youthful-gifted-hypatia/mnt/neutral-base-v2/components/theo-tdf/claude-design/screens.tsx"
+# Usage: python3 port-claude-design-1.4.py <kumikomi.html> [out screens.tsx]
+# 既定の OUT は repo 相対 (scripts/ の一つ上の components/theo-tdf/claude-design/screens.tsx)。
+_REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+KUMI = sys.argv[1] if len(sys.argv) > 1 else os.path.join(_REPO, "kumikomi.html")
+OUT  = sys.argv[2] if len(sys.argv) > 2 else os.path.join(_REPO, "components/theo-tdf/claude-design/screens.tsx")
 
 html = open(KUMI, encoding="utf-8").read()
 blocks = re.findall(r'<script type="text/babel"[^>]*>(.*?)</script>', html, re.DOTALL)
@@ -52,6 +55,10 @@ def transform(t):
 
 body = transform(body)
 screen_combined = transform(screen_combined)
+
+# ---- HEADER_GRAD_* に React.CSSProperties 型注釈を付与 (style props へ渡すため) ----
+for _hg in ("HEADER_GRAD_CSS", "HEADER_GRAD_STATUS", "HEADER_GRAD_APPBAR"):
+    body = body.replace("const %s = {" % _hg, "const %s: React.CSSProperties = {" % _hg)
 
 # ---- windows (Screens ページ) 用 initial props 注入 ----
 # 静的バリアント表示のため、kumikomi に無い initial 系 props を追加して
@@ -108,12 +115,19 @@ ATOMS["Badge"] = '''function Badge({ children, tone = "secondary" }: { children:
 ATOMS["Btn"] = '''function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "danger" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
   // shadcn <Button> へ委譲。kind→variant + ブランド色 className。
   const tint: Record<string, string> = {
-    cta: "bg-button-500 text-white hover:bg-button-600",
-    button: "bg-button-500 text-white hover:bg-button-600",
-    danger: "bg-cta-500 text-white hover:bg-cta-600",
+    cta: "text-white",
+    button: "text-white",
+    danger: "text-white",
     outline: "border border-button-600 bg-white text-button-600 hover:bg-button-10",
     ghost: "text-neutral-500 hover:text-neutral-800",
   };
+  // グラデーション: cta / button = ブルー, danger = レッド (TD 組込1.4 で追加)
+  const gradStyle: React.CSSProperties | undefined =
+    (kind === "cta" || kind === "button")
+      ? { backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }
+      : kind === "danger"
+      ? { backgroundImage: "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)" }
+      : undefined;
   const variant = kind === "outline" ? "outline" : kind === "ghost" ? "ghost" : "default";
   return (
     <Button
@@ -121,6 +135,7 @@ ATOMS["Btn"] = '''function Btn({ kind = "button", children, onClick, disabled, f
       variant={variant}
       onClick={onClick}
       disabled={disabled}
+      style={gradStyle}
       className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-h6 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
     >
       {children}

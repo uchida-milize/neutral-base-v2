@@ -101,11 +101,4 @@
   --theo-tdf-warm:              var(--warm-50);
 }
 
-/* ダーク時は primary を 1 段明るくして "沈み" を防ぐ */
-.dark .theo-tdf-scope {
-  --primary: var(--primary-color-300);            /* primary 同色相の明 (#2f81fa) */
-  --primary-foreground: #ffffff;
-  --ring: var(--primary-color-300);
-  --accent: rgba(255, 255, 255, 0.06);
-  --accent-foreground: #f4f4f5;
-}
+/* theo-tdf は保険商品のため常時ライト固定 (ダークモード上書きは廃止 — 2026-06-17)。 */

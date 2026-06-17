@@ -144,7 +144,7 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 }
 
 // Phone app bar (THEO header)
-// 共有グラデーション: ステータスバー(33px)+ヘッダー(56px) を1枚の連続グラデとして描画 (TD 組込1.4)
+// 共有グラデーション: ステータスバー(33px)+ヘッダー(56px) を1枚の連続グラデとして描画
 export const HEADER_GRAD_CSS: React.CSSProperties = {
   backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)",
   backgroundSize: "366px 89px",
@@ -309,7 +309,7 @@ export function Select({ label, required, hint, value, onChange, options = [], d
       </span>
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
-          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-h6 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-warm-50 text-neutral-800"}`}>
+          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-h6 ${disabled ? "border-warm-200 bg-[#EFEFEF] text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><path d="M6 9l6 6 6-6"/></svg>
@@ -409,10 +409,10 @@ export const PLANS: Plan[] = [
 export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean; onSelect: () => void }) {
   const [ttOpen, setTtOpen] = React.useState(false);
   return (
-    <div onClick={onSelect} role="button" className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary ring-2 ring-primary/30" : "border-warm-200"}`}>
-      <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-warm-50 border-warm-200"}`}>
+    <div onClick={onSelect} role="button" className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
+      <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-[#EFEFEF] border-warm-200"}`}>
         <div className="flex items-center gap-2">
-          <span className={`grid place-items-center w-5 h-5 rounded-full border-2 shrink-0 ${selected ? "border-primary bg-primary text-white" : "border-warm-300"}`}>
+          <span className={`grid place-items-center w-5 h-5 rounded-full border-2 shrink-0 ${selected ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
             {selected && <Ic.check className="w-3 h-3" />}
           </span>
           <span className="text-h6 font-bold text-neutral-800">{p.name}</span>
@@ -464,7 +464,7 @@ export function StepSection({ label, n, big, className, children }: { label: str
     <section className="space-y-4">
       <div className="flex items-center gap-2.5">
         {n != null && (
-          <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
+          <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
         )}
         <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
         <span className="flex-1 h-px bg-warm-200" />
@@ -828,7 +828,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
               <div className="flex flex-col gap-1.5">
                 <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
                 <button type="button" onClick={() => setPickerOpen(true)}
-                  className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
+                  className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
                   <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
                   <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
                 </button>
@@ -838,7 +838,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                 <div className="flex gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
-                      className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600"}`}>{g}</button>
+                      className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
                   ))}
                 </div>
               </div>
@@ -1010,7 +1010,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
             onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
             inputMode="numeric"
             placeholder="______"
-            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-warm-50 text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
+            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-white text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
           />
 
           <button className="mt-4 text-caption underline underline-offset-2" style={{ color: 'var(--color-link)' }}>PINコードを再送する</button>
@@ -1284,7 +1284,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
           <div className="flex flex-col gap-1.5">
             <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
             <button type="button" onClick={() => setBenPickerOpen(true)}
-              className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-h6 text-left ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
+              className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
               <span className="truncate">{benBirth ? fmtBirth(benBirth) : "選択してください"}</span>
               <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
             </button>
@@ -1294,7 +1294,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
             <div className="flex gap-2">
               {["男性", "女性"].map((g) => (
                 <button key={g} onClick={() => setBenGender(g)}
-                  className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600"}`}>{g}</button>
+                  className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
               ))}
             </div>
           </div>
@@ -1329,7 +1329,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
       </div>
 
       <ActionBar bg={atBottom ? "#e7edf7" : undefined}>
-        <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-warm-50"}`}>
+        <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
             <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium" style={{ color: 'var(--color-link)' }}>
@@ -1705,7 +1705,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
                     <span className="flex gap-1.5"><span className="text-neutral-400 shrink-0">・</span><span>以下のマークのあるクレジットカードをご指定いただけます。</span></span>
                     <div className="flex flex-wrap gap-1.5 mt-2 ml-3.5">
                       {["VISA", "Mastercard", "JCB", "AMEX", "Diners"].map((c) => (
-                        <span key={c} className="rounded border border-warm-300 bg-warm-50 px-2 py-1 text-[10px] font-en font-semibold tracking-wide text-neutral-600">{c}</span>
+                        <span key={c} className="rounded border border-warm-300 bg-white px-2 py-1 text-[10px] font-en font-semibold tracking-wide text-neutral-600">{c}</span>
                       ))}
                     </div>
                   </li>
@@ -1762,7 +1762,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
                     <div className="grid grid-cols-2 gap-3">
                       {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
                         <button key={k} onClick={() => setNat(k)}
-                          className={`h-11 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                          className={`h-11 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
                           {l}
                         </button>
                       ))}
@@ -1773,7 +1773,7 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
                         <div className="grid grid-cols-2 gap-3">
                           {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
                             <button key={k} onClick={() => setJpLang(k)}
-                              className={`h-11 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                              className={`h-11 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
                               {l}
                             </button>
                           ))}
@@ -2021,7 +2021,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
     <>
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         {/* Hero */}
-        <div style={{ position: 'relative', height: '420px', overflow: 'hidden', boxShadow: '0 60px 60px 0 rgba(0,0,0,0.08)' }}>
+        <div style={{ position: 'relative', height: '420px', overflow: 'hidden', boxShadow: '0 60px 60px 0 rgba(100,176,247,0.10)' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
             <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
@@ -2113,7 +2113,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
             <div className="flex flex-col gap-1.5">
               <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
               <button type="button" onClick={() => setPickerOpen(true)}
-                className={"fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-warm-50 px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
+                className={"fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
                 <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
                 <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
               </button>
@@ -2123,7 +2123,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
               <div className="flex gap-2">
                 {["男性", "女性"].map((g) => (
                   <button key={g} onClick={() => setGender(g)}
-                    className={"flex-1 h-11 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-warm-50 text-neutral-600")}>{g}</button>
+                    className={"flex-1 h-11 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
                 ))}
               </div>
             </div>
