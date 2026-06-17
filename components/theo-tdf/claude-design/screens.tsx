@@ -2099,7 +2099,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
         </div>{/* /px-5 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-5 py-4 bg-primary">
+        <div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>
           <h2 className="text-h4 font-bold text-white text-center">さっそく、<br/>プランを選んでみましょう</h2>
           <p className="mt-1 text-caption text-white text-center" style={{ opacity: 0.8 }}>かんたん入力で保険料がすぐわかります</p>
         </div>

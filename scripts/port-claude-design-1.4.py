@@ -95,6 +95,10 @@ screen_combined = screen_combined.replace("const [showSend, setShowSend] = useSt
                     "const [showSend, setShowSend] = useState(initialShowSend ?? false);")
 screen_combined = screen_combined.replace("const [agree, setAgree] = useState(false);",
                     "const [agree, setAgree] = useState(initialAgree ?? false);")
+# 橋渡しバナー「さっそく、プランを選んでみましょう」の背景を bg-primary → ヘッダーと同じ青グラデへ (お客様要望 2026-06-17)
+screen_combined = screen_combined.replace(
+    '<div className="px-5 py-4 bg-primary">',
+    '<div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>')
 
 # ---- ATOM shadcn-wrapper replacements (proven template c495e75, text-h6) ----
 ATOMS = {}
