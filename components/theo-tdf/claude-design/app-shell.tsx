@@ -36,7 +36,7 @@ import {
    - scr 5-6: クレジットカード承認 (外部 GMO、番号なし)
    - scr 7: 完了 (STEP5)
 
-   tweaks: patternB (商品概要+プラン選択統合) / formSplit (フォーム2ページ分割)
+   tweaks: patternB (商品概要+プラン選択統合) / simFirst (積立金額・保障期間をプランより先に) / formSplit (フォーム2ページ分割)
    ============================================================ */
 
 type FlowEntry = {
@@ -194,6 +194,7 @@ function Phone({
 
 const TWEAK_DEFAULTS = {
   patternB: false,
+  simFirst: false,
   formSplit: false,
 };
 
@@ -223,11 +224,11 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
     <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} />,
     <ScreenStep4 key="step4" go={go} sel={sel} m={simM} y={simY} />,
@@ -244,6 +245,7 @@ export function TheoTdfClaudeDesignShell() {
           <TweaksPanel>
             <TweakSection label="表示パターン" />
             <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
+            <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
             <TweakSection label="申込フォーム" />
             <TweakToggle label="2ページ分割（契約者／受取人）" value={tw.formSplit} onChange={(v) => setTweak("formSplit", v)} />
           </TweaksPanel>

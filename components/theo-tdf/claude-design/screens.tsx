@@ -406,8 +406,8 @@ export const PLANS: Plan[] = [
     tooltip: "障害・介護プランとがんプランをセットにしたおすすめプランです。月額最大50,000円の給付金と300,000円のがん診断一時金、両方の保障が受けられます。" },
 ];
 
-export function PlanCard({ p, selected, onSelect }: { p: Plan; selected: boolean; onSelect: () => void }) {
-  const [ttOpen, setTtOpen] = React.useState(false);
+export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }) {
+  const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
   return (
     <div onClick={onSelect} role="button" className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
       <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-[#EFEFEF] border-warm-200"}`}>
@@ -646,15 +646,18 @@ export function ScreenOverview({ go }: { go: Go }) {
   };
   return (
     <>
+      {/* 固定ステータスバー（パララックスと一緒に動かない） */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
-
         {/* ---- ヒーロー（ステータスバー含む、背景画像でスクロール） ---- */}
         {/* ---- ヒーロー: img で自然な高さ、コンテンツを絶対配置でオーバーレイ ---- */}
         <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
-          {/* フェイクステータスバー（Phone側は非表示、ここで描画） */}
-          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
+          {/* フェイクステータスバー（プレースホルダー：Phone側は非表示、固定オーバーレイを上に描画） */}
+          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
             <span>9:41</span>
             <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
@@ -725,7 +728,7 @@ export function ScreenOverview({ go }: { go: Go }) {
               {/* 商品概要（図版の下） */}
               <div className="mt-6 space-y-6 mb-9">
                 <div className="text-right">
-                  <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)" }}>
+                  <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
                     詳細なサービス内容はこちら
                   </a>
@@ -785,7 +788,7 @@ export function ScreenOverview({ go }: { go: Go }) {
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, emailVerified }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; emailVerified?: boolean }) {
+export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, emailVerified, simFirst }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; emailVerified?: boolean; simFirst?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -806,20 +809,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
       }
     }, { passive: true });
   };
-  return (
-    <>
-      <AppBar title="保険" onBack={() => go(0)} />
-      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
-        <div className="sticky top-0 z-30">
-          <Steps n={2} go={go} />
-        </div>
-        <div className="px-5 pt-6 pb-0 space-y-8">
-          {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
-          <div className="space-y-5">
-            <div>
-              <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
-              <p className="mt-2 text-h6 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
-            </div>
+  const birthGenderFields = (
             <div className="space-y-4">
               <div>
                 <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
@@ -843,16 +833,33 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                 </div>
               </div>
             </div>
+  );
+  return (
+    <>
+      <AppBar title="保険" onBack={() => go(0)} />
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
+        <div className="sticky top-0 z-30">
+          <Steps n={2} go={go} />
+        </div>
+        <div className="px-5 pt-6 pb-0 space-y-8">
+          {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
+              <p className="mt-2 text-h6 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
+            </div>
+            {!simFirst && birthGenderFields}
           </div>
 
+          {!simFirst && (<>
           {/* ---- プラン選択 ---- */}
           <div style={{ marginTop: '80px' }}>
           <StepSection label="プランを選ぶ" n={1} big>
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
-          {PLANS.map((p) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
+          {PLANS.map((p, i) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
           ))}
           <p className="text-caption text-neutral-500 leading-relaxed px-1">
             ※ 保険料は年齢・性別により変動します。
@@ -861,20 +868,55 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
 
         {/* ---- 保険料シミュレーション ---- */}
-        <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+        <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
           <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
         </StepSection>
         </div>
+        </>)}
+
+        {simFirst && (<>
+        {/* ---- 積立金額・保障期間（プランより先） ---- */}
+        <div style={{ marginTop: '80px' }}>
+        <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
+          {birthGenderFields}
+          <div className="sim-noborder">
+            <p className="text-caption text-neutral-600 leading-relaxed mb-4">保障する積立金額と保障期間を選択してください。</p>
+             <SimSliders m={m} setM={setM} y={y} setY={setY} />
+          </div>
+        </StepSection>
+        </div>
+
+        {/* ---- プラン選択 ---- */}
+        <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+        <StepSection label="プランを選ぶ" n={2} big className="mt-8">
+          <div>
+            <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
+          </div>
+          {PLANS.map((p, i) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+          ))}
+          <p className="text-caption text-neutral-500 leading-relaxed px-1">※ 保険料は年齢・性別により変動します。</p>
+        </StepSection>
+        </div>
+
+        {/* ---- 給付予想額 ---- */}
+        <StepSection label="給付予想額" n={3} big className="mt-8">
+          <div className="rounded-2xl border border-warm-200 bg-white p-5">
+            <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
+            <BenefitTable m={m} y={y} plan={plan} />
+          </div>
+        </StepSection>
+        </>)}
 
         {/* ---- 申し込みをする（2ステップ） ---- */}
-        <div className="-mx-5 px-5 py-6" style={{ background: "#e7edf7" }}>
-        <StepSection label="申し込みをする" n={3} big className="mt-8">
+        <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "#e7edf7" }}>
+        <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-8">
           {/* STEP 1 — メールアドレスのご入力 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
             <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">
-              ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。メールアドレスをご入力ください。
+              ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
             </p>
             <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
@@ -906,7 +948,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
       <ActionBar bg={showSend ? "#e7edf7" : undefined}>
         <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
           <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
-          申込みには、ご本人様名義のクレジットカードが必要です
+          申込みは本人様名義のクレジットカードが必要です
         </div>
         {emailVerified && showSend && (
           <div className="fade-in flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-3.5 py-2.5">
@@ -925,6 +967,14 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
           )}
         </div>
         {!agree && showSend && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+        {agree && (
+          <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
+            <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+              よくあるご質問
+            </a>
+          </div>
+        )}
       </ActionBar>
 
       {/* 生年月日ドラムロール（iOS風） */}
@@ -1918,13 +1968,17 @@ export function ScreenDone({ go }: { go: Go }) {
   };
   return (
     <>
+      {/* 固定ステータスバー（パララックスと一緒に動かない） */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
       <div ref={bindDoneScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ヒーロー（img＋絶対配置・パララックス） */}
         <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
           <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {/* フェイクステータスバー */}
-          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700">
+          {/* フェイクステータスバー（プレースホルダー） */}
+          <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
             <span>9:41</span>
             <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
@@ -1995,7 +2049,7 @@ export function ScreenDone({ go }: { go: Go }) {
 // app.jsx references it, and relying on cross-<script> const sharing is fragile
 // (a single missing binding throws and blanks the entire UI).
 
-export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, initialAgree, initialShowSend }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; initialAgree?: boolean; initialShowSend?: boolean }) {
+export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(false);
@@ -2017,14 +2071,43 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
       if (sec) { const secTop = sec.getBoundingClientRect().top; const contBottom = el.getBoundingClientRect().bottom; setShowSend(secTop < contBottom - 64); }
     }, { passive: true });
   };
+  const birthGenderFields = (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
+              <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+              <button type="button" onClick={() => setPickerOpen(true)}
+                className={"fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
+                <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
+                <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-caption font-medium text-neutral-600">性別<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+              <div className="flex gap-2">
+                {["男性", "女性"].map((g) => (
+                  <button key={g} onClick={() => setGender(g)}
+                    className={"flex-1 h-11 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+  );
   return (
     <>
+      {/* \u56fa\u5b9a\u30b9\u30c6\u30fc\u30bf\u30b9\u30d0\u30fc\uff08\u30d1\u30e9\u30e9\u30c3\u30af\u30b9\u3068\u4e00\u7dd2\u306b\u52d5\u304b\u306a\u3044\uff09 */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         {/* Hero */}
         <div style={{ position: 'relative', height: '420px', overflow: 'hidden', boxShadow: '0 60px 60px 0 rgba(100,176,247,0.10)' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
+            <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
               <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>
             <div className="sticky top-0 z-20 transition-colors duration-200" style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
@@ -2073,7 +2156,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           </div>
           <div className="space-y-4 mt-4">
             <div className="text-right">
-              <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)" }}>
+              <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                 <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
                 詳細なサービス内容はこちら
               </a>
@@ -2105,60 +2188,68 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
         </div>
         <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
-              <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
-              <button type="button" onClick={() => setPickerOpen(true)}
-                className={"fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
-                <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
-                <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
-              </button>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-caption font-medium text-neutral-600">性別<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
-              <div className="flex gap-2">
-                {["男性", "女性"].map((g) => (
-                  <button key={g} onClick={() => setGender(g)}
-                    className={"flex-1 h-11 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
-                ))}
-              </div>
-            </div>
-          </div>
+          {!simFirst && birthGenderFields}
+          {!simFirst && (<>
           {/* プランを選ぶ */}
           <div style={{ marginTop: '48px' }}>
           <StepSection label="プランを選ぶ" n={1} big>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
-            {PLANS.map((p) => (
-              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
+            {PLANS.map((p, i) => (
+              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
             ))}
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
-          <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+          <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
             </StepSection>
           </div>
+          </>)}
+          {simFirst && (<>
+          {/* 積立金額・保障期間を選ぶ（生年月日・性別を含む） */}
+          <div style={{ marginTop: '48px' }}>
+          <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
+            {birthGenderFields}
+            <div className="sim-noborder">
+              <p className="text-caption text-neutral-600 leading-relaxed mb-4">保障する積立金額と保障期間を選択してください。</p>
+               <SimSliders m={m} setM={setM} y={y} setY={setY} />
+            </div>
+          </StepSection>
+          </div>
+          {/* プランを選ぶ */}
+          <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+            <StepSection label="プランを選ぶ" n={2} big className="mt-8">
+              <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
+              {PLANS.map((p, i) => (
+                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+              ))}
+            </StepSection>
+          </div>
+          {/* 給付予想額 */}
+          <StepSection label="給付予想額" n={3} big className="mt-8">
+            <div className="rounded-2xl border border-warm-200 bg-white p-5">
+              <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
+              <BenefitTable m={m} y={y} plan={plan} />
+            </div>
+          </StepSection>
+          </>)}
           {/* 申し込みをする */}
-          <div className="-mx-5 px-5 py-6" style={{ background: "#e7edf7" }}>
-            <StepSection label="申し込みをする" n={3} big className="mt-8">
+          <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "#e7edf7" }}>
+            <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-8">
               {/* 必要書類のご確認 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
                 <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
                 <p className="text-caption text-neutral-600 leading-relaxed">お手続きの際に必要となる書類をご準備ください。</p>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-warm-50 border border-warm-200">
                   <Ic.cardArt className="w-10 h-auto text-primary-500 shrink-0" />
-                  <span className="text-caption font-medium text-neutral-700">申込みには、ご本人様名義のクレジットカードが必要です</span>
+                  <span className="text-caption font-medium text-neutral-700">申込みは本人様名義のクレジットカードが必要です</span>
                 </div>
               </div>
               {/* メールアドレスのご入力 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
                 <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
-                <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。</p>
+                <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
                 <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
               </div>
               <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
@@ -2198,6 +2289,14 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
               <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
             )}
             {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+            {agree && (
+              <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
+                <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+                  <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                  よくあるご質問
+                </a>
+              </div>
+            )}
           </div>
         )}
       </ActionBar>

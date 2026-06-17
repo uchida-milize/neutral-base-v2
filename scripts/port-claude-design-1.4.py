@@ -65,12 +65,25 @@ for _hg in ("HEADER_GRAD_CSS", "HEADER_GRAD_STATUS", "HEADER_GRAD_APPBAR"):
 # 右 24px がグラデ無しで切れるため、幅を 100% にして全幅を覆う (縦 89px の連続性は維持)。
 body = body.replace('backgroundSize: "366px 89px"', 'backgroundSize: "100% 89px"')
 
+
+def must_replace(t, old, new):
+    """文字列置換。対象が無ければ即エラー (kumikomi のシグネチャ・ドリフトを検知)。
+    silent no-op で initial props 注入が抜け落ちる退行 (HANDOFF gotcha #35) を防ぐ。"""
+    if old not in t:
+        raise SystemExit(
+            "PORT ERROR: 期待した部分文字列が見つかりません (kumikomi のシグネチャが変わった可能性):\n  "
+            + old[:160])
+    return t.replace(old, new)
+
+
 # ---- windows (Screens ページ) 用 initial props 注入 ----
 # 静的バリアント表示のため、kumikomi に無い initial 系 props を追加して
 # useState の初期値に流し込む。destructure は inject_type 前に増やしておく。
-body = body.replace(
-    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified })",
-    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, emailVerified })")
+# NOTE: 新 kumikomi(1.4) で simFirst が末尾に追加されたシグネチャに同期。
+# initialShowSend (§14.11 CTA 表示) と initialTipIdx (A: ツールチップ1つ静的展開) を注入。
+body = must_replace(body,
+    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
+    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, emailVerified, simFirst })")
 body = body.replace(
     "function ScreenPin({ go, onVerified, backScr = 1 })",
     "function ScreenPin({ go, onVerified, backScr = 1, initialPin })")
@@ -80,9 +93,11 @@ body = body.replace(
 body = body.replace(
     "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false })",
     "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 })")
-screen_combined = screen_combined.replace(
-    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified })",
-    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, initialAgree, initialShowSend })")
+# 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
+# initialTipIdx (A) を注入。
+screen_combined = must_replace(screen_combined,
+    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst })",
+    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
 # useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
 # formPage は ScreenOverview と ScreenForm の両方に存在するため、ScreenForm 固有のコメント文脈で限定置換する。
 body = body.replace(
@@ -104,6 +119,29 @@ screen_combined = screen_combined.replace("const [agree, setAgree] = useState(fa
 screen_combined = screen_combined.replace(
     '<div className="px-5 py-4 bg-primary">',
     '<div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>')
+
+# ---- (A) ツールチップ静的展開: PlanCard に initialTtOpen、画面に initialTipIdx ----
+# windows で「プラン選択 / ツールチップ1つ展開」を静的に再現するため、kumikomi に無い
+# initialTtOpen / initialTipIdx を注入する。state 名は kumikomi の ttOpen を踏襲。
+body = must_replace(body,
+    "function PlanCard({ p, selected, onSelect }) {",
+    "function PlanCard({ p, selected, onSelect, initialTtOpen }) {")
+body = must_replace(body,
+    "const [ttOpen, setTtOpen] = React.useState(false);",
+    "const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);")
+
+
+def wire_tip(t):
+    # PLANS.map に index を渡し、initialTipIdx と一致する 1 枚だけ tooltip を開く。
+    t = t.replace("PLANS.map((p) =>", "PLANS.map((p, i) =>")
+    t = t.replace(
+        "<PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />",
+        "<PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />")
+    return t
+
+
+body = wire_tip(body)
+screen_combined = wire_tip(screen_combined)
 
 # ---- ATOM shadcn-wrapper replacements (proven template c495e75, text-h6) ----
 ATOMS = {}
@@ -242,11 +280,11 @@ TYPE = {
   "ActionBar": "{ children: React.ReactNode; solid?: boolean; bg?: string }",
   "Select": "{ label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean }",
   "StepSection": "{ label: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }",
-  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void }",
+  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }",
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; emailVerified?: boolean }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; emailVerified?: boolean; simFirst?: boolean }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
@@ -262,7 +300,7 @@ TYPE = {
   "ScreenCardConfirm": "{ go: Go }",
   "ScreenDone": "{ go: Go }",
   "ScreenIntro": "{ go: Go }",
-  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; initialAgree?: boolean; initialShowSend?: boolean }",
+  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
 }
 
 def inject_type(t, name, typ):

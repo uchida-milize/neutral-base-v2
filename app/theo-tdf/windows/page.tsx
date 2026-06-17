@@ -218,6 +218,28 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          key: "st-step2-tooltip",
+          label: "プランツールチップ1つ展開（安心セット）",
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialTipIdx={2}
+            />
+          ),
+        },
+        {
+          key: "st-step2-simfirst",
+          label: "積立金額・保障期間をプランより先に",
+          el: (
+            <ScreenStep2
+              go={noop} sel="c" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              simFirst
+            />
+          ),
+        },
       ],
     },
 
