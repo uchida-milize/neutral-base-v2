@@ -13,6 +13,7 @@ import {
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
+  HEADER_GRAD_STATUS,
 } from "@/components/theo-tdf/claude-design/screens";
 import {
   useTweaks,
@@ -161,16 +162,18 @@ function Phone({
     ? "bg-neutral-600 text-white"
     : overviewMode
       ? "text-neutral-800"
-      : "bg-primary text-primary-foreground";
+      : "text-primary-foreground";
+  // ステータスバーは AppBar と連続する1枚グラデの上段 (TD 組込1.4)
+  const statusStyle = (!external && !overviewMode) ? HEADER_GRAD_STATUS : undefined;
   return (
     <div className="relative">
       <div className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}>
-        <div className="relative w-full h-full rounded-[34px] overflow-hidden bg-warm-50 flex flex-col">
+        <div className="relative w-full h-full rounded-[34px] overflow-hidden flex flex-col" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* Notch pill — always visible */}
           <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch} z-30 pointer-events-none`} />
           {/* Status bar: hidden for overview (screen provides its own inside scroll) */}
           {!overviewMode && (
-            <div className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`}>
+            <div className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`} style={statusStyle}>
               <span>9:41</span>
               <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>

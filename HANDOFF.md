@@ -620,19 +620,45 @@ UI/UX 納品契約で Figma ファイルが要求されるケースに対応。
 
 ## 8. 次のチャットで Cowork に伝える言葉 (テンプレ)
 
-新しい Cowork チャットを開いて、このファイルを添付した上で:
+新しい Cowork チャットを開いて、このファイルを添付した上で伝える。
 
-> 「`HANDOFF.md` を読んでください。Priority 2 (`/init-brand-tokens` スキル) の設計から始めたいです。サンプル顧客サイト URL を渡すので、ブランド色抽出を試したいです。」
+### 8.0 ★推奨★ Claude Design zip の取り込み（全刷新フロー・最新版）
 
-あるいは:
+**新セッションで HANDOFF.md ＋ 新しい Claude Design handoff zip を添付**し、以下を貼る:
 
+```
+添付の HANDOFF.md を最初に通読してください（最新は §15、取り込みフローの要は §11.2 / §14 / scripts/port-claude-design-1.4.py）。
+
+プロジェクト: neutral-base デザインシステム
+リポジトリ: ~/GoogleDrive/Documents/Works/MILIZE-DATA/___AI_ClaudeCode/Upload/neutral-base
+（Vercel: neutral-base.vercel.app に正常デプロイ済み。現行は TD 組込1.4 全刷新 + windows 23バリアント + Figma 連携まで完了）
+
+【今回やりたいこと】
+添付の Claude Design handoff zip を取り込みたいです。まず zip を解析し、対象テナント（theo-tdf か新規か）・画面構成・前回からの差分を洗い出して、作業計画を提示してください。追加/修正か全刷新かは、その差分を見てから相談させてください。
+
+【取り込みの厳守ルール（HANDOFF 準拠）】
+1. kumikomi.html（単一ファイル版）を真の最新とする。screens.jsx/app.jsx とは md5/行 diff で実差分を必ず確認（§11.2 の罠）。
+2. screens.tsx はコミット版を土台にせず、kumikomi から再生成する方針。型注釈はコミット版を辞書として再利用。スクリプトは scripts/port-claude-design-1.4.py を雛形に。
+3. 規約を確実に適用: (a) コンパクトスケール text-h{2-7} → repo の text-h{1-6} へ変換（globals.css 準拠）、(b) atom は shadcn ラッパー化（Btn→Button / Badge / Field→Label+Input / GroupCard→Card、§11.4）、(c) asset パスは /assets/<tenant>/、(d) bg-success → bg-[color:var(--success)]、(e) 生 hex/旧スケールの残骸ゼロを grep 確認。
+4. windows ページの状態バリアントは「全展開（height 固定はボトムシートのみ）」方針（§14.11）。必要な initial props はコンポーネントと port スクリプト両方に追加。
+5. 検証: tsc --noEmit エラー0 / eslint クリーン / 残骸 grep 0 / kumikomi の UI テキスト網羅を機械照合。
+6. Cowork は編集のみ。git add/commit/push は私（うちだ）がターミナルで実行。git は必ず …/Upload/neutral-base の中で打つ（§14.10 gotcha #31）。
+
+着手前に AskUserQuestion で (1) 対象テナント/スコープ、(2) tweaks や A/B の扱い、(3) atom 方針（shadcn ラッパー継続でよいか）を確認してから進めてください。
+```
+
+### 8.1 Figma へ書き出したい場合
+
+- **MCP 直接描画**（AI が Figma を操作）: ターミナルの **Claude Code + Figma Desktop** で `my-app/figma-mcp-import-prompt.md`（共通仕様）/ `my-app/figma-mcp-import-prompt-batched.md`（フェーズ分割・重さ対策）を使う。Cowork からは不可（§15.1）。
+- **プラグイン経路**: `my-app/code.js`（23画面完全版）を Figma の Import plugin from manifest で実行。
+- **視覚忠実**: html.to.design で `neutral-base.vercel.app/theo-tdf/windows` を取り込み（§12.7）。
+
+### 8.2 その他（旧テンプレ）
+
+> 「`HANDOFF.md` を読んでください。Priority 2 (`/init-brand-tokens`) の設計を進めたいです。」
 > 「`HANDOFF.md` を読んでから、新規テナント `acme` を追加して、ブランドカラーを 〇〇〇 / △△△ / □□□ に設定したいです。」
 
-あるいは:
-
-> 「`HANDOFF.md` を読んでください。Priority 5 (`/export-to-figma`) の Figma MCP 連携を試したいです。」
-
-このように Priority 番号 + やりたい作業を伝えると Cowork が文脈を即座に把握できます。
+Priority 番号 + やりたい作業、または「Claude Design zip 取り込み」と伝えると文脈を即座に把握できます。
 
 ---
 
@@ -1481,3 +1507,28 @@ Figma に画面をコピーする手描き型インポータープラグイン�
 - 注意: 旧 `UIUX_Importer` プラグインは削除済み。`manifest.json` は repo の `my-app/` に置いた（プラグインフォルダ側）。`figma_Importer_2` を使う場合は両ファイルをコピーする。
 
 > **2026-06-16 完全版に再生成**: 23画面すべてを省略なしで具体描画する完全版に置き換え（約920行）。お客様の絶対死守ルールに準拠 — (1) プレースホルダ/省略コメント無し・全画面全コンポーネント描画、(2) **スプレッド演算子(`...`)不使用**（Figma クラッシュ回避）、(3) **Figma ノードへのカスタムプロパティ付与なし**（`Object is not extensible` 回避。プロト遷移は正規の `node.reactions` のみ）、(4) 各画面はコンテンツ全体を表示する**可変高さフレーム**（クリップ無し）、(5) Btn/Badge/Field/LockedField/Select/GroupCard/checkbox/accordion/planCard/simSlider/benefitTable/extBar を実装。CTA ラベルは実 `screens.tsx` と一致（クレジットカード登録開始 / この内容で申込 / 確認画面へ進む 等）。検証: `node --check` OK、`...`0件・省略コメント0件・`.__`カスタムプロパティ0件。
+
+---
+
+## 15. セッションログ 2026-06-16 (Figma MCP 直接描画 / 23画面)
+
+### 15.1 経路の確定（重要）
+- **Cowork からは Figma に MCP で直接ノード描画できない**。Cowork で使える Figma MCP は Dev Mode（読み取り専用: `get_metadata` / `get_design_context` / `get_screenshot` / `get_variable_defs` / `get_code_connect_map` / `add_code_connect_map` / `create_design_system_rules`）のみ。ノード生成 `use_figma` は無い（§12.6 #21 を再確認）。
+- **書き込み（直接描画）は「ターミナルの Claude Code + Figma Desktop の MCP サーバー」経由**。`/mcp` で `figma` 接続を確認し `use_figma` を使う。新規起動は不要で、これがターミナル経路。
+- 成果: Claude Code + `use_figma` で **23画面を Figma キャンバスに直接描画完了**。
+
+### 15.2 用意したプロンプト資産（`my-app/`）
+- `my-app/figma-mcp-import-prompt.md` — 共通仕様（見た目最大化）。Auto Layout 全面 / 既存 Color Variables(theo-tdf モード)バインド / 画像 image fill / atom を Master Component 化→Instance / 実 px タイポ / 23画面の対応関数・状態 props・遷移・整列。
+- `my-app/figma-mcp-import-prompt-batched.md` — **フェーズ分割版**（一括は重くて停止するため）。Phase0 セットアップ+atom Component化 → Phase1〜6 カテゴリ単位 → Phase7 遷移+整列。各フェーズ「対象だけ作る/1回の use_figma でまとめて生成/完了したら node-id 報告して停止」。
+
+### 15.3 MCP エージェントへの効率的指示（gotcha 追記）
+31. **単純修正（画像をずらす等）に長時間かかる** → エージェントが毎回 figma-use スキルロード→全体 get_metadata 探索→計画→スクショ検証をやるため。対策: (a) **位置微調整は手作業が最速**（Figma で選択し矢印キー/ドラッグ）、(b) AI に頼むなら「**対象を選択済み**＋**数値で具体的**（x+16 等）＋**探索/スクショ検証は不要**＋**1回の use_figma でまとめて適用**」をセットで指示、(c) 繰り返す微調整は `for (const n of figma.currentPage.selection) n.x += 16;` の1行スクリプト再利用。
+32. **重さ対策** → 一括禁止。フェーズ分割（Phase0 で atom Component 化し以降はインスタンス再利用）。重いフェーズはさらに2〜3画面に分割。1ノードずつ大量呼び出しせず1回でバッチ生成。
+
+### 15.4 既知の崩れと修正方針
+- 画面01「商品概要 / パターンA」のヒーローで、背景画像が下にずれ上部に白帯／ヒーロー文言（左上 青THEOロゴ・EMBEDDED INSURANCE・大見出し「つみたてながら、もしもに備える。」・サブコピー）が欠落する崩れが発生。修正は「画像 x0/y0・最背面、ステータスバー透明・濃色文字、テキストを `screens.tsx` の `ScreenOverview` 通りに再現」を**選択フレーム限定・数値指定・探索なし**でターミナルに投げる方式に確定（プロンプト例はチャット履歴参照）。
+- §12.7 のとおり MCP 直接描画は Variables/Component/構造は正確だが**画面の視覚再現は html.to.design に劣る**。完全一致が要る画面は html.to.design 併用。
+
+### 15.5 補足
+- Figma Plugin API 経路の代替として `my-app/code.js`（23画面完全版・遷移付き）も維持（§14.12）。MCP 直接描画と二者択一ではなく、状況に応じて使い分け。
+- `my-app/manifest.json` は code.js プラグイン用。MCP 経路では不要。

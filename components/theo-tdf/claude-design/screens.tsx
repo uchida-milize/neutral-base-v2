@@ -115,12 +115,19 @@ export function PH({ className = "", label }: { className?: string; label: strin
 export function Btn({ kind = "button", children, onClick, disabled, full = true }: { kind?: "cta" | "button" | "danger" | "outline" | "ghost"; children: React.ReactNode; onClick?: () => void; disabled?: boolean; full?: boolean }) {
   // shadcn <Button> へ委譲。kind→variant + ブランド色 className。
   const tint: Record<string, string> = {
-    cta: "bg-button-500 text-white hover:bg-button-600",
-    button: "bg-button-500 text-white hover:bg-button-600",
-    danger: "bg-cta-500 text-white hover:bg-cta-600",
+    cta: "text-white",
+    button: "text-white",
+    danger: "text-white",
     outline: "border border-button-600 bg-white text-button-600 hover:bg-button-10",
     ghost: "text-neutral-500 hover:text-neutral-800",
   };
+  // グラデーション: cta / button = ブルー, danger = レッド (TD 組込1.4 で追加)
+  const gradStyle: React.CSSProperties | undefined =
+    (kind === "cta" || kind === "button")
+      ? { backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }
+      : kind === "danger"
+      ? { backgroundImage: "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)" }
+      : undefined;
   const variant = kind === "outline" ? "outline" : kind === "ghost" ? "ghost" : "default";
   return (
     <Button
@@ -128,6 +135,7 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
       variant={variant}
       onClick={onClick}
       disabled={disabled}
+      style={gradStyle}
       className={`h-16 md:h-16 rounded-xl gap-1.5 px-4 text-h6 font-bold active:scale-[.99] ${tint[kind]} ${full ? "w-full" : ""}`}
     >
       {children}
@@ -136,15 +144,24 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 }
 
 // Phone app bar (THEO header)
+// 共有グラデーション: ステータスバー(33px)+ヘッダー(56px) を1枚の連続グラデとして描画 (TD 組込1.4)
+export const HEADER_GRAD_CSS: React.CSSProperties = {
+  backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)",
+  backgroundSize: "366px 89px",
+  backgroundRepeat: "no-repeat",
+};
+export const HEADER_GRAD_STATUS: React.CSSProperties = { ...HEADER_GRAD_CSS, backgroundPosition: "0 0" };
+export const HEADER_GRAD_APPBAR: React.CSSProperties = { ...HEADER_GRAD_CSS, backgroundPosition: "0 -33px" };
+
 export function AppBar({ title, onBack, brandVisible = true }: { title: string; onBack?: () => void; brandVisible?: boolean }) {
   // 完了画面は空のAppBar
   if (title === "お申込み完了") {
     return (
-      <div className="sticky top-0 z-20 bg-primary text-primary-foreground h-14" />
+      <div className="sticky top-0 z-20 text-primary-foreground h-14" style={HEADER_GRAD_APPBAR} />
     );
   }
   return (
-    <div className="sticky top-0 z-20 bg-primary text-primary-foreground">
+    <div className="sticky top-0 z-20 text-primary-foreground" style={HEADER_GRAD_APPBAR}>
       <div className="flex items-center justify-between px-3 h-14">
         <span className="w-9 shrink-0" />
         <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
@@ -435,7 +452,7 @@ export function StepSection({ label, n, big, className, children }: { label: str
       <section className={`space-y-4 ${className || ""}`}>
         <div className="flex items-center gap-3">
           {n != null && (
-            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
+            <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
           )}
           <h2 className="text-h4 font-bold text-neutral-800">{label}</h2>
         </div>
@@ -643,7 +660,7 @@ export function ScreenOverview({ go }: { go: Go }) {
           </div>
           {/* インラインAppBar - スクロール後にsolid化 */}
           <div className="sticky top-0 z-20 transition-colors duration-200"
-               style={solid ? { background: 'var(--primary-color, #054EBA)' } : { background: 'transparent' }}>
+               style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
             <div className="flex items-center justify-between px-3 h-14">
               <span className="w-9 shrink-0" />
               <div className={`flex items-center gap-1.5 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
@@ -844,7 +861,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
 
         {/* ---- 保険料シミュレーション ---- */}
-        <div className="-mx-5 px-5 py-6 relative" style={{ background: "var(--warm-100)" }}>
+        <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
           <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
         </StepSection>
@@ -2010,7 +2027,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
             <div className="flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-800">
               <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>
-            <div className="sticky top-0 z-20 transition-colors duration-200" style={solid ? { background: 'var(--primary-color, #054EBA)' } : { background: 'transparent' }}>
+            <div className="sticky top-0 z-20 transition-colors duration-200" style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
               <div className="flex items-center justify-between px-3 h-14">
                 <span className="w-9 shrink-0" />
                 <div className={"flex items-center gap-1.5 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
@@ -2086,7 +2103,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           <h2 className="text-h4 font-bold text-white text-center">さっそく、<br/>プランを選んでみましょう</h2>
           <p className="mt-1 text-caption text-white text-center" style={{ opacity: 0.8 }}>かんたん入力で保険料がすぐわかります</p>
         </div>
-        <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "var(--warm-100)" }}>
+        <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
           <div className="space-y-4">
             <div>
@@ -2121,7 +2138,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
-          <div className="-mx-5 px-5 py-6 relative" style={{ background: "var(--warm-100)" }}>
+          <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
             </StepSection>
