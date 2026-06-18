@@ -164,8 +164,9 @@ export default function TheoTdfWindowsPage() {
         },
         {
           key: "st-notice",
-          label: "重要事項ボトムシート",
-          height: 820,
+          label: "重要事項ボトムシート（全文表示）",
+          // ボトムシートは max-h-[88%]。全文が収まるよう高さを確保（上部は暗幕＝通常のシート表示）
+          height: 1600,
           el: (
             <ScreenStep2
               go={noop} sel="cancer" setSel={noop}
@@ -295,8 +296,9 @@ export default function TheoTdfWindowsPage() {
         {
           // 告知モーダルは ScreenForm マウント時に既定表示される（initialDisclosureOpen 省略時）
           key: "form-disclosure",
-          label: "モーダルあり：告知",
-          height: 820,
+          label: "モーダルあり：告知（全文表示）",
+          // 告知モーダルは内容が長い。全文が収まるよう高さを確保（max-h-[88%] 内に収める）
+          height: 3700,
           el: (
             <ScreenForm
               go={noop} sel="cancer"
@@ -334,6 +336,18 @@ export default function TheoTdfWindowsPage() {
               go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
               formSplit initialFormPage={2} initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          // initialSame={false} で「住所は契約者と同じ」を未チェック → 受取人住所の個別入力欄が出る
+          key: "form-recipient-addr",
+          label: "モーダル無し：受取人住所を個別入力（「契約者と同じ」未チェック）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              formSplit initialFormPage={2} initialSame={false} initialDisclosureOpen={false}
             />
           ),
         },
