@@ -768,12 +768,13 @@
    内部スクロールを止め、シート全文を一覧表示する。カード高さは内容に合わせて指定する。 */
 .theo-sheet-full .sheet-up {
   top: 140px !important;
-  bottom: 0 !important;
+  bottom: auto !important;       /* 内容ぴったりの高さに（flex-1 本文が伸びてフッターが落ちるのを防ぐ） */
   max-height: none !important;
 }
 .theo-sheet-full .sheet-up [class*="overflow-y-auto"] {
   overflow: visible !important;
   max-height: none !important;
+  flex: 0 0 auto !important;     /* flex-1 本文を内容高さに固定（伸ばさない） */
 }
 
 /* theo-tdf prototype 用 success (メール認証済み表示 / GMO 画面のアクセント)

@@ -302,8 +302,8 @@ export default function TheoTdfWindowsPage() {
           // 告知モーダルは ScreenForm マウント時に既定表示される（initialDisclosureOpen 省略時）
           key: "form-disclosure",
           label: "モーダルあり：告知（全文表示）",
-          // ステッパー直下(140px)から告知モーダル全文を表示。カード高さ＝140+内容（長文）＋余白。
-          height: 3120,
+          // ステッパー直下(140px)から告知モーダル全文を表示。height:auto のシート全高＋上部140に合わせる。
+          height: 2700,
           fullSheet: true,
           el: (
             <ScreenForm
