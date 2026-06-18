@@ -48,7 +48,9 @@ export type Plan = {
   lead: string;
   feat: string[];
   tag?: string;
-  tooltip?: string;
+  death?: boolean;
+  tooltip?: { sections: { head: string; body: string }[] };
+  disclosure?: AgreeBlock[];
 };
 
 export type AgreeBlock = {
@@ -58,11 +60,15 @@ export type AgreeBlock = {
   download?: string;
   note?: string;
   table?: string[][];
+  head?: string;
+  strong?: string;
 };
 
 export type AgreeItemData = {
   t: string;
   blocks: AgreeBlock[];
+  kind?: string;
+  id?: string;
 };
 
 type Go = (n: number) => void;
@@ -394,17 +400,130 @@ export function ScreenIntro({ go }: { go: Go }) {
 /* ============================================================
    SCREEN 2 — プラン選択
    ============================================================ */
-export const PLANS: Plan[] = [
-  { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "免責期間：60日"],
-    tooltip: "就業不能・障害状態または介護状態に認定された場合に、月額最大50,000円の給付金をお受け取りいただけます。保険期間1年（自動更新）、告知のみで加入可能。免責期間は60日間です。" },
-  { id: "b", name: "がん", price: "¥980", lead: "初めてがんと診断された場合に、給付金が支払われます",
-    feat: ["診断一時金：¥300,000", "保険期間：1年", "告知のみ・診査不要"],
-    tooltip: "初めてがんと診断確定された場合に、300,000円の診断一時金をお受け取りいただけます。保険期間1年（自動更新）、医師の診査不要・告知のみで加入可能です。" },
-  { id: "c", name: "安心セット", tag: "おすすめ", price: "¥1,290", lead: "障害・介護状態になった場合、または初めてがんと診断された場合に、給付金が支払われます",
-    feat: ["障害・介護：月額 最大 ¥50,000", "がん診断一時金：¥300,000", "保険期間：1年（自動更新）"],
-    tooltip: "障害・介護プランとがんプランをセットにしたおすすめプランです。月額最大50,000円の給付金と300,000円のがん診断一時金、両方の保障が受けられます。" },
+/* 告知事項（健康告知）— 4プラン共通のベース項目。
+   ※ 先進医療プランは告知不要。各プラン固有の告知文言は添付PPTX反映時に上書きします。 */
+export const DISCLOSURE_INTRO = [
+  { head: "告知に関する重要事項" },
+  { p: "下記の内容をご確認のうえ、お申し込みください。" },
+  { strong: "保険商品お申し込みの方へ" },
+  { p: "募集用資料・告知書・告知説明資料等において、ご契約者や被保険者は健康状態等について告知をしていただく義務があります。" },
+  { p: "生命保険は、多数の人々が公平に保険料を出し合い、相互に保険し合う制度です。したがって、初めから健康状態の良くない方や危険な職業に従事されている方等が無条件に契約されますと、保険料負担の公平性が保てません。" },
+  { p: "このため、当社では、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、職業、身体の障がい状況、危険な趣味などについて「告知書」をもって、おたずねすることになっております。事実をありのままに正確にもれなくお知らせ（告知）ください。" },
+  { p: "ご加入（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、保険金・給付金はお支払いできません。" },
+  { p: "（事例）契約前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目には該当しませんが、契約3ヶ月後に直接的な原因による脳梗塞を発症した場合などもお支払いできない場合があります。" },
+  { p: "※ただし、以下のような場合には責任開始期以後発生した原因によるものとみなし、保険金・給付金をお支払いします。" },
+  { ul: [
+    "責任開始期から2年を経過した後で支払事由が生じた場合",
+    "責任開始期以降、その疾病やケガによって医師の診察を受けたことがなく、かつ診断等による異常な指摘も受けていない場合。ただし、その原因となった病気やケガによる症状について被保険者が認識または自覚していた場合を除きます。",
+  ] },
+  { p: "※告知に、以下のような事実を故意または重大な過失によって告知されなかったり、事実と異なることを告知された場合には、保険・給付契約を解除させていただくことがあります。お気をつけください。" },
+  { ul: [
+    "責任開始期から2年を経過するまでに支払事由が生じた場合",
+    "被保険者または契約者が、当社の担当者（生命保険募集人）に告知の際、事実を告げることを妨げられた場合、または事実と異なる告知をすることを勧められた場合などには、解除できないことがあります。ただし、その原因となった事実についてはこの限りではありません。",
+    "なお、お客さまが告知されたことが事実と相違していても、当社の担当者がその相違を知り、または過失により知らなかった場合などには解除できないことがあります。",
+  ] },
 ];
+
+export const DISCLOSURE_BASE = [
+  ...DISCLOSURE_INTRO,
+  { note: "【告知事項】\n以下の質問についてすべて「いいえ」であることをご確認ください。1つでも「はい」があると、ご加入いただけません。" },
+  { ul: [
+    "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）",
+    "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。",
+  ] },
+  { table: [["検査名", "狭内視鏡検査・便潜血検査・マンモグラフィ検査・腫瘍マーカー（CEA、AFP、CA19-9、PSA）"]] },
+  { ul: ["過去5年以内の病気について、以下に該当することはありますか。\n・病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）\n・下記表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。"] },
+  { table: [
+    ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
+    ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
+    ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
+    ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
+    ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
+    ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"],
+    ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
+  ] },
+  { ul: ["つぎのいずれか1つでも該当することはありますか。\n・今までに、がん（上皮内がん、肉腫、白血病、悪性リンパ腫、骨髄腫を含む）、高度異形成または骨髄異形成症候群になったことがある。\n・今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）。\n・現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折などにより現在一時的に必要とする場合も含みます。（1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄）"] },
+];
+
+export const PLANS: Plan[] = [
+  { id: "cancer", name: "がん保障型", price: "¥980", death: true,
+    lead: "がんと診断された場合に、給付金が支払われます",
+    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+    ] },
+    disclosure: DISCLOSURE_BASE },
+  { id: "three", name: "三大疾病保障型", price: "¥1,180", death: true,
+    lead: "がん・急性心筋梗塞・脳卒中と診断された場合に、給付金が支払われます",
+    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\nがん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+    ] },
+    disclosure: DISCLOSURE_BASE },
+  { id: "care", name: "障害介護保障型", price: "¥680", death: true,
+    lead: "障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] },
+    disclosure: DISCLOSURE_BASE },
+  { id: "cancer_care", name: "がん・障害介護保障型", price: "¥1,480", death: true,
+    lead: "がんと診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["がん診断給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
+    tooltip: { sections: [
+      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] },
+    disclosure: DISCLOSURE_BASE },
+  { id: "three_care", name: "三大疾病・障害介護保障型", price: "¥1,780", death: true,
+    lead: "三大疾病と診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["三大疾病給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
+    tooltip: { sections: [
+      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\n※がん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] },
+    disclosure: DISCLOSURE_BASE },
+];
+
+/* 告知項目モーダル — プラン選択画面のツールチップ押下で表示 */
+export function DisclosureModal({ plan, onClose, confirm, onConfirm }: { plan: Plan | null; onClose: () => void; confirm?: boolean; onConfirm?: () => void }) {
+  if (!plan) return null;
+  return (
+    <div className="absolute inset-0 z-50">
+      <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
+      <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
+          <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
+            <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">告知</span>
+            {plan.name}の告知項目
+          </h3>
+          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto no-sb px-5 py-4 space-y-3">
+          {plan.disclosure ? (
+            <AgreeBlocks blocks={plan.disclosure} />
+          ) : (
+            <div className="rounded-lg border border-warm-200 bg-warm-50 p-4">
+              <p className="text-caption text-neutral-700 leading-relaxed">本プランはご加入にあたっての健康告知が不要です。所定の条件を満たす方であれば、告知なしでお申し込みいただけます。</p>
+            </div>
+          )}
+        </div>
+        <div className="px-5 py-3 border-t border-warm-200">
+          {confirm ? (
+            <div className="flex gap-3">
+              <div className="flex-1"><Btn kind="button" onClick={onClose}>キャンセル</Btn></div>
+              <div className="flex-1"><Btn kind="button" onClick={onConfirm || onClose}>すべていいえ</Btn></div>
+            </div>
+          ) : (
+            <Btn kind="button" onClick={onClose}>閉じる</Btn>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }) {
   const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
@@ -424,8 +543,17 @@ export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; se
         {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
       </div>
       {ttOpen && (
-        <div className="mx-4 mt-3 p-3.5 rounded-xl bg-primary-10 border border-primary-100" onClick={(e) => e.stopPropagation()}>
-          <p className="text-caption text-neutral-700 leading-relaxed">{p.tooltip}</p>
+        <div className="mx-4 mt-3 p-3.5 rounded-xl bg-primary-10 border border-primary-100 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-2">
+            <span className="text-caption font-bold text-neutral-800">死亡保障</span>
+            <span className={`text-h6 font-bold leading-none ${p.death ? "text-primary-600" : "text-neutral-400"}`}>{p.death ? "◯" : "✗"}</span>
+          </div>
+          {p.tooltip?.sections.map((s, i) => (
+            <div key={i} className="space-y-1">
+              <p className="text-caption font-bold text-neutral-800 leading-snug">{s.head}</p>
+              <p className="text-caption text-neutral-700 leading-relaxed whitespace-pre-line">{s.body}</p>
+            </div>
+          ))}
         </div>
       )}
       <div className="p-4">
@@ -759,7 +887,7 @@ export function ScreenOverview({ go }: { go: Go }) {
               </div>
               <div className="border-t border-primary-100 mb-[45px]"></div>
               <div className="text-center mb-5">
-                <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">3つのプランから選ぶだけ</h2>
+                <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">5つのプランから選ぶだけ</h2>
                 <p className="mt-2 text-h6 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
               </div>
               <div>
@@ -868,9 +996,9 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
 
         {/* ---- 保険料シミュレーション ---- */}
-        <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>
+        <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
-          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
         </StepSection>
         </div>
         </>)}
@@ -901,7 +1029,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
 
         {/* ---- 給付予想額 ---- */}
-        <StepSection label="給付予想額" n={3} big className="mt-8">
+        <StepSection label="保険料テーブル" n={3} big className="mt-8">
           <div className="rounded-2xl border border-warm-200 bg-white p-5">
             <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
             <BenefitTable m={m} y={y} plan={plan} />
@@ -910,7 +1038,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </>)}
 
         {/* ---- 申し込みをする（2ステップ） ---- */}
-        <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "#e7edf7" }}>
+        <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-8">
           {/* STEP 1 — メールアドレスのご入力 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
@@ -945,7 +1073,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
         </div>
       </div>
 
-      <ActionBar bg={showSend ? "#e7edf7" : undefined}>
+      <ActionBar bg={showSend ? "#F2FBFE" : undefined}>
         <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
           <Ic.doc className="w-4 h-4 mt-0.5 text-neutral-400 shrink-0" />
           申込みは本人様名義のクレジットカードが必要です
@@ -984,7 +1112,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
 
       {/* 重要事項ボトムシート */}
       {noticeOpen && (
-        <div className="absolute inset-0 z-40">
+        <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
@@ -1023,6 +1151,14 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                     <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
                   </ul>
                 </section>
+                {plan.death && (
+                <section className="space-y-1.5">
+                  <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・本プランには死亡保障が含まれます。死亡保険金受取人は、日本国内に在住し、日本語による各種ご通知・お手続きへの対応が可能な方に限ります。</li>
+                  </ul>
+                </section>
+                )}
               </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
@@ -1125,10 +1261,10 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
             <span className="text-caption"> 円</span>
           </span>
         </div>
-        <input type="range" min="5000" max="50000" step="1000" value={m} onChange={onM}
+        <input type="range" min="5000" max="150000" step="1000" value={m} onChange={onM}
           style={sliderStyle} className="w-full mt-2 h-1.5 cursor-pointer" />
         <div className="flex justify-between font-mono text-[10px] text-neutral-400 mt-1">
-          <span>5,000円</span><span>50,000円</span>
+          <span>5,000円</span><span>150,000円</span>
         </div>
       </div>
 
@@ -1150,9 +1286,32 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
   );
 }
 
+// 生年月日("YYYY-MM-DD")から加入年齢を算出。未入力時は30をデフォルト。
+export function ageFromBirth(b: string) {
+  if (!b) return 30;
+  const d = new Date(b);
+  if (isNaN(d.getTime())) return 30;
+  const n = new Date();
+  let a = n.getFullYear() - d.getFullYear();
+  const md = n.getMonth() - d.getMonth();
+  if (md < 0 || (md === 0 && n.getDate() < d.getDate())) a--;
+  return a;
+}
+
+// シミュレーション上限チェック
+export const SIM_MAX_BENEFIT = 40000000; // 4,000万円
+export const SIM_MAX_MATURITY_AGE = 90;  // 加入年齢＋保障期間の上限
+export function simErrors(m: number, y: number, startAge: number) {
+  const errs: string[] = [];
+  if (m * 12 * y > SIM_MAX_BENEFIT)
+    errs.push("保障金額が上限を超えています。積立金額×12×保障期間が4,000万円以内となるよう設定ください");
+  if (startAge + y > SIM_MAX_MATURITY_AGE)
+    errs.push("保障満了が上限を超えています。加入年齢＋保障期間が90歳以下となるよう設定ください");
+  return errs;
+}
+
 // 給付予想額テーブル（m, y から算出）
-export function BenefitTable({ m, y, plan }: { m: number; y: number; plan: Plan | undefined }) {
-  const startAge = 30;
+export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: number; plan: Plan | undefined; startAge?: number }) {
   const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const annual = m * 12;
@@ -1205,9 +1364,10 @@ export function BenefitTable({ m, y, plan }: { m: number; y: number; plan: Plan 
   );
 }
 
-export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined }) {
+export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan, startAge = 30 }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }) {
   const [open, setOpen] = useState(initialSimOpen ?? false);
-  const shouldShowLabel = planName && ['安心セット', 'がん', '障害・介護'].includes(planName);
+  const shouldShowLabel = !!planName;
+  const errors = simErrors(m, y, startAge);
   return (
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
       <div className="flex items-center justify-start gap-3 mb-5">
@@ -1226,9 +1386,16 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 
       <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setOpen(true)} />
 
+      {errors.length > 0 ? (
+        <div className="mt-4 pt-4 border-t border-warm-200 space-y-2">
+          {errors.map((e, i) => (
+            <p key={i} className="text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>{e}</p>
+          ))}
+        </div>
+      ) : (<>
       <button onClick={() => setOpen((o) => !o)}
         className="flex items-center justify-between w-full mt-4 pt-4 border-t border-warm-200 text-left">
-        <span className="text-h6 font-bold text-neutral-800">給付予想額をみる</span>
+        <span className="text-h6 font-bold text-neutral-800">保険料テーブルをみる</span>
         <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${open ? "rotate-180" : ""}`}>
           <Ic.chevR className="w-4 h-4 rotate-90" />
         </span>
@@ -1236,8 +1403,9 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 
       <div style={{ maxHeight: open ? "1600px" : "0px", opacity: open ? 1 : 0, marginTop: open ? "16px" : "0px" }}
         className="overflow-hidden transition-all duration-300 ease-out">
-        <BenefitTable m={m} y={y} plan={plan} />
+        <BenefitTable m={m} y={y} plan={plan} startAge={startAge} />
       </div>
+      </>)}
     </div>
   );
 }
@@ -1247,11 +1415,16 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
    ============================================================ */
 export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  // ページ表示時に、選択プランの告知項目モーダルを強制表示
+  const [infoPlan, setInfoPlan] = useState<Plan | null>(() => plan ?? null);
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
+  // 積立内容修正モーダル用バリデーション（シミュレーション画面と同ロジック）
+  const formStartAge = ageFromBirth("1990-01-01"); // 契約者生年月日
+  const editErrors = simErrors(m, y, formStartAge);
 
   // 契約者住所（受取人「契約者と同じ」でコピーされる値。初期値はTHEO口座から自動入力）
   const [holder, setHolder] = useState({ zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", addr: "1-1", bldg: "丸の内ビル 10F" });
@@ -1356,13 +1529,15 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
             <span className="text-caption text-neutral-700">住所は契約者と同じ</span>
           </button>
 
-          <div key={same ? `same-${holder.zip}-${holder.pref}-${holder.town}-${holder.bldg}` : "diff"} className="space-y-3">
-            <Field label="郵便番号" placeholder="100-0001" value={same ? holder.zip : undefined} disabled={same} />
-            <Select label="都道府県" value={same ? holder.pref : "都道府県を選択"} options={PREFS} disabled={same} />
-            <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" value={same ? holder.town : undefined} disabled={same} />
-            <Field label="番地など" placeholder="1丁目1番地1号" value={same ? holder.addr : undefined} disabled={same} />
-            <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={same ? holder.bldg : undefined} disabled={same} />
+          {!same && (
+          <div className="space-y-3">
+            <Field label="郵便番号" placeholder="100-0001" />
+            <Select label="都道府県" value="都道府県を選択" options={PREFS} />
+            <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" />
+            <Field label="番地など" placeholder="1丁目1番地1号" />
+            <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" />
           </div>
+          )}
 
           <Select label="続柄" required value="続柄を選択" options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} />
           <Field label="電話番号" placeholder="090-0000-0000" />
@@ -1378,7 +1553,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
 
       </div>
 
-      <ActionBar bg={atBottom ? "#e7edf7" : undefined}>
+      <ActionBar bg={atBottom ? "#F2FBFE" : undefined}>
         <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
@@ -1406,7 +1581,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
       </ActionBar>
 
       {editOpen && (
-        <div className="absolute inset-0 z-40">
+        <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setEditOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
@@ -1418,25 +1593,36 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
             <div className="px-5 overflow-y-auto no-sb pb-2">
               <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
 
-              {/* シミュレーション結果（アコーディオン） */}
+              {/* シミュレーション結果（エラー時はテーブル非表示・赤字エラー） */}
+              {editErrors.length > 0 ? (
+                <div className="mt-2 pt-4 border-t border-warm-200 space-y-2">
+                  {editErrors.map((e, i) => (
+                    <p key={i} className="text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>{e}</p>
+                  ))}
+                </div>
+              ) : (<>
               <button onClick={() => setSheetRes((o) => !o)}
                 className="flex items-center justify-between w-full mt-2 pt-4 border-t border-warm-200 text-left">
-                <span className="text-h6 font-bold text-neutral-800">給付予想額をみる</span>
+                <span className="text-h6 font-bold text-neutral-800">保険料テーブルをみる</span>
                 <span className={`grid place-items-center w-7 h-7 rounded-full bg-warm-100 text-neutral-500 transition-transform ${sheetRes ? "rotate-180" : ""}`}>
                   <Ic.chevR className="w-4 h-4 rotate-90" />
                 </span>
               </button>
               <div style={{ maxHeight: sheetRes ? "1600px" : "0px", opacity: sheetRes ? 1 : 0, marginTop: sheetRes ? "16px" : "0px" }}
                 className="overflow-hidden transition-all duration-300 ease-out">
-                <BenefitTable m={m} y={y} plan={plan} />
+                <BenefitTable m={m} y={y} plan={plan} startAge={formStartAge} />
               </div>
+              </>)}
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
-              <Btn kind="button" onClick={() => setEditOpen(false)}>この内容で更新</Btn>
+              <Btn kind="button" onClick={() => setEditOpen(false)} disabled={editErrors.length > 0}>この内容で更新</Btn>
             </div>
           </div>
         </div>
       )}
+
+      {/* 告知項目モーダル（ページ表示時に選択プランで強制表示） */}
+      <DisclosureModal plan={infoPlan} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} />
 
       {/* 受取人 生年月日ドラムロール */}
       <DateDrumSheet open={benPickerOpen} value={benBirth}
@@ -1463,6 +1649,7 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
+    kind: "agree",
     t: "個人情報のお取り扱いについて",
     blocks: [
       { ul: [
@@ -1476,6 +1663,7 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
+    kind: "agree",
     t: "ペーパーレス申込の同意",
     blocks: [
       { p: "ペーパーレス手続きとは、情報端末（以下「タブレット等」といいます）による生命保険契約のお申込み手続きです。" },
@@ -1519,6 +1707,7 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
+    id: "insured",
     t: "被保険者の確認",
     blocks: [
       { p: "該当するいずれかにチェックを入れてください。" },
@@ -1536,9 +1725,11 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     blocks: [
       { p: "シミュレーションをもとにT＆Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。" },
       { ul: [
-        "障害・介護プランを選択した場合\n積立期間中における障害・介護状態にそなえたい",
-        "がんプランを選択した場合\n積立期間中におけるがんにそなえたい",
-        "安心セットを選択した場合\n積立期間中における障害・介護状態、がんにそなえたい",
+        "がん保障型を選択した場合\n積立期間中のがんにそなえたい",
+        "三大疾病保障型を選択した場合\n積立期間中のがん・急性心筋梗塞・脳卒中にそなえたい",
+        "障害介護保障型を選択した場合\n積立期間中における障害・介護状態にそなえたい",
+        "がん・障害介護保障型を選択した場合\n積立期間中のがん、および障害・介護状態にそなえたい",
+        "三大疾病・障害介護保障型を選択した場合\n積立期間中のがん・急性心筋梗塞・脳卒中、および障害・介護状態にそなえたい",
       ] },
     ],
   },
@@ -1554,6 +1745,8 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
   return (
     <>
       {blocks.map((b, i) => {
+        if (b.head) return <p key={i} className="text-h5 font-bold text-neutral-800 leading-snug pt-1">{b.head}</p>;
+        if (b.strong) return <p key={i} className="text-caption font-bold text-neutral-800 leading-relaxed">{b.strong}</p>;
         if (b.p) return <p key={i} className="text-caption text-neutral-600 leading-relaxed whitespace-pre-line">{b.p}</p>;
         if (b.ul) return (
           <ul key={i} className="space-y-2">
@@ -1611,6 +1804,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
       <div style={{ maxHeight: open ? "2600px" : "0px", opacity: open ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
         <div className="px-3 pt-3 pb-3.5 border-t border-warm-200 max-h-80 overflow-y-auto no-sb space-y-2.5">
           <AgreeBlocks blocks={item.blocks} />
+          {children}
         </div>
       </div>
     </div>
@@ -1627,6 +1821,11 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
+  // 死亡保障がないプランでは「被保険者の確認」選択は不要
+  const agreeItems = plan.death ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !== "insured");
+  const CIRC = "①②③④⑤⑥⑦⑧⑨";
+  const confirmNums = agreeItems.map((it, i) => (it.kind === "agree" ? null : CIRC[i])).filter(Boolean).join("");
+  const agreeNums = agreeItems.map((it, i) => (it.kind === "agree" ? CIRC[i] : null)).filter(Boolean).join("");
   return (
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
@@ -1804,10 +2003,10 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
         <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
           <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-h5 font-bold text-neutral-800">重要事項をご確認ください</span></div>
           <div className="space-y-2.5">
-            {AGREE_ITEMS.map((it, i) => (
-              <AgreeItem key={i} num={"①②③④⑤⑥⑦⑧"[i]} item={it} open={openIdx === i}
+            {agreeItems.map((it, i) => (
+              <AgreeItem key={it.id || i} num={CIRC[i]} item={it} open={openIdx === i}
                 onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}>
-                {i === 4 && (
+                {it.id === "insured" && (
                   <div className="space-y-4 pt-1">
                     <div className="grid grid-cols-2 gap-3">
                       {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
@@ -1841,11 +2040,11 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
             <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-h6 text-neutral-700 leading-relaxed">①④⑤⑥⑦⑧について確認、②③について同意する</span>
+            <span className="text-h6 text-neutral-700 leading-relaxed">{confirmNums}について確認、{agreeNums}について同意する</span>
           </button>
         </div>
       </div>
-      <ActionBar>
+      <ActionBar bg="#F2FBFE">
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
           <div style={{ width: '100%', maxWidth: '260px' }}>
@@ -2038,7 +2237,7 @@ export function ScreenDone({ go }: { go: Go }) {
           </div>
         </div>
       </div>
-      <ActionBar>
+      <ActionBar bg="#F2FBFE">
         <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
       </ActionBar>
     </>
@@ -2202,7 +2401,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           {/* 保険料シミュレーション */}
           <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
-              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} />
+              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
           </div>
           </>)}
@@ -2227,7 +2426,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
             </StepSection>
           </div>
           {/* 給付予想額 */}
-          <StepSection label="給付予想額" n={3} big className="mt-8">
+          <StepSection label="保険料テーブル" n={3} big className="mt-8">
             <div className="rounded-2xl border border-warm-200 bg-white p-5">
               <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
               <BenefitTable m={m} y={y} plan={plan} />
@@ -2302,7 +2501,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
       </ActionBar>
       <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
       {noticeOpen && (
-        <div className="absolute inset-0 z-40">
+        <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
@@ -2314,11 +2513,45 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-5 py-4 overflow-y-auto no-sb text-caption text-neutral-700 leading-relaxed space-y-3 flex-1">
-              <p>本保険は「THEO つみたて安心ほけん」（T&Dフィナンシャル生命保険株式会社）です。ご契約前に重要事項・事前同意事項をよくお読みください。</p>
+            <div className="px-5 py-4 overflow-y-auto no-sb space-y-5">
+              <p className="text-caption text-neutral-500 leading-relaxed">
+                お申込み前に、以下の内容を必ずご確認ください。
+              </p>
+
+              <div className="space-y-5">
+                <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
+                  <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
+                  事前同意事項
+                </p>
+                <p className="text-caption text-neutral-500 leading-relaxed">お申し込み前にご確認ください。</p>
+                <section className="space-y-1.5">
+                  <h4 className="text-h6 font-bold text-neutral-800">この保険について</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・株式会社三菱ＵＦＪ銀行を団体契約者とし、Money Canvas会員の皆さま、会員のご家族を被保険者とする団体契約です。Money Canvas会員の資格を喪失された場合、保険契約は解約いただく、もしくは更新できませんので、ご注意ください。また、保険証券を請求する権利、保険契約を解約する権利等は原則として株式会社 三菱ＵＦＪ銀行が有します。</li>
+                    <li>・この契約は、申込み日が17日までの場合は、翌月1日（0時）より補償が開始し、申込み日が18日から末日までの場合は、翌々月1日（0時）より補償が開始します。</li>
+                    <li>・満期日までにご加入者から更新しない旨のお申出がなければ、団体の取り決めにより原則自動更新されます。</li>
+                  </ul>
+                </section>
+                <section className="space-y-1.5">
+                  <h4 className="text-h6 font-bold text-neutral-800">個人情報の取扱いについて</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・団体契約者である株式会社三菱ＵＦＪ銀行は、お客さまにご入力いただく個人情報を、以下の目的で利用させていただきます。</li>
+                    <li>・お客さまに関する情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
+                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
+                  </ul>
+                </section>
+                {plan.death && (
+                <section className="space-y-1.5">
+                  <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
+                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+                    <li>・本プランには死亡保障が含まれます。死亡保険金受取人は、日本国内に在住し、日本語による各種ご通知・お手続きへの対応が可能な方に限ります。</li>
+                  </ul>
+                </section>
+                )}
+              </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
-              <Btn kind="button" onClick={() => setNoticeOpen(false)}>閉じる</Btn>
+              <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
         </div>

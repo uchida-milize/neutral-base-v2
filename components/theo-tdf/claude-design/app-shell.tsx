@@ -201,7 +201,7 @@ const TWEAK_DEFAULTS = {
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [scr, setScr] = React.useState(0);
-  const [sel, setSel] = React.useState("a");
+  const [sel, setSel] = React.useState("cancer");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
   const [emailVerified, setEmailVerified] = React.useState(false);

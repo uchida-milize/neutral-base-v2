@@ -116,7 +116,7 @@ export default function TheoTdfWindowsPage() {
           label: "パターンB（商品概要＋プラン選択統合）",
           el: (
             <ScreenCombined
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
             />
           ),
@@ -126,7 +126,7 @@ export default function TheoTdfWindowsPage() {
           label: "パターンB / ページ下部CTA（未同意）",
           el: (
             <ScreenCombined
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialShowSend
             />
@@ -137,7 +137,7 @@ export default function TheoTdfWindowsPage() {
           label: "パターンB / 同意チェック済・CTA活性",
           el: (
             <ScreenCombined
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialShowSend initialAgree
             />
@@ -157,7 +157,7 @@ export default function TheoTdfWindowsPage() {
           label: "デフォルト",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
             />
           ),
@@ -168,7 +168,7 @@ export default function TheoTdfWindowsPage() {
           height: 820,
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialNoticeOpen
             />
@@ -179,7 +179,7 @@ export default function TheoTdfWindowsPage() {
           label: "給付予想額アコーディオン展開",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialSimOpen
             />
@@ -190,7 +190,7 @@ export default function TheoTdfWindowsPage() {
           label: "ページ下部CTA（未同意・送信ボタン非活性）",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialShowSend
             />
@@ -201,7 +201,7 @@ export default function TheoTdfWindowsPage() {
           label: "同意チェック済・CTA活性",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialShowSend initialAgree
             />
@@ -212,7 +212,7 @@ export default function TheoTdfWindowsPage() {
           label: "メール認証済み・申込フォームへ進む",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialShowSend initialAgree emailVerified
             />
@@ -220,12 +220,12 @@ export default function TheoTdfWindowsPage() {
         },
         {
           key: "st-step2-tooltip",
-          label: "プランツールチップ1つ展開（安心セット）",
+          label: "プランツールチップ1つ展開（がん保障型）",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
-              initialTipIdx={2}
+              initialTipIdx={0}
             />
           ),
         },
@@ -234,7 +234,7 @@ export default function TheoTdfWindowsPage() {
           label: "積立金額・保障期間をプランより先に",
           el: (
             <ScreenStep2
-              go={noop} sel="c" setSel={noop}
+              go={noop} sel="cancer" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               simFirst
             />
@@ -273,7 +273,7 @@ export default function TheoTdfWindowsPage() {
           label: "デフォルト（1ページ）",
           el: (
             <ScreenForm
-              go={noop} sel="c"
+              go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
             />
           ),
@@ -283,7 +283,7 @@ export default function TheoTdfWindowsPage() {
           label: "2ページ分割（契約者ページ）",
           el: (
             <ScreenForm
-              go={noop} sel="c"
+              go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
               formSplit
             />
@@ -294,7 +294,7 @@ export default function TheoTdfWindowsPage() {
           label: "2ページ分割（保険金受取人ページ）",
           el: (
             <ScreenForm
-              go={noop} sel="c"
+              go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
               formSplit initialFormPage={2}
             />
@@ -306,7 +306,7 @@ export default function TheoTdfWindowsPage() {
           height: 820,
           el: (
             <ScreenForm
-              go={noop} sel="c"
+              go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
               initialEditOpen initialSheetRes
             />
@@ -324,19 +324,19 @@ export default function TheoTdfWindowsPage() {
         {
           key: "step4",
           label: "デフォルト",
-          el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} />,
+          el: <ScreenStep4 go={noop} sel="cancer" m={10000} y={15} />,
         },
         {
           key: "st-acct",
           label: "お支払い詳細展開",
-          el: <ScreenStep4 go={noop} sel="c" m={10000} y={15} initialAcctOpen />,
+          el: <ScreenStep4 go={noop} sel="cancer" m={10000} y={15} initialAcctOpen />,
         },
         {
           key: "st-agree",
           label: "同意項目①展開＋全チェック・CTA活性",
           el: (
             <ScreenStep4
-              go={noop} sel="c" m={10000} y={15}
+              go={noop} sel="cancer" m={10000} y={15}
               initialOpenIdx={0}
               initialChecks={[true, true, true, true, true]}
             />
@@ -347,7 +347,7 @@ export default function TheoTdfWindowsPage() {
           label: "契約者情報＋保険金受取人 両方編集展開",
           el: (
             <ScreenStep4
-              go={noop} sel="c" m={10000} y={15}
+              go={noop} sel="cancer" m={10000} y={15}
               initialEditKiyaku initialEditJuushin
             />
           ),

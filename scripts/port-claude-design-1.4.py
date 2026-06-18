@@ -49,6 +49,9 @@ def transform(t):
     t = t.replace('bg-success', 'bg-[color:var(--success)]')
     # typing helpers
     t = t.replace('useRef(null)', 'useRef<any>(null)')
+    # TD 組込1.5: tooltip は optional。表示は ttOpen (tooltip 存在時のみ true) 配下だが
+    # TS の narrowing が効かないため optional chaining で型安全化。
+    t = t.replace('p.tooltip.sections.map', 'p.tooltip?.sections.map')
     t = t.replace('(el) =>', '(el: any) =>')
     t = re.sub(r'\(p\) => <svg', '(p: React.SVGProps<SVGSVGElement>) => <svg', t)
     return t
@@ -305,8 +308,9 @@ TYPE = {
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
   "SimSliders": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }",
-  "BenefitTable": "{ m: number; y: number; plan: Plan | undefined }",
-  "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined }",
+  "BenefitTable": "{ m: number; y: number; plan: Plan | undefined; startAge?: number }",
+  "DisclosureModal": "{ plan: Plan | null; onClose: () => void; confirm?: boolean; onConfirm?: () => void }",
+  "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }",
   "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
@@ -338,6 +342,14 @@ for name, typ in TYPE.items():
 body = body.replace("function daysInMonth(y, m)", "function daysInMonth(y: number, m: number)")
 body = body.replace("function pad2(n)", "function pad2(n: number)")
 body = body.replace("function fmtBirth(v)", "function fmtBirth(v: string)")
+# TD 組込1.5: 新ヘルパー (年齢計算 / 積立上限バリデーション)
+body = must_replace(body, "function ageFromBirth(b)", "function ageFromBirth(b: string)")
+body = must_replace(body, "function simErrors(m, y, startAge)", "function simErrors(m: number, y: number, startAge: number)")
+body = must_replace(body, "const errs = [];", "const errs: string[] = [];")
+# infoPlan は plan (Plan | undefined) で初期化され null もセットされるため明示型付け。
+body = must_replace(body,
+    "const [infoPlan, setInfoPlan] = useState(() => plan);",
+    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => plan ?? null);")
 
 # ---- standalone arrow param typings (avoid implicit-any in strict mode) ----
 body = body.replace("const years = [];", "const years: number[] = [];")
@@ -364,6 +376,10 @@ body = body.replace("const AGREE_ITEMS = [", "const AGREE_ITEMS: AgreeItemData[]
 body = re.sub(r'^function ', 'export function ', body, flags=re.M)
 body = re.sub(r'^const ', 'export const ', body, flags=re.M)
 screen_combined = re.sub(r'^function ', 'export function ', screen_combined, flags=re.M)
+
+# TD 組込1.5: kumikomi で字下げされていない関数内 const は export 不可。
+# `agreeItems` は ScreenStep4 内のローカル (plan を参照) なので export を剥がす。
+body = must_replace(body, "export const agreeItems = plan.death", "  const agreeItems = plan.death")
 
 # ---- HEADER ----
 HEADER = '''"use client";
@@ -417,7 +433,9 @@ export type Plan = {
   lead: string;
   feat: string[];
   tag?: string;
-  tooltip?: string;
+  death?: boolean;
+  tooltip?: { sections: { head: string; body: string }[] };
+  disclosure?: AgreeBlock[];
 };
 
 export type AgreeBlock = {
@@ -427,11 +445,15 @@ export type AgreeBlock = {
   download?: string;
   note?: string;
   table?: string[][];
+  head?: string;
+  strong?: string;
 };
 
 export type AgreeItemData = {
   t: string;
   blocks: AgreeBlock[];
+  kind?: string;
+  id?: string;
 };
 
 type Go = (n: number) => void;
