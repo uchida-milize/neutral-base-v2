@@ -1413,10 +1413,10 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }) {
+export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   // ページ表示時に、選択プランの告知項目モーダルを強制表示
-  const [infoPlan, setInfoPlan] = useState<Plan | null>(() => plan ?? null);
+  const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
@@ -1811,12 +1811,12 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }) {
+export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
   const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
-  const [nat, setNat] = useState("jp");
+  const [nat, setNat] = useState(initialNat ?? "jp");
   const [jpLang, setJpLang] = useState("");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);

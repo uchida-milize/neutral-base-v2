@@ -293,46 +293,59 @@ export default function TheoTdfWindowsPage() {
       badge: "STEP 3",
       screens: [
         {
-          key: "form",
-          label: "デフォルト（1ページ）",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer"
-              m={10000} setM={noop} y={15} setY={noop}
-            />
-          ),
-        },
-        {
-          key: "form-split",
-          label: "2ページ分割（契約者ページ）",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer"
-              m={10000} setM={noop} y={15} setY={noop}
-              formSplit
-            />
-          ),
-        },
-        {
-          key: "form-split-2",
-          label: "2ページ分割（保険金受取人ページ）",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer"
-              m={10000} setM={noop} y={15} setY={noop}
-              formSplit initialFormPage={2}
-            />
-          ),
-        },
-        {
-          key: "st-edit",
-          label: "積立修正シート＋給付予想額展開",
+          // 告知モーダルは ScreenForm マウント時に既定表示される（initialDisclosureOpen 省略時）
+          key: "form-disclosure",
+          label: "モーダルあり：告知",
           height: 820,
           el: (
             <ScreenForm
               go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
-              initialEditOpen initialSheetRes
+            />
+          ),
+        },
+        {
+          key: "form",
+          label: "モーダル無し：デフォルト",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          key: "form-split",
+          label: "モーダル無し：2ページ分割（契約者ページ）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              formSplit initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          key: "form-split-2",
+          label: "モーダル無し：2ページ分割（保険金受取人ページ）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              formSplit initialFormPage={2} initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          key: "st-edit",
+          label: "モーダルあり：積立修正シート＋給付予想額展開",
+          height: 820,
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              initialEditOpen initialSheetRes initialDisclosureOpen={false}
             />
           ),
         },
@@ -373,6 +386,17 @@ export default function TheoTdfWindowsPage() {
             <ScreenStep4
               go={noop} sel="cancer" m={10000} y={15}
               initialEditKiyaku initialEditJuushin
+            />
+          ),
+        },
+        {
+          // 被保険者の確認は AGREE_ITEMS の index 4。initialNat="other" で「日本国籍以外」選択を表示
+          key: "st-insured-other",
+          label: "被保険者の確認（日本国籍以外を選択）を開いた状態",
+          el: (
+            <ScreenStep4
+              go={noop} sel="cancer" m={10000} y={15}
+              initialOpenIdx={4} initialNat="other"
             />
           ),
         },

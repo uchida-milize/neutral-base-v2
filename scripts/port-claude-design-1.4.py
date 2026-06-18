@@ -95,12 +95,14 @@ body = must_replace(body,
 body = body.replace(
     "function ScreenPin({ go, onVerified, backScr = 1 })",
     "function ScreenPin({ go, onVerified, backScr = 1, initialPin })")
-body = body.replace(
+body = must_replace(body,
     "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen })",
-    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin })")
-body = body.replace(
+    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat })")
+body = must_replace(body,
     "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false })",
-    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1 })")
+    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1, initialDisclosureOpen })")
+# ScreenStep4: 国籍 (被保険者の確認の「日本国籍以外」選択) を静的再現する initialNat。
+body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, setNat] = useState(initialNat ?? "jp");')
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
 # initialTipIdx (A) を注入。
 screen_combined = must_replace(screen_combined,
@@ -316,10 +318,10 @@ TYPE = {
   "BenefitTable": "{ m: number; y: number; plan: Plan | undefined; startAge?: number }",
   "DisclosureModal": "{ plan: Plan | null; onClose: () => void; confirm?: boolean; onConfirm?: () => void }",
   "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }",
-  "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number }",
+  "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number; initialDisclosureOpen?: boolean }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
-  "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }",
+  "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }",
   "ExtBar": "{ url: string }",
   "ScreenCardInput": "{ go: Go }",
   "ScreenCardConfirm": "{ go: Go }",
@@ -354,7 +356,7 @@ body = must_replace(body, "const errs = [];", "const errs: string[] = [];")
 # infoPlan は plan (Plan | undefined) で初期化され null もセットされるため明示型付け。
 body = must_replace(body,
     "const [infoPlan, setInfoPlan] = useState(() => plan);",
-    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => plan ?? null);")
+    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));")
 
 # ---- standalone arrow param typings (avoid implicit-any in strict mode) ----
 body = body.replace("const years = [];", "const years: number[] = [];")
