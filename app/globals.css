@@ -762,6 +762,20 @@
   .screen-enter { animation: theoTdfScreenFadeIn 0.28s ease-out forwards; }
 }
 
+/* windows (Screens) 専用: ハーフモーダル/ボトムシートを「ステッパー直下から全文表示」する。
+   通常プロト/プレビューは bottom-0 + max-h-[88%] で内部スクロールするが、スクリーンページでは
+   上端をステッパー直下(140px = status33+appbar56+steps約51)に固定し、高さ上限を解除して
+   内部スクロールを止め、シート全文を一覧表示する。カード高さは内容に合わせて指定する。 */
+.theo-sheet-full .sheet-up {
+  top: 140px !important;
+  bottom: 0 !important;
+  max-height: none !important;
+}
+.theo-sheet-full .sheet-up [class*="overflow-y-auto"] {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
 /* theo-tdf prototype 用 success (メール認証済み表示 / GMO 画面のアクセント)
    Claude Design 2026-06-04 出力の styles.css 由来 */
 .theo-tdf-cd {

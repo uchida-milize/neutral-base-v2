@@ -29,6 +29,8 @@ type ScreenDef = {
   el: React.ReactNode;
   /** ボトムシート等 absolute 配置の状態バリアントは 820px 固定高さで描画 */
   height?: number;
+  /** ハーフモーダル/ボトムシートをステッパー直下から全文表示する（.theo-sheet-full） */
+  fullSheet?: boolean;
 };
 
 type ScreenGroupDef = {
@@ -44,10 +46,12 @@ type ScreenGroupDef = {
 function StaticScreen({
   label,
   height,
+  fullSheet,
   children,
 }: {
   label: string;
   height?: number;
+  fullSheet?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -56,7 +60,7 @@ function StaticScreen({
         <p className="text-h6 font-semibold text-foreground">{label}</p>
       </figcaption>
       <div
-        className="theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300"
+        className={`theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300${fullSheet ? " theo-sheet-full" : ""}`}
         style={{ width: 390, height }}
       >
         <div
@@ -87,7 +91,7 @@ function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
       </div>
       <div className="flex items-start gap-6">
         {group.screens.map((s) => (
-          <StaticScreen key={s.key} label={s.label} height={s.height}>
+          <StaticScreen key={s.key} label={s.label} height={s.height} fullSheet={s.fullSheet}>
             {s.el}
           </StaticScreen>
         ))}
@@ -165,8 +169,9 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-notice",
           label: "重要事項ボトムシート（全文表示）",
-          // ボトムシートは max-h-[88%]。全文が収まるよう高さを確保（上部は暗幕＝通常のシート表示）
-          height: 1600,
+          // ステッパー直下(140px)からシート全文を表示。カード高さ＝140+内容＋余白。
+          height: 1000,
+          fullSheet: true,
           el: (
             <ScreenStep2
               go={noop} sel="cancer" setSel={noop}
@@ -297,8 +302,9 @@ export default function TheoTdfWindowsPage() {
           // 告知モーダルは ScreenForm マウント時に既定表示される（initialDisclosureOpen 省略時）
           key: "form-disclosure",
           label: "モーダルあり：告知（全文表示）",
-          // 告知モーダルは内容が長い。全文が収まるよう高さを確保（max-h-[88%] 内に収める）
-          height: 3700,
+          // ステッパー直下(140px)から告知モーダル全文を表示。カード高さ＝140+内容（長文）＋余白。
+          height: 3120,
+          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="cancer"
