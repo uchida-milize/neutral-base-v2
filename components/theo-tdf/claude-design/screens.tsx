@@ -2399,7 +2399,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
-          <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>
+          <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
@@ -2434,7 +2434,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           </StepSection>
           </>)}
           {/* 申し込みをする */}
-          <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "#e7edf7" }}>
+          <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-8">
               {/* 必要書類のご確認 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">

@@ -130,6 +130,16 @@ screen_combined = screen_combined.replace(
     '<div className="px-5 py-4 bg-primary">',
     '<div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>')
 
+# パターンB(ScreenCombined)の STEP2 保険料シミュレーション / STEP3 申し込みをする 帯を、
+# 通常版 ScreenStep2 と同じ縦グラデ(180deg #FFFFFF→#F2FBFE)へ統一 (お客様要望 2026-06-18)。
+# kumikomi では ScreenStep2 のみグラデ化され ScreenCombined は単色(#EAF9FE/#e7edf7)のまま不一致だったため、ここで揃える。
+screen_combined = must_replace(screen_combined,
+    '<div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>',
+    '<div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>')
+screen_combined = must_replace(screen_combined,
+    'style={{ background: "#e7edf7" }}',
+    'style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}')
+
 # ---- (A) ツールチップ静的展開: PlanCard に initialTtOpen、画面に initialTipIdx ----
 # windows で「プラン選択 / ツールチップ1つ展開」を静的に再現するため、kumikomi に無い
 # initialTtOpen / initialTipIdx を注入する。state 名は kumikomi の ttOpen を踏襲。
