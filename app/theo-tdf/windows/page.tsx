@@ -240,6 +240,30 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          // 積立額×12×保障期間 = 150,000×12×25 = 4,500万 > 4,000万 → 保障金額上限エラー
+          key: "st-step2-err-amount",
+          label: "シミュレーション上限エラー（保障金額）",
+          el: (
+            <ScreenStep2
+              go={noop} sel="cancer" setSel={noop}
+              m={150000} setM={noop} y={25} setY={noop}
+              initialSimOpen
+            />
+          ),
+        },
+        {
+          // 加入年齢(1944生まれ≒82歳)＋保障期間15年 = 97 > 90 → 保障満了上限エラー
+          key: "st-step2-err-maturity",
+          label: "シミュレーション上限エラー（保障満了）",
+          el: (
+            <ScreenStep2
+              go={noop} sel="cancer" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialBirth="1944-01-01" initialSimOpen
+            />
+          ),
+        },
       ],
     },
 

@@ -86,7 +86,12 @@ def must_replace(t, old, new):
 # initialShowSend (§14.11 CTA 表示) と initialTipIdx (A: ツールチップ1つ静的展開) を注入。
 body = must_replace(body,
     "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
-    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, emailVerified, simFirst })")
+    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
+# initialBirth: windows でシミュレーション上限エラー(加入年齢+保障期間>90)を静的再現するため
+# 生年月日を初期注入できるようにする。body 内 birth は ScreenStep2 のみ (ScreenCombined は screen_combined)。
+body = must_replace(body,
+    'const [birth, setBirth] = useState("");',
+    'const [birth, setBirth] = useState(initialBirth ?? "");')
 body = body.replace(
     "function ScreenPin({ go, onVerified, backScr = 1 })",
     "function ScreenPin({ go, onVerified, backScr = 1, initialPin })")
@@ -303,7 +308,7 @@ TYPE = {
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; emailVerified?: boolean; simFirst?: boolean }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
