@@ -204,10 +204,11 @@ ATOMS["Btn"] = '''function Btn({ kind = "button", children, onClick, disabled, f
     outline: "border border-button-600 bg-white text-button-600 hover:bg-button-10",
     ghost: "text-neutral-500 hover:text-neutral-800",
   };
-  // グラデーション: cta / button = ブルー, danger = レッド (TD 組込1.4 で追加)
+  // cta / button = ブルー単色 (グラデのブルー側 #075FE3 に統一, お客様要望 2026-06-18),
+  // danger = レッドグラデ (TD 組込1.4)
   const gradStyle: React.CSSProperties | undefined =
     (kind === "cta" || kind === "button")
-      ? { backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }
+      ? { backgroundColor: "#075FE3" }
       : kind === "danger"
       ? { backgroundImage: "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)" }
       : undefined;
