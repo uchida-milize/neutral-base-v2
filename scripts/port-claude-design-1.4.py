@@ -139,6 +139,10 @@ screen_combined = must_replace(screen_combined,
 screen_combined = must_replace(screen_combined,
     'style={{ background: "#e7edf7" }}',
     'style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}')
+# パターンB の ActionBar（ボタン周りの帯）背景を、他画面と同じ #F2FBFE（STEP3/4 グラデの青側）へ統一 (2026-06-18)。
+screen_combined = must_replace(screen_combined,
+    '<ActionBar bg={showSend ? "#e7edf7" : undefined}>',
+    '<ActionBar bg={showSend ? "#F2FBFE" : undefined}>')
 
 # ---- (A) ツールチップ静的展開: PlanCard に initialTtOpen、画面に initialTipIdx ----
 # windows で「プラン選択 / ツールチップ1つ展開」を静的に再現するため、kumikomi に無い
@@ -204,11 +208,10 @@ ATOMS["Btn"] = '''function Btn({ kind = "button", children, onClick, disabled, f
     outline: "border border-button-600 bg-white text-button-600 hover:bg-button-10",
     ghost: "text-neutral-500 hover:text-neutral-800",
   };
-  // cta / button = ブルー単色 (グラデのブルー側 #075FE3 に統一, お客様要望 2026-06-18),
-  // danger = レッドグラデ (TD 組込1.4)
+  // グラデーション: cta / button = ブルー, danger = レッド (TD 組込1.4)
   const gradStyle: React.CSSProperties | undefined =
     (kind === "cta" || kind === "button")
-      ? { backgroundColor: "#075FE3" }
+      ? { backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }
       : kind === "danger"
       ? { backgroundImage: "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)" }
       : undefined;
