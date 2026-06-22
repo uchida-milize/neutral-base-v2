@@ -100,7 +100,7 @@ body = must_replace(body,
     "function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, initialNat })")
 body = must_replace(body,
     "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto' })",
-    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen })")
+    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0 })")
 # ScreenStep4: 国籍 (被保険者の確認の「日本国籍以外」選択) を静的再現する initialNat。
 body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, setNat] = useState(initialNat ?? "jp");')
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
@@ -158,7 +158,7 @@ screen_combined = wire_tip(screen_combined)
 # 外部 GMO カード画面 (bg-neutral-100 グレー) は対象外。
 _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
 _grad_targets = [
-    '<div className="px-5 pt-6 pb-0 space-y-8">',                          # ScreenStep2 (ヘッダ+ステッパー下)
+    '<div className="px-5 pt-8 pb-0 space-y-8">',                          # ScreenForm content (TD 組込1.5: pt-6→pt-8)
     '<div className="px-5 py-8 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下)
     '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">',  # ScreenForm
     '<div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">',  # ScreenStep4 (ステッパー下)
@@ -308,7 +308,7 @@ TYPE = {
   "ActionBar": "{ children: React.ReactNode; solid?: boolean; bg?: string }",
   "ErrText": "{ children: React.ReactNode }",
   "Select": "{ label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }",
-  "StepSection": "{ label: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }",
+  "StepSection": "{ label?: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }",
   "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }",
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
@@ -321,7 +321,7 @@ TYPE = {
   "BenefitTable": "{ m: number; y: number; plan: Plan | undefined; startAge?: number }",
   "DisclosureModal": "{ plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void }",
   "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }",
-  "ScreenForm": "{ go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }",
+  "ScreenForm": "{ go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number }",
   "KoTable": "{ rows: any[] }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
@@ -438,6 +438,17 @@ body = must_replace(body,
     "const errMap: Record<string, string> = showErr ? Object.fromEntries(ERR_DEFS.map((e) => [e.id, e.msg])) : {};")
 body = must_replace(body, "const scrollToField = (id) => {", "const scrollToField = (id: string) => {")
 body = must_replace(body, "const jumpNext = (list) => {", "const jumpNext = (list: typeof ERR_DEFS) => {")
+# jumpIdx(useRef) → errStep(useState) でサイクル位置を再レンダリング可能に (TD 組込1.5-handoff(1))
+body = must_replace(body,
+    "const jumpIdx = useRef(0);",
+    "const [errStep, setErrStep] = useState(initialErrStep);")
+body = must_replace(body,
+    "  scrollToField(list[jumpIdx.current % list.length].id);\n    jumpIdx.current++;",
+    "  scrollToField(list[errStep % list.length].id);\n    setErrStep((s) => s + 1);")
+# float バー右側のピルに「現在N/合計M 次の項目へ」カウンターを表示
+body = must_replace(body,
+    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1">次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>',
+    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>')
 body = must_replace(body,
     "const errState = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};",
     "const errState: Record<string, boolean> = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};")

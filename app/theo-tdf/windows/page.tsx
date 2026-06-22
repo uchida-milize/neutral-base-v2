@@ -395,14 +395,38 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // errMode="float": 下部フローティングバーでエラー件数を表示（提案）
-          key: "form-err-float",
-          label: "エラー表示③：下部フローティング（errMode=float）",
+          // errMode="float" initialErrStep=0: 1/4 → 最初のエラー項目へ
+          key: "form-err-float-1",
+          label: "エラー表示③-a：フローティング「1/4 次の項目へ」（initialErrStep=0）",
           el: (
             <ScreenForm
               go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
-              errMode="float" initialDisclosureOpen={false}
+              errMode="float" initialDisclosureOpen={false} initialErrStep={0}
+            />
+          ),
+        },
+        {
+          // errMode="float" initialErrStep=1: 2/4 → 2番目のエラー項目へ
+          key: "form-err-float-2",
+          label: "エラー表示③-b：フローティング「2/4 次の項目へ」（initialErrStep=1）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="float" initialDisclosureOpen={false} initialErrStep={1}
+            />
+          ),
+        },
+        {
+          // errMode="float" initialErrStep=3: 4/4 → 最後のエラー項目へ（折り返しも確認）
+          key: "form-err-float-4",
+          label: "エラー表示③-c：フローティング「4/4 次の項目へ」（initialErrStep=3）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="float" initialDisclosureOpen={false} initialErrStep={3}
             />
           ),
         },

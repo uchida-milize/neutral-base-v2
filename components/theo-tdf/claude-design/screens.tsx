@@ -732,7 +732,7 @@ export function PlanCard({ p, selected, onSelect, death = true, onDeath = () => 
 }
 
 /* Divider used inside combined (multi-section) pages */
-export function StepSection({ label, n, big, className, children }: { label: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }) {
+export function StepSection({ label, n, big, className, children }: { label?: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }) {
   if (big) {
     return (
       <section className={`space-y-4 ${className || ""}`}>
@@ -748,13 +748,15 @@ export function StepSection({ label, n, big, className, children }: { label: str
   }
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2.5">
-        {n != null && (
-          <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
-        )}
-        <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
-        <span className="flex-1 h-px bg-warm-200" />
-      </div>
+      {label && (
+        <div className="flex items-center gap-2.5">
+          {n != null && (
+            <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
+          )}
+          <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
+          <span className="flex-1 h-px bg-warm-200" />
+        </div>
+      )}
       {children}
     </section>
   );
@@ -1129,15 +1131,12 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-5">
-            <div>
-              <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
-              <p className="mt-2 text-h6 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
-              <div className="mt-3 flex items-center gap-2 text-caption text-primary-700">
-                <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
-              </div>
+            <div className="flex items-center gap-2 text-caption text-primary-700 px-1">
+              <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
             </div>
             {!simFirst && birthGenderFields}
           </div>
@@ -1583,7 +1582,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0 }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
   const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
@@ -1608,7 +1607,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   const scrollerRef = useRef<any>(null);
   const fieldRefs = useRef<Record<string, any>>({});
   const setFieldRef = (id: string) => (el: any) => { if (el) fieldRefs.current[id] = el; };
-  const jumpIdx = useRef(0);
+  const [errStep, setErrStep] = useState(initialErrStep);
   // どのページに出るか（2ページ分割時のフィルタ用）
   const ERR_DEFS = [
     { id: 'tel',       page: 1, label: '契約者 電話番号', msg: '電話番号を入力してください' },
@@ -1625,8 +1624,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   };
   const jumpNext = (list: typeof ERR_DEFS) => {
     if (!list.length) return;
-    scrollToField(list[jumpIdx.current % list.length].id);
-    jumpIdx.current++;
+    scrollToField(list[errStep % list.length].id);
+    setErrStep((s) => s + 1);
   };
 
   // 契約者住所（受取人「契約者と同じ」でコピーされる値。初期値はTHEO口座から自動入力）
@@ -1690,12 +1689,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         )}
 
         {(!formSplit || formPage === 1) && (<>
-        <div>
-          <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">認証が完了しました。</h2>
-          <p className="mt-2 text-h6 text-neutral-600 leading-relaxed" style={{ textWrap: "pretty" }}>あと少しで、お申し込みは完了です。ご契約者さま・保険金受取人さまの情報をご入力ください。</p>
-        </div>
-        <h2 className="text-h4 font-bold text-neutral-800 pt-1">情報ご入力</h2>
-        <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
+        <h2 className="text-h5 font-bold text-center" style={{ color: '#054EBA', marginTop: '32px', marginBottom: '32px' }}>情報ご入力</h2>
+        <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
           <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
         </div>
 
@@ -1811,7 +1806,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                 <span className="text-h6"><span className="text-h4 tabular-nums">{visibleErrs.length}</span>件あります</span>
               </span>
             </span>
-            <span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1">次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>
+            <span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>
           </button>
         )}
         <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
@@ -2094,7 +2089,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
       <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-5 -mt-5"><Steps n={4} go={go} /></div>
-        <StepSection label="内容確認">
+        <h2 className="text-h4 font-bold text-center" style={{ color: '#054EBA' }}>内容確認</h2>
+        <StepSection>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
         <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-5">
@@ -2243,7 +2239,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection label="お支払い">
+        <StepSection>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2724,8 +2720,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
         </div>{/* /px-5 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
-          <h2 className="text-h4 font-bold text-white text-center">プランシミュレーション</h2>
+        <div className="px-5 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
+          <h2 className="text-h4 font-bold text-center" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
         </div>
         <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
