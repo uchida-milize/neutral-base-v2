@@ -67,7 +67,7 @@ function StaticScreen({
       >
         <div
           className="flex flex-col"
-          style={height ? { height: "100%" } : { minHeight: 600 }}
+          style={height ? { height: "100%" } : { minHeight: 812 }}
         >
           {children}
         </div>
@@ -622,11 +622,13 @@ export default function TheoTdfWindowsPage() {
         {
           key: "card",
           label: "カード情報入力",
+          height: 812,
           el: <ScreenCardInput go={noop} />,
         },
         {
           key: "cardconf",
           label: "カード情報確認",
+          height: 812,
           el: <ScreenCardConfirm go={noop} />,
         },
       ],
@@ -641,16 +643,19 @@ export default function TheoTdfWindowsPage() {
         {
           key: "done",
           label: "完了",
+          height: 812,
           el: <ScreenDone go={noop} />,
         },
         {
           key: "done-processing",
           label: "処理中",
+          height: 812,
           el: <ScreenStatus variant="processing" go={noop} />,
         },
         {
           key: "done-error",
           label: "処理エラー",
+          height: 812,
           el: <ScreenStatus variant="error" go={noop} />,
         },
       ],
@@ -665,6 +670,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "ended",
           label: "デフォルト（「告知に同意しない」でキャンセル後）",
+          height: 812,
           el: <ScreenEnded onRestart={noop} />,
         },
       ],
