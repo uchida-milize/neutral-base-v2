@@ -181,7 +181,7 @@ function Phone({
               <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>
           )}
-          <div key={screenKey} className="screen-enter flex flex-col flex-1 min-h-0">
+          <div key={screenKey} className="screen-enter flex flex-col flex-1 min-h-[812px]">
             {children}
           </div>
         </div>
