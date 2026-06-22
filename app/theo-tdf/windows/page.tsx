@@ -12,6 +12,7 @@ import {
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
+  ScreenStatus,
   ScreenEnded,
 } from "@/components/theo-tdf/claude-design/screens";
 
@@ -325,28 +326,6 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          key: "form-split",
-          label: "モーダル無し：2ページ分割（契約者ページ）",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer"
-              m={10000} setM={noop} y={15} setY={noop}
-              formSplit initialDisclosureOpen={false}
-            />
-          ),
-        },
-        {
-          key: "form-split-2",
-          label: "モーダル無し：2ページ分割（保険金受取人ページ）",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer"
-              m={10000} setM={noop} y={15} setY={noop}
-              formSplit initialFormPage={2} initialDisclosureOpen={false}
-            />
-          ),
-        },
-        {
           // initialSame={false} で「住所は契約者と同じ」を未チェック → 受取人住所の個別入力欄が出る
           key: "form-recipient-addr",
           label: "モーダル無し：受取人住所を個別入力（「契約者と同じ」未チェック）",
@@ -354,7 +333,7 @@ export default function TheoTdfWindowsPage() {
             <ScreenForm
               go={noop} sel="cancer"
               m={10000} setM={noop} y={15} setY={noop}
-              formSplit initialFormPage={2} initialSame={false} initialDisclosureOpen={false}
+              initialSame={false} initialDisclosureOpen={false}
             />
           ),
         },
@@ -661,8 +640,18 @@ export default function TheoTdfWindowsPage() {
       screens: [
         {
           key: "done",
-          label: "デフォルト",
+          label: "完了",
           el: <ScreenDone go={noop} />,
+        },
+        {
+          key: "done-processing",
+          label: "処理中",
+          el: <ScreenStatus variant="processing" go={noop} />,
+        },
+        {
+          key: "done-error",
+          label: "処理エラー",
+          el: <ScreenStatus variant="error" go={noop} />,
         },
       ],
     },

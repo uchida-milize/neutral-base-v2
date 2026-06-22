@@ -59,6 +59,31 @@ def transform(t):
 body = transform(body)
 screen_combined = transform(screen_combined)
 
+# ---- TD 組込1.5(3): HeigaiModal は app ブロック (blocks[2]) に定義されるが
+#      ScreenStep2 (blocks[1]) でも参照されるため、app ブロックから抽出して body に追加する。
+def _extract_heigai(src):
+    if 'HEIGAI_BLOCKS' not in src: return ''
+    try:
+        cb = src.index('\nconst HEIGAI_BLOCKS')
+        h0, h1 = span(src, 'HeigaiModal')
+        return src[cb:h1]
+    except (ValueError, AttributeError):
+        return ''
+
+_heigai_raw = _extract_heigai(app)
+if _heigai_raw:
+    _heigai = transform(_heigai_raw)
+    _heigai = re.sub(r'^function ', 'export function ', _heigai, flags=re.M)
+    _heigai = re.sub(r'^const ', 'export const ', _heigai, flags=re.M)
+    _heigai = _heigai.replace(
+        'export function HeigaiModal({ open, onClose, onAgree })',
+        'export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose: () => void; onAgree?: () => void })')
+    _heigai = _heigai.replace(
+        '{HEIGAI_BLOCKS.map((b, i) => (',
+        '{(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (')
+else:
+    _heigai = ''
+
 # ---- HEADER_GRAD_* に React.CSSProperties 型注釈を付与 (style props へ渡すため) ----
 for _hg in ("HEADER_GRAD_CSS", "HEADER_GRAD_STATUS", "HEADER_GRAD_APPBAR"):
     body = body.replace("const %s = {" % _hg, "const %s: React.CSSProperties = {" % _hg)
@@ -329,7 +354,8 @@ TYPE = {
   "ExtBar": "{ url: string }",
   "ScreenCardInput": "{ go: Go }",
   "ScreenCardConfirm": "{ go: Go }",
-  "ScreenDone": "{ go: Go }",
+  "ScreenDone": "{ go: Go; variant?: string }",
+  "ScreenStatus": "{ variant?: string; go: Go }",
   "ScreenEnded": "{ onRestart: () => void }",
   "ScreenIntro": "{ go: Go }",
   "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
@@ -455,10 +481,30 @@ body = must_replace(body,
 body = must_replace(body, "const errOf = (id) => (errState[id] ? errMap[id] : undefined);",
                     "const errOf = (id: string) => (errState[id] ? errMap[id] : undefined);")
 
-# IKO[sel]: sel は string だが IKO のキーは具体的なリテラル型 → any キャスト
-body = must_replace(body,
+# NoticeContent の Ul ヘルパーを関数外に移動 (component created during render ESLint rule 対策)。
+# kumikomi でインライン定義されている const Ul を NoticeContent の手前に抽出して top-level に昇格させる。
+_UL_INNER = "  const Ul = ({ items }) => (\n    <ul className=\"space-y-1.5 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t, i) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );"
+_UL_OUTER = "function NoticeUl({ items }: { items: string[] }) {\n  return (\n    <ul className=\"space-y-1.5 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t: string, i: number) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );\n}\n\n/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */"
+if _UL_INNER in body:
+    body = body.replace(_UL_INNER + "\n", "")  # Ul を NoticeContent 内から除去
+    body = body.replace(
+        "/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */",
+        _UL_OUTER)
+    body = body.replace("<Ul items=", "<NoticeUl items=")
+
+# ScreenDone: variant チェックの early return が useRef より前 → hook の条件付き呼び出し ESLint エラー対策
+# useRef を早期リターンの前に移動する (TD 組込1.5(3))
+body = body.replace(
+    "  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;\n  const doneBgRef = useRef<any>(null);",
+    "  const doneBgRef = useRef<any>(null);\n  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;")
+
+# IKO[sel]: sel は string だが IKO のキーは具体的なリテラル型 → any キャスト (TD 組込1.5(3): ikoText→ikoMid)
+body = body.replace(
     "const ikoText = (IKO[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
     "const ikoText = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
+body = body.replace(
+    "const ikoMid = (IKO[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
+    "const ikoMid = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
 
 # ---- const type annotations ----
 body = body.replace("const STEP_TO_SCREEN = {", "const STEP_TO_SCREEN: Record<number, number> = {")
@@ -562,7 +608,7 @@ type Go = (n: number) => void;
 
 # cn is imported but only used if needed; keep usage to avoid unused — reference in a noop is ugly.
 # Instead drop cn import if not used.
-final = HEADER + body + "\n\n" + screen_combined + "\n"
+final = HEADER + body + ("\n\n" + _heigai if _heigai else "") + "\n\n" + screen_combined + "\n"
 if "cn(" not in final:
     final = final.replace('import { cn } from "@/lib/utils";\n', '')
 

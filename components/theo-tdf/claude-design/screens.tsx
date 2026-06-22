@@ -920,6 +920,7 @@ export function ScreenOverview({ go }: { go: Go }) {
   const [solid, setSolid] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const [formPage, setFormPage] = useState(1);
+  const [heigaiOpen, setHeigaiOpen] = useState(false);
   const bindScroll = (el: any) => {
     if (!el || el.__bound) return;
     el.__bound = true;
@@ -1026,6 +1027,12 @@ export function ScreenOverview({ go }: { go: Go }) {
                   <p className="mt-2 text-h6 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
                 </div>
+                <div className="text-right">
+                  <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                    弊害防止措置等の対応について
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1071,10 +1078,80 @@ export function ScreenOverview({ go }: { go: Go }) {
         </div>
       </div>
 
+      <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
       <ActionBar solid>
         <Btn kind="cta" onClick={() => go(1)}>プランを選ぶ<Ic.chevR className="w-4 h-4" /></Btn>
       </ActionBar>
     </>
+  );
+}
+
+export function NoticeUl({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
+      {items.map((t: string, i: number) => (
+        <li key={i} className="flex gap-1.5"><span className="text-neutral-400 shrink-0">・</span><span>{t}</span></li>
+      ))}
+    </ul>
+  );
+}
+
+/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */
+export function NoticeContent() {
+  const items1 = [
+    "お申込・告知内容は必ず被保険者ご本人さまがご入力ください。",
+    "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
+    "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
+  ];
+  const items2 = [
+    "この保険は団体先を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて投資信託の毎月同額つみたて契約の利用者を被保険者とする、団体保険です。",
+    "保障期間中に被保険者が所定の状態に該当（または死亡）した場合に給付金等が支払われます。給付金額は、保険対象積立金額(毎月の積立金額×12)に基づいて計算され、加入時の保険対象積立金額が計算の基準となります。なお、保険料は毎年更新されます。",
+    "つみたてシミュレーションにおける目標金額や運用利益の保証、運用による損失を補填するものではありません。",
+    "がん給付金については、加入者ごとの責任開始日からその日を含めて９１日目より保障を開始します。責任開始日から一定の間、保障はありませんのでご注意ください。",
+    "被保険者が所定の状態に該当し給付金等をお支払いした場合、その後別の所定の状態に該当しても給付金等のお支払はありません。",
+    "お申し込みは、日本国内に在住し、ご自身で日本語の契約内容をご理解できることが条件となります。（死亡保険金受取人についても同様です。）",
+    "保険金受取人は、本人（被保険者）から見た続柄が「配偶者および2親等内の血族」までで指定いただきます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方を受取人とする契約は取り扱いません。",
+    "ご加入の際には健康告知が必要です。告知事項に該当する場合、お申込いただけません。",
+    "この保険には解約払戻金はありません。",
+    "この保険はクーリング・オフ制度の対象外です。",
+    "その他ご注意いただきたい事項についてくわしくは、重要事項説明書をご確認ください。",
+  ];
+  const itemsTail = [
+    "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
+  ];
+  const iko = [
+    ["障害・介護プラン（死亡あり）を選択した場合", "積立期間中における障害・介護状態、死亡にそなえたい"],
+    ["障害・介護プランを選択した場合", "積立期間中における障害・介護状態にそなえたい"],
+    ["がんプラン（死亡あり）を選択した場合", "積立期間中におけるがん、死亡にそなえたい"],
+    ["がんプランを選択した場合", "積立期間中におけるがんにそなえたい"],
+    ["がん・障害介護プラン（死亡あり）を選択した場合", "積立期間中におけるがん、障害・介護状態、死亡にそなえたい"],
+    ["がん・障害介護プランを選択した場合", "積立期間中におけるがん、障害・介護状態にそなえたい"],
+    ["三大疾病プラン（死亡あり）を選択した場合", "積立期間中における三大疾病、死亡にそなえたい"],
+    ["三大疾病プランを選択した場合", "積立期間中における三大疾病にそなえたい"],
+    ["三大疾病・障害介護プラン（死亡あり）を選択した場合", "積立期間中における三大疾病、障害介護、死亡にそなえたい"],
+    ["三大疾病・障害介護プランを選択した場合", "積立期間中における三大疾病、障害介護にそなえたい"],
+  ];
+  return (
+    <div className="space-y-4">
+      <NoticeUl items={items1} />
+      <NoticeUl items={items2} />
+      <NoticeUl items={itemsTail} />
+      <section className="space-y-2 pt-1">
+        <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
+          <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">意向</span>
+          意向の確認
+        </p>
+        <p className="text-caption text-neutral-600 leading-relaxed">シミュレーションをもとにT&Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。</p>
+        <ul className="space-y-2.5">
+          {iko.map(([cond, want], i) => (
+            <li key={i} className="text-caption leading-relaxed">
+              <span className="flex gap-1.5 text-neutral-600"><span className="text-neutral-400 shrink-0">・</span><span>{cond}</span></span>
+              <span className="block pl-3.5 font-bold text-neutral-900">{want}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }
 
@@ -1296,31 +1373,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
                   <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
                   事前同意事項
                 </p>
-                <p className="text-caption text-neutral-500 leading-relaxed">お申し込み前にご確認ください。</p>
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">この保険について</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・株式会社三菱ＵＦＪ銀行を団体契約者とし、Money Canvas会員の皆さま、会員のご家族を被保険者とする団体契約です。Money Canvas会員の資格を喪失された場合、保険契約は解約いただく、もしくは更新できませんので、ご注意ください。また、保険証券を請求する権利、保険契約を解約する権利等は原則として株式会社 三菱ＵＦＪ銀行が有します。</li>
-                    <li>・この契約は、申込み日が17日までの場合は、翌月1日（0時）より補償が開始し、申込み日が18日から末日までの場合は、翌々月1日（0時）より補償が開始します。</li>
-                    <li>・満期日までにご加入者から更新しない旨のお申出がなければ、団体の取り決めにより原則自動更新されます。</li>
-                  </ul>
-                </section>
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">個人情報の取扱いについて</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・団体契約者である株式会社三菱ＵＦＪ銀行は、お客さまにご入力いただく個人情報を、以下の目的で利用させていただきます。</li>
-                    <li>・お客さまに関する情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
-                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
-                  </ul>
-                </section>
-                {deathOpt && (
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・本プランには死亡保障が含まれます。死亡保険金受取人は、日本国内に在住し、日本語による各種ご通知・お手続きへの対応が可能な方に限ります。</li>
-                  </ul>
-                </section>
-                )}
+                <NoticeContent />
               </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">
@@ -2063,15 +2116,15 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const [jpLang, setJpLang] = useState("");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [ikoAgree, setIkoAgree] = useState(false);
-  // ご意向文（プラン×死亡保障の全10通り）
+  // ご意向文のプラン種別部分（太字表示する中央部分。プラン×死亡保障の全10通り）
   const IKO = {
-    cancer:      { d: "積立期間中におけるがん、死亡にそなえたい", n: "積立期間中におけるがんにそなえたい" },
-    three:       { d: "積立期間中における三大疾病、死亡にそなえたい", n: "積立期間中における三大疾病にそなえたい" },
-    care:        { d: "積立期間中における障害・介護状態、死亡にそなえたい", n: "積立期間中における障害・介護状態にそなえたい" },
-    cancer_care: { d: "積立期間中におけるがん、障害・介護状態、死亡にそなえたい", n: "積立期間中におけるがん、障害・介護状態にそなえたい" },
-    three_care:  { d: "積立期間中における三大疾病、障害介護状態、死亡にそなえたい", n: "積立期間中における三大疾病、障害介護状態にそなえたい" },
+    cancer:      { d: "がん、死亡", n: "がん" },
+    three:       { d: "三大疾病、死亡", n: "三大疾病" },
+    care:        { d: "障害・介護状態、死亡", n: "障害・介護状態" },
+    cancer_care: { d: "がん、障害・介護状態、死亡", n: "がん、障害・介護状態" },
+    three_care:  { d: "三大疾病、障害介護状態、死亡", n: "三大疾病、障害介護状態" },
   };
-  const ikoText = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? "d" : "n"];
+  const ikoMid = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
   // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
@@ -2109,7 +2162,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           {/* ご意向の再確認（プランにより文言が変化） */}
           <div className="mt-3 pt-3 border-t border-warm-300">
             <p className="text-caption font-bold text-neutral-600 mb-1">ご意向の確認</p>
-            <p className="text-caption text-neutral-700 leading-relaxed mb-2.5">「{ikoText}」</p>
+            <p className="text-caption text-neutral-700 leading-relaxed mb-2.5">「積立期間中における<strong className="font-bold text-neutral-900">{ikoMid}</strong>にそなえたい」</p>
             <button onClick={() => setIkoAgree((a) => !a)} className="flex items-start gap-2.5 w-full text-left rounded-xl border border-warm-300 bg-white p-3 transition-colors">
               <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${ikoAgree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
                 {ikoAgree && <Ic.check className="w-3 h-3" />}
@@ -2462,8 +2515,44 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
 /* ============================================================
    SCREEN 6 — 完了
    ============================================================ */
-export function ScreenDone({ go }: { go: Go }) {
+/* 完了画面の派生：処理中 / 処理エラー */
+export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
+  const isErr = variant === 'error';
+  return (
+    <>
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
+      {/* 背景画像：上下中央揃え */}
+      <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1 }}>
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
+          {isErr ? (
+            <div className="grid place-items-center w-16 h-16 rounded-full mb-6" style={{ background: '#FFF0F0' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="w-8 h-8" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5v.01"/></svg>
+            </div>
+          ) : (
+            <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 mb-6">
+              <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+          )}
+          <h2 className="text-h3 font-bold text-neutral-800">{isErr ? "処理エラー" : "処理中"}</h2>
+          <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line" style={{ textWrap: 'pretty' }}>
+            {isErr ? "クレジットカード情報をご確認のうえ、再度操作をお願いいたします（E01260010）。" : "お手続きを処理しています。\nこのまましばらくお待ちください。"}
+          </p>
+        </div>
+      </div>
+      <ActionBar bg="#F2FBFE">
+        <Btn kind="button" onClick={() => go(isErr ? 5 : 6)}>戻る</Btn>
+      </ActionBar>
+    </>
+  );
+}
+
+export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string }) {
   const doneBgRef = useRef<any>(null);
+  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;
   const bindDoneScroll = (el: any) => {
     if (!el || el.__bound) return;
     el.__bound = true;
@@ -2587,9 +2676,77 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
 // app.jsx references it, and relying on cross-<script> const sharing is fragile
 // (a single missing binding throws and blanks the entire UI).
 
+
+export const HEIGAI_BLOCKS = [
+  { sec: "1．お客さまに関する情報のお取扱いについて" },
+  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
+  { note: "お申し出窓口：●●　●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
+  { sec: "2．引受保険会社からの情報提供" },
+  { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
+  { sec: "3．保険商品のご購入のご検討に際して" },
+  { p: "保険募集に係る当行とお客様とのお取り引きが、当行におけるお客様の他のお取り引きに影響を与えることはありません。" },
+  { p: "保険商品は保険会社を引受とする保険商品であり預金とは異なります。したがって、預金と違い元本保証はありません。また預金保険制度の対象外です。" },
+  { p: "保険契約はお客様と保険会社の間で締結されます。当行は、生命保険契約について契約締結の媒介を行っており、保険契約の代理権はありません。したがって、契約の成立は保険会社による承諾後となります。" },
+  { p: "保険商品にお申込みいただいても、引受保険会社による審査や法令等により、お引き受けできない場合があります。" },
+  { p: "既にご契約いただいている保険契約を今回見直される場合、新規契約の承諾や保障開始日（がん保険であれば90日経過後）を確認のうえ、旧契約の解約を行っていただきますよう、ご留意ください。" },
+  { p: "当行が保険の募集を行う場合、当該保険募集を株式会社FFGほけんサービスと共同で行います。" },
+  { p: "この場合当該保険募集を通じて知りえた情報（お客様のご契約内容、申込書記載事項等）および当行とのお取り引きに関する情報を株式会社FFGほけんサービスに提供し、当行ならびに株式会社FFGほけんサービスが共同で保険契約の募集・維持・管理に活用させていただきます。" },
+  { note: "代理店名 ●●●●\n所在地 ●●●●●●\n電話番号 ●●●●-●●-●●" },
+  { sec: "4．保険募集制限先等の確認について" },
+  { p: "当行取扱いの保険商品（除く、個人年金保険・長期火災保険・個人契約の一時払終身保険）の募集にあたって、お客さまが以下に該当される方である場合には、法令等の定めによってご契約のお申込みをいただけない場合がございます。誠に恐れ入りますが、この点につきまして予めご了承いただきますよう、お願い申しあげます。" },
+  { p: "① 当行の事業資金のご融資先である法人・その代表者および個人事業主の方" },
+  { p: "② 当行の事業性資金のご融資先である法人（代表者に対するご融資を含みます）および個人事業主のうち、従業員数が50名以下の事業所に常時勤務されている従業員および役員（代表者除く）の方" },
+  { note: "※パート・アルバイト等の方で、2ヶ月を超えて勤務されており、かつ正社員と概ね同等の勤務形態の場合は「従業員」とします。" },
+  { p: "③ 現在、当行に事業資金融資をお申込みいただいている期間中である" },
+  { sec: "5．ご確認いただきたいこと" },
+  { sub: "1．当行の「特定関係法人※1」に該当する企業・団体に勤務されているお客さまへ" },
+  { p: "当行の「特定関係法人※1」に該当する企業・団体に勤務されているお客さまに対しては、当行は医療保険・がん保険・傷害保険に限り募集を行うことができます。" },
+  { sub: "2．当行に事業性資金等のご融資を申込み中のお客さまへ" },
+  { p: "お客さま※2が当行に事業性資金等のご融資※3をお申込み中の間は、当行はお客さまに対して、医療保険、その他一部の保険商品の募集を行いません。" },
+  { sub: "3．法人代表者、個人事業主のお客さまへ" },
+  { p: "当行が事業性資金等のご融資※3を行っているお客さまに対して、医療保険、その他一部の保険商品の募集は原則として行いません。" },
+  { sub: "4．会社役員（代表者を除きます）、従業員のお客さまへ" },
+  { p: "当行が事業性資金等のご融資を行っている、常時使用する従業員数※4が50名以下の事業者にお勤めのお客さまに対して、医療保険、その他一部の保険商品の募集は原則として行いません。" },
+  { note: "※1 「特定関係法人」とは、当行の関連会社・団体をはじめとする出資関係か人的関係等により、当行と密接な関係がある法人を指します。「特定関係法人」に勤務されているお客さまは、当行では医療保険・がん保険に限りお申込いただけます。\n※2 お客さまが法人の代表者である場合の当該法人、またはお客さまが法人である場合の当該法人の代表者を含みます。\n※3 「事業性資金等のご融資」には事業に必要なご資金のほか、事業として賃貸しているアパート・マンションの建築資金のご融資を含みます。\n※4 通常の従業員と概ね同様な勤務形態で、2ヶ月を超えて勤務されているパート、アルバイト、派遣社員の方を含みます。" },
+];
+
+export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose: () => void; onAgree?: () => void }) {
+  if (!open) return null;
+  return (
+    <div className="absolute inset-0 z-50">
+      <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
+      <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
+        <div className="flex items-center justify-between gap-2 px-5 pt-4 pb-3 border-b border-warm-200">
+          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">保険商品のご案内にあたりご確認・同意いただきたいこと</h3>
+          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto no-sb px-5 py-4 space-y-2.5">
+          {(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (
+            b.sec ? <p key={i} className="text-h6 font-bold text-neutral-800 pt-2">{b.sec}</p>
+            : b.sub ? <p key={i} className="text-caption font-bold text-neutral-800 pt-1">{b.sub}</p>
+            : b.note ? <p key={i} className="text-[11px] text-neutral-500 leading-relaxed whitespace-pre-line">{b.note}</p>
+            : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
+          ))}
+        </div>
+        <div className="px-5 py-3 border-t border-warm-200">
+          <div className="flex gap-3 items-center">
+            <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
+            <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
+  const [heigaiOpen, setHeigaiOpen] = useState(false);
   const [noticeOpen, setNoticeOpen] = useState(false);
   const [birth, setBirth] = useState("");
   const [gender, setGender] = useState("");
@@ -2716,6 +2873,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
             </div>
             <span className="inline-flex items-center gap-1 text-caption font-bold" style={{ color: '#054EBA' }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
           </div>
+          <div className="text-right mt-3">
+            <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+              弊害防止措置等の対応について
+            </button>
+          </div>
         </div>
         </div>{/* /px-5 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
@@ -2838,6 +3001,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
         )}
       </ActionBar>
       <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
+      <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
       {noticeOpen && (
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
@@ -2861,31 +3025,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
                   <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">事前同意</span>
                   事前同意事項
                 </p>
-                <p className="text-caption text-neutral-500 leading-relaxed">お申し込み前にご確認ください。</p>
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">この保険について</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・株式会社三菱ＵＦＪ銀行を団体契約者とし、Money Canvas会員の皆さま、会員のご家族を被保険者とする団体契約です。Money Canvas会員の資格を喪失された場合、保険契約は解約いただく、もしくは更新できませんので、ご注意ください。また、保険証券を請求する権利、保険契約を解約する権利等は原則として株式会社 三菱ＵＦＪ銀行が有します。</li>
-                    <li>・この契約は、申込み日が17日までの場合は、翌月1日（0時）より補償が開始し、申込み日が18日から末日までの場合は、翌々月1日（0時）より補償が開始します。</li>
-                    <li>・満期日までにご加入者から更新しない旨のお申出がなければ、団体の取り決めにより原則自動更新されます。</li>
-                  </ul>
-                </section>
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">個人情報の取扱いについて</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・団体契約者である株式会社三菱ＵＦＪ銀行は、お客さまにご入力いただく個人情報を、以下の目的で利用させていただきます。</li>
-                    <li>・お客さまに関する情報は、保険契約上必要な範囲で引受保険会社に提供し、契約の引受・維持管理、保険金等のお支払いの目的で利用させていただきます。</li>
-                    <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
-                  </ul>
-                </section>
-                {deathOpt && (
-                <section className="space-y-1.5">
-                  <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
-                  <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
-                    <li>・本プランには死亡保障が含まれます。死亡保険金受取人は、日本国内に在住し、日本語による各種ご通知・お手続きへの対応が可能な方に限ります。</li>
-                  </ul>
-                </section>
-                )}
+                <NoticeContent />
               </div>
             </div>
             <div className="px-5 py-3 border-t border-warm-200">

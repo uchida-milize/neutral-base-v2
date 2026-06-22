@@ -198,10 +198,10 @@ function Phone({
 const TWEAK_DEFAULTS = {
   patternB: false,
   simFirst: false,
-  formSplit: false,
   errMode: "inline" as string,
   benSameAddr: true,
   kokuchiPattern: "auto" as string,
+  doneVariant: "done" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -238,11 +238,11 @@ export function TheoTdfClaudeDesignShell() {
     ),
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} setDeathOpt={setDeathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
-    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} />,
+    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
-    <ScreenDone key="done" go={go} />,
+    <ScreenDone key="done" go={go} variant={tw.doneVariant} />,
   ];
 
   return (
@@ -255,7 +255,6 @@ export function TheoTdfClaudeDesignShell() {
             <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
             <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
             <TweakSection label="申込フォーム" />
-            <TweakToggle label="2ページ分割（契約者／受取人）" value={tw.formSplit} onChange={(v) => setTweak("formSplit", v)} />
             <TweakSelect
               label="入力エラー表示"
               value={tw.errMode}
@@ -283,6 +282,17 @@ export function TheoTdfClaudeDesignShell() {
                 { value: "three_n",  label: "⑧ 三大疾病プラン" },
                 { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
                 { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
+              ]}
+            />
+            <TweakSection label="完了画面" />
+            <TweakSelect
+              label="表示状態"
+              value={tw.doneVariant}
+              onChange={(v) => setTweak("doneVariant", v)}
+              options={[
+                { value: "done",       label: "完了" },
+                { value: "processing", label: "処理中" },
+                { value: "error",      label: "処理エラー" },
               ]}
             />
             <TweakSection label="内容確認画面" />
