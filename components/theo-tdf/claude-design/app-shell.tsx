@@ -13,6 +13,7 @@ import {
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
+  ScreenEnded,
   HEADER_GRAD_STATUS,
 } from "@/components/theo-tdf/claude-design/screens";
 import {
@@ -20,6 +21,7 @@ import {
   TweaksPanel,
   TweakSection,
   TweakToggle,
+  TweakSelect,
 } from "@/components/theo-tdf/claude-design/tweaks-panel";
 
 /* ============================================================
@@ -37,6 +39,7 @@ import {
    - scr 7: 完了 (STEP5)
 
    tweaks: patternB (商品概要+プラン選択統合) / simFirst (積立金額・保障期間をプランより先に) / formSplit (フォーム2ページ分割)
+           / errMode (入力エラー表示方式: none/inline/top/float) / benSameAddr (受取人住所: same/diff)
    ============================================================ */
 
 type FlowEntry = {
@@ -196,6 +199,8 @@ const TWEAK_DEFAULTS = {
   patternB: false,
   simFirst: false,
   formSplit: false,
+  errMode: "inline" as string,
+  benSameAddr: true,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -206,6 +211,7 @@ export function TheoTdfClaudeDesignShell() {
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
   const [deathOpt, setDeathOpt] = React.useState(true); // 死亡保障あり/なし（共有）
   const [emailVerified, setEmailVerified] = React.useState(false);
+  const [terminated, setTerminated] = React.useState(false); // 申込キャンセル→終了画面
   const NSCR = 8;
 
   const patternB = tw.patternB;
@@ -221,7 +227,7 @@ export function TheoTdfClaudeDesignShell() {
   const curStep = stepOfScreen(scr);
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
   const curStepNo = STEP_NUMS[curStep];
-  const overviewMode = scr === 0 || scr === 7;
+  const overviewMode = (scr === 0 || scr === 7) && !terminated;
 
   const screens = [
     patternB ? (
@@ -231,8 +237,8 @@ export function TheoTdfClaudeDesignShell() {
     ),
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} setDeathOpt={setDeathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
-    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} />,
-    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} />,
+    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} errMode={tw.errMode} onTerminate={() => setTerminated(true)} />,
+    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
     <ScreenDone key="done" go={go} />,
@@ -244,14 +250,37 @@ export function TheoTdfClaudeDesignShell() {
         <Rail scr={scr} go={go} />
         <main className="py-10 flex flex-col items-center gap-4">
           <TweaksPanel>
-            <TweakSection label="表示パターン" />
+            <TweakSection label="全体表示パターン" />
             <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
             <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
             <TweakSection label="申込フォーム" />
             <TweakToggle label="2ページ分割（契約者／受取人）" value={tw.formSplit} onChange={(v) => setTweak("formSplit", v)} />
+            <TweakSelect
+              label="入力エラー表示"
+              value={tw.errMode}
+              onChange={(v) => setTweak("errMode", v)}
+              options={[
+                { value: "none",   label: "エラーなし" },
+                { value: "inline", label: "① 各入力の下に赤字" },
+                { value: "top",    label: "② 上部にまとめて（クリックで移動）" },
+                { value: "float",  label: "③ 下部フローティング（提案）" },
+              ]}
+            />
+            <TweakSection label="内容確認画面" />
+            <TweakSelect
+              label="保険金受取人の住所"
+              value={tw.benSameAddr ? "same" : "diff"}
+              onChange={(v) => setTweak("benSameAddr", v === "same")}
+              options={[
+                { value: "same", label: "契約者と同じ（チェック）" },
+                { value: "diff", label: "別住所を入力" },
+              ]}
+            />
           </TweaksPanel>
-          <Phone external={external} overviewMode={overviewMode} screenKey={scr}>
-            {screens[scr]}
+          <Phone external={external} overviewMode={overviewMode} screenKey={terminated ? -1 : scr}>
+            {terminated
+              ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
+              : screens[scr]}
           </Phone>
           {/* prev / next outside the phone */}
           <div className="flex items-center gap-2">

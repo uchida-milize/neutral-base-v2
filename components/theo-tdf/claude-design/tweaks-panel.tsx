@@ -11,6 +11,8 @@ import * as React from "react";
    host が無く開けないため、ランチャー (歯車ボタン) で開閉する
    自己完結型に作り替えてある。表示パターン (A/B) や申込フォームの
    2 ページ分割といった検討用トグルをプロトタイプ上で切り替えられる。
+
+   TD 組込1.5-handoff (2): TweakSelect を追加 (errMode 4択 / benSameAddr)。
    ============================================================ */
 
 export function useTweaks<T extends Record<string, unknown>>(
@@ -59,6 +61,33 @@ export function TweakToggle({
         />
       </button>
     </label>
+  );
+}
+
+export function TweakSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 py-1">
+      <span className="text-caption text-neutral-500 leading-snug">{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-8 rounded-lg border border-warm-200 bg-white px-2 text-caption text-neutral-700 focus:outline-none focus:ring-1 focus:ring-primary-300"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </div>
   );
 }
 

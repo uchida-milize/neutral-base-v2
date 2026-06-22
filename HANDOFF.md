@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年6月17日 (TD 組込1.4 再取り込み[配色リフレッシュ] + theo-tdf ダーク廃止 + ガイドライン刷新 + 追補修正完了。最新はセクション 16 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
+最終更新: 2026年6月22日 (TD 組込1.5 → 1.5(1) 取り込み: 新プラン体系/健康告知/積立上限バリデーション、死亡保障オプション deathOpt、インライン検証 errMode、windows バリアント大幅追加、port スクリプト堅牢化。最新はセクション 17 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -1583,3 +1583,62 @@ Figma に画面をコピーする手描き型インポータープラグイン�
 ### 16.10 現在の状態 / 次タスク
 - `tsc`/`eslint` グリーン。git は未 push（お客様がターミナルで `add -A`→`commit`→`push`。FUSE シャドウ削除も同コミットに同梱可）。
 - 次タスク（さらなるデザイン更新の取り込み）用キックオフプロンプトは本セッションのチャット参照。windows（スクリーン）ページへ **「プラン選択 / ツールチップ1つ展開」** と **新 tweak「積立金額・保障期間をプランより先に」** のバリアント書き出し要望あり（initial props / 新 tweak フラグはコンポーネント＋port スクリプト両方へ §14.11 同様に焼き込むこと）。
+
+---
+
+## 17. セッションログ 2026-06-22 (TD 組込1.5 → 1.5(1) 連続取り込み + windows 拡充 + port 堅牢化)
+
+このセッションは複数の Claude Design 更新（1.5 / 1.5(1)）を連続取り込みし、windows（スクリーン）ページのバリアントを大幅拡充し、port スクリプトを堅牢化した。`scripts/port-claude-design-1.4.py` が取り込みパイプラインの単一の正であり、下記の変換がすべて焼き込み済み。再取り込み時は「port 再生成 → screens.tsx とバイト一致」を必ず確認すること。
+
+### 17.1 取り込み版の変遷（kumikomi が正）
+| 版 | 主な内容 |
+|---|---|
+| 1.5 | 新プラン体系（がん保障型/三大疾病/障害介護/がん・障害介護/三大疾病・障害介護＝ id: cancer/three/care/cancer_care/three_care）。構造化ツールチップ `tooltip:{sections}`、健康告知（DisclosureModal + DISCLOSURE_BASE）、積立上限バリデーション（simErrors: 保障4,000万円・加入年齢+保障期間90歳）、ageFromBirth。既定 sel が "a"→"cancer"。 |
+| simFirst | tweak「積立金額・保障期間をプランより先に」を app-shell + 自己完結 tweaks-panel.tsx に配線。 |
+| ツールチップ静的展開(A) | PlanCard に `initialTtOpen`、画面に `initialTipIdx`、PLANS.map を `(p,i)` 化して1枚だけ tooltip 開。 |
+| 画面背景グラデ | 各フロー画面のコンテンツ起点コンテナに白→薄ブルー縦グラデ `linear-gradient(to bottom,#FFFFFF,#F2FBFE)`（6画面、外部 GMO グレー画面は除外）。 |
+| 1.5(1) | **死亡保障オプション deathOpt**（全画面 + PlanCard「あり/なし」トグル + DisclosureModal の death 出し分け）、**インライン入力検証 errMode**（none/inline/top）、新ヘルパー ErrText / disclosureFor、Field/Select に error/errMode/anchorRef。プランは death:true・disclosure はやめて disclosureFor(planId,death) で算出に変更。 |
+
+### 17.2 §11.2 の罠は健在
+1.5 / 1.5(1) いずれも screens.jsx(1694行)/app.jsx(202行) は古いキャッシュで、kumikomi.html（2984→3167行）が真の最新。md5/行 diff で確認のうえ kumikomi から再生成した。
+
+### 17.3 port スクリプトの堅牢化（重要）
+- **`must_replace()` 導入**: 各変換の対象文字列が無ければ即 `SystemExit` で停止（silent no-op による焼き込み抜け＝退行を防止）。kumikomi のシグネチャが変わると確実に検知できる。再取り込みで停止したら、新しいシグネチャ/文字列に match を更新する（gotcha #35 の根治）。
+- **`inject_type` を括弧バランス方式へ**: アロー初期値 `= () => {}`（setDeathOpt/onDeath 等）を含むシグネチャでも閉じ括弧を正しく見つけて型注釈を挿入。旧正規表現だと最初の `)` で誤判定して型が付かず tsc 落ちになるため必須。
+- 取り込み済み手動修正の撤去: 「橋渡しバナーの青グラデ / パターンB のシミュレーション・申込帯のグラデ / ActionBar #F2FBFE」は 1.5(1) で Claude Design 側にネイティブ取り込みされたため port の焼き込みを撤去（旧文字列が消え must_replace が失敗するため）。
+
+### 17.4 port スクリプトに焼き込み済みの変換一覧（維持・退行させない）
+- Btn 青/赤グラデ（cta/button=#075FE3→#64B0F7, danger=#E83A3C→#F66A6C, `style={gradStyle}`, React.CSSProperties 型）。**ボタンは単色化しない**（青も赤もグラデ）。
+- HEADER_GRAD_* 型注釈、`backgroundSize "366px 89px"→"100% 89px"`（windows 390px 右端切れ対策）。
+- 各フロー画面コンテンツ起点の白→薄ブルー縦グラデ（6画面）。
+- windows 用 initial props 注入（§14.11 + 本セッション拡張）: ScreenStep2= initialNoticeOpen/initialAgree/initialSimOpen/initialShowSend/initialTipIdx/initialBirth、ScreenPin= initialPin、ScreenStep4= initialOpenIdx/initialChecks/initialAcctOpen/initialEditKiyaku/initialEditJuushin/initialNat、ScreenForm= initialFormPage/initialDisclosureOpen、ScreenCombined= initialAgree/initialShowSend/initialTipIdx、PlanCard= initialTtOpen。
+- 型注入: Plan（tooltip:{sections}, death?, disclosure?）/ AgreeBlock（+head/strong/cat/checks）/ AgreeItemData（+kind/id）/ Select（+error/errMode/anchorRef）/ DisclosureModal（+death）/ deathOpt・setDeathOpt（ScreenStep2/Combined）/ deathOpt・errMode（ScreenForm）/ deathOpt（ScreenStep4）/ PlanCard（+death/onDeath）/ 新関数 ErrText・disclosureFor・ageFromBirth・simErrors。
+- atom shadcn ラッパー（Btn/Badge/Field/LockedField/GroupCard、Select はネイティブ）。Field wrapper は error/errMode/anchorRef を受け取りインライン検証（無効時 `--color-attention` 罫線 + ErrText）に対応。
+- 関数内 column-0 const `agreeItems = deathOpt ? …` の誤 export 是正、infoPlan の `Plan|null`＋initialDisclosureOpen 制御、errMap/errState/fieldRefs 等の動的添字に型注入、tooltip の optional-chaining 安全化、PlanCard 死亡トグルのラベル配列のタプル化。
+- eslint-disable に `react-hooks/refs`（setFieldRef の ref コールバック誤検知）を追加。
+
+### 17.5 CSS / globals（手動定義。kumikomi の CSS 変数は port が拾わない）
+- `app/globals.css` の `.theo-tdf-cd` に `--success` / `--success-10` / `--color-link:#0066d1` / **`--color-attention:#d70027`（1.5 で新採用。エラー文・必須印の赤）** を定義。新 kumikomi が新変数を使い始めたら同様に追記する。
+- **`.theo-sheet-full`**（新規）: windows でハーフモーダル/ボトムシートを「ステッパー直下から全文表示」する。`.sheet-up` を `top:140px; bottom:auto; max-height:none`、内部 `overflow-y-auto` を `overflow:visible; flex:0 0 auto` に上書き。StaticScreen の `fullSheet` フラグで付与し、カード高さは内容に合わせて指定。
+
+### 17.6 app-shell / tweaks（手動同期。screens は kumikomi 由来）
+- 既定 `sel="cancer"`。`const [deathOpt,setDeathOpt]=useState(true)` を置き、ScreenCombined/ScreenStep2 に deathOpt+setDeathOpt、ScreenForm/ScreenStep4 に deathOpt を伝播。
+- tweaks: patternB / simFirst / formSplit を TWEAK_DEFAULTS + 自己完結 tweaks-panel.tsx に配線済み。**次回 errMode（none/inline/top の選択式）/ deathOpt の Tweaks 化が来たら、TweakToggle に加え TweakSelect 等を追加して完全同期すること**（stale/未配線ゼロ）。
+
+### 17.7 windows（/theo-tdf/windows）の確定バリアント
+- プラン選択: デフォルト / 重要事項ボトムシート（全文表示 .theo-sheet-full, height 1000）/ 給付予想額展開 / 下部CTA(未同意) / 同意済CTA / メール認証済 / ツールチップ1展開(がん保障型, initialTipIdx={0}) / 積立金額・保障期間をプランより先に(simFirst) / シミュ上限エラー(保障金額 m=150000 y=25) / シミュ上限エラー(保障満了 initialBirth="1944-01-01" y=15)。
+- 申込フォーム（6枚）: モーダルあり:告知(全文表示 .theo-sheet-full, height 2700) / モーダル無し:デフォルト(initialDisclosureOpen={false}) / 2ページ分割(契約者) / 2ページ分割(受取人) / 受取人住所を個別入力(initialSame={false}) / モーダルあり:積立修正シート＋給付予想額展開。
+- 内容確認: デフォルト / お支払い詳細展開 / 同意項目①展開＋全チェック / 契約者＋受取人 両方編集展開 / 被保険者の確認(日本国籍以外, initialOpenIdx={4} initialNat="other")。
+- 告知モーダルは ScreenForm マウント時に既定表示される設計（infoPlan=plan）。windows では `initialDisclosureOpen={false}` で非表示にして並べている。
+
+### 17.8 検証（毎回）
+- `tsc --noEmit` 0 / `eslint` クリーン / 残骸 grep 0（text-h7・text-cd-h・生 assets/・素 bg-success・雛形語）/ **port 再生成が screens.tsx とバイト一致** / kumikomi UI テキスト網羅（画面本体100%、未一致はエディタ足場 ← プロトタイプに戻る等）。
+
+### 17.9 Vercel / 運用メモ
+37. **本番は `neutral-base.vercel.app` の1本**（旧 neutral-base-v2 は削除済み）。`neutral-base-<hash>-tuchida-milize-projects.vercel.app` はデプロイ毎の自動発行URL（削除不可・無視可）。ダッシュボードの「Visit」はこのハッシュURLを開く。
+38. **ローカル `.vercel/project.json` が削除済みの neutral-base-v2 を指す誤リンク** → `rm -rf .vercel` 推奨（GitHub 連携デプロイには無影響）。CLI 誤リンクで Vercel に不要プロジェクト `td-1-5-c0f823b5` が生成された形跡あり → ダッシュボードで削除。
+39. **git commit 前に `rm -f .git/index.lock`**（FUSE で残留しやすい）。
+
+### 17.10 現在の状態 / 次タスク
+- `tsc`/`eslint` グリーン。port 再生成バイト一致。git は未 push（お客様がターミナルで実施）。
+- 次の取り込み（`TD 組込1.5-handoff (2).zip`）用キックオフプロンプトを別途用意済み（本セッション成果物 `kickoff-next.md`）。**tweaks の完全同期**（errMode の選択式 tweak 化含む）を次タスクで実施予定。

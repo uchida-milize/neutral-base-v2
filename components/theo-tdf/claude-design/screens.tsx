@@ -28,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.4-handoff (kumikomi.html 単一ファイル版を正) (2026-06-16 全刷新取り込み)
+   原典: TD 組込1.5-handoff (2) (kumikomi.html 単一ファイル版を正) (2026-06-22 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
@@ -555,7 +555,8 @@ export const PLANS: Plan[] = [
 ];
 
 /* 告知項目モーダル — プラン選択画面のツールチップ押下で表示 */
-export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void }) {
+export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void }) {
+  const [askExit, setAskExit] = React.useState(false);
   if (!plan) return null;
   const blocks = disclosureFor(plan.id, death);
   return (
@@ -583,7 +584,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
         <div className="px-5 py-3 border-t border-warm-200">
           {confirm ? (
             <div className="flex gap-3 items-center">
-              <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
+              <button onClick={onCancel ? () => setAskExit(true) : onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
               <div className="flex-1"><Btn kind="button" onClick={onConfirm || onClose}>確認しました</Btn></div>
             </div>
           ) : (
@@ -591,6 +592,22 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
           )}
         </div>
       </div>
+
+      {/* 終了確認アラート */}
+      {askExit && (
+        <div className="absolute inset-0 z-[60] grid place-items-center px-8">
+          <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
+          <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
+            <div className="px-5 pt-5 pb-4 text-center">
+              <p className="text-h6 font-bold text-neutral-800 leading-relaxed">お申し込みが出来ません。<br/>終了してよいですか？</p>
+            </div>
+            <div className="grid grid-cols-2 border-t border-warm-200">
+              <button onClick={() => setAskExit(false)} className="py-3 text-h6 font-medium text-neutral-500 border-r border-warm-200">キャンセル</button>
+              <button onClick={() => { setAskExit(false); onCancel && onCancel(); }} className="py-3 text-h6 font-bold" style={{ color: 'var(--color-link)' }}>OK</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1060,6 +1077,9 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
             <div>
               <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">さっそく、はじめましょう。</h2>
               <p className="mt-2 text-h6 text-neutral-600 leading-relaxed text-balance">ご入力はかんたん。まずは保険料の算出に必要な情報からどうぞ。</p>
+              <div className="mt-3 flex items-center gap-2 text-caption text-primary-700">
+                <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
+              </div>
             </div>
             {!simFirst && birthGenderFields}
           </div>
@@ -1498,7 +1518,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   // ページ表示時に、選択プランの告知項目モーダルを強制表示
   const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));
@@ -1539,7 +1559,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   };
 
   // 契約者住所（受取人「契約者と同じ」でコピーされる値。初期値はTHEO口座から自動入力）
-  const [holder, setHolder] = useState({ zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", addr: "1-1", bldg: "丸の内ビル 10F" });
+  const [holder, setHolder] = useState({ zip: "1000001", pref: "東京都", town: "千代田区丸の内１丁目", addr: "1-1", bldg: "丸の内ビル 10F" });
   const setH = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h: any) => ({ ...h, [k]: e.target.value }));
 
   // 保険金受取人 生年月日・性別
@@ -1620,12 +1640,12 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <LockedField label="性別" value="男性" />
 
           <SubLabel>連絡先</SubLabel>
-          <Field label="郵便番号" placeholder="100-0001" required hint="郵便番号から住所を自動入力します" value={holder.zip} onChange={setH("zip")} />
+          <Field label="郵便番号" placeholder="1000001" required hint="郵便番号から住所を自動入力します" value={holder.zip} onChange={setH("zip")} />
           <Select label="都道府県" required value={holder.pref} options={PREFS} hint="郵便番号で自動入力" onChange={setH("pref")} />
           <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" required hint="町名まで自動入力されます" value={holder.town} onChange={setH("town")} />
           <Field label="番地など" placeholder="1丁目1番地1号" required value={holder.addr} onChange={setH("addr")} />
           <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={holder.bldg} onChange={setH("bldg")} />
-          <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
+          <Field label="電話番号" placeholder="09000000000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
         </GroupCard>
 
         {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
@@ -1646,7 +1666,12 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 保険金受取人グループ */}
         <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" iconSrc="/assets/theo-tdf/letter-heart-square.svg">
-          <Field label="氏名" placeholder="山田 花子" />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="姓" placeholder="山田" required />
+            <Field label="名" placeholder="花子" required />
+            <Field label="セイ" placeholder="ヤマダ" required />
+            <Field label="メイ" placeholder="ハナコ" required />
+          </div>
 
           {/* 受取人 生年月日・性別 */}
           <div ref={setFieldRef('benBirth')} className="flex flex-col gap-1.5">
@@ -1680,7 +1705,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
           {!same && (
           <div className="space-y-3">
-            <Field label="郵便番号" placeholder="100-0001" />
+            <Field label="郵便番号" placeholder="1000001" />
             <Select label="都道府県" value="都道府県を選択" options={PREFS} />
             <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" />
             <Field label="番地など" placeholder="1丁目1番地1号" />
@@ -1689,7 +1714,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           )}
 
           <Select label="続柄" required value={rel || "続柄を選択"} onChange={(e) => setRel(e.target.value === "続柄を選択" ? "" : e.target.value)} options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} error={errOf('rel')} errMode={errMode} anchorRef={setFieldRef('rel')} />
-          <Field label="電話番号" placeholder="090-0000-0000" />
+          <Field label="電話番号" placeholder="09000000000" />
         </GroupCard>
 
         {/* 団体特定コード（パターンA：非分割時は保険金受取人の後） */}
@@ -1786,7 +1811,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
       )}
 
       {/* 告知項目モーダル（ページ表示時に選択プランで強制表示） */}
-      <DisclosureModal plan={infoPlan} death={deathOpt} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} />
+      <DisclosureModal plan={infoPlan} death={deathOpt} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} />
 
       {/* 受取人 生年月日ドラムロール */}
       <DateDrumSheet open={benPickerOpen} value={benBirth}
@@ -1799,7 +1824,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 /* ============================================================
    SCREEN 5 — 内容確認
    ============================================================ */
-// 重要事項（5項目）— ①〜④は添付内容、⑤は契約のしおり・約款
+// 重要事項（4項目）— ①〜③は添付内容、④は契約のしおり・約款
 export const AGREE_ITEMS: AgreeItemData[] = [
   {
     t: "申込に関する注意事項の確認",
@@ -1835,39 +1860,6 @@ export const AGREE_ITEMS: AgreeItemData[] = [
         "お客さま自身によるペーパーレス手続きのお願い\nタブレット等の画面等でおこなう各種ご確認・入力は被保険者さま（以下「お客さま」といいます）ご自身によりおこなってください。",
         "セキュリティについて\n1. お客さまがタブレット等で確認・入力したすべての情報は、当社において電磁的記録（電子データ）によって保管します。\n2. タブレット等の情報端末内にお客さまの情報は保存しません。データの伝送についても、データを暗号化するなどのセキュリティ対策を講じます。",
       ] },
-    ],
-  },
-  {
-    t: "健康告知について",
-    blocks: [
-      { p: "下記の内容をご確認のうえ、お申し込みください。" },
-      { p: "保険商品お申し込みの方へ" },
-      { p: "ご加入にあたっては、被保険者の現在の健康状態等について告知をしていただく義務があります。" },
-      { p: "ご加入にあたっては、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、身体の障がい状況について「告知事項」で当社がおたずねすることについて、事実をありのままに正確にもれなくお知らせ（告知）ください。" },
-      { p: "ご加入（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、給付金はお支払いできません。" },
-      { p: "（事例）加入前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目には該当しませんが、加入3ヶ月後に直接的な原因による脳梗塞を発症した場合などもお支払いできないことがあります。" },
-      { p: "※ただし、以下の場合には責任開始期以後発生した原因によるものとみなし、給付金をお支払いします。" },
-      { ul: [
-        "責任開始期から1年を経過した後で支払事由が生じた場合",
-        "責任開始期以降、その疾病やケガによって医師の診察を受けたことがなくかつ診断等による異常な指摘も受けていないこと。ただし、その原因となった病気やケガによる症状について被保険者が認識または自覚していた場合を除きます。",
-      ] },
-      { note: "【告知事項】\n以下の質問についてすべて「いいえ」であることをご確認ください。1つでも「はい」があると、ご加入いただけません。" },
-      { ul: [
-        "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）",
-        "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。",
-      ] },
-      { table: [["検査名", "狭内視鏡検査・便潜血検査・マンモグラフィ検査・腫瘍マーカー（CEA、AFP、CA19-9、PSA）"]] },
-      { ul: ["過去5年以内の病気について、以下に該当することはありますか。\n・病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）\n・下記表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。"] },
-      { table: [
-        ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
-        ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
-        ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
-        ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
-        ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
-        ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"],
-        ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
-      ] },
-      { ul: ["つぎのいずれか1つでも該当することはありますか。\n・今までに、がん（上皮内がん、肉腫、白血病、悪性リンパ腫、骨髄腫を含む）、高度異形成または骨髄異形成症候群になったことがある。\n・今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）。\n・現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折などにより現在一時的に必要とする場合も含みます。（1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄）"] },
     ],
   },
   {
@@ -1983,7 +1975,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
+export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
@@ -1993,6 +1985,11 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
+  // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
+  const [benEditSame, setBenEditSame] = useState(benSameAddr);
+  const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
+  // 受取人固有の住所（「契約者と異なる」場合に表示）
+  const BEN_ADDR = { zip: "1500002", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
   // 死亡保障がないプランでは「被保険者の確認」選択は不要
   const agreeItems = deathOpt ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !== "insured");
   const CIRC = "①②③④⑤⑥⑦⑧⑨";
@@ -2044,8 +2041,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <LockedField label="生年月日" value="1990 / 01 / 01" />
               <LockedField label="性別" value="男性" />
               <Field label="国籍" value="日本国籍" />
-              <Field label="住所" value="〒100-0001 東京都千代田区丸の内１丁目 丸の内ビル 10F" />
-              <Field label="電話番号" value="090-0000-0000" />
+              <Field label="住所" value="〒1000001 東京都千代田区丸の内１丁目 丸の内ビル 10F" />
+              <Field label="電話番号" value="09000000000" />
               <Field label="メールアドレス" value="samplename@sample.co.jp" />
             </div>
           ) : (
@@ -2057,9 +2054,9 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Row k="国籍" v="日本国籍" />
               <div className="flex flex-col gap-0.5 py-3 border-b border-warm-200">
                 <span className="text-caption text-neutral-500">住所</span>
-                <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
+                <span className="text-h6 text-neutral-700 leading-relaxed">〒1000001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
               </div>
-              <Row k="電話番号" v="090-0000-0000" />
+              <Row k="電話番号" v="09000000000" />
               <Row k="メールアドレス" v="samplename@sample.co.jp" />
             </>
           )}
@@ -2069,7 +2066,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <div className="flex items-center justify-between mb-2">
             <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-900">保険金受取人</p>
             {!editJuushin && (
-              <button onClick={() => setEditJuushin(true)} className="flex items-center gap-1 text-caption font-medium text-primary-600 hover:text-primary transition-colors">
+              <button onClick={openJuushinEdit} className="flex items-center gap-1 text-caption font-medium text-primary-600 hover:text-primary transition-colors">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 編集
               </button>
@@ -2084,20 +2081,45 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           {editJuushin ? (
             <div className="space-y-3 mt-1">
               <Field label="氏名" value="山田 花子" />
+              <Field label="フリガナ" value="ヤマダ ハナコ" />
               <Field label="生年月日" value="1992 / 05 / 15" />
               <Field label="性別" value="女性" />
               <Field label="続柄" value="配偶者" />
-              <Field label="住所" value="契約者と同じ" />
-              <Field label="電話番号" value="090-0000-0000" />
+              {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-caption font-medium text-neutral-600">住所</span>
+                <button type="button" onClick={() => setBenEditSame((s) => !s)} className="flex items-center gap-2.5 text-left">
+                  <span className={`grid place-items-center w-5 h-5 rounded border-2 shrink-0 ${benEditSame ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                    {benEditSame && <Ic.check className="w-3 h-3" />}
+                  </span>
+                  <span className="text-caption text-neutral-700">住所は契約者と同じ</span>
+                </button>
+                {!benEditSame && (
+                  <div className="space-y-2 mt-1 fade-in">
+                    <Field label="郵便番号" value={BEN_ADDR.zip} />
+                    <Field label="都道府県・市区町村" value={BEN_ADDR.line1} />
+                    <Field label="番地・建物名・部屋番号" value={BEN_ADDR.line2} />
+                  </div>
+                )}
+              </div>
+              <Field label="電話番号" value="09000000000" />
             </div>
           ) : (
             <>
               <Row k="氏名" v="山田 花子" />
+              <Row k="フリガナ" v="ヤマダ ハナコ" />
               <Row k="生年月日" v="1992 / 05 / 15" />
               <Row k="性別" v="女性" />
               <Row k="続柄" v="配偶者" />
-              <Row k="住所" v="契約者と同じ" />
-              <Row k="電話番号" v="090-0000-0000" />
+              {benSameAddr ? (
+                <Row k="住所" v="契約者と同じ" />
+              ) : (
+                <div className="flex flex-col gap-0.5 py-3 border-b border-warm-200">
+                  <span className="text-caption text-neutral-500">住所</span>
+                  <span className="text-h6 text-neutral-700 leading-relaxed">〒{BEN_ADDR.zip}<br/>{BEN_ADDR.line1} {BEN_ADDR.line2}</span>
+                </div>
+              )}
+              <Row k="電話番号" v="09000000000" />
             </>
           )}
         </div>
@@ -2417,6 +2439,37 @@ export function ScreenDone({ go }: { go: Go }) {
       </div>
       <ActionBar bg="#F2FBFE">
         <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
+      </ActionBar>
+    </>
+  );
+}
+
+/* ============================================================
+   SCREEN — 終了しました（申込キャンセル時）
+   ============================================================ */
+export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
+  return (
+    <>
+      {/* 固定ステータスバー */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <div className="grid place-items-center w-16 h-16 rounded-full bg-warm-100 mb-6">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-8 h-8 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </div>
+          <h2 className="text-h3 font-bold text-neutral-800">お申し込みを終了しました</h2>
+          <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。<br/>再度お申し込みいただく場合は、はじめからやり直してください。</p>
+        </div>
+        <div className="px-5 pb-6">
+          <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-center">
+            ご不明な点は THEO サポートまでお問い合わせください。
+          </div>
+        </div>
+      </div>
+      <ActionBar bg="#F2FBFE">
+        <Btn kind="button" onClick={onRestart}>はじめの画面に戻る</Btn>
       </ActionBar>
     </>
   );

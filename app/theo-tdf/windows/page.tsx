@@ -12,6 +12,7 @@ import {
   ScreenCardInput,
   ScreenCardConfirm,
   ScreenDone,
+  ScreenEnded,
 } from "@/components/theo-tdf/claude-design/screens";
 
 /**
@@ -369,6 +370,42 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          // errMode="inline": 「確認する」後に必須入力エラーを各フィールド下に赤字表示
+          key: "form-err-inline",
+          label: "エラー表示①：各入力の下に赤字（errMode=inline）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="inline" initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          // errMode="top": 「確認する」後に上部にエラー一覧（クリックで該当フィールドへジャンプ）
+          key: "form-err-top",
+          label: "エラー表示②：上部にまとめて（errMode=top）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="top" initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          // errMode="float": 下部フローティングバーでエラー件数を表示（提案）
+          key: "form-err-float",
+          label: "エラー表示③：下部フローティング（errMode=float）",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="float" initialDisclosureOpen={false}
+            />
+          ),
+        },
       ],
     },
 
@@ -420,6 +457,17 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          // benSameAddr=false で「受取人住所を個別入力」状態の内容確認画面
+          key: "st-step4-diffaddr",
+          label: "保険金受取人の住所：別住所を入力（benSameAddr=false）",
+          el: (
+            <ScreenStep4
+              go={noop} sel="cancer" m={10000} y={15}
+              benSameAddr={false}
+            />
+          ),
+        },
       ],
     },
 
@@ -452,6 +500,20 @@ export default function TheoTdfWindowsPage() {
           key: "done",
           label: "デフォルト",
           el: <ScreenDone go={noop} />,
+        },
+      ],
+    },
+
+    /* ---- 08 申込キャンセル終了 ---- */
+    {
+      key: "ended",
+      title: "申込キャンセル終了",
+      badge: "終了",
+      screens: [
+        {
+          key: "ended",
+          label: "デフォルト（「告知に同意しない」でキャンセル後）",
+          el: <ScreenEnded onRestart={noop} />,
         },
       ],
     },
