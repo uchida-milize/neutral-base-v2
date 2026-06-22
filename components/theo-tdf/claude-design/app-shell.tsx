@@ -18,7 +18,7 @@ import {
 } from "@/components/theo-tdf/claude-design/screens";
 import {
   useTweaks,
-  TweaksPanel,
+  TweaksSidebar,
   TweakSection,
   TweakToggle,
   TweakSelect,
@@ -247,65 +247,9 @@ export function TheoTdfClaudeDesignShell() {
 
   return (
     <div className="theo-tdf-cd font-jp min-h-screen w-full bg-warm-100 transition-colors duration-300">
-      <div className="mx-auto max-w-[1100px] px-6 flex items-start justify-center gap-4">
+      <div className="mx-auto max-w-[1400px] px-6 flex items-start gap-4">
         <Rail scr={scr} go={go} />
-        <main className="py-10 flex flex-col items-center gap-4">
-          <TweaksPanel>
-            <TweakSection label="全体表示パターン" />
-            <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
-            <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
-            <TweakSection label="申込フォーム" />
-            <TweakSelect
-              label="入力エラー表示"
-              value={tw.errMode}
-              onChange={(v) => setTweak("errMode", v)}
-              options={[
-                { value: "none",   label: "エラーなし" },
-                { value: "inline", label: "① 各入力の下に赤字" },
-                { value: "top",    label: "② 上部にまとめて（クリックで移動）" },
-                { value: "float",  label: "③ 下部フローティング（提案）" },
-              ]}
-            />
-            <TweakSelect
-              label="告知項目パターン"
-              value={tw.kokuchiPattern}
-              onChange={(v) => setTweak("kokuchiPattern", v)}
-              options={[
-                { value: "auto",     label: "auto（プラン連動）" },
-                { value: "care_d",   label: "① 障害・介護プラン（死亡あり）" },
-                { value: "care_n",   label: "② 障害・介護プラン" },
-                { value: "cancer_d", label: "③ がんプラン（死亡あり）" },
-                { value: "cancer_n", label: "④ がんプラン" },
-                { value: "cc_d",     label: "⑤ がん・障害介護プラン（死亡あり）" },
-                { value: "cc_n",     label: "⑥ がん・障害介護プラン" },
-                { value: "three_d",  label: "⑦ 三大疾病プラン（死亡あり）" },
-                { value: "three_n",  label: "⑧ 三大疾病プラン" },
-                { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
-                { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
-              ]}
-            />
-            <TweakSection label="完了画面" />
-            <TweakSelect
-              label="表示状態"
-              value={tw.doneVariant}
-              onChange={(v) => setTweak("doneVariant", v)}
-              options={[
-                { value: "done",       label: "完了" },
-                { value: "processing", label: "処理中" },
-                { value: "error",      label: "処理エラー" },
-              ]}
-            />
-            <TweakSection label="内容確認画面" />
-            <TweakSelect
-              label="保険金受取人の住所"
-              value={tw.benSameAddr ? "same" : "diff"}
-              onChange={(v) => setTweak("benSameAddr", v === "same")}
-              options={[
-                { value: "same", label: "契約者と同じ（チェック）" },
-                { value: "diff", label: "別住所を入力" },
-              ]}
-            />
-          </TweaksPanel>
+        <main className="flex-1 py-10 flex flex-col items-center gap-4">
           <Phone external={external} overviewMode={overviewMode} screenKey={terminated ? -1 : scr}>
             {terminated
               ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
@@ -338,6 +282,62 @@ export function TheoTdfClaudeDesignShell() {
             </button>
           </div>
         </main>
+        <TweaksSidebar>
+          <TweakSection label="全体表示パターン" />
+          <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
+          <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
+          <TweakSection label="申込フォーム" />
+          <TweakSelect
+            label="入力エラー表示"
+            value={tw.errMode}
+            onChange={(v) => setTweak("errMode", v)}
+            options={[
+              { value: "none",   label: "エラーなし" },
+              { value: "inline", label: "① 各入力の下に赤字" },
+              { value: "top",    label: "② 上部にまとめて（クリックで移動）" },
+              { value: "float",  label: "③ 下部フローティング（提案）" },
+            ]}
+          />
+          <TweakSelect
+            label="告知項目パターン"
+            value={tw.kokuchiPattern}
+            onChange={(v) => setTweak("kokuchiPattern", v)}
+            options={[
+              { value: "auto",     label: "auto（プラン連動）" },
+              { value: "care_d",   label: "① 障害・介護プラン（死亡あり）" },
+              { value: "care_n",   label: "② 障害・介護プラン" },
+              { value: "cancer_d", label: "③ がんプラン（死亡あり）" },
+              { value: "cancer_n", label: "④ がんプラン" },
+              { value: "cc_d",     label: "⑤ がん・障害介護プラン（死亡あり）" },
+              { value: "cc_n",     label: "⑥ がん・障害介護プラン" },
+              { value: "three_d",  label: "⑦ 三大疾病プラン（死亡あり）" },
+              { value: "three_n",  label: "⑧ 三大疾病プラン" },
+              { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
+              { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
+            ]}
+          />
+          <TweakSection label="完了画面" />
+          <TweakSelect
+            label="表示状態"
+            value={tw.doneVariant}
+            onChange={(v) => setTweak("doneVariant", v)}
+            options={[
+              { value: "done",       label: "完了" },
+              { value: "processing", label: "処理中" },
+              { value: "error",      label: "処理エラー" },
+            ]}
+          />
+          <TweakSection label="内容確認画面" />
+          <TweakSelect
+            label="保険金受取人の住所"
+            value={tw.benSameAddr ? "same" : "diff"}
+            onChange={(v) => setTweak("benSameAddr", v === "same")}
+            options={[
+              { value: "same", label: "契約者と同じ（チェック）" },
+              { value: "diff", label: "別住所を入力" },
+            ]}
+          />
+        </TweaksSidebar>
       </div>
     </div>
   );

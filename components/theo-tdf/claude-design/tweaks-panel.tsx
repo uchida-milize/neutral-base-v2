@@ -91,35 +91,22 @@ export function TweakSelect({
   );
 }
 
-export function TweaksPanel({
+/** 右カラム固定サイドバー版（3カラムレイアウト用） */
+export function TweaksSidebar({
   title = "表示オプション",
   children,
 }: {
   title?: string;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
   return (
-    <div className="w-[390px]">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-full bg-white border border-warm-200 px-4 h-9 text-caption font-medium text-neutral-600 shadow-sm hover:border-warm-300"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-        </svg>
+    <aside className="hidden xl:flex flex-col w-56 shrink-0 py-10">
+      <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400 mb-3 px-1">
         {title}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`}>
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </button>
-      {open && (
-        <div className="mt-2 rounded-2xl border border-warm-200 bg-white shadow-lg p-4 fade-in">
-          {children}
-        </div>
-      )}
-    </div>
+      </p>
+      <div className="rounded-2xl border border-warm-200 bg-white shadow-sm p-4 space-y-0.5">
+        {children}
+      </div>
+    </aside>
   );
 }
