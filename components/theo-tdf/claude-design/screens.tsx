@@ -8,6 +8,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any --
     scroll バインドの DOM 参照 / 動的 __bound プロパティへ any キャスト。 */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/refs --
+   ScreenForm の setFieldRef は ref コールバック (ref={setFieldRef(id)}) で、
+   .current への代入はコミット時に走る正規パターン。React Compiler ルールの誤検知を抑制。 */
 /* eslint-disable react-hooks/set-state-in-effect --
    DateDrumSheet が「シートを開いた時に value へ同期」「月変更時に日をクランプ」
    する目的で effect 内 setState を使用 (Claude Design 由来の意図的パターン)。 */
@@ -62,6 +65,8 @@ export type AgreeBlock = {
   table?: string[][];
   head?: string;
   strong?: string;
+  cat?: string;
+  checks?: string[];
 };
 
 export type AgreeItemData = {
@@ -262,12 +267,27 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
   );
 }
 
-// Wireframe form field
-export function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
-  // shadcn <Label> + <Input> へ委譲。
-  const id = React.useId();
+// インラインのエラーメッセージ（小さめ・赤字・アイコン付き）
+export function ErrText({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <span className="flex items-start gap-1 text-[11px] font-medium leading-snug" style={{ color: 'var(--color-attention)' }}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-3.5 h-3.5 mt-px shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+      <span>{children}</span>
+    </span>
+  );
+}
+
+// エラー状態の入力枠スタイル（border赤＋薄赤背景。レイアウトずれ防止に border幅は1pxのまま）
+export const ERR_INPUT_CLS = "text-neutral-800";
+export const errInputStyle = { borderColor: 'var(--color-attention)', background: '#FFF5F5', boxShadow: '0 0 0 1px var(--color-attention)' };
+
+// Wireframe form field
+export function Field({ label, placeholder, required, hint, value, onChange, disabled, error, errMode, anchorRef }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }) {
+  // shadcn <Label> + <Input> へ委譲。error/errMode は Claude Design のインライン検証用 (1.5(1))。
+  const id = React.useId();
+  const invalid = !!error && !!errMode && errMode !== "none";
+  return (
+    <div className="flex flex-col gap-1.5" ref={anchorRef}>
       <Label htmlFor={id} className="text-caption font-medium text-neutral-600">
         {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
       </Label>
@@ -277,8 +297,10 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
         defaultValue={value}
         onChange={onChange}
         disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}
+        aria-invalid={invalid || undefined}
+        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : invalid ? "border-[color:var(--color-attention)] bg-white text-neutral-800" : "border-warm-300 bg-white text-neutral-800"}`}
       />
+      {errMode === "inline" && error && <ErrText>{error}</ErrText>}
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </div>
   );
@@ -307,20 +329,24 @@ export function LockedField({ label, value }: { label: string; value: string }) 
 }
 
 // Wireframe select (dropdown)
-export function Select({ label, required, hint, value, onChange, options = [], disabled }: { label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean }) {
+export function Select({ label, required, hint, value, onChange, options = [], disabled, error, errMode, anchorRef }: { label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }) {
+  const invalid = !!error && errMode && errMode !== 'none';
+  const showText = invalid && errMode === 'inline';
   return (
-    <label className="flex flex-col gap-1.5">
+    <label ref={anchorRef} className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
         {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
       </span>
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
-          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-h6 ${disabled ? "border-warm-200 bg-[#EFEFEF] text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}>
+          style={invalid ? errInputStyle : undefined}
+          className={`fld appearance-none w-full h-11 rounded-lg border px-3 pr-9 text-h6 ${disabled ? "border-warm-200 bg-[#EFEFEF] text-neutral-400 cursor-not-allowed" : invalid ? `border-[color:var(--color-attention)] ${ERR_INPUT_CLS}` : "border-warm-300 bg-white text-neutral-800"}`}>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      {hint && <span className="text-caption text-neutral-400">{hint}</span>}
+      {showText && <ErrText>{error}</ErrText>}
+      {!showText && hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </label>
   );
 }
@@ -408,42 +434,90 @@ export const DISCLOSURE_INTRO = [
   { strong: "保険商品お申し込みの方へ" },
   { p: "募集用資料・告知書・告知説明資料等において、ご契約者や被保険者は健康状態等について告知をしていただく義務があります。" },
   { p: "生命保険は、多数の人々が公平に保険料を出し合い、相互に保険し合う制度です。したがって、初めから健康状態の良くない方や危険な職業に従事されている方等が無条件に契約されますと、保険料負担の公平性が保てません。" },
-  { p: "このため、当社では、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、職業、身体の障がい状況、危険な趣味などについて「告知書」をもって、おたずねすることになっております。事実をありのままに正確にもれなくお知らせ（告知）ください。" },
-  { p: "ご加入（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、保険金・給付金はお支払いできません。" },
-  { p: "（事例）契約前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目には該当しませんが、契約3ヶ月後に直接的な原因による脳梗塞を発症した場合などもお支払いできない場合があります。" },
+  { p: "ご契約にあたっては、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、身体の障がい状態、職業歴とうについて「告知書」で当社がおたずねすることについて、事実をありのままに正確にもれなくお知らせ（告知）ください" },
+  { p: "ご契約（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、保険金・給付金はお支払い出来ません。（事例）契約前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目に該当しませんが、契約3ヶ月後に直接的な原因により脳梗塞が発症した場合などはお支払い出来ないことがあります。" },
   { p: "※ただし、以下のような場合には責任開始期以後発生した原因によるものとみなし、保険金・給付金をお支払いします。" },
   { ul: [
     "責任開始期から2年を経過した後で支払事由が生じた場合",
     "責任開始期以降、その疾病やケガによって医師の診察を受けたことがなく、かつ診断等による異常な指摘も受けていない場合。ただし、その原因となった病気やケガによる症状について被保険者が認識または自覚していた場合を除きます。",
   ] },
-  { p: "※告知に、以下のような事実を故意または重大な過失によって告知されなかったり、事実と異なることを告知された場合には、保険・給付契約を解除させていただくことがあります。お気をつけください。" },
-  { ul: [
-    "責任開始期から2年を経過するまでに支払事由が生じた場合",
-    "被保険者または契約者が、当社の担当者（生命保険募集人）に告知の際、事実を告げることを妨げられた場合、または事実と異なる告知をすることを勧められた場合などには、解除できないことがあります。ただし、その原因となった事実についてはこの限りではありません。",
-    "なお、お客さまが告知されたことが事実と相違していても、当社の担当者がその相違を知り、または過失により知らなかった場合などには解除できないことがあります。",
-  ] },
 ];
 
-export const DISCLOSURE_BASE = [
-  ...DISCLOSURE_INTRO,
-  { note: "【告知事項】\n以下の質問についてすべて「いいえ」であることをご確認ください。1つでも「はい」があると、ご加入いただけません。" },
-  { ul: [
-    "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）",
-    "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。",
-  ] },
-  { table: [["検査名", "狭内視鏡検査・便潜血検査・マンモグラフィ検査・腫瘍マーカー（CEA、AFP、CA19-9、PSA）"]] },
-  { ul: ["過去5年以内の病気について、以下に該当することはありますか。\n・病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）\n・下記表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。"] },
-  { table: [
-    ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
-    ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
-    ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
-    ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
-    ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
-    ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"],
-    ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
-  ] },
-  { ul: ["つぎのいずれか1つでも該当することはありますか。\n・今までに、がん（上皮内がん、肉腫、白血病、悪性リンパ腫、骨髄腫を含む）、高度異形成または骨髄異形成症候群になったことがある。\n・今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）。\n・現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折などにより現在一時的に必要とする場合も含みます。（1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄）"] },
+/* ── 告知項目テンプレート（取り込み用PPTXの4区分）──
+   死亡用 / がん用 / 三大疾病用 / 障害・介護用 を、プラン×死亡保障で組み合わせて出し分ける。 */
+export const DISCLOSURE_HEAD = [
+  { head: "告知重要事項" },
+  { p: "各項目をご確認のうえ、以下の内容にご回答ください。" },
 ];
+// 最近の健康状態（全パターン共通・先頭に1度だけ）
+export const G_RECENT = [
+  { cat: "最近の健康状態" },
+  { p: "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）" },
+];
+// 別表（病気・ケガ）— 死亡用・障害介護用で使用。目の行だけ差し替え
+export const BETSU_TOP = [
+  ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
+  ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
+  ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
+  ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
+  ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
+];
+export const BETSU_BOTTOM = [
+  ["悪性新生物", "がん、肉腫、悪性の腫瘍、白血病、悪性リンパ腫、骨髄腫、骨髄異形成症候群"],
+  ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
+];
+export const TABLE_CARE = [...BETSU_TOP, ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"], ...BETSU_BOTTOM];
+export const TABLE_DEATH = [...BETSU_TOP, ["目", "—"], ...BETSU_BOTTOM];
+
+// 死亡用
+export const DEATH_REST = [
+  { cat: "病気・ケガについて" },
+  { p: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。" },
+  { table: TABLE_DEATH },
+];
+// 障害・介護用
+export const CARE_REST = [
+  { cat: "病気・ケガについて" },
+  { p: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。" },
+  { table: TABLE_CARE },
+  { cat: "身体の障がい・介護状態について" },
+  { p: "つぎのいずれか1つでも該当することはありますか。\n●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）\n●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" },
+];
+// がん用
+export const CANCER_REST = [
+  { cat: "病気・ケガについて" },
+  { p: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" },
+  { cat: "がんについて" },
+  { p: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" },
+  { cat: "健康診断・人間ドックについて" },
+  { p: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" },
+  { checks: ["『内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
+];
+// 三大疾病用
+export const THREE_REST = [
+  { cat: "病気・ケガについて" },
+  { p: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" },
+  { cat: "がんについて" },
+  { p: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" },
+  { cat: "健康診断・人間ドックについて" },
+  { p: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" },
+  { checks: ["『心電図検査・内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
+  { cat: "女性の方" },
+  { p: "現在妊娠していますか。" },
+];
+
+// プラン×死亡保障 → 告知項目（取り込み用PPTXの対応表どおり）
+export function disclosureFor(planId: string, death: boolean) {
+  const map = {
+    cancer:      death ? [DEATH_REST, CANCER_REST] : [CANCER_REST],
+    three:       death ? [DEATH_REST, THREE_REST]  : [THREE_REST],
+    care:        [CARE_REST],
+    cancer_care: [CANCER_REST, CARE_REST],
+    three_care:  [THREE_REST, CARE_REST],
+  };
+  const rests = (map as Record<string, typeof CANCER_REST[]>)[planId] || [CANCER_REST];
+  return [...DISCLOSURE_INTRO, ...DISCLOSURE_HEAD, ...G_RECENT, ...rests.flat()];
+}
 
 export const PLANS: Plan[] = [
   { id: "cancer", name: "がん保障型", price: "¥980", death: true,
@@ -451,43 +525,39 @@ export const PLANS: Plan[] = [
     feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
     tooltip: { sections: [
       { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] },
-    disclosure: DISCLOSURE_BASE },
+    ] } },
   { id: "three", name: "三大疾病保障型", price: "¥1,180", death: true,
     lead: "がん・急性心筋梗塞・脳卒中と診断された場合に、給付金が支払われます",
     feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
     tooltip: { sections: [
       { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\nがん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] },
-    disclosure: DISCLOSURE_BASE },
+    ] } },
   { id: "care", name: "障害介護保障型", price: "¥680", death: true,
     lead: "障害・介護状態になった場合に、給付金が支払われます",
     feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
     tooltip: { sections: [
       { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] },
-    disclosure: DISCLOSURE_BASE },
+    ] } },
   { id: "cancer_care", name: "がん・障害介護保障型", price: "¥1,480", death: true,
     lead: "がんと診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
     feat: ["がん診断給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
     tooltip: { sections: [
       { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
       { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] },
-    disclosure: DISCLOSURE_BASE },
+    ] } },
   { id: "three_care", name: "三大疾病・障害介護保障型", price: "¥1,780", death: true,
     lead: "三大疾病と診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
     feat: ["三大疾病給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
     tooltip: { sections: [
       { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\n※がん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
       { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] },
-    disclosure: DISCLOSURE_BASE },
+    ] } },
 ];
 
 /* 告知項目モーダル — プラン選択画面のツールチップ押下で表示 */
-export function DisclosureModal({ plan, onClose, confirm, onConfirm }: { plan: Plan | null; onClose: () => void; confirm?: boolean; onConfirm?: () => void }) {
+export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void }) {
   if (!plan) return null;
+  const blocks = disclosureFor(plan.id, death);
   return (
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
@@ -502,8 +572,8 @@ export function DisclosureModal({ plan, onClose, confirm, onConfirm }: { plan: P
           </button>
         </div>
         <div className="flex-1 overflow-y-auto no-sb px-5 py-4 space-y-3">
-          {plan.disclosure ? (
-            <AgreeBlocks blocks={plan.disclosure} />
+          {blocks ? (
+            <AgreeBlocks blocks={blocks} />
           ) : (
             <div className="rounded-lg border border-warm-200 bg-warm-50 p-4">
               <p className="text-caption text-neutral-700 leading-relaxed">本プランはご加入にあたっての健康告知が不要です。所定の条件を満たす方であれば、告知なしでお申し込みいただけます。</p>
@@ -512,9 +582,9 @@ export function DisclosureModal({ plan, onClose, confirm, onConfirm }: { plan: P
         </div>
         <div className="px-5 py-3 border-t border-warm-200">
           {confirm ? (
-            <div className="flex gap-3">
-              <div className="flex-1"><Btn kind="button" onClick={onClose}>キャンセル</Btn></div>
-              <div className="flex-1"><Btn kind="button" onClick={onConfirm || onClose}>すべていいえ</Btn></div>
+            <div className="flex gap-3 items-center">
+              <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
+              <div className="flex-1"><Btn kind="button" onClick={onConfirm || onClose}>確認しました</Btn></div>
             </div>
           ) : (
             <Btn kind="button" onClick={onClose}>閉じる</Btn>
@@ -525,10 +595,10 @@ export function DisclosureModal({ plan, onClose, confirm, onConfirm }: { plan: P
   );
 }
 
-export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }) {
+export function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {}, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }) {
   const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
   return (
-    <div onClick={onSelect} role="button" className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
+    <div onClick={onSelect} role="button" style={{ boxShadow: '0 0 10px rgba(27,49,87,0.14)' }} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
       <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-[#EFEFEF] border-warm-200"}`}>
         <div className="flex items-center gap-2">
           <span className={`grid place-items-center w-5 h-5 rounded-full border-2 shrink-0 ${selected ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
@@ -546,7 +616,7 @@ export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; se
         <div className="mx-4 mt-3 p-3.5 rounded-xl bg-primary-10 border border-primary-100 space-y-3" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-2">
             <span className="text-caption font-bold text-neutral-800">死亡保障</span>
-            <span className={`text-h6 font-bold leading-none ${p.death ? "text-primary-600" : "text-neutral-400"}`}>{p.death ? "◯" : "✗"}</span>
+            <span className={`text-h6 font-bold leading-none ${death ? "text-primary-600" : "text-neutral-400"}`}>{death ? "◯" : "✗"}</span>
           </div>
           {p.tooltip?.sections.map((s, i) => (
             <div key={i} className="space-y-1">
@@ -568,6 +638,21 @@ export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; se
             </li>
           ))}
         </ul>
+        <div className="mt-3 flex items-center justify-between gap-2 border-t border-warm-200 pt-3">
+          <span className="text-caption font-bold text-neutral-700">死亡保障</span>
+          <div className="flex gap-1.5">
+            {([["あり", true], ["なし", false]] as [string, boolean][]).map(([lbl, val]) => {
+              const on = selected && death === val;
+              return (
+                <button key={lbl} type="button"
+                  onClick={(e) => { e.stopPropagation(); onSelect(); onDeath(val); }}
+                  className={`min-w-[56px] h-8 rounded-lg border text-caption transition-colors ${on ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>
+                  {lbl}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -815,7 +900,7 @@ export function ScreenOverview({ go }: { go: Go }) {
 
         {/* ステッパー直上：hero高さで確定するためスペーサーは不要 */}
         {/* progress — sticks to top once the blue hero scrolls out of view */}
-        <div className="sticky top-0 z-30" style={{ marginTop: '-10px' }}>
+        <div>
           <Steps n={1} go={go} />
         </div>
 
@@ -916,7 +1001,7 @@ export function ScreenOverview({ go }: { go: Go }) {
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }) {
+export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -966,7 +1051,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
     <>
       <AppBar title="保険" onBack={() => go(0)} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
-        <div className="sticky top-0 z-30">
+        <div>
           <Steps n={2} go={go} />
         </div>
         <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
@@ -987,7 +1072,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
           {PLANS.map((p, i) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
           ))}
           <p className="text-caption text-neutral-500 leading-relaxed px-1">
             ※ 保険料は年齢・性別により変動します。
@@ -1022,7 +1107,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
           {PLANS.map((p, i) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
           ))}
           <p className="text-caption text-neutral-500 leading-relaxed px-1">※ 保険料は年齢・性別により変動します。</p>
         </StepSection>
@@ -1151,7 +1236,7 @@ export function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOp
                     <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
                   </ul>
                 </section>
-                {plan.death && (
+                {deathOpt && (
                 <section className="space-y-1.5">
                   <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
                   <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">
@@ -1413,7 +1498,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   // ページ表示時に、選択プランの告知項目モーダルを強制表示
   const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));
@@ -1426,6 +1511,33 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
   const formStartAge = ageFromBirth("1990-01-01"); // 契約者生年月日
   const editErrors = simErrors(m, y, formStartAge);
 
+  // ===== 入力エラー表示デモ =====================================
+  // 「確認する」を押した時点で必須項目が未入力だった想定。errMode（Tweaks）で表示方法を切替。
+  const showErr = errMode && errMode !== 'none';
+  const scrollerRef = useRef<any>(null);
+  const fieldRefs = useRef<Record<string, any>>({});
+  const setFieldRef = (id: string) => (el: any) => { if (el) fieldRefs.current[id] = el; };
+  const jumpIdx = useRef(0);
+  // どのページに出るか（2ページ分割時のフィルタ用）
+  const ERR_DEFS = [
+    { id: 'tel',       page: 1, label: '契約者 電話番号', msg: '電話番号を入力してください' },
+    { id: 'benBirth',  page: 2, label: '受取人 生年月日', msg: '生年月日を選択してください' },
+    { id: 'benGender', page: 2, label: '受取人 性別',     msg: '性別を選択してください' },
+    { id: 'rel',       page: 2, label: '受取人 続柄',     msg: '続柄を選択してください' },
+  ];
+  const errMap: Record<string, string> = showErr ? Object.fromEntries(ERR_DEFS.map((e) => [e.id, e.msg])) : {};
+  const scrollToField = (id: string) => {
+    const c = scrollerRef.current, el = fieldRefs.current[id];
+    if (!c || !el) return;
+    const top = c.scrollTop + (el.getBoundingClientRect().top - c.getBoundingClientRect().top) - 20;
+    c.scrollTo({ top, behavior: 'smooth' });
+  };
+  const jumpNext = (list: typeof ERR_DEFS) => {
+    if (!list.length) return;
+    scrollToField(list[jumpIdx.current % list.length].id);
+    jumpIdx.current++;
+  };
+
   // 契約者住所（受取人「契約者と同じ」でコピーされる値。初期値はTHEO口座から自動入力）
   const [holder, setHolder] = useState({ zip: "100-0001", pref: "東京都", town: "千代田区丸の内１丁目", addr: "1-1", bldg: "丸の内ビル 10F" });
   const setH = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h: any) => ({ ...h, [k]: e.target.value }));
@@ -1434,12 +1546,17 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
   const [benBirth, setBenBirth] = useState("");
   const [benGender, setBenGender] = useState("");
   const [benPickerOpen, setBenPickerOpen] = useState(false);
+  // エラーデモ用：契約者電話番号・受取人続柄（入力で解消できるよう state 化）
+  const [tel, setTel] = useState("");
+  const [rel, setRel] = useState("");
 
   // ページ下部到達で CTA ブロックを薄ブルーに
   const [atBottom, setAtBottom] = useState(false);
   const [formPage, setFormPage] = useState(initialFormPage ?? 1);
   const bindScroll = (el: any) => {
-    if (!el || el.__bound) return;
+    if (!el) return;
+    scrollerRef.current = el;
+    if (el.__bound) return;
     el.__bound = true;
     el.addEventListener("scroll", () => {
       setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 48);
@@ -1447,12 +1564,40 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
   };
 
   const onBack = formSplit && formPage === 2 ? () => setFormPage(1) : () => go(backScr);
+  // 現在の未入力状態（入力されると解消）
+  const errState: Record<string, boolean> = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};
+  const errOf = (id: string) => (errState[id] ? errMap[id] : undefined);
+  // 現在のページに表示中で、かつ未入力のエラー項目
+  const visibleErrs = showErr ? ERR_DEFS.filter((e) => errState[e.id] && (!formSplit || e.page === formPage)) : [];
 
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <Steps n={3} go={go} />
       <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="-mx-5 -mt-5"><Steps n={3} go={go} /></div>
+
+        {/* ② 上部サマリー：クリックで該当入力へスクロール */}
+        {errMode === 'top' && visibleErrs.length > 0 && (
+          <div className="rounded-xl border-2 px-4 py-3.5 fade-in" style={{ borderColor: 'var(--color-attention)', background: '#FFF5F5' }}>
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-5 h-5 shrink-0" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+              <p className="text-h6 font-bold" style={{ color: 'var(--color-attention)' }}>{visibleErrs.length}件の未入力項目があります</p>
+            </div>
+            <ul className="mt-2.5 space-y-1.5">
+              {visibleErrs.map((e) => (
+                <li key={e.id}>
+                  <button onClick={() => scrollToField(e.id)}
+                    className="flex items-center gap-1.5 text-caption font-medium text-left underline underline-offset-2 decoration-from-font"
+                    style={{ color: 'var(--color-attention)' }}>
+                    <Ic.chevR className="w-3.5 h-3.5 shrink-0" />
+                    <span>{e.label}：{e.msg}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {(!formSplit || formPage === 1) && (<>
         <div>
           <h2 className="text-h3 font-bold text-neutral-900 leading-snug text-balance">認証が完了しました。</h2>
@@ -1480,7 +1625,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
           <Field label="市区町村・町名" placeholder="千代田区丸の内１丁目" required hint="町名まで自動入力されます" value={holder.town} onChange={setH("town")} />
           <Field label="番地など" placeholder="1丁目1番地1号" required value={holder.addr} onChange={setH("addr")} />
           <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={holder.bldg} onChange={setH("bldg")} />
-          <Field label="電話番号" placeholder="090-0000-0000" required />
+          <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
         </GroupCard>
 
         {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
@@ -1504,22 +1649,26 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
           <Field label="氏名" placeholder="山田 花子" />
 
           {/* 受取人 生年月日・性別 */}
-          <div className="flex flex-col gap-1.5">
+          <div ref={setFieldRef('benBirth')} className="flex flex-col gap-1.5">
             <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
             <button type="button" onClick={() => setBenPickerOpen(true)}
-              className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
+              style={errState.benBirth ? errInputStyle : undefined}
+              className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border px-3 text-h6 text-left ${errState.benBirth ? "border-[color:var(--color-attention)]" : "border-warm-300 bg-white"} ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
               <span className="truncate">{benBirth ? fmtBirth(benBirth) : "選択してください"}</span>
               <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-5 h-5 shrink-0" />
             </button>
+            {errMode === 'inline' && errState.benBirth && <ErrText>{errMap.benBirth}</ErrText>}
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div ref={setFieldRef('benGender')} className="flex flex-col gap-1.5">
             <span className="text-caption font-medium text-neutral-600">性別<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
             <div className="flex gap-2">
               {["男性", "女性"].map((g) => (
                 <button key={g} onClick={() => setBenGender(g)}
-                  className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
+                  style={errState.benGender ? errInputStyle : undefined}
+                  className={`flex-1 h-11 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : errState.benGender ? "border-[color:var(--color-attention)] text-neutral-600" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
               ))}
             </div>
+            {errMode === 'inline' && errState.benGender && <ErrText>{errMap.benGender}</ErrText>}
           </div>
 
           <button onClick={() => setSame((s) => !s)} className="flex items-center gap-2.5 w-full text-left pt-1">
@@ -1539,7 +1688,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
           </div>
           )}
 
-          <Select label="続柄" required value="続柄を選択" options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} />
+          <Select label="続柄" required value={rel || "続柄を選択"} onChange={(e) => setRel(e.target.value === "続柄を選択" ? "" : e.target.value)} options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} error={errOf('rel')} errMode={errMode} anchorRef={setFieldRef('rel')} />
           <Field label="電話番号" placeholder="090-0000-0000" />
         </GroupCard>
 
@@ -1554,6 +1703,21 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
       </div>
 
       <ActionBar bg={atBottom ? "#F2FBFE" : undefined}>
+        {/* ③ 下部フローティング（提案）：未入力の必須項目数を親指元に表示し、順にジャンプ */}
+        {errMode === 'float' && visibleErrs.length > 0 && (
+          <button onClick={() => jumpNext(visibleErrs)}
+            className="w-full flex items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 fade-in active:scale-[.99] transition-transform"
+            style={{ background: 'var(--color-attention)', color: '#fff' }}>
+            <span className="flex items-center gap-2.5 text-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-5 h-5 shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+              <span className="flex flex-col leading-tight font-bold">
+                <span className="text-caption">未入力の必須項目が</span>
+                <span className="text-h6"><span className="text-h4 tabular-nums">{visibleErrs.length}</span>件あります</span>
+              </span>
+            </span>
+            <span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1">次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>
+          </button>
+        )}
         <div className={`rounded-xl border px-3.5 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
@@ -1622,7 +1786,7 @@ export function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initial
       )}
 
       {/* 告知項目モーダル（ページ表示時に選択プランで強制表示） */}
-      <DisclosureModal plan={infoPlan} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} />
+      <DisclosureModal plan={infoPlan} death={deathOpt} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} />
 
       {/* 受取人 生年月日ドラムロール */}
       <DateDrumSheet open={benPickerOpen} value={benBirth}
@@ -1764,6 +1928,14 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           </a>
         );
+        if (b.checks) return (
+          <div key={i} className="rounded-lg border border-warm-200 overflow-hidden">
+            {b.checks.map((c, j) => (
+              <div key={j} className={`text-caption text-neutral-700 px-3 py-2 leading-relaxed ${j > 0 ? "border-t border-warm-200" : ""}`}>{c}</div>
+            ))}
+          </div>
+        );
+        if (b.cat) return <div key={i} className="rounded-lg border border-primary-100 bg-primary-10 px-4 py-2.5"><p className="text-caption font-bold text-neutral-800 leading-snug">{b.cat}</p></div>;
         if (b.note) return <div key={i} className="rounded-lg border border-warm-200 bg-warm-50 p-3 text-caption text-neutral-700 leading-relaxed whitespace-pre-line">{b.note}</div>;
         if (b.table) return (
           <div key={i} className="rounded-lg border border-warm-200 overflow-hidden">
@@ -1811,7 +1983,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
+export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
@@ -1822,25 +1994,31 @@ export function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, init
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
   // 死亡保障がないプランでは「被保険者の確認」選択は不要
-  const agreeItems = plan.death ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !== "insured");
+  const agreeItems = deathOpt ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !== "insured");
   const CIRC = "①②③④⑤⑥⑦⑧⑨";
   const confirmNums = agreeItems.map((it, i) => (it.kind === "agree" ? null : CIRC[i])).filter(Boolean).join("");
   const agreeNums = agreeItems.map((it, i) => (it.kind === "agree" ? CIRC[i] : null)).filter(Boolean).join("");
   return (
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
-      <Steps n={4} go={go} />
       <div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="-mx-5 -mt-5"><Steps n={4} go={go} /></div>
         <StepSection label="内容確認">
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
-        <div className="rounded-2xl border border-warm-200 bg-white p-5">
-          <SectionLabel>積立内容</SectionLabel>
+        <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-5">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-900">積立内容</p>
+            <span className="inline-flex items-center gap-1 rounded-full bg-warm-200 px-2 py-0.5 text-[10px] font-medium text-neutral-500">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3 h-3"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              変更不可
+            </span>
+          </div>
           <Row k="契約プラン" v={plan.name} strong />
           <Row k="毎月の積立金額（希望給付額）" v={`${yen(m)} 円`} strong />
           <Row k="保障期間" v={`${y} 年`} strong />
           <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
-          <Row k="保険期間" v="1年（自動更新）" />
+          <Row k="保険期間" v="1年（自動更新）" strong />
         </div>
 
         <div className={`rounded-2xl border bg-white p-5 transition-colors ${editKiyaku ? "border-primary-300" : "border-warm-200"}`}>
@@ -2194,7 +2372,7 @@ export function ScreenDone({ go }: { go: Go }) {
         </div>
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
-        <div className="sticky top-0 z-30">
+        <div>
           <Steps n={5} go={go} />
         </div>
 
@@ -2248,7 +2426,7 @@ export function ScreenDone({ go }: { go: Go }) {
 // app.jsx references it, and relying on cross-<script> const sharing is fragile
 // (a single missing binding throws and blanks the entire UI).
 
-export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(false);
@@ -2394,7 +2572,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
           <StepSection label="プランを選ぶ" n={1} big>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
             {PLANS.map((p, i) => (
-              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
             ))}
           </StepSection>
           </div>
@@ -2421,7 +2599,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
             <StepSection label="プランを選ぶ" n={2} big className="mt-8">
               <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
               {PLANS.map((p, i) => (
-                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
+                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
               ))}
             </StepSection>
           </div>
@@ -2540,7 +2718,7 @@ export function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerifie
                     <li>・法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。</li>
                   </ul>
                 </section>
-                {plan.death && (
+                {deathOpt && (
                 <section className="space-y-1.5">
                   <h4 className="text-h6 font-bold text-neutral-800">死亡保険金受取人について</h4>
                   <ul className="space-y-1.5 text-caption text-neutral-600 leading-relaxed">

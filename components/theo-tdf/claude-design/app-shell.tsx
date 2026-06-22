@@ -204,6 +204,7 @@ export function TheoTdfClaudeDesignShell() {
   const [sel, setSel] = React.useState("cancer");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
+  const [deathOpt, setDeathOpt] = React.useState(true); // 死亡保障あり/なし（共有）
   const [emailVerified, setEmailVerified] = React.useState(false);
   const NSCR = 8;
 
@@ -224,14 +225,14 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} setDeathOpt={setDeathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} setDeathOpt={setDeathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
-    <ScreenForm key="form" go={go} sel={sel} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} />,
-    <ScreenStep4 key="step4" go={go} sel={sel} m={simM} y={simY} />,
+    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} />,
+    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
     <ScreenDone key="done" go={go} />,

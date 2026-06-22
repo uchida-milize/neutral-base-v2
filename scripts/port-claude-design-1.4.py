@@ -85,8 +85,8 @@ def must_replace(t, old, new):
 # NOTE: 新 kumikomi(1.4) で simFirst が末尾に追加されたシグネチャに同期。
 # initialShowSend (§14.11 CTA 表示) と initialTipIdx (A: ツールチップ1つ静的展開) を注入。
 body = must_replace(body,
-    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
-    "function ScreenStep2({ go, sel, setSel, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
 # initialBirth: windows でシミュレーション上限エラー(加入年齢+保障期間>90)を静的再現するため
 # 生年月日を初期注入できるようにする。body 内 birth は ScreenStep2 のみ (ScreenCombined は screen_combined)。
 body = must_replace(body,
@@ -96,18 +96,18 @@ body = body.replace(
     "function ScreenPin({ go, onVerified, backScr = 1 })",
     "function ScreenPin({ go, onVerified, backScr = 1, initialPin })")
 body = must_replace(body,
-    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen })",
-    "function ScreenStep4({ go, sel, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat })")
+    "function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen })",
+    "function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialEditKiyaku, initialEditJuushin, initialNat })")
 body = must_replace(body,
-    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false })",
-    "function ScreenForm({ go, sel, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, initialFormPage = 1, initialDisclosureOpen })")
+    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none' })",
+    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', initialFormPage = 1, initialDisclosureOpen })")
 # ScreenStep4: 国籍 (被保険者の確認の「日本国籍以外」選択) を静的再現する initialNat。
 body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, setNat] = useState(initialNat ?? "jp");')
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
 # initialTipIdx (A) を注入。
 screen_combined = must_replace(screen_combined,
-    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst })",
-    "function ScreenCombined({ go, sel, setSel, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst })",
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
 # useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
 # formPage は ScreenOverview と ScreenForm の両方に存在するため、ScreenForm 固有のコメント文脈で限定置換する。
 body = body.replace(
@@ -125,31 +125,16 @@ screen_combined = screen_combined.replace("const [showSend, setShowSend] = useSt
                     "const [showSend, setShowSend] = useState(initialShowSend ?? false);")
 screen_combined = screen_combined.replace("const [agree, setAgree] = useState(false);",
                     "const [agree, setAgree] = useState(initialAgree ?? false);")
-# 橋渡しバナー「さっそく、プランを選んでみましょう」の背景を bg-primary → ヘッダーと同じ青グラデへ (お客様要望 2026-06-17)
-screen_combined = screen_combined.replace(
-    '<div className="px-5 py-4 bg-primary">',
-    '<div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>')
-
-# パターンB(ScreenCombined)の STEP2 保険料シミュレーション / STEP3 申し込みをする 帯を、
-# 通常版 ScreenStep2 と同じ縦グラデ(180deg #FFFFFF→#F2FBFE)へ統一 (お客様要望 2026-06-18)。
-# kumikomi では ScreenStep2 のみグラデ化され ScreenCombined は単色(#EAF9FE/#e7edf7)のまま不一致だったため、ここで揃える。
-screen_combined = must_replace(screen_combined,
-    '<div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "#EAF9FE" }}>',
-    '<div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>')
-screen_combined = must_replace(screen_combined,
-    'style={{ background: "#e7edf7" }}',
-    'style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}')
-# パターンB の ActionBar（ボタン周りの帯）背景を、他画面と同じ #F2FBFE（STEP3/4 グラデの青側）へ統一 (2026-06-18)。
-screen_combined = must_replace(screen_combined,
-    '<ActionBar bg={showSend ? "#e7edf7" : undefined}>',
-    '<ActionBar bg={showSend ? "#F2FBFE" : undefined}>')
+# NOTE (1.5(1)): 以下はお客様が Claude Design 側に取り込み済みのため撤去:
+#   - 橋渡しバナーの青グラデ / パターンB の シミュレーション・申込帯のグラデ / ActionBar #F2FBFE
+#   いずれも新 kumikomi にネイティブで入っている (旧文字列 #EAF9FE/#e7edf7/bg-primary は消滅)。
 
 # ---- (A) ツールチップ静的展開: PlanCard に initialTtOpen、画面に initialTipIdx ----
 # windows で「プラン選択 / ツールチップ1つ展開」を静的に再現するため、kumikomi に無い
 # initialTtOpen / initialTipIdx を注入する。state 名は kumikomi の ttOpen を踏襲。
 body = must_replace(body,
-    "function PlanCard({ p, selected, onSelect }) {",
-    "function PlanCard({ p, selected, onSelect, initialTtOpen }) {")
+    "function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {} }) {",
+    "function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {}, initialTtOpen }) {")
 body = must_replace(body,
     "const [ttOpen, setTtOpen] = React.useState(false);",
     "const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);")
@@ -250,11 +235,12 @@ ATOMS["GroupCard"] = '''function GroupCard({ title, sub, icon: Icon, children, c
   );
 }'''
 
-ATOMS["Field"] = '''function Field({ label, placeholder, required, hint, value, onChange, disabled }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean }) {
-  // shadcn <Label> + <Input> へ委譲。
+ATOMS["Field"] = '''function Field({ label, placeholder, required, hint, value, onChange, disabled, error, errMode, anchorRef }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }) {
+  // shadcn <Label> + <Input> へ委譲。error/errMode は Claude Design のインライン検証用 (1.5(1))。
   const id = React.useId();
+  const invalid = !!error && !!errMode && errMode !== "none";
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5" ref={anchorRef}>
       <Label htmlFor={id} className="text-caption font-medium text-neutral-600">
         {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
       </Label>
@@ -264,8 +250,10 @@ ATOMS["Field"] = '''function Field({ label, placeholder, required, hint, value, 
         defaultValue={value}
         onChange={onChange}
         disabled={disabled}
-        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : "border-warm-300 bg-white text-neutral-800"}`}
+        aria-invalid={invalid || undefined}
+        className={`fld h-11 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : invalid ? "border-[color:var(--color-attention)] bg-white text-neutral-800" : "border-warm-300 bg-white text-neutral-800"}`}
       />
+      {errMode === "inline" && error && <ErrText>{error}</ErrText>}
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
     </div>
   );
@@ -318,40 +306,49 @@ TYPE = {
   "SectionLabel": "{ children: React.ReactNode }",
   "SubLabel": "{ children: React.ReactNode }",
   "ActionBar": "{ children: React.ReactNode; solid?: boolean; bg?: string }",
-  "Select": "{ label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean }",
+  "ErrText": "{ children: React.ReactNode }",
+  "Select": "{ label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }",
   "StepSection": "{ label: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }",
-  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }",
+  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }",
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
   "SimSliders": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }",
   "BenefitTable": "{ m: number; y: number; plan: Plan | undefined; startAge?: number }",
-  "DisclosureModal": "{ plan: Plan | null; onClose: () => void; confirm?: boolean; onConfirm?: () => void }",
+  "DisclosureModal": "{ plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void }",
   "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }",
-  "ScreenForm": "{ go: Go; sel: string; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; initialFormPage?: number; initialDisclosureOpen?: boolean }",
+  "ScreenForm": "{ go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
-  "ScreenStep4": "{ go: Go; sel: string; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }",
+  "ScreenStep4": "{ go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }",
   "ExtBar": "{ url: string }",
   "ScreenCardInput": "{ go: Go }",
   "ScreenCardConfirm": "{ go: Go }",
   "ScreenDone": "{ go: Go }",
   "ScreenIntro": "{ go: Go }",
-  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
+  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
 }
 
 def inject_type(t, name, typ):
     # function NAME(<params>) {   ->   function NAME(<params>: typ) {
-    pat = re.compile(r'(\nfunction ' + name + r'\()([^)]*)(\)\s*\{)')
-    def rep(m):
-        return m.group(1) + m.group(2) + ": " + typ + m.group(3)
-    new, n = pat.subn(rep, t)
-    if n == 0: print("WARN type sig not matched:", name)
-    return new
+    # 括弧バランスで閉じ括弧を探す（アロー初期値 `= () => {}` 等の括弧に対応）。
+    m = re.search(r'\nfunction ' + name + r'\(', t)
+    if not m:
+        print("WARN type sig not matched:", name); return t
+    i = m.end() - 1  # '(' の位置
+    depth = 0; j = i
+    while j < len(t):
+        c = t[j]
+        if c == '(': depth += 1
+        elif c == ')':
+            depth -= 1
+            if depth == 0: break
+        j += 1
+    return t[:j] + ": " + typ + t[j:]
 
 for name, typ in TYPE.items():
     if name == "ScreenCombined":
@@ -366,6 +363,8 @@ body = body.replace("function fmtBirth(v)", "function fmtBirth(v: string)")
 # TD 組込1.5: 新ヘルパー (年齢計算 / 積立上限バリデーション)
 body = must_replace(body, "function ageFromBirth(b)", "function ageFromBirth(b: string)")
 body = must_replace(body, "function simErrors(m, y, startAge)", "function simErrors(m: number, y: number, startAge: number)")
+# TD 組込1.5(1): プラン×死亡保障 → 告知項目を返すヘルパー
+body = must_replace(body, "function disclosureFor(planId, death)", "function disclosureFor(planId: string, death: boolean)")
 body = must_replace(body, "const errs = [];", "const errs: string[] = [];")
 # infoPlan は plan (Plan | undefined) で初期化され null もセットされるため明示型付け。
 body = must_replace(body,
@@ -387,6 +386,28 @@ body = body.replace("const onY = (e) => { setY(+e.target.value); onInput && onIn
 body = body.replace("const setH = (k) => (e) => setHolder((h) => ({ ...h, [k]: e.target.value }));",
                     "const setH = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h: any) => ({ ...h, [k]: e.target.value }));")
 
+# ---- TD 組込1.5(1): 死亡保障オプション / インライン検証まわりの型注入 ----
+# PlanCard 死亡保障トグルのラベル配列 (string|boolean 混在) を明示タプル化。
+body = must_replace(body,
+    '{[["あり", true], ["なし", false]].map(([lbl, val]) => {',
+    '{([["あり", true], ["なし", false]] as [string, boolean][]).map(([lbl, val]) => {')
+# disclosureFor の map は planId(string) で添字引きするため any キャスト。
+body = must_replace(body, "const rests = map[planId] || [CANCER_REST];",
+                    "const rests = (map as Record<string, typeof CANCER_REST[]>)[planId] || [CANCER_REST];")
+# ScreenForm エラーデモの動的添字オブジェクト群に型付け。
+body = must_replace(body, "const fieldRefs = useRef({});", "const fieldRefs = useRef<Record<string, any>>({});")
+body = must_replace(body, "const setFieldRef = (id) => (el: any) =>", "const setFieldRef = (id: string) => (el: any) =>")
+body = must_replace(body,
+    "const errMap = showErr ? Object.fromEntries(ERR_DEFS.map((e) => [e.id, e.msg])) : {};",
+    "const errMap: Record<string, string> = showErr ? Object.fromEntries(ERR_DEFS.map((e) => [e.id, e.msg])) : {};")
+body = must_replace(body, "const scrollToField = (id) => {", "const scrollToField = (id: string) => {")
+body = must_replace(body, "const jumpNext = (list) => {", "const jumpNext = (list: typeof ERR_DEFS) => {")
+body = must_replace(body,
+    "const errState = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};",
+    "const errState: Record<string, boolean> = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};")
+body = must_replace(body, "const errOf = (id) => (errState[id] ? errMap[id] : undefined);",
+                    "const errOf = (id: string) => (errState[id] ? errMap[id] : undefined);")
+
 # ---- const type annotations ----
 body = body.replace("const STEP_TO_SCREEN = {", "const STEP_TO_SCREEN: Record<number, number> = {")
 body = body.replace("const PREFS = [", "const PREFS: string[] = [")
@@ -400,7 +421,7 @@ screen_combined = re.sub(r'^function ', 'export function ', screen_combined, fla
 
 # TD 組込1.5: kumikomi で字下げされていない関数内 const は export 不可。
 # `agreeItems` は ScreenStep4 内のローカル (plan を参照) なので export を剥がす。
-body = must_replace(body, "export const agreeItems = plan.death", "  const agreeItems = plan.death")
+body = must_replace(body, "export const agreeItems = deathOpt", "  const agreeItems = deathOpt")
 
 # ---- HEADER ----
 HEADER = '''"use client";
@@ -413,6 +434,9 @@ HEADER = '''"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any --
     scroll バインドの DOM 参照 / 動的 __bound プロパティへ any キャスト。 */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/refs --
+   ScreenForm の setFieldRef は ref コールバック (ref={setFieldRef(id)}) で、
+   .current への代入はコミット時に走る正規パターン。React Compiler ルールの誤検知を抑制。 */
 /* eslint-disable react-hooks/set-state-in-effect --
    DateDrumSheet が「シートを開いた時に value へ同期」「月変更時に日をクランプ」
    する目的で effect 内 setState を使用 (Claude Design 由来の意図的パターン)。 */
@@ -468,6 +492,8 @@ export type AgreeBlock = {
   table?: string[][];
   head?: string;
   strong?: string;
+  cat?: string;
+  checks?: string[];
 };
 
 export type AgreeItemData = {
