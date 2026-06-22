@@ -99,8 +99,8 @@ body = must_replace(body,
     "function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true })",
     "function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, initialNat })")
 body = must_replace(body,
-    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate })",
-    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, initialFormPage = 1, initialDisclosureOpen })")
+    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto' })",
+    "function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen })")
 # ScreenStep4: 国籍 (被保険者の確認の「日本国籍以外」選択) を静的再現する initialNat。
 body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, setNat] = useState(initialNat ?? "jp");')
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
@@ -321,7 +321,8 @@ TYPE = {
   "BenefitTable": "{ m: number; y: number; plan: Plan | undefined; startAge?: number }",
   "DisclosureModal": "{ plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void }",
   "Simulator": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }",
-  "ScreenForm": "{ go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; initialFormPage?: number; initialDisclosureOpen?: boolean }",
+  "ScreenForm": "{ go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }",
+  "KoTable": "{ rows: any[] }",
   "AgreeBlocks": "{ blocks: AgreeBlock[] }",
   "AgreeItem": "{ num: string; item: AgreeItemData; open: boolean; onToggle: () => void; checked?: boolean; onCheck?: () => void; children?: React.ReactNode }",
   "ScreenStep4": "{ go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }",
@@ -364,13 +365,35 @@ body = body.replace("function fmtBirth(v)", "function fmtBirth(v: string)")
 # TD 組込1.5: 新ヘルパー (年齢計算 / 積立上限バリデーション)
 body = must_replace(body, "function ageFromBirth(b)", "function ageFromBirth(b: string)")
 body = must_replace(body, "function simErrors(m, y, startAge)", "function simErrors(m: number, y: number, startAge: number)")
-# TD 組込1.5(1): プラン×死亡保障 → 告知項目を返すヘルパー
-body = must_replace(body, "function disclosureFor(planId, death)", "function disclosureFor(planId: string, death: boolean)")
+# TD 組込1.5(1)→1.5(2): プラン×死亡保障 → ノックアウト告知テーブルを返すヘルパー (disclosureFor→koTableFor 改名)
+body = must_replace(body, "function koTableFor(planId, death)", "function koTableFor(planId: string, death: boolean)")
 body = must_replace(body, "const errs = [];", "const errs: string[] = [];")
-# infoPlan は plan (Plan | undefined) で初期化され null もセットされるため明示型付け。
+# koTableFor の map は planId(string) で添字引きするため any キャスト。byKey も型付け。
 body = must_replace(body,
-    "const [infoPlan, setInfoPlan] = useState(() => plan);",
-    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));")
+    "const blocks = map[planId] || [KO_CANCER];",
+    "const blocks: any[] = ((map as Record<string, any[]>)[planId] || [KO_CANCER]);")
+body = must_replace(body, "const byKey = {};", "const byKey: Record<string, any> = {};")
+# koTableFor forEach コールバック: any 経由呼び出しで implicit-any になるため明示型付け
+body = must_replace(body,
+    "(row.paras || []).forEach((p) => { if (!tgt.paras.some((q) => q.t === p.t)) tgt.paras.push(p); });",
+    "(row.paras || []).forEach((p: any) => { if (!tgt.paras.some((q: any) => q.t === p.t)) tgt.paras.push(p); });")
+body = must_replace(body,
+    "(row.checks || []).forEach((c) => { if (!tgt.checks.includes(c)) tgt.checks.push(c); });",
+    "(row.checks || []).forEach((c: any) => { if (!tgt.checks.includes(c)) tgt.checks.push(c); });")
+# KoTable map コールバック: rows が any[] だと各段階のコールバック引数が implicit-any になる
+body = must_replace(body,
+    "{r.paras.map((p, j) => (",
+    "{r.paras.map((p: any, j: number) => (")
+body = must_replace(body,
+    "{p.sub.map((row, k) => (",
+    "{p.sub.map((row: any, k: number) => (")
+body = must_replace(body,
+    "{r.checks.map((c, j) => (",
+    "{r.checks.map((c: any, j: number) => (")
+# infoPlan は modalPlan (Plan | undefined) で初期化。initialDisclosureOpen=false 時は null にする。
+body = must_replace(body,
+    "const [infoPlan, setInfoPlan] = useState(() => modalPlan);",
+    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (modalPlan ?? null));")
 
 # ---- standalone arrow param typings (avoid implicit-any in strict mode) ----
 body = body.replace("const years = [];", "const years: number[] = [];")
@@ -384,6 +407,17 @@ body = body.replace("const onM = (e) => { setM(+e.target.value); onInput && onIn
                     "const onM = (e: React.ChangeEvent<HTMLInputElement>) => { setM(+e.target.value); onInput && onInput(); };")
 body = body.replace("const onY = (e) => { setY(+e.target.value); onInput && onInput(); };",
                     "const onY = (e: React.ChangeEvent<HTMLInputElement>) => { setY(+e.target.value); onInput && onInput(); };")
+# SimSliders 直接入力ハンドラ (TD 組込1.5: .num-input 連動)
+body = body.replace(
+    "const onMText = (e) => { const d = e.target.value.replace(/[^0-9]/g, \"\"); setM(d === \"\" ? 0 : +d); onInput && onInput(); };",
+    "const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, \"\"); setM(d === \"\" ? 0 : +d); onInput && onInput(); };")
+body = body.replace(
+    "const onYText = (e) => { const d = e.target.value.replace(/[^0-9]/g, \"\"); setY(d === \"\" ? 0 : +d); onInput && onInput(); };",
+    "const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, \"\"); setY(d === \"\" ? 0 : +d); onInput && onInput(); };")
+# onYBlur: v は再代入なし → prefer-const 対応
+body = body.replace(
+    "const onYBlur = () => { let v = Math.min(30,",
+    "const onYBlur = () => { const v = Math.min(30,")
 body = body.replace("const setH = (k) => (e) => setHolder((h) => ({ ...h, [k]: e.target.value }));",
                     "const setH = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h: any) => ({ ...h, [k]: e.target.value }));")
 
@@ -392,9 +426,10 @@ body = body.replace("const setH = (k) => (e) => setHolder((h) => ({ ...h, [k]: e
 body = must_replace(body,
     '{[["あり", true], ["なし", false]].map(([lbl, val]) => {',
     '{([["あり", true], ["なし", false]] as [string, boolean][]).map(([lbl, val]) => {')
-# disclosureFor の map は planId(string) で添字引きするため any キャスト。
-body = must_replace(body, "const rests = map[planId] || [CANCER_REST];",
-                    "const rests = (map as Record<string, typeof CANCER_REST[]>)[planId] || [CANCER_REST];")
+# kokuchiPattern に応じた告知モーダル対象を特定するための any キャスト。
+body = must_replace(body,
+    "const kokuchiPat = KOKUCHI_PATTERNS.find((p) => p.key === kokuchiPattern);",
+    "const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);")
 # ScreenForm エラーデモの動的添字オブジェクト群に型付け。
 body = must_replace(body, "const fieldRefs = useRef({});", "const fieldRefs = useRef<Record<string, any>>({});")
 body = must_replace(body, "const setFieldRef = (id) => (el: any) =>", "const setFieldRef = (id: string) => (el: any) =>")
@@ -408,6 +443,11 @@ body = must_replace(body,
     "const errState: Record<string, boolean> = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};")
 body = must_replace(body, "const errOf = (id) => (errState[id] ? errMap[id] : undefined);",
                     "const errOf = (id: string) => (errState[id] ? errMap[id] : undefined);")
+
+# IKO[sel]: sel は string だが IKO のキーは具体的なリテラル型 → any キャスト
+body = must_replace(body,
+    "const ikoText = (IKO[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
+    "const ikoText = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
 
 # ---- const type annotations ----
 body = body.replace("const STEP_TO_SCREEN = {", "const STEP_TO_SCREEN: Record<number, number> = {")
@@ -495,6 +535,7 @@ export type AgreeBlock = {
   strong?: string;
   cat?: string;
   checks?: string[];
+  linkBtn?: { label: string; href: string };
 };
 
 export type AgreeItemData = {

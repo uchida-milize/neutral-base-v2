@@ -409,6 +409,145 @@ export default function TheoTdfWindowsPage() {
       ],
     },
 
+    /* ---- 04b 申込フォーム — 告知10パターン ---- */
+    {
+      key: "form-kokuchi",
+      title: "申込フォーム — 告知10パターン",
+      badge: "STEP 3 告知",
+      screens: [
+        {
+          key: "kokuchi-care_d",
+          label: "① 障害・介護プラン（死亡あり）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="care" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="care_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-care_n",
+          label: "② 障害・介護プラン（死亡なし）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="care" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="care_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cancer_d",
+          label: "③ がんプラン（死亡あり）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="cancer_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cancer_n",
+          label: "④ がんプラン（死亡なし）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="cancer_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cc_d",
+          label: "⑤ がん・障害介護プラン（死亡あり）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_care" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="cc_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cc_n",
+          label: "⑥ がん・障害介護プラン（死亡なし）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_care" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="cc_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-three_d",
+          label: "⑦ 三大疾病プラン（死亡あり）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="three" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="three_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-three_n",
+          label: "⑧ 三大疾病プラン（死亡なし）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="three" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="three_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-tc_d",
+          label: "⑨ 三大疾病・障害介護プラン（死亡あり）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="three_care" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="tc_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-tc_n",
+          label: "⑩ 三大疾病・障害介護プラン（死亡なし）",
+          height: 2700,
+          fullSheet: true,
+          el: (
+            <ScreenForm
+              go={noop} sel="three_care" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              kokuchiPattern="tc_n"
+            />
+          ),
+        },
+      ],
+    },
+
     /* ---- 05 内容確認・お支払い ---- */
     {
       key: "step4",

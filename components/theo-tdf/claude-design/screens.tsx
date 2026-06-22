@@ -67,6 +67,7 @@ export type AgreeBlock = {
   strong?: string;
   cat?: string;
   checks?: string[];
+  linkBtn?: { label: string; href: string };
 };
 
 export type AgreeItemData = {
@@ -469,55 +470,72 @@ export const BETSU_BOTTOM = [
 export const TABLE_CARE = [...BETSU_TOP, ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"], ...BETSU_BOTTOM];
 export const TABLE_DEATH = [...BETSU_TOP, ["目", "—"], ...BETSU_BOTTOM];
 
+// ── 告知項目（ノックアウト告知）：取り込み用PPTXの4区分を、プラン×死亡保障で組み合わせて1つに ──
+// paras は { t:本文, sub?:別表 } の配列。別表は対応する設問の直後に表示する。
+export const RECENT_ROW = { k: "最近の健康状態", paras: [{ t: "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）" }] };
 // 死亡用
-export const DEATH_REST = [
-  { cat: "病気・ケガについて" },
-  { p: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。" },
-  { table: TABLE_DEATH },
+export const KO_DEATH = [
+  RECENT_ROW,
+  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。", sub: TABLE_DEATH }] },
 ];
 // 障害・介護用
-export const CARE_REST = [
-  { cat: "病気・ケガについて" },
-  { p: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。" },
-  { table: TABLE_CARE },
-  { cat: "身体の障がい・介護状態について" },
-  { p: "つぎのいずれか1つでも該当することはありますか。\n●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）\n●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" },
+export const KO_CARE = [
+  RECENT_ROW,
+  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。", sub: TABLE_CARE }] },
+  { k: "身体の障がい・介護状態について", paras: [{ t: "つぎのいずれか1つでも該当することはありますか。\n●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）\n●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" }] },
 ];
 // がん用
-export const CANCER_REST = [
-  { cat: "病気・ケガについて" },
-  { p: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" },
-  { cat: "がんについて" },
-  { p: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" },
-  { cat: "健康診断・人間ドックについて" },
-  { p: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" },
-  { checks: ["『内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
+export const KO_CANCER = [
+  RECENT_ROW,
+  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" }] },
+  { k: "がんについて", paras: [{ t: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" }] },
+  { k: "健康診断・人間ドックについて", paras: [{ t: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。" }, { t: "異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" }], checks: ["『内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
 ];
 // 三大疾病用
-export const THREE_REST = [
-  { cat: "病気・ケガについて" },
-  { p: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" },
-  { cat: "がんについて" },
-  { p: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" },
-  { cat: "健康診断・人間ドックについて" },
-  { p: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" },
-  { checks: ["『心電図検査・内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
-  { cat: "女性の方" },
-  { p: "現在妊娠していますか。" },
+export const KO_THREE = [
+  RECENT_ROW,
+  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" }] },
+  { k: "がんについて", paras: [{ t: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" }] },
+  { k: "健康診断・人間ドックについて", paras: [{ t: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。" }, { t: "異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" }], checks: ["『心電図検査・内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
+  { k: "女性の方", paras: [{ t: "現在妊娠していますか。" }] },
 ];
+export const KO_ORDER = ["最近の健康状態", "病気・ケガについて", "がんについて", "健康診断・人間ドックについて", "身体の障がい・介護状態について", "女性の方"];
 
-// プラン×死亡保障 → 告知項目（取り込み用PPTXの対応表どおり）
-export function disclosureFor(planId: string, death: boolean) {
+// プラン×死亡保障 → ノックアウト告知（同一区分はマージし重複本文はまとめる。対応表どおりの組み合わせ）
+export function koTableFor(planId: string, death: boolean) {
   const map = {
-    cancer:      death ? [DEATH_REST, CANCER_REST] : [CANCER_REST],
-    three:       death ? [DEATH_REST, THREE_REST]  : [THREE_REST],
-    care:        [CARE_REST],
-    cancer_care: [CANCER_REST, CARE_REST],
-    three_care:  [THREE_REST, CARE_REST],
+    cancer:      death ? [KO_DEATH, KO_CANCER] : [KO_CANCER],
+    three:       death ? [KO_DEATH, KO_THREE]  : [KO_THREE],
+    care:        [KO_CARE],
+    cancer_care: [KO_CARE, KO_CANCER],
+    three_care:  [KO_CARE, KO_THREE],
   };
-  const rests = (map as Record<string, typeof CANCER_REST[]>)[planId] || [CANCER_REST];
-  return [...DISCLOSURE_INTRO, ...DISCLOSURE_HEAD, ...G_RECENT, ...rests.flat()];
+  const blocks: any[] = ((map as Record<string, any[]>)[planId] || [KO_CANCER]);
+  const byKey: Record<string, any> = {};
+  for (const block of blocks) {
+    for (const row of block) {
+      if (!byKey[row.k]) byKey[row.k] = { k: row.k, paras: [], checks: [] };
+      const tgt = byKey[row.k];
+      (row.paras || []).forEach((p: any) => { if (!tgt.paras.some((q: any) => q.t === p.t)) tgt.paras.push(p); });
+      (row.checks || []).forEach((c: any) => { if (!tgt.checks.includes(c)) tgt.checks.push(c); });
+    }
+  }
+  return KO_ORDER.filter((k) => byKey[k]).map((k) => byKey[k]);
 }
+
+// 告知項目プレビュー用パターン（プラン×死亡保障の全10通り）— Tweaks「告知項目パターン」で切替
+export const KOKUCHI_PATTERNS = [
+  { key: 'care_d',   plan: 'care',        death: true,  label: '① 障害・介護プラン（死亡あり）' },
+  { key: 'care_n',   plan: 'care',        death: false, label: '② 障害・介護プラン' },
+  { key: 'cancer_d', plan: 'cancer',      death: true,  label: '③ がんプラン（死亡あり）' },
+  { key: 'cancer_n', plan: 'cancer',      death: false, label: '④ がんプラン' },
+  { key: 'cc_d',     plan: 'cancer_care', death: true,  label: '⑤ がん・障害介護プラン（死亡あり）' },
+  { key: 'cc_n',     plan: 'cancer_care', death: false, label: '⑥ がん・障害介護プラン' },
+  { key: 'three_d',  plan: 'three',       death: true,  label: '⑦ 三大疾病プラン（死亡あり）' },
+  { key: 'three_n',  plan: 'three',       death: false, label: '⑧ 三大疾病プラン' },
+  { key: 'tc_d',     plan: 'three_care',  death: true,  label: '⑨ 三大疾病・障害介護プラン（死亡あり）' },
+  { key: 'tc_n',     plan: 'three_care',  death: false, label: '⑩ 三大疾病・障害介護プラン' },
+];
 
 export const PLANS: Plan[] = [
   { id: "cancer", name: "がん保障型", price: "¥980", death: true,
@@ -554,32 +572,70 @@ export const PLANS: Plan[] = [
     ] } },
 ];
 
+/* 告知項目（ノックアウト告知）— 区分はラベル（太字・改行）＋本文のリスト形式。別表は内側の表組みのまま */
+export function KoTable({ rows }: { rows: any[] }) {
+  return (
+    <div className="rounded-xl border border-warm-200 bg-white divide-y divide-warm-200">
+      {rows.map((r, i) => (
+        <div key={i} className="px-3.5 py-3 space-y-2">
+          <p className="text-h6 font-bold text-neutral-800 leading-snug">{r.k}</p>
+          {r.paras.map((p: any, j: number) => (
+            <div key={j} className="space-y-1.5">
+              <p className="text-caption text-neutral-700 leading-relaxed whitespace-pre-line">{p.t}</p>
+              {p.sub && (
+                <div className="rounded-lg border border-warm-200 overflow-hidden">
+                  {p.sub.map((row: any, k: number) => (
+                    <div key={k} className={`grid grid-cols-[88px_1fr] ${k > 0 ? "border-t border-warm-200" : ""}`}>
+                      <div className="bg-warm-100 px-2 py-1.5 flex items-center border-r border-warm-200">
+                        <span className="text-[11px] font-bold text-neutral-600 leading-snug">{row[0]}</span>
+                      </div>
+                      <div className="px-2 py-1.5 text-[11px] text-neutral-700 leading-relaxed">{row[1]}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          {r.checks && r.checks.length > 0 && (
+            <div className="space-y-1 pt-0.5">
+              {r.checks.map((c: any, j: number) => (
+                <p key={j} className="text-caption font-bold text-neutral-800 leading-relaxed">{c}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* 告知項目モーダル — プラン選択画面のツールチップ押下で表示 */
 export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void }) {
   const [askExit, setAskExit] = React.useState(false);
   if (!plan) return null;
-  const blocks = disclosureFor(plan.id, death);
+  const koRows = koTableFor(plan.id, death);
   return (
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
-          <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
-            <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-0.5 text-[11px] font-bold leading-none">告知</span>
-            {plan.name}の告知項目
+        <div className="flex items-center justify-between gap-2 px-5 pt-4 pb-3 border-b border-warm-200">
+          <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800 min-w-0">
+            <span className="grid place-items-center w-5 h-5 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
+            </span>
+            <span>{plan.name}の告知項目</span>
           </h3>
-          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
         <div className="flex-1 overflow-y-auto no-sb px-5 py-4 space-y-3">
-          {blocks ? (
-            <AgreeBlocks blocks={blocks} />
-          ) : (
-            <div className="rounded-lg border border-warm-200 bg-warm-50 p-4">
-              <p className="text-caption text-neutral-700 leading-relaxed">本プランはご加入にあたっての健康告知が不要です。所定の条件を満たす方であれば、告知なしでお申し込みいただけます。</p>
-            </div>
-          )}
+          <AgreeBlocks blocks={DISCLOSURE_INTRO} />
+          <div className="pt-2">
+            <p className="text-h5 font-bold text-neutral-800 leading-snug">告知重要事項</p>
+            <p className="text-caption text-neutral-600 leading-relaxed mt-1">各項目をご確認のうえ、以下の内容にご回答ください。</p>
+          </div>
+          <KoTable rows={koRows} />
         </div>
         <div className="px-5 py-3 border-t border-warm-200">
           {confirm ? (
@@ -964,10 +1020,6 @@ export function ScreenOverview({ go }: { go: Go }) {
                   </a>
                 </div>
                 <div className="text-left">
-                  <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
-                  <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
-                </div>
-                <div className="text-left">
                   <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
                   <p className="mt-2 text-h6 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
@@ -1005,6 +1057,12 @@ export function ScreenOverview({ go }: { go: Go }) {
                 <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
                 <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
               </div>
+            </div>
+
+            {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
+            <div className="text-left pt-2 pb-1">
+              <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
+              <p className="mt-2 mb-6 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
 
           </div>
@@ -1202,7 +1260,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         {!agree && showSend && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
         {agree && (
           <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
-            <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+            <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
               <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
               よくあるご質問
             </a>
@@ -1356,13 +1414,19 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
   const sliderStyle = { accentColor: "var(--primary-color-500)" };
   const onM = (e: React.ChangeEvent<HTMLInputElement>) => { setM(+e.target.value); onInput && onInput(); };
   const onY = (e: React.ChangeEvent<HTMLInputElement>) => { setY(+e.target.value); onInput && onInput(); };
+  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限・ステップにスナップ）
+  const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
+  const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
+  const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
+  const onYBlur = () => { const v = Math.min(30, Math.max(5, Math.round(y || 0) || 5)); setY(v); };
   return (
     <>
       <div className="mb-5">
         <div className="flex items-start justify-between gap-2">
           <span className="text-h6 font-medium text-neutral-800 leading-snug">毎月の積立金額<br/><span className="text-caption text-neutral-500">（ご希望給付額）</span></span>
-          <span className="text-neutral-800">
-            <span className="font-en text-h4 font-semibold text-primary-600 tabular-nums">{yen(m)}</span>
+          <span className="flex items-baseline gap-1 text-neutral-800">
+            <input type="text" inputMode="numeric" value={yen(m)} onChange={onMText} onBlur={onMBlur} aria-label="毎月の積立金額"
+              className="num-input font-en text-h4 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "5.5em" }} />
             <span className="text-caption"> 円</span>
           </span>
         </div>
@@ -1376,8 +1440,9 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
       <div className="mb-1">
         <div className="flex items-baseline justify-between">
           <span className="text-h6 font-medium text-neutral-800">保障期間</span>
-          <span className="text-neutral-800">
-            <span className="font-en text-h4 font-semibold text-primary-600 tabular-nums">{y}</span>
+          <span className="flex items-baseline gap-1 text-neutral-800">
+            <input type="text" inputMode="numeric" value={y} onChange={onYText} onBlur={onYBlur} aria-label="保障期間"
+              className="num-input font-en text-h4 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "2.4em" }} />
             <span className="text-caption"> 年</span>
           </span>
         </div>
@@ -1518,10 +1583,16 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
+  const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
+  const modalPlan = kokuchiPat ? (PLANS.find((p) => p.id === kokuchiPat.plan) || plan) : plan;
+  const modalDeath = kokuchiPat ? kokuchiPat.death : deathOpt;
   // ページ表示時に、選択プランの告知項目モーダルを強制表示
-  const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (plan ?? null));
+  const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (modalPlan ?? null));
+  // 告知項目パターン切替時にモーダルを再表示
+  useEffect(() => { setInfoPlan(modalPlan); }, [kokuchiPattern]);
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
@@ -1811,7 +1882,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
       )}
 
       {/* 告知項目モーダル（ページ表示時に選択プランで強制表示） */}
-      <DisclosureModal plan={infoPlan} death={deathOpt} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} />
+      <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} />
 
       {/* 受取人 生年月日ドラムロール */}
       <DateDrumSheet open={benPickerOpen} value={benBirth}
@@ -1895,6 +1966,13 @@ export const AGREE_ITEMS: AgreeItemData[] = [
       { p: "本サービスはT＆Dフィナンシャル生命のほけん商品となります。詳細なほけん商品のお問い合わせについてはT＆Dフィナンシャル生命へお問い合わせください。" },
     ],
   },
+  {
+    t: "マイページの利用規約",
+    blocks: [
+      { p: "マイページのご利用にあたっては、以下の利用規約をご確認ください。" },
+      { linkBtn: { label: "マイページの利用規約", href: "https://is.tdf-life.co.jp/tdcustomer/index.html#/terms" } },
+    ],
+  },
 ];
 
 export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
@@ -1918,6 +1996,12 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
           <a key={i} href="#" onClick={(e) => e.preventDefault()} className="inline-flex items-center gap-1.5 text-caption font-medium underline underline-offset-2" style={{ color: 'var(--color-link)' }}>
             {b.download}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </a>
+        );
+        if (b.linkBtn) return (
+          <a key={i} href={b.linkBtn.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-caption font-medium underline underline-offset-2" style={{ color: 'var(--color-link)' }}>
+            {b.linkBtn.label}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
           </a>
         );
         if (b.checks) return (
@@ -1983,13 +2067,23 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const [nat, setNat] = useState(initialNat ?? "jp");
   const [jpLang, setJpLang] = useState("");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
+  const [ikoAgree, setIkoAgree] = useState(false);
+  // ご意向文（プラン×死亡保障の全10通り）
+  const IKO = {
+    cancer:      { d: "積立期間中におけるがん、死亡にそなえたい", n: "積立期間中におけるがんにそなえたい" },
+    three:       { d: "積立期間中における三大疾病、死亡にそなえたい", n: "積立期間中における三大疾病にそなえたい" },
+    care:        { d: "積立期間中における障害・介護状態、死亡にそなえたい", n: "積立期間中における障害・介護状態にそなえたい" },
+    cancer_care: { d: "積立期間中におけるがん、障害・介護状態、死亡にそなえたい", n: "積立期間中におけるがん、障害・介護状態にそなえたい" },
+    three_care:  { d: "積立期間中における三大疾病、障害介護状態、死亡にそなえたい", n: "積立期間中における三大疾病、障害介護状態にそなえたい" },
+  };
+  const ikoText = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
   // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
-  const BEN_ADDR = { zip: "1500002", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
+  const BEN_ADDR = { zip: "1500002", pref: "東京都", town: "渋谷区渋谷２丁目", addr: "2-1", bldg: "渋谷フラット 305", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
   // 死亡保障がないプランでは「被保険者の確認」選択は不要
   const agreeItems = deathOpt ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !== "insured");
   const CIRC = "①②③④⑤⑥⑦⑧⑨";
@@ -2016,6 +2110,18 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <Row k="保障期間" v={`${y} 年`} strong />
           <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
           <Row k="保険期間" v="1年（自動更新）" strong />
+          {/* ご意向の再確認（プランにより文言が変化） */}
+          <div className="mt-3 pt-3 border-t border-warm-300">
+            <p className="text-caption font-bold text-neutral-600 mb-1">ご意向の確認</p>
+            <p className="text-caption text-neutral-700 leading-relaxed mb-2.5">「{ikoText}」</p>
+            <button onClick={() => setIkoAgree((a) => !a)} className="flex items-start gap-2.5 w-full text-left rounded-xl border border-warm-300 bg-white p-3 transition-colors">
+              <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${ikoAgree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                {ikoAgree && <Ic.check className="w-3 h-3" />}
+              </span>
+              <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-bold text-white shrink-0 mt-0.5" style={{ background: 'var(--color-attention)' }}>必須</span>
+              <span className="text-caption text-neutral-700 leading-relaxed">最終的なご意向と当初のご意向の比較を確認しました。</span>
+            </button>
+          </div>
         </div>
 
         <div className={`rounded-2xl border bg-white p-5 transition-colors ${editKiyaku ? "border-primary-300" : "border-warm-200"}`}>
@@ -2041,7 +2147,11 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <LockedField label="生年月日" value="1990 / 01 / 01" />
               <LockedField label="性別" value="男性" />
               <Field label="国籍" value="日本国籍" />
-              <Field label="住所" value="〒1000001 東京都千代田区丸の内１丁目 丸の内ビル 10F" />
+              <Field label="郵便番号" value="1000001" hint="郵便番号から住所を自動入力します" />
+              <Select label="都道府県" value="東京都" options={PREFS} />
+              <Field label="市区町村・町名" value="千代田区丸の内１丁目" />
+              <Field label="番地など" value="1-1" />
+              <Field label="建物名／部屋番号" value="丸の内ビル 10F" />
               <Field label="電話番号" value="09000000000" />
               <Field label="メールアドレス" value="samplename@sample.co.jp" />
             </div>
@@ -2096,9 +2206,11 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                 </button>
                 {!benEditSame && (
                   <div className="space-y-2 mt-1 fade-in">
-                    <Field label="郵便番号" value={BEN_ADDR.zip} />
-                    <Field label="都道府県・市区町村" value={BEN_ADDR.line1} />
-                    <Field label="番地・建物名・部屋番号" value={BEN_ADDR.line2} />
+                    <Field label="郵便番号" value={BEN_ADDR.zip} hint="郵便番号から住所を自動入力します" />
+                    <Select label="都道府県" value={BEN_ADDR.pref} options={PREFS} />
+                    <Field label="市区町村・町名" value={BEN_ADDR.town} />
+                    <Field label="番地など" value={BEN_ADDR.addr} />
+                    <Field label="建物名／部屋番号" value={BEN_ADDR.bldg} />
                   </div>
                 )}
               </div>
@@ -2248,10 +2360,10 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
           <div style={{ width: '100%', maxWidth: '260px' }}>
-            <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+            <Btn kind="danger" onClick={() => go(5)} disabled={!agreed || !ikoAgree}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
           </div>
         </div>
-        {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
+        {(!agreed || !ikoAgree) && <p className="text-center text-caption text-neutral-400">ご意向の確認と上記に確認・同意すると進めます</p>}
       </ActionBar>
     </>
   );
@@ -2388,7 +2500,7 @@ export function ScreenDone({ go }: { go: Go }) {
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
             <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
-            <p className="mt-2 text-caption text-neutral-500">受付番号　THEO-2026-000482</p>
+            <p className="mt-2 text-caption text-neutral-500">申込番号　THEO-2026-000482</p>
           </div>
           </div>
         </div>
@@ -2593,7 +2705,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
             </div>
             <div className="text-left">
               <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
-              <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+              <p className="mt-2 mb-6 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
             <div className="text-left">
               <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
@@ -2612,9 +2724,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
         </div>{/* /px-5 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)" }}>
-          <h2 className="text-h4 font-bold text-white text-center">さっそく、<br/>プランを選んでみましょう</h2>
-          <p className="mt-1 text-caption text-white text-center" style={{ opacity: 0.8 }}>かんたん入力で保険料がすぐわかります</p>
+        <div className="px-5 py-4" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
+          <h2 className="text-h4 font-bold text-white text-center">プランシミュレーション</h2>
         </div>
         <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
@@ -2721,7 +2832,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
             {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
             {agree && (
               <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
-                <a className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+                <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                   <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
                   よくあるご質問
                 </a>

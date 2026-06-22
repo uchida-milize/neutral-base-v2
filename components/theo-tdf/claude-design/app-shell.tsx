@@ -201,6 +201,7 @@ const TWEAK_DEFAULTS = {
   formSplit: false,
   errMode: "inline" as string,
   benSameAddr: true,
+  kokuchiPattern: "auto" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -237,7 +238,7 @@ export function TheoTdfClaudeDesignShell() {
     ),
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} setDeathOpt={setDeathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
-    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} errMode={tw.errMode} onTerminate={() => setTerminated(true)} />,
+    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} formSplit={tw.formSplit} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
@@ -264,6 +265,24 @@ export function TheoTdfClaudeDesignShell() {
                 { value: "inline", label: "① 各入力の下に赤字" },
                 { value: "top",    label: "② 上部にまとめて（クリックで移動）" },
                 { value: "float",  label: "③ 下部フローティング（提案）" },
+              ]}
+            />
+            <TweakSelect
+              label="告知項目パターン"
+              value={tw.kokuchiPattern}
+              onChange={(v) => setTweak("kokuchiPattern", v)}
+              options={[
+                { value: "auto",     label: "auto（プラン連動）" },
+                { value: "care_d",   label: "① 障害・介護プラン（死亡あり）" },
+                { value: "care_n",   label: "② 障害・介護プラン" },
+                { value: "cancer_d", label: "③ がんプラン（死亡あり）" },
+                { value: "cancer_n", label: "④ がんプラン" },
+                { value: "cc_d",     label: "⑤ がん・障害介護プラン（死亡あり）" },
+                { value: "cc_n",     label: "⑥ がん・障害介護プラン" },
+                { value: "three_d",  label: "⑦ 三大疾病プラン（死亡あり）" },
+                { value: "three_n",  label: "⑧ 三大疾病プラン" },
+                { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
+                { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
               ]}
             />
             <TweakSection label="内容確認画面" />

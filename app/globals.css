@@ -787,3 +787,24 @@
   /* 注意/エラー文・必須印専用 (TD 組込1.5 — kumikomi 定義に一致) */
   --color-attention: #d70027;
 }
+
+/* SimSliders 数字直接入力フィールド (TD 組込1.5)
+   スライダーと連動するインライン input[type=text]。下線のみ表示し余白を最小化。 */
+.num-input {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--primary-color-200, #b9d4f5);
+  border-radius: 0;
+  padding: 0 2px;
+  outline: none;
+  transition: border-color .15s;
+}
+.num-input:focus {
+  border-bottom-color: var(--primary-color-500, #2a6fdb);
+  background: var(--primary-color-10, #f2f8ff);
+}
+.num-input::-webkit-outer-spin-button,
+.num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

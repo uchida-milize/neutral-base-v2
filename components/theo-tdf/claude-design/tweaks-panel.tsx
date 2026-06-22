@@ -28,9 +28,9 @@ export function useTweaks<T extends Record<string, unknown>>(
   return [tw, setTweak];
 }
 
-export function TweakSection({ label }: { label: string }) {
+export function TweakSection({ label }: { label: React.ReactNode }) {
   return (
-    <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400 mt-3 first:mt-0 mb-1">
+    <p className="font-mono text-[10px] tracking-[0.14em] uppercase mt-3 first:mt-0 mb-1 font-semibold" style={{ color: "var(--color-link, #0066d1)" }}>
       {label}
     </p>
   );
