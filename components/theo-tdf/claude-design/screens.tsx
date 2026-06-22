@@ -2523,8 +2523,23 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
-      {/* 背景画像：上下中央揃え */}
-      <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
+      {/* 背景装飾（SVG グラデ） */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
+        <svg viewBox="0 0 390 820" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full">
+          <defs>
+            <radialGradient id="sbg1" cx="50%" cy="30%" r="60%">
+              <stop offset="0%" stopColor="#C8E6FF" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="#C8E6FF" stopOpacity="0"/>
+            </radialGradient>
+            <radialGradient id="sbg2" cx="80%" cy="75%" r="45%">
+              <stop offset="0%" stopColor="#D8F0E8" stopOpacity="0.5"/>
+              <stop offset="100%" stopColor="#D8F0E8" stopOpacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="390" height="820" fill="url(#sbg1)"/>
+          <rect width="390" height="820" fill="url(#sbg2)"/>
+        </svg>
+      </div>
       <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
