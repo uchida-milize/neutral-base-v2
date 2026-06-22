@@ -643,7 +643,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "done",
           label: "完了",
-          height: 812,
           el: <ScreenDone go={noop} />,
         },
         {
