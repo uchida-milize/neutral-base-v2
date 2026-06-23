@@ -62,7 +62,7 @@ function StaticScreen({
         <p className="text-h6 font-semibold text-foreground">{label}</p>
       </figcaption>
       <div
-        className={`theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 overflow-hidden shadow-sm transition-colors duration-300${fullSheet ? " theo-sheet-full" : ""}`}
+        className={`theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm transition-colors duration-300${fullSheet ? " theo-sheet-full overflow-visible" : " overflow-hidden"}`}
         style={{ width: 390, height }}
       >
         <div
@@ -171,8 +171,6 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-notice",
           label: "重要事項ボトムシート（全文表示）",
-          // ステッパー直下(140px)からシート全文を表示。カード高さ＝140+内容＋余白。
-          height: 1000,
           fullSheet: true,
           el: (
             <ScreenStep2
