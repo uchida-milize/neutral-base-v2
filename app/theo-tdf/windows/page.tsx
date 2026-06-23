@@ -419,130 +419,110 @@ export default function TheoTdfWindowsPage() {
         {
           key: "kokuchi-care_d",
           label: "① 障害・介護プラン（死亡あり）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="care_d"
+              kokuchiPattern="care_d" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-care_n",
           label: "② 障害・介護プラン（死亡なし）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="care_n"
+              kokuchiPattern="care_n" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-cancer_d",
           label: "③ がんプラン（死亡あり）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="cancer" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cancer_d"
+              kokuchiPattern="cancer_d" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-cancer_n",
           label: "④ がんプラン（死亡なし）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="cancer" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cancer_n"
+              kokuchiPattern="cancer_n" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-cc_d",
           label: "⑤ がん・障害介護プラン（死亡あり）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cc_d"
+              kokuchiPattern="cc_d" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-cc_n",
           label: "⑥ がん・障害介護プラン（死亡なし）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cc_n"
+              kokuchiPattern="cc_n" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-three_d",
           label: "⑦ 三大疾病プラン（死亡あり）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="three_d"
+              kokuchiPattern="three_d" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-three_n",
           label: "⑧ 三大疾病プラン（死亡なし）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="three_n"
+              kokuchiPattern="three_n" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-tc_d",
           label: "⑨ 三大疾病・障害介護プラン（死亡あり）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="tc_d"
+              kokuchiPattern="tc_d" initialDisclosureOpen={false}
             />
           ),
         },
         {
           key: "kokuchi-tc_n",
           label: "⑩ 三大疾病・障害介護プラン（死亡なし）",
-          height: 2700,
-          fullSheet: true,
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="tc_n"
+              kokuchiPattern="tc_n" initialDisclosureOpen={false}
             />
           ),
         },
