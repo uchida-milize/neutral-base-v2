@@ -641,6 +641,12 @@ export default function TheoTdfWindowsPage() {
           height: 812,
           el: <ScreenStatus variant="error" go={noop} />,
         },
+        {
+          key: "done-maint",
+          label: "メンテナンス中",
+          height: 812,
+          el: <ScreenStatus variant="maint" go={noop} />,
+        },
       ],
     },
 
