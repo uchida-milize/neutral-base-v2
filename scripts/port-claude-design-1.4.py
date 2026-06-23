@@ -421,6 +421,11 @@ body = must_replace(body,
     "const [infoPlan, setInfoPlan] = useState(() => modalPlan);",
     "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (modalPlan ?? null));")
 
+# kokuchiPattern 切替 useEffect: initialDisclosureOpen=false の静的プレビューではスキップ
+body = must_replace(body,
+    "useEffect(() => { setInfoPlan(modalPlan); }, [kokuchiPattern]);",
+    "useEffect(() => { if (initialDisclosureOpen !== false) setInfoPlan(modalPlan); }, [kokuchiPattern]);")
+
 # ---- standalone arrow param typings (avoid implicit-any in strict mode) ----
 body = body.replace("const years = [];", "const years: number[] = [];")
 body = body.replace('const yen = (v) => v.toLocaleString("ja-JP");',

@@ -1644,7 +1644,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   // ページ表示時に、選択プランの告知項目モーダルを強制表示
   const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (modalPlan ?? null));
   // 告知項目パターン切替時にモーダルを再表示
-  useEffect(() => { setInfoPlan(modalPlan); }, [kokuchiPattern]);
+  useEffect(() => { if (initialDisclosureOpen !== false) setInfoPlan(modalPlan); }, [kokuchiPattern]);
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
