@@ -914,13 +914,13 @@ export function fmtBirth(v: string) {
 /* ============================================================
    STEP 2 — プラン選択 ＋ 補償内容 ＋ 不足分メール送信（1ページ）
    ============================================================ */
-export function ScreenOverview({ go }: { go: Go }) {
+export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeigaiOpen?: boolean }) {
   const heroRef = useRef<any>(null);
   const heroBgRef = useRef<any>(null);
   const [solid, setSolid] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const [formPage, setFormPage] = useState(1);
-  const [heigaiOpen, setHeigaiOpen] = useState(false);
+  const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
   const bindScroll = (el: any) => {
     if (!el || el.__bound) return;
     el.__bound = true;

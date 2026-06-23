@@ -337,7 +337,7 @@ TYPE = {
   "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }",
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
-  "ScreenOverview": "{ go: Go }",
+  "ScreenOverview": "{ go: Go; initialHeigaiOpen?: boolean }",
   "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
@@ -425,6 +425,16 @@ body = must_replace(body,
 body = must_replace(body,
     "useEffect(() => { setInfoPlan(modalPlan); }, [kokuchiPattern]);",
     "useEffect(() => { if (initialDisclosureOpen !== false) setInfoPlan(modalPlan); }, [kokuchiPattern]);")
+
+# ScreenOverview の heigaiOpen を initialHeigaiOpen prop で制御
+# inject_type は型注釈のみ追加するため、destructuring にも initialHeigaiOpen を追加する
+body = must_replace(body,
+    "function ScreenOverview({ go }: { go: Go; initialHeigaiOpen?: boolean })",
+    "function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeigaiOpen?: boolean })")
+# （ScreenCombined の同名 state と区別するため bindScroll コンテキストで一意化）
+body = must_replace(body,
+    "const [heigaiOpen, setHeigaiOpen] = useState(false);\n  const bindScroll",
+    "const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);\n  const bindScroll")
 
 # ---- standalone arrow param typings (avoid implicit-any in strict mode) ----
 body = body.replace("const years = [];", "const years: number[] = [];")

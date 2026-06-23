@@ -118,6 +118,12 @@ export default function TheoTdfWindowsPage() {
           el: <ScreenOverview go={noop} />,
         },
         {
+          key: "overview-heigai",
+          label: "弊害防止措置等の対応について（モーダル全文表示）",
+          fullSheet: true,
+          el: <ScreenOverview go={noop} initialHeigaiOpen />,
+        },
+        {
           key: "combined",
           label: "パターンB（商品概要＋プラン選択統合）",
           el: (
