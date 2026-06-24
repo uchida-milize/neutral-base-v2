@@ -1309,38 +1309,39 @@ function ScreenOverview({ go }) {
               </div>
             </div>
 
-            {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-5 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
-              <div className="mb-12">
-                <div className="text-center">
-                  <span className="inline-block text-h4 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
-                  <p className="mt-2 text-h7 text-neutral-500">お手続きの際に必要となる書類を<br/>ご準備ください</p>
+            {/* ▼ 誘導ブロック＋保険名称：同一 bg-primary-10 ラッパーで隙間なく接続 */}
+            <div className="-mx-5 mt-8 bg-primary-10 px-5">
+              <div className="pt-10 pb-[18px]">
+                <div className="mb-12">
+                  <div className="text-center">
+                    <span className="inline-block text-h4 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
+                    <p className="mt-2 text-h7 text-neutral-500">お手続きの際に必要となる書類を<br/>ご準備ください</p>
+                  </div>
+                  <div className="mt-2 flex flex-col items-center gap-1 px-4">
+                    <Ic.cardArt className="w-20 h-auto text-primary-500" />
+                    <span className="text-[11px] font-medium text-neutral-600">ご本人名義のクレジットカード</span>
+                  </div>
                 </div>
-                <div className="mt-2 flex flex-col items-center gap-1 px-4">
-                  <Ic.cardArt className="w-20 h-auto text-primary-500" />
-                  <span className="text-[11px] font-medium text-neutral-600">ご本人名義のクレジットカード</span>
+                <div className="border-t border-primary-100 mb-[45px]"></div>
+                <div className="text-center mb-5">
+                  <h2 className="text-h4 font-bold text-neutral-900 leading-snug text-balance">5つのプランから選ぶだけ</h2>
+                  <p className="mt-2 text-h7 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
+                </div>
+                <div>
+                  <div className="flex flex-col items-center text-center gap-3">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold shadow-sm" style={{ color: "var(--color-emphasis)" }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
+                  </div>
+                </div>
+                <div className="mt-8 flex flex-col items-center gap-0.5">
+                  <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
+                  <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
                 </div>
               </div>
-              <div className="border-t border-primary-100 mb-[45px]"></div>
-              <div className="text-center mb-5">
-                <h2 className="text-h4 font-bold text-neutral-900 leading-snug text-balance">5つのプランから選ぶだけ</h2>
-                <p className="mt-2 text-h7 text-neutral-500 leading-relaxed text-balance">最短10分で、お申し込みが完了します。</p>
+              {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
+              <div className="text-left pt-5 pb-1">
+                <span className="inline-block text-h6 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
+                <p className="mt-2 mb-6 text-h7 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
               </div>
-              <div>
-                <div className="flex flex-col items-center text-center gap-3">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-caption font-bold shadow-sm" style={{ color: "var(--color-emphasis)" }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
-                </div>
-              </div>
-              <div className="mt-8 flex flex-col items-center gap-0.5">
-                <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
-                <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
-              </div>
-            </div>
-
-            {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
-            <div className="text-left pt-5 pb-1 px-5 -mx-5 !mt-0" style={{ background: 'var(--color-primary-10, #EEF5FF)' }}>
-              <span className="inline-block text-h6 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
-              <p className="mt-2 mb-6 text-h7 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
 
           </div>
