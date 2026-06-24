@@ -183,7 +183,7 @@ screen_combined = wire_tip(screen_combined)
 # 外部 GMO カード画面 (bg-neutral-100 グレー) は対象外。
 _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
 _grad_targets = [
-    '<div className="px-5 pt-8 pb-0 space-y-8">',                          # ScreenForm content (TD 組込1.5: pt-6→pt-8)
+    '<div className="px-5 pt-8 pb-32 space-y-8">',                         # ScreenStep2 content (TD 組込1.5: pt-6→pt-8, pb-0→pb-32)
     '<div className="px-5 py-8 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下)
     '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">',  # ScreenForm
     '<div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">',  # ScreenStep4 (ステッパー下)

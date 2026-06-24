@@ -1149,7 +1149,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             </div>
 
             {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
-            <div className="text-left pt-5 pb-1 px-5 -mx-5" style={{ background: 'var(--color-primary-10, #EEF5FF)', marginTop: 0 }}>
+            <div className="text-left pt-5 pb-1 px-5 -mx-5 !mt-0" style={{ background: 'var(--color-primary-10, #EEF5FF)' }}>
               <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
               <p className="mt-2 mb-6 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
@@ -1288,7 +1288,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-5 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-8 pb-32 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-5">
