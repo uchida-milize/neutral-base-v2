@@ -416,6 +416,26 @@ body = must_replace(body,
 body = must_replace(body,
     "{r.checks.map((c, j) => (",
     "{r.checks.map((c: any, j: number) => (")
+# DisclosureQCard: row/idx パラメータと各 map コールバックに型注釈
+body = must_replace(body,
+    "function DisclosureQCard({ row, idx }) {",
+    "function DisclosureQCard({ row, idx }: { row: any; idx: number }) {")
+body = must_replace(body,
+    "        {row.paras.map((p, j) => {",
+    "        {row.paras.map((p: any, j: number) => {")
+body = must_replace(body,
+    "                {parts.map((seg, k) =>",
+    "                {parts.map((seg: string, k: number) =>")
+body = must_replace(body,
+    "                  {p.sub.map((srow, sk) => (",
+    "                  {p.sub.map((srow: any, sk: number) => (")
+body = must_replace(body,
+    "            {row.checks.map((c, j) => (",
+    "            {row.checks.map((c: any, j: number) => (")
+body = must_replace(body,
+    "  const qCards = [];",
+    "  const qCards: React.ReactNode[] = [];")
+
 # infoPlan は modalPlan (Plan | undefined) で初期化。initialDisclosureOpen=false 時は null にする。
 body = must_replace(body,
     "const [infoPlan, setInfoPlan] = useState(() => modalPlan);",
