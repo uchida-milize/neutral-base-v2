@@ -478,7 +478,11 @@ export const KO_DEATH = [
 export const KO_CARE = [
   RECENT_ROW,
   { k: "病気・ケガについて", paras: [{ t: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。", sub: TABLE_CARE }] },
-  { k: "身体の障がい・介護状態について", paras: [{ t: "つぎのいずれか1つでも該当することはありますか。\n●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）\n●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" }] },
+  { k: "身体の障がい・介護状態について", paras: [
+    { t: "つぎのいずれか1つでも該当することはありますか。" },
+    { t: "●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）" },
+    { t: "●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" },
+  ] },
 ];
 // がん用
 export const KO_CANCER = [
@@ -613,7 +617,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
           // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）なら全文bold、それ以外は末尾のありますか/ていますか以降をbold
-          const isShortQ = /^[^\n]{0,50}(?:ありますか|ていますか)[。。。]/.test(p.t) && !p.t.includes('\n');
+          const isShortQ = /(?:ありますか|ていますか)[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
             <div key={j}>
@@ -1107,10 +1111,6 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                   </a>
                 </div>
                 <div className="text-left">
-                  <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
-                  <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
-                </div>
-                <div className="text-left">
                   <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
                   <p className="mt-2 text-h6 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
@@ -1124,7 +1124,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
               </div>
             </div>
 
-            {/* ▼ 誘導ブロック：bg-primary-10 フルブリード帯 */}
+            {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
             <div className="-mx-5 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
               <div className="mb-12">
                 <div className="text-center">
@@ -1150,6 +1150,12 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
                 <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
               </div>
+            </div>
+
+            {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
+            <div className="text-left pt-5 pb-1 px-5 -mx-5" style={{ background: 'var(--color-primary-10, #EEF5FF)', marginTop: 0 }}>
+              <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
+              <p className="mt-2 mb-6 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
 
           </div>
@@ -1286,7 +1292,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-5 pt-8 pb-32 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-5">
@@ -2962,14 +2968,15 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
                 詳細なサービス内容はこちら
               </a>
             </div>
-            <div className="text-left pt-4 pb-1 px-5 -mx-5" style={{ background: 'var(--color-primary-10, #EEF5FF)' }}>
+            <div className="text-left">
+              <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保険名称</span>
+              <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+            </div>
+            <div className="text-left">
               <span className="inline-block text-h5 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
               <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
-              <p className="mt-1 text-caption text-neutral-500 leading-relaxed mb-6">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
+              <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
             </div>
-          </div>
-            <div className="flex flex-wrap items-center gap-4 py-3 px-4 rounded-xl bg-primary-10">
-            <span className="inline-flex items-center gap-1 text-caption font-bold" style={{ color: '#054EBA' }}><Ic.check className="w-3.5 h-3.5" />いつでも見直し・解約OK</span>
           </div>
           <div className="text-right mt-3">
             <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-1.5 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
