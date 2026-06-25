@@ -8,7 +8,6 @@ import {
   ScreenCombined,
   ScreenStep2,
   ScreenPin,
-  ScreenPhone,
   ScreenForm,
   ScreenStep4,
   ScreenCardInput,
@@ -54,7 +53,7 @@ type FlowEntry = {
   subs?: string[];
 };
 
-/* PIN認証・電話認証・カード承認(外部) は番号なし → 5 numbered steps total. */
+/* PIN認証・カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
   { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
   { key: "step2",    label: "プラン選択",          en: "Plan / Coverage",  scr: [1] },
@@ -63,7 +62,6 @@ const FLOW: FlowEntry[] = [
   { key: "step4",    label: "内容確認",            en: "Confirm",          scr: [4] },
   { key: "card",     label: "クレジットカード承認", en: "Card Auth (外部)", ext: true, noNum: true, scr: [5, 6] },
   { key: "done",     label: "完了",                en: "Complete",         scr: [7] },
-  { key: "phone",    label: "電話番号認証",         en: "Phone Verify",     noNum: true, scr: [8] },
 ];
 
 const STEP_NUMS: (number | null)[] = (() => {
@@ -215,9 +213,8 @@ export function TheoTdfClaudeDesignShell() {
   const [simY, setSimY] = React.useState(15);    // 保障期間（共有）
   const deathOpt = deathFromSel(sel); // 死亡保障あり/なし（selから導出）
   const [emailVerified, setEmailVerified] = React.useState(false);
-  const [phoneVerified, setPhoneVerified] = React.useState(false);
   const [terminated, setTerminated] = React.useState(false); // 申込キャンセル→終了画面
-  const NSCR = 9;
+  const NSCR = 8;
 
   const patternB = tw.patternB;
   const setPatternB = (v: boolean) => {
@@ -247,7 +244,6 @@ export function TheoTdfClaudeDesignShell() {
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
     <ScreenDone key="done" go={go} variant={tw.doneVariant} />,
-    <ScreenPhone key="phone" go={go} onVerified={() => setPhoneVerified(true)} />,
   ];
 
   return (
