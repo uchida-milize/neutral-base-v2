@@ -110,8 +110,8 @@ def must_replace(t, old, new):
 # NOTE: 新 kumikomi(1.4) で simFirst が末尾に追加されたシグネチャに同期。
 # initialShowSend (§14.11 CTA 表示) と initialTipIdx (A: ツールチップ1つ静的展開) を注入。
 body = must_replace(body,
-    "function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
-    "function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
 # initialBirth: windows でシミュレーション上限エラー(加入年齢+保障期間>90)を静的再現するため
 # 生年月日を初期注入できるようにする。body 内 birth は ScreenStep2 のみ (ScreenCombined は screen_combined)。
 body = must_replace(body,
@@ -131,8 +131,8 @@ body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, 
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
 # initialTipIdx (A) を注入。
 screen_combined = must_replace(screen_combined,
-    "function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst })",
-    "function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst })",
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
 # useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
 # formPage は ScreenOverview と ScreenForm の両方に存在するため、ScreenForm 固有のコメント文脈で限定置換する。
 body = body.replace(
@@ -158,15 +158,16 @@ screen_combined = screen_combined.replace("const [agree, setAgree] = useState(fa
 # windows で「プラン選択 / ツールチップ1つ展開」を静的に再現するため、kumikomi に無い
 # initialTtOpen / initialTipIdx を注入する。state 名は kumikomi の ttOpen を踏襲。
 body = must_replace(body,
-    "function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {} }) {",
-    "function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {}, initialTtOpen }) {")
+    "function PlanCard({ p, selected, onSelect }) {",
+    "function PlanCard({ p, selected, onSelect, initialTtOpen }) {")
 body = must_replace(body,
     "const [ttOpen, setTtOpen] = React.useState(false);",
     "const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);")
 
 
 def wire_tip(t):
-    # PLANS.map に index を渡し、initialTipIdx と一致する 1 枚だけ tooltip を開く。
+    # PLAN_CARDS.map (handoff(4)) / PLANS.map に index を渡し、initialTipIdx と一致する 1 枚だけ tooltip を開く。
+    t = t.replace("PLAN_CARDS.map((p) =>", "PLAN_CARDS.map((p, i) =>")
     t = t.replace("PLANS.map((p) =>", "PLANS.map((p, i) =>")
     t = t.replace(
         "<PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />",
@@ -334,12 +335,13 @@ TYPE = {
   "ErrText": "{ children: React.ReactNode }",
   "Select": "{ label: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; options?: string[]; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }",
   "StepSection": "{ label?: string; n?: number; big?: boolean; className?: string; children: React.ReactNode }",
-  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }",
+  "PlanCard": "{ p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }",
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go; initialHeigaiOpen?: boolean }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
+  "ScreenPhone": "{ go: Go; onVerified?: () => void; backScr?: number; toScr?: number }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
   "FeatValue": "{ v: string }",
   "SimSliders": "{ m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }",
@@ -358,7 +360,7 @@ TYPE = {
   "ScreenStatus": "{ variant?: string; go: Go }",
   "ScreenEnded": "{ onRestart: () => void }",
   "ScreenIntro": "{ go: Go }",
-  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
+  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
 }
 
 def inject_type(t, name, typ):
@@ -483,8 +485,8 @@ body = body.replace("const setH = (k) => (e) => setHolder((h) => ({ ...h, [k]: e
                     "const setH = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHolder((h: any) => ({ ...h, [k]: e.target.value }));")
 
 # ---- TD 組込1.5(1): 死亡保障オプション / インライン検証まわりの型注入 ----
-# PlanCard 死亡保障トグルのラベル配列 (string|boolean 混在) を明示タプル化。
-body = must_replace(body,
+# PlanCard 死亡保障トグルは handoff(4) で削除済み → no-op (旧コードのみ対応)。
+body = body.replace(
     '{[["あり", true], ["なし", false]].map(([lbl, val]) => {',
     '{([["あり", true], ["なし", false]] as [string, boolean][]).map(([lbl, val]) => {')
 # kokuchiPattern に応じた告知モーダル対象を特定するための any キャスト。
@@ -533,19 +535,44 @@ body = body.replace(
     "  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;\n  const doneBgRef = useRef<any>(null);",
     "  const doneBgRef = useRef<any>(null);\n  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;")
 
-# IKO[sel]: sel は string だが IKO のキーは具体的なリテラル型 → any キャスト (TD 組込1.5(3): ikoText→ikoMid)
+# IKO[planIdFromSel(sel)]: planIdFromSel が string を返し IKO のキーは具体的なリテラル型 → any キャスト
+# handoff(4) で IKO[sel] → IKO[planIdFromSel(sel)] に変更。旧パターンも残す (fallback)。
 body = body.replace(
     "const ikoText = (IKO[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
     "const ikoText = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
 body = body.replace(
     "const ikoMid = (IKO[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
     "const ikoMid = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
+# handoff(4): planIdFromSel を挟む新パターン
+body = body.replace(
+    "const ikoMid = (IKO[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];",
+    "const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? \"d\" : \"n\"];")
 
 # ---- const type annotations ----
 body = body.replace("const STEP_TO_SCREEN = {", "const STEP_TO_SCREEN: Record<number, number> = {")
 body = body.replace("const PREFS = [", "const PREFS: string[] = [")
 body = body.replace("const PLANS = [", "const PLANS: Plan[] = [")
 body = body.replace("const AGREE_ITEMS = [", "const AGREE_ITEMS: AgreeItemData[] = [")
+# handoff(4): PLAN_CARDS (10枚フラット配列), planIdFromSel/deathFromSel ヘルパー型注釈
+body = body.replace(
+    "const PLAN_CARDS = PLANS.flatMap((p) => [",
+    "const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.flatMap((p) => [")
+body = body.replace("function planIdFromSel(sel) {", "function planIdFromSel(sel: string) {")
+body = body.replace("function deathFromSel(sel)  {", "function deathFromSel(sel: string)  {")
+
+# ---- handoff(4): ScreenPin 6-box PIN 入力の新ヘルパーに型注釈 ----
+body = body.replace(
+    "const pinRefs = useRef([]);",
+    "const pinRefs = useRef<HTMLInputElement[]>([]);")
+body = body.replace(
+    "const setDigit = (i, v) => {",
+    "const setDigit = (i: number, v: string) => {")
+body = body.replace(
+    "const onPinKey = (i, e) => {",
+    "const onPinKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {")
+body = body.replace(
+    "const onPinPaste = (e) => {",
+    "const onPinPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {")
 
 # ---- export prefixing (top-level only) ----
 body = re.sub(r'^function ', 'export function ', body, flags=re.M)
@@ -588,7 +615,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (2) (kumikomi.html 単一ファイル版を正) (2026-06-22 取り込み)
+   原典: TD 組込1.5-handoff (4) (kumikomi.html 単一ファイル版を正) (2026-06-26 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
@@ -599,9 +626,9 @@ import { Card, CardContent } from "@/components/ui/card";
    ★ Select はネイティブ <select> 維持、AppBar / Steps / DateDrumSheet /
      WheelCol / PlanCard / ExtBar 等のモバイル UI 固有部品も独自実装維持。
 
-   画面 (8 index / 5 番号ステップ + パターンB 統合画面 ScreenCombined):
-     0 商品概要 / 1 プラン選択 / 2 PIN認証 / 3 申込フォーム /
-     4 内容確認 / 5-6 カード承認(外部GMO) / 7 完了
+   画面 (9 index / 5 番号ステップ + パターンB 統合画面 ScreenCombined):
+     0 商品概要 / 1 プラン選択 / 2 PIN認証 / 3 電話認証(SMS) / 4 申込フォーム /
+     5 内容確認 / 6-7 カード承認(外部GMO) / 8 完了
    ============================================================ */
 
 export type Plan = {

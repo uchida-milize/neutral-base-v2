@@ -7,6 +7,7 @@ import {
   ScreenCombined,
   ScreenStep2,
   ScreenPin,
+  ScreenPhone,
   ScreenForm,
   ScreenStep4,
   ScreenCardInput,
@@ -294,6 +295,20 @@ export default function TheoTdfWindowsPage() {
           key: "pin-filled",
           label: "「666666」入力済・認証ボタン活性",
           el: <ScreenPin go={noop} initialPin="666666" />,
+        },
+      ],
+    },
+
+    /* ---- 03b 電話番号認証 (SMS) ---- */
+    {
+      key: "phone",
+      title: "電話番号認証",
+      badge: "SMS認証",
+      screens: [
+        {
+          key: "phone-input",
+          label: "電話番号入力フェーズ",
+          el: <ScreenPhone go={noop} />,
         },
       ],
     },

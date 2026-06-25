@@ -42,6 +42,33 @@
   src: url("/fonts/zen-kaku-gothic-new/ZenKakuGothicNew-Bold.ttf") format("truetype");
 }
 
+/* Noto Sans JP — セルフホスト (public/fonts/) で主要ウェイトを読み込み。
+   handoff(4) で --font-jp の筆頭フォントに変更。weight 300 (Light) を追加。 */
+@font-face {
+  font-family: "Noto Sans JP";
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/NotoSansJP-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Noto Sans JP";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/NotoSansJP-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Noto Sans JP";
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/NotoSansJP-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/NotoSansJP-Bold.ttf") format("truetype");
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -694,7 +721,7 @@
   /* --text-cd-h* 廃止 → text-h1〜text-h6 (UI Heading scale) に統合。
    * port.py 変換スクリプトで text-h{2-7} → text-h{1-6} へ変換する。 */
 
-  --font-jp: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   --font-en: "Geist", var(--font-geist-sans), -apple-system, sans-serif;
 }
 
@@ -739,8 +766,28 @@
   .fld:focus {
     outline: none;
     border-color: var(--primary-color-400);
-    box-shadow: 0 0 0 3px rgba(6, 95, 227, 0.14);
   }
+  /* ScreenPin 6-box PIN 入力 (handoff(4)) */
+  .pin-box {
+    width: 44px; height: 56px;
+    border: 1px solid var(--primary-color-100, #dce8f7);
+    border-radius: 12px;
+    background: var(--primary-color-10, #f4f7fc);
+    text-align: center;
+    font-family: var(--font-en, inherit);
+    font-weight: 600; font-size: 26px;
+    color: var(--neutral-800, #1f2937);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    -moz-appearance: textfield;
+  }
+  .pin-box:focus {
+    border-color: var(--primary-color-500, #2a6fdb);
+    box-shadow: 0 0 0 3px var(--primary-color-50, #e8f1fd);
+    background: #fff;
+  }
+  .pin-box::-webkit-outer-spin-button,
+  .pin-box::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 }
 
 @keyframes theoTdfSheetUp {

@@ -28,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (2) (kumikomi.html 単一ファイル版を正) (2026-06-22 取り込み)
+   原典: TD 組込1.5-handoff (4) (kumikomi.html 単一ファイル版を正) (2026-06-26 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
@@ -39,9 +39,9 @@ import { Card, CardContent } from "@/components/ui/card";
    ★ Select はネイティブ <select> 維持、AppBar / Steps / DateDrumSheet /
      WheelCol / PlanCard / ExtBar 等のモバイル UI 固有部品も独自実装維持。
 
-   画面 (8 index / 5 番号ステップ + パターンB 統合画面 ScreenCombined):
-     0 商品概要 / 1 プラン選択 / 2 PIN認証 / 3 申込フォーム /
-     4 内容確認 / 5-6 カード承認(外部GMO) / 7 完了
+   画面 (9 index / 5 番号ステップ + パターンB 統合画面 ScreenCombined):
+     0 商品概要 / 1 プラン選択 / 2 PIN認証 / 3 電話認証(SMS) / 4 申込フォーム /
+     5 内容確認 / 6-7 カード承認(外部GMO) / 8 完了
    ============================================================ */
 
 export type Plan = {
@@ -268,6 +268,13 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
   );
 }
 
+// 必須バッジ（赤字・細い赤枠）
+export function ReqBadge() {
+  return (
+    <span className="ml-1.5 inline-flex items-center align-middle text-[10px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
+  );
+}
+
 // インラインのエラーメッセージ（小さめ・赤字・アイコン付き）
 export function ErrText({ children }: { children: React.ReactNode }) {
   return (
@@ -336,7 +343,7 @@ export function Select({ label, required, hint, value, onChange, options = [], d
   return (
     <label ref={anchorRef} className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-neutral-600">
-        {label}{required && <span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span>}
+        {label}{required && <ReqBadge />}
       </span>
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
@@ -572,6 +579,14 @@ export const PLANS: Plan[] = [
     ] } },
 ];
 
+// 10枚カード（プラン×死亡保障）
+export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.flatMap((p) => [
+  { ...p, id: p.id + '_d', planId: p.id, death: true,  name: p.name + '　死亡保障あり' },
+  { ...p, id: p.id + '_n', planId: p.id, death: false, name: p.name + '　死亡保障なし' },
+]);
+export function planIdFromSel(sel: string) { return sel ? sel.replace(/_[dn]$/, '') : 'cancer'; }
+export function deathFromSel(sel: string)  { return !sel || !sel.endsWith('_n'); }
+
 /* 告知項目（ノックアウト告知）— 区分はラベル（太字・改行）＋本文のリスト形式。別表は内側の表組みのまま */
 export function KoTable({ rows }: { rows: any[] }) {
   return (
@@ -617,7 +632,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
           // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）なら全文bold、それ以外は末尾のありますか/ていますか以降をbold
-          const isShortQ = /(?:ありますか|ていますか)[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
+          const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
             <div key={j}>
@@ -687,7 +702,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
             <span className="grid place-items-center w-5 h-5 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
             </span>
-            <span>{plan.name}の告知項目</span>
+            <span>{plan.name}　死亡保障{death ? 'あり' : 'なし'}の告知項目</span>
           </h3>
           <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -757,7 +772,8 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
   );
 }
 
-export function PlanCard({ p, selected, onSelect, death = true, onDeath = () => {}, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; death?: boolean; onDeath?: (v: boolean) => void; initialTtOpen?: boolean }) {
+export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; selected: boolean; onSelect: () => void; initialTtOpen?: boolean }) {
+  const death = p.death;
   const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
   return (
     <div onClick={onSelect} role="button" style={{ boxShadow: '0 0 10px rgba(27,49,87,0.14)' }} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
@@ -797,21 +813,7 @@ export function PlanCard({ p, selected, onSelect, death = true, onDeath = () => 
             </li>
           ))}
         </ul>
-        <div className="mt-3 flex items-center justify-between gap-2 border-t border-warm-200 pt-3">
-          <span className="text-caption font-bold text-neutral-700">死亡保障</span>
-          <div className="flex gap-1.5">
-            {([["あり", true], ["なし", false]] as [string, boolean][]).map(([lbl, val]) => {
-              const on = selected && death === val;
-              return (
-                <button key={lbl} type="button"
-                  onClick={(e) => { e.stopPropagation(); onSelect(); onDeath(val); }}
-                  className={`min-w-[56px] h-8 rounded-lg border text-caption transition-colors ${on ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>
-                  {lbl}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+
       </div>
     </div>
   );
@@ -1239,8 +1241,8 @@ export function NoticeContent() {
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }) {
-  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }) {
+  const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
   const [birth, setBirth] = useState(initialBirth ?? "");
@@ -1267,7 +1269,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
                 <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">生年月日<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
                 <button type="button" onClick={() => setPickerOpen(true)}
                   className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
                   <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
@@ -1275,7 +1277,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
                 </button>
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-caption font-medium text-neutral-600">性別<span className="text-[color:var(--secondary-color-700)] ml-0.5">*</span></span>
+                <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
                 <div className="flex gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
@@ -1309,8 +1311,8 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
-          {PLANS.map((p, i) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
+          {PLAN_CARDS.map((p, i) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
           ))}
           <p className="text-caption text-neutral-500 leading-relaxed px-1">
             ※ 保険料は年齢・性別により変動します。
@@ -1321,7 +1323,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         {/* ---- 保険料シミュレーション ---- */}
         <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
-          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
         </StepSection>
         </div>
         </>)}
@@ -1339,13 +1341,13 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         </div>
 
         {/* ---- プラン選択 ---- */}
-        <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+        <div className="-mx-5 px-5 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="プランを選ぶ" n={2} big className="mt-8">
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
-          {PLANS.map((p, i) => (
-            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
+          {PLAN_CARDS.map((p, i) => (
+            <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
           ))}
           <p className="text-caption text-neutral-500 leading-relaxed px-1">※ 保険料は年齢・性別により変動します。</p>
         </StepSection>
@@ -1363,17 +1365,8 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
         {/* ---- 申し込みをする（2ステップ） ---- */}
         <div className={`-mx-5 px-5 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-8">
-          {/* STEP 1 — メールアドレスのご入力 */}
+          {/* STEP 1 — 事前同意事項のご確認 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
-            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
-            <p className="text-caption text-neutral-600 leading-relaxed">
-              ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
-            </p>
-            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
-          </div>
-
-          {/* STEP 2 — 事前同意事項のご確認 */}
-          <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
             <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
             <button onClick={() => setNoticeOpen(true)}
@@ -1384,13 +1377,23 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
               </span>
               <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
             </button>
-            <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left pt-1">
+            <div className={`flex items-start gap-3 w-full text-left pt-1 transition-opacity ${agree ? "" : "opacity-40 pointer-events-none"}`}>
               <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
                 {agree && <Ic.check className="w-3 h-3" />}
               </span>
               <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-            </button>
+            </div>
           </div>
+
+          {/* STEP 2 — メールアドレスのご入力 */}
+          <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
+            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">
+              ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
+            </p>
+            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+          </div>
+          {agree && <div style={{ height: '80px' }} aria-hidden="true" />}
         </StepSection>
         </div>
         </div>
@@ -1412,7 +1415,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
           {showSend && (
             <div className="flex-1">
               <Btn kind="cta" onClick={() => emailVerified ? go(3) : go(2)} disabled={!agree}>
-                {emailVerified ? <>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></> : "上記に同意してメールを送信"}
+                {emailVerified ? <>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></> : "PINコードを送信"}
               </Btn>
             </div>
           )}
@@ -1475,6 +1478,26 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, setDeathOpt = ()
    ============================================================ */
 export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }) {
   const [pin, setPin] = useState(initialPin ?? "");
+  const pinRefs = useRef<HTMLInputElement[]>([]);
+  const setDigit = (i: number, v: string) => {
+    const d = v.replace(/[^0-9]/g, "").slice(-1);
+    const arr = pin.padEnd(6, " ").split("");
+    arr[i] = d || " ";
+    const next = arr.join("").replace(/\s+$/, "");
+    setPin(next);
+    if (d && i < 5) pinRefs.current[i + 1]?.focus();
+  };
+  const onPinKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !pin[i] && i > 0) {
+      pinRefs.current[i - 1]?.focus();
+    }
+  };
+  const onPinPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const v = (e.clipboardData.getData("text") || "").replace(/[^0-9]/g, "").slice(0, 6);
+    setPin(v);
+    pinRefs.current[Math.min(v.length, 5)]?.focus();
+  };
   return (
     <>
       <AppBar title="保険" onBack={() => go(backScr)} />
@@ -1485,18 +1508,25 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
           <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-5">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           </div>
-          <h1 className="text-h3 font-bold text-neutral-800">PINコードの入力</h1>
+          <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
           <p className="mt-3 text-h6 text-neutral-600 leading-relaxed">
             ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載の6桁のPINコードを入力してください。
           </p>
 
-          <input
-            value={pin}
-            onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
-            inputMode="numeric"
-            placeholder="______"
-            className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-white text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
-          />
+          <div className="mt-7 flex justify-center gap-2" onPaste={onPinPaste}>
+            {[0,1,2,3,4,5].map((i) => (
+              <input
+                key={i}
+                ref={(el: any) => (pinRefs.current[i] = el)}
+                value={pin[i] || ""}
+                onChange={(e) => setDigit(i, e.target.value)}
+                onKeyDown={(e) => onPinKey(i, e)}
+                inputMode="numeric"
+                maxLength={1}
+                className="pin-box"
+              />
+            ))}
+          </div>
 
           <button className="mt-4 text-caption underline underline-offset-2" style={{ color: 'var(--color-link)' }}>PINコードを再送する</button>
         </div>
@@ -1513,6 +1543,80 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
           </div>
         </div>
         {pin.length < 6 && <p className="text-center text-caption text-neutral-400">6桁のPINコードを入力してください</p>}
+      </ActionBar>
+    </>
+  );
+}
+
+/* ============================================================
+   SCREEN — 電話番号認証（SMSで承認番号を送信して認証）
+   ============================================================ */
+export function ScreenPhone({ go, onVerified, backScr = 2, toScr = 3 }: { go: Go; onVerified?: () => void; backScr?: number; toScr?: number }) {
+  const [phase, setPhase] = useState("input"); // input | code
+  const [tel, setTel] = useState("");
+  const [code, setCode] = useState("");
+  const telDigits = tel.replace(/[^0-9]/g, "");
+  const telOk = telDigits.length >= 10 && telDigits.length <= 11;
+  return (
+    <>
+      <AppBar title="保険" onBack={() => phase === "code" ? setPhase("input") : go(backScr)} />
+      <div className="flex-1 overflow-y-auto no-sb">
+        <Steps n={3} go={go} />
+        <div className="px-5 py-8 flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
+          <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+          </div>
+          {phase === "input" ? (
+            <>
+              <h1 className="text-h3 font-bold text-neutral-800">電話番号の認証</h1>
+              <p className="mt-3 text-h6 text-neutral-600 leading-relaxed">
+                ご本人さま確認のため、SMS（ショートメッセージ）で承認番号をお送りします。お手持ちの携帯電話番号をご入力ください。
+              </p>
+              <input
+                value={tel}
+                onChange={(e) => setTel(e.target.value.replace(/[^0-9]/g, "").slice(0, 11))}
+                inputMode="tel"
+                placeholder="090-0000-0000"
+                className="fld mt-7 w-full max-w-[300px] h-14 rounded-xl border border-warm-300 bg-white text-center font-en font-semibold text-h2 tracking-[0.15em] text-neutral-800"
+              />
+              <p className="mt-3 text-caption text-neutral-400 leading-relaxed">ハイフンなしでご入力ください。SMSが受信できる番号をご指定ください。</p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-h3 font-bold text-neutral-800">承認番号の入力</h1>
+              <p className="mt-3 text-h6 text-neutral-600 leading-relaxed">
+                <span className="font-bold text-neutral-800">{tel}</span> 宛に、SMSで6桁の承認番号をお送りしました。メッセージに記載の承認番号を入力してください。
+              </p>
+              <input
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                inputMode="numeric"
+                placeholder="______"
+                className="fld mt-7 w-full max-w-[260px] h-14 rounded-xl border border-warm-300 bg-white text-center font-en font-semibold text-h1 tracking-[0.45em] text-neutral-800"
+              />
+              <button onClick={() => setPhase("input")} className="mt-4 text-caption underline underline-offset-2" style={{ color: 'var(--color-link)' }}>承認番号を再送する</button>
+            </>
+          )}
+        </div>
+      </div>
+      <ActionBar>
+        <p className="text-caption text-neutral-500 leading-relaxed px-1">
+          本お手続きは「THEO つみたて安心ほけん」のお申し込みです。<br/>
+          <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={() => phase === "code" ? setPhase("input") : go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+          <div style={{ width: '100%', maxWidth: '260px' }}>
+            {phase === "input" ? (
+              <Btn kind="cta" onClick={() => setPhase("code")} disabled={!telOk}>承認番号を送信<Ic.chevR className="w-4 h-4" /></Btn>
+            ) : (
+              <Btn kind="cta" onClick={() => { if (onVerified) onVerified(); go(toScr); }} disabled={code.length < 6}>認証する</Btn>
+            )}
+          </div>
+        </div>
+        {phase === "input" && !telOk && <p className="text-center text-caption text-neutral-400">携帯電話番号をご入力ください</p>}
+        {phase === "code" && code.length < 6 && <p className="text-center text-caption text-neutral-400">6桁の承認番号を入力してください</p>}
       </ActionBar>
     </>
   );
@@ -1676,9 +1780,9 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
   const errors = simErrors(m, y, startAge);
   return (
     <div className="rounded-2xl border border-warm-200 bg-white p-5">
-      <div className="flex items-center justify-start gap-3 mb-5">
+      <div className="flex flex-col gap-2 mb-5">
         {shouldShowLabel && (
-          <span className="flex flex-col items-center justify-center shrink-0 rounded-lg bg-[#EFEFEF] px-2.5 py-2 text-center leading-tight h-full">
+          <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-2.5 py-2 leading-tight self-start">
             <span className="text-[9px] font-bold text-neutral-800">選択プラン</span>
             <span className="text-[11px] font-bold text-primary-600 mt-1">{planName}</span>
           </span>
@@ -1730,7 +1834,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
    SCREEN 4 — 申込フォーム
    ============================================================ */
 export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0 }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number }) {
-  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
   const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
   const modalPlan = kokuchiPat ? (PLANS.find((p) => p.id === kokuchiPat.plan) || plan) : plan;
@@ -1836,7 +1940,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         )}
 
         {(!formSplit || formPage === 1) && (<>
-        <h2 className="text-h5 font-bold text-center" style={{ color: '#054EBA', marginTop: '32px', marginBottom: '32px' }}>情報ご入力</h2>
+        <h2 className="text-h5 font-bold text-center" style={{ color: '#054EBA', marginTop: '32px', marginBottom: '32px' }}>加入手続き</h2>
         <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
           <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
         </div>
@@ -1859,7 +1963,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <Field label="町名" placeholder="丸の内１丁目" required value={holder.town} onChange={setH("town")} />
           <Field label="番地など" placeholder="1丁目1番地1号" required value={holder.addr} onChange={setH("addr")} />
           <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={holder.bldg} onChange={setH("bldg")} />
-          <Field label="電話番号" placeholder="09000000000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
+          <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
         </GroupCard>
 
         {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
@@ -1889,7 +1993,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
           {/* 受取人 生年月日・性別 */}
           <div ref={setFieldRef('benBirth')} className="flex flex-col gap-1.5">
-            <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+            <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
             <button type="button" onClick={() => setBenPickerOpen(true)}
               style={errState.benBirth ? errInputStyle : undefined}
               className={`fld flex items-center justify-between gap-2 h-11 rounded-lg border px-3 text-h6 text-left ${errState.benBirth ? "border-[color:var(--color-attention)]" : "border-warm-300 bg-white"} ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
@@ -1899,7 +2003,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             {errMode === 'inline' && errState.benBirth && <ErrText>{errMap.benBirth}</ErrText>}
           </div>
           <div ref={setFieldRef('benGender')} className="flex flex-col gap-1.5">
-            <span className="text-caption font-medium text-neutral-600">性別<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+            <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
             <div className="flex gap-2">
               {["男性", "女性"].map((g) => (
                 <button key={g} onClick={() => setBenGender(g)}
@@ -1929,7 +2033,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           )}
 
           <Select label="続柄" required value={rel || "続柄を選択"} onChange={(e) => setRel(e.target.value === "続柄を選択" ? "" : e.target.value)} options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} error={errOf('rel')} errMode={errMode} anchorRef={setFieldRef('rel')} />
-          <Field label="電話番号" placeholder="09000000000" />
+          <Field label="電話番号" placeholder="090-0000-0000" />
         </GroupCard>
 
         {/* 団体特定コード（パターンA：非分割時は保険金受取人の後） */}
@@ -1967,7 +2071,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </button>
           </div>
           <div className="mt-0.5 flex items-center flex-wrap gap-x-2 gap-y-0.5 text-caption">
-            <span className="font-bold text-neutral-800">{plan.name}</span>
+            <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
             <span className="text-warm-300">|</span>
             <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
             <span className="text-warm-300">|</span>
@@ -1995,6 +2099,14 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               </button>
             </div>
             <div className="px-5 overflow-y-auto no-sb pb-2">
+              {/* 選択プラン＋説明 */}
+              <div className="flex flex-col gap-2 mb-4 pt-1">
+                <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-2.5 py-2 leading-tight self-start">
+                  <span className="text-[9px] font-bold text-neutral-800">選択プラン</span>
+                  <span className="text-[11px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
+                </span>
+                <p className="text-caption text-neutral-600 leading-relaxed">保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
+              </div>
               <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
 
               {/* シミュレーション結果（エラー時はテーブル非表示・赤字エラー） */}
@@ -2048,7 +2160,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 /* ============================================================
    SCREEN 5 — 内容確認
    ============================================================ */
-// 重要事項（4項目）— ①〜③は添付内容、④は契約のしおり・約款
+// 重要事項（①⑤⑦⑧を残す — ②③④⑥は別場所で表記のため削除）
 export const AGREE_ITEMS: AgreeItemData[] = [
   {
     t: "申込に関する注意事項の確認",
@@ -2062,55 +2174,10 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
-    kind: "agree",
-    t: "個人情報のお取り扱いについて",
-    blocks: [
-      { ul: [
-        "本保険のご加入手続き等について、保険契約者（団体）は加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）〔以下、個人情報〕を各種保険契約の引受け・継続・維持管理、給付金の支払い、その他保険に関連・付随する業務のために利用し、引受保険会社に前記目的の範囲内で提供します。今後個人情報に変更等が発生した際にも、それぞれ前記に準じ個人情報が取扱われます。",
-        "保険医療等の機微（センシティブ）情報については、保険業法施行規則により、業務の適切な運営の確保その他必要と認められる目的に利用目的が限定されています。",
-        "個人番号及び特定個人情報の取扱いについて\n個人番号及び特定個人情報については、「行政手続における特定の個人を識別するための番号の利用等に関する法律」第9条に基づき、団体保険、団体年金保険、および財形保険に関する支払い調書等作成事務に利用目的を限定しており、当該利用目的の範囲を超えた利用、第三者提供はいたしません。",
-        "T&Dフィナンシャル生命では、お客さまの個人情報に関するお問い合わせ窓口を設けています。保有個人データの開示、訂正、利用停止などのご請求、その他個人情報に関するお問い合わせは下記までご連絡いただけますようお願いします。",
-      ] },
-      { link: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
-      { ul: ["最新の内容はT&Dフィナンシャル生命ホームページ（https://www.tdf-life.co.jp）にてご確認ください。"] },
-    ],
-  },
-  {
-    kind: "agree",
-    t: "ペーパーレス申込の同意",
-    blocks: [
-      { p: "ペーパーレス手続きとは、情報端末（以下「タブレット等」といいます）による生命保険契約のお申込み手続きです。" },
-      { ul: [
-        "お客さま自身によるペーパーレス手続きのお願い\nタブレット等の画面等でおこなう各種ご確認・入力は被保険者さま（以下「お客さま」といいます）ご自身によりおこなってください。",
-        "セキュリティについて\n1. お客さまがタブレット等で確認・入力したすべての情報は、当社において電磁的記録（電子データ）によって保管します。\n2. タブレット等の情報端末内にお客さまの情報は保存しません。データの伝送についても、データを暗号化するなどのセキュリティ対策を講じます。",
-      ] },
-    ],
-  },
-  {
-    id: "insured",
-    t: "被保険者の確認",
-    blocks: [
-      { p: "該当するいずれかにチェックを入れてください。" },
-    ],
-  },
-  {
     t: "重要事項説明の確認",
     blocks: [
       { p: "以下の重要事項説明書をご確認ください。" },
       { download: "重要事項説明書" },
-    ],
-  },
-  {
-    t: "意向の確認",
-    blocks: [
-      { p: "シミュレーションをもとにT＆Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。" },
-      { ul: [
-        "がん保障型を選択した場合\n積立期間中のがんにそなえたい",
-        "三大疾病保障型を選択した場合\n積立期間中のがん・急性心筋梗塞・脳卒中にそなえたい",
-        "障害介護保障型を選択した場合\n積立期間中における障害・介護状態にそなえたい",
-        "がん・障害介護保障型を選択した場合\n積立期間中のがん、および障害・介護状態にそなえたい",
-        "三大疾病・障害介護保障型を選択した場合\n積立期間中のがん・急性心筋梗塞・脳卒中、および障害・介護状態にそなえたい",
-      ] },
     ],
   },
   {
@@ -2213,7 +2280,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
 }
 
 export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
-  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+  const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
   const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
@@ -2229,7 +2296,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
     cancer_care: { d: "がん、障害・介護状態、死亡", n: "がん、障害・介護状態" },
     three_care:  { d: "三大疾病、障害介護状態、死亡", n: "三大疾病、障害介護状態" },
   };
-  const ikoMid = ((IKO as Record<string, any>)[sel] || IKO.cancer)[deathOpt ? "d" : "n"];
+  const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
   // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
@@ -2259,7 +2326,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               変更不可
             </span>
           </div>
-          <Row k="契約プラン" v={plan.name} strong />
+          <Row k="契約プラン" v={PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name} strong />
           <Row k="毎月の積立金額（希望給付額）" v={`${yen(m)} 円`} strong />
           <Row k="保障期間" v={`${y} 年`} strong />
           <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
@@ -2300,7 +2367,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Field label="町名" value="丸の内１丁目" />
               <Field label="番地など" value="1-1" />
               <Field label="建物名／部屋番号" value="丸の内ビル 10F" />
-              <Field label="電話番号" value="09000000000" />
+              <Field label="電話番号" value="090-0000-0000" />
               <Field label="メールアドレス" value="samplename@sample.co.jp" />
             </div>
           ) : (
@@ -2314,7 +2381,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                 <span className="text-caption text-neutral-500">住所</span>
                 <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
               </div>
-              <Row k="電話番号" v="09000000000" />
+              <Row k="電話番号" v="090-0000-0000" />
               <Row k="メールアドレス" v="samplename@sample.co.jp" />
             </>
           )}
@@ -2363,7 +2430,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                   </div>
                 )}
               </div>
-              <Field label="電話番号" value="09000000000" />
+              <Field label="電話番号" value="090-0000-0000" />
             </div>
           ) : (
             <>
@@ -2380,7 +2447,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                   <span className="text-h6 text-neutral-700 leading-relaxed">〒{BEN_ADDR.zip}<br/>{BEN_ADDR.line1} {BEN_ADDR.line2}</span>
                 </div>
               )}
-              <Row k="電話番号" v="09000000000" />
+              <Row k="電話番号" v="090-0000-0000" />
             </>
           )}
         </div>
@@ -2479,7 +2546,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                     </div>
                     {nat === "other" && (
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-[color:var(--secondary-color-700)]">*</span></span>
+                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <ReqBadge /></span>
                         <div className="grid grid-cols-2 gap-3">
                           {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
                             <button key={k} onClick={() => setJpLang(k)}
@@ -2501,7 +2568,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-h6 text-neutral-700 leading-relaxed">{confirmNums}について確認、{agreeNums}について同意する</span>
+            <span className="text-h6 text-neutral-700 leading-relaxed">①②③④について確認する</span>
           </button>
         </div>
       </div>
@@ -2855,8 +2922,8 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt = () => {}, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; setDeathOpt?: (v: boolean) => void; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
-  const plan = PLANS.find((p) => p.id === sel) || PLANS[0];
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }) {
+  const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [heigaiOpen, setHeigaiOpen] = useState(false);
   const [noticeOpen, setNoticeOpen] = useState(false);
@@ -2885,7 +2952,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
               <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <span className="text-caption font-medium text-neutral-600">生年月日<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+              <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
               <button type="button" onClick={() => setPickerOpen(true)}
                 className={"fld flex items-center justify-between gap-2 h-11 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
                 <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
@@ -2893,7 +2960,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
               </button>
             </div>
             <div className="flex flex-col gap-1.5">
-              <span className="text-caption font-medium text-neutral-600">性別<span style={{ color: 'var(--color-attention)' }} className="ml-0.5">*</span></span>
+              <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
               <div className="flex gap-2">
                 {["男性", "女性"].map((g) => (
                   <button key={g} onClick={() => setGender(g)}
@@ -2999,15 +3066,15 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
           <div style={{ marginTop: '48px' }}>
           <StepSection label="プランを選ぶ" n={1} big>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
-            {PLANS.map((p, i) => (
-              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
+            {PLAN_CARDS.map((p, i) => (
+              <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
             ))}
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
           <div className="-mx-5 px-5 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
-              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
+              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
           </div>
           </>)}
@@ -3023,11 +3090,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
           </StepSection>
           </div>
           {/* プランを選ぶ */}
-          <div className="-mx-5 px-5 py-6 relative" style={{ background: "#EAF9FE" }}>
+          <div className="-mx-5 px-5 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="プランを選ぶ" n={2} big className="mt-8">
               <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
-              {PLANS.map((p, i) => (
-                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} death={deathOpt} onDeath={setDeathOpt} />
+              {PLAN_CARDS.map((p, i) => (
+                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
               ))}
             </StepSection>
           </div>
@@ -3051,13 +3118,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
                   <span className="text-caption font-medium text-neutral-700">申込みは本人様名義のクレジットカードが必要です</span>
                 </div>
               </div>
-              {/* メールアドレスのご入力 */}
+              {/* 事前同意事項のご確認 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
-                <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
-                <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
-                <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
-              </div>
-              <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
                 <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
                 <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
                 <button onClick={() => setNoticeOpen(true)}
@@ -3068,13 +3130,20 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
                   </span>
                   <Ic.chevR className="w-5 h-5 text-[color:var(--secondary-color-600)] shrink-0" />
                 </button>
-                <button onClick={() => setAgree((a) => !a)} className="flex items-start gap-3 w-full text-left pt-1">
+                <div className={"flex items-start gap-3 w-full text-left pt-1 transition-opacity " + (agree ? "" : "opacity-40 pointer-events-none")}>
                   <span className={"grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 " + (agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white")}>
                     {agree && <Ic.check className="w-3 h-3" />}
                   </span>
                   <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-                </button>
+                </div>
               </div>
+              {/* メールアドレスのご入力 */}
+              <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-5 space-y-3">
+                <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
+                <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
+                <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+              </div>
+              {agree && <div style={{ height: '80px' }} aria-hidden="true" />}
             </StepSection>
           </div>
         </div>
@@ -3091,7 +3160,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, setDeathOpt =
                 <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
               </>
             ) : (
-              <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>上記に同意してメールを送信</Btn>
+              <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
             )}
             {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
             {agree && (
