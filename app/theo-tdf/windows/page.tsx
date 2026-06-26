@@ -276,6 +276,17 @@ export default function TheoTdfWindowsPage() {
             />
           ),
         },
+        {
+          key: "st-step2-accordion",
+          label: "アコーディオン表示（がんプラン＋死亡保障 展開）",
+          el: (
+            <ScreenStep2
+              go={noop} sel="cancer_d" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              planCardStyle="accordion" initialPlanOpenId="cancer_d"
+            />
+          ),
+        },
       ],
     },
 
@@ -305,7 +316,7 @@ export default function TheoTdfWindowsPage() {
       badge: "STEP 3",
       screens: [
         {
-          // 告知モーダルは ScreenForm マウント時に既定表示される（initialDisclosureOpen 省略時）
+          // initialDisclosureOpen={true} で告知モーダルをマウント時に開いた状態で表示
           key: "form-disclosure",
           label: "モーダルあり：告知（全文表示）",
           // ステッパー直下(140px)から告知モーダル全文を表示。height:auto のシート全高＋上部140に合わせる。
@@ -315,6 +326,7 @@ export default function TheoTdfWindowsPage() {
             <ScreenForm
               go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true}
             />
           ),
         },

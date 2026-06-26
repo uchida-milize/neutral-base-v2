@@ -110,8 +110,8 @@ def must_replace(t, old, new):
 # NOTE: 新 kumikomi(1.4) で simFirst が末尾に追加されたシグネチャに同期。
 # initialShowSend (§14.11 CTA 表示) と initialTipIdx (A: ツールチップ1つ静的展開) を注入。
 body = must_replace(body,
-    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst })",
-    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst })")
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, emailVerified, simFirst, planCardStyle = \"card\" })",
+    "function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst, planCardStyle = \"card\", initialPlanOpenId })")
 # initialBirth: windows でシミュレーション上限エラー(加入年齢+保障期間>90)を静的再現するため
 # 生年月日を初期注入できるようにする。body 内 birth は ScreenStep2 のみ (ScreenCombined は screen_combined)。
 body = must_replace(body,
@@ -131,8 +131,8 @@ body = must_replace(body, 'const [nat, setNat] = useState("jp");', 'const [nat, 
 # 新 kumikomi(1.4) で simFirst 追加。initialAgree / initialShowSend (§14.11) と
 # initialTipIdx (A) を注入。
 screen_combined = must_replace(screen_combined,
-    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst })",
-    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, initialAgree, initialShowSend, initialTipIdx })")
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = \"card\" })",
+    "function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = \"card\", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId })")
 # useState 初期値の wiring (body の showSend は ScreenStep2 のみ、screen_combined は ScreenCombined のみ)
 # formPage は ScreenOverview と ScreenForm の両方に存在するため、ScreenForm 固有のコメント文脈で限定置換する。
 body = body.replace(
@@ -166,7 +166,7 @@ body = must_replace(body,
 
 
 def wire_tip(t):
-    # PLAN_CARDS.map (handoff(4)) / PLANS.map に index を渡し、initialTipIdx と一致する 1 枚だけ tooltip を開く。
+    # PLAN_CARDS.map (handoff(4)~) / PLANS.map に index を渡し、initialTipIdx と一致する 1 枚だけ tooltip を開く。
     t = t.replace("PLAN_CARDS.map((p) =>", "PLAN_CARDS.map((p, i) =>")
     t = t.replace("PLANS.map((p) =>", "PLANS.map((p, i) =>")
     t = t.replace(
@@ -177,6 +177,29 @@ def wire_tip(t):
 
 body = wire_tip(body)
 screen_combined = wire_tip(screen_combined)
+
+# ---- handoff(5): PlanList に initialTipIdx を注入 (PlanCard 呼び出しで参照するため) ----
+# PlanList は新 kumikomi で追加。card モード内で PLAN_CARDS.map → wire_tip が
+# initialTtOpen={i === initialTipIdx} を注入するが、PlanList のスコープに
+# initialTipIdx が無いとTS エラーになるため prop として追加する。
+# ScreenStep2 / ScreenCombined からも initialTipIdx を渡す。
+body = must_replace(body,
+    "function PlanList({ sel, setSel, mode = 'card' })",
+    "function PlanList({ sel, setSel, mode = 'card', initialTipIdx, initialOpenId })")
+# PlanList の toggleOpen コールバック: id が implicit-any → 型注釈
+body = body.replace(
+    "  const toggleOpen = (id) => setOpenIds(",
+    "  const toggleOpen = (id: string) => setOpenIds(")
+# initialOpenId で accordion の初期展開項目を制御 (windows 静的プレビュー用)
+body = body.replace(
+    "  const [openIds, setOpenIds] = React.useState(() => new Set());",
+    "  const [openIds, setOpenIds] = React.useState<Set<string>>(() => new Set(initialOpenId ? [initialOpenId] : []));")
+body = body.replace(
+    "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} />",
+    "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />")
+screen_combined = screen_combined.replace(
+    "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} />",
+    "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />")
 
 # ---- 各画面コンテンツ背景の白→薄ブルー縦グラデ (Claude Design / ScreenCombined と統一) ----
 # ScreenCombined は kumikomi 側で既に content に gradient を持つ。他のフロー画面にも
@@ -339,7 +362,7 @@ TYPE = {
   "WheelCol": "{ items: string[]; index: number; onChange: (v: number) => void; flex?: number; align?: string }",
   "DateDrumSheet": "{ open: boolean; value: string; onClose: () => void; onDone: (v: string) => void }",
   "ScreenOverview": "{ go: Go; initialHeigaiOpen?: boolean }",
-  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean }",
+  "ScreenStep2": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialPlanOpenId?: string }",
   "ScreenPin": "{ go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }",
   "ScreenPhone": "{ go: Go; onVerified?: () => void; backScr?: number; toScr?: number }",
   "Row": "{ k: string; v: React.ReactNode; strong?: boolean }",
@@ -360,7 +383,9 @@ TYPE = {
   "ScreenStatus": "{ variant?: string; go: Go }",
   "ScreenEnded": "{ onRestart: () => void }",
   "ScreenIntro": "{ go: Go }",
-  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number }",
+  "ScreenCombined": "{ go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string }",
+  "PlanList": "{ sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; mode?: string; initialTipIdx?: number; initialOpenId?: string }",
+  "PlanCardAccordion": "{ p: Plan; selected: boolean; onSelect: () => void; open: boolean; onToggle: () => void }",
 }
 
 def inject_type(t, name, typ):
@@ -438,15 +463,12 @@ body = must_replace(body,
     "  const qCards = [];",
     "  const qCards: React.ReactNode[] = [];")
 
-# infoPlan は modalPlan (Plan | undefined) で初期化。initialDisclosureOpen=false 時は null にする。
+# infoPlan: handoff(5) で auto-open を廃止 → useState(null) に変更。
+# windows の静的プレビューで告知モーダルを表示したい場合は initialDisclosureOpen={true} を渡す。
 body = must_replace(body,
-    "const [infoPlan, setInfoPlan] = useState(() => modalPlan);",
-    "const [infoPlan, setInfoPlan] = useState<Plan | null>(() => initialDisclosureOpen === false ? null : (modalPlan ?? null));")
-
-# kokuchiPattern 切替 useEffect: initialDisclosureOpen=false の静的プレビューではスキップ
-body = must_replace(body,
-    "useEffect(() => { setInfoPlan(modalPlan); }, [kokuchiPattern]);",
-    "useEffect(() => { if (initialDisclosureOpen !== false) setInfoPlan(modalPlan); }, [kokuchiPattern]);")
+    "const [infoPlan, setInfoPlan] = useState(null);",
+    "const [infoPlan, setInfoPlan] = useState<Plan | null>(initialDisclosureOpen ? (modalPlan ?? null) : null);")
+# NOTE: handoff(5) で kokuchiPattern 切替 useEffect が削除されたため、対応 must_replace も撤去済み。
 
 # ScreenOverview の heigaiOpen を initialHeigaiOpen prop で制御
 # inject_type は型注釈のみ追加するため、destructuring にも initialHeigaiOpen を追加する
@@ -615,7 +637,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (4) (kumikomi.html 単一ファイル版を正) (2026-06-26 取り込み)
+   原典: TD 組込1.5-handoff (5) (kumikomi.html 単一ファイル版を正) (2026-06-26 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は

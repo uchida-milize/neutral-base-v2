@@ -1,6 +1,6 @@
 # Handoff — 汎用 + テナント別デザインシステム × 顧客 UI/UX 構築フロー
 
-最終更新: 2026年6月22日 (TD 組込1.5 → 1.5(1) 取り込み: 新プラン体系/健康告知/積立上限バリデーション、死亡保障オプション deathOpt、インライン検証 errMode、windows バリアント大幅追加、port スクリプト堅牢化。最新はセクション 17 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
+最終更新: 2026年6月26日 (TD 組込1.5-handoff(4) fafd9913 取り込み: PLAN_CARDS フラット化・planIdFromSel/deathFromSel・ReqBadge・PIN 6-box・ScreenPhone 削除。最新はセクション 18 参照。なお Claude Design の取り込みは単一ファイル版 `kumikomi.html` を正とする — §11.2)
 
 新しい Cowork チャットを開いた時、このファイルを添付すれば文脈を引き継げます。
 
@@ -1642,3 +1642,105 @@ Figma に画面をコピーする手描き型インポータープラグイン�
 ### 17.10 現在の状態 / 次タスク
 - `tsc`/`eslint` グリーン。port 再生成バイト一致。git は未 push（お客様がターミナルで実施）。
 - 次の取り込み（`TD 組込1.5-handoff (2).zip`）用キックオフプロンプトを別途用意済み（本セッション成果物 `kickoff-next.md`）。**tweaks の完全同期**（errMode の選択式 tweak 化含む）を次タスクで実施予定。
+
+---
+
+## 18. セッションログ 2026-06-26 (TD 組込1.5-handoff(4) fafd9913 取り込み)
+
+### 18.1 取り込んだ handoff
+
+| zipファイル | ハッシュ | 内容 |
+|---|---|---|
+| `TD 組込1.5-handoff (4)-fafd9913.zip` | fafd9913 | PLAN_CARDS フラット化・planIdFromSel/deathFromSel・ReqBadge・PIN 6-box・ScreenPhone |
+
+### 18.2 主な変更点
+
+#### プランID体系の変更（最重要）
+- 旧: `sel = "cancer"` + `deathOpt: boolean` で2変数
+- 新: `sel = "cancer_d"` / `"cancer_n"` — `_d`(死亡保障あり) / `_n`(なし) をIDに内包
+- `PLAN_CARDS: (Plan & { planId: string })[]` — 5プラン×2 = 10枚のフラット配列
+  - ID形式: `cancer_d`, `cancer_n`, `care_d`, `care_n`, `three_d`, `three_n`, `three_care_d`, `three_care_n`, `cancer_care_d`, `cancer_care_n`
+- `planIdFromSel(sel: string)`: `"cancer_d"` → `"cancer"` （末尾 `_d`/`_n` を除去）
+- `deathFromSel(sel: string)`: `"cancer_d"` → `true`
+
+#### app-shell.tsx の変更
+```tsx
+// 旧
+const [deathOpt, setDeathOpt] = useState(true);
+// 新（useState廃止、sel から導出）
+const deathOpt = deathFromSel(sel);
+```
+- `sel` 初期値: `"cancer_d"`
+- `NSCR = 8`（ScreenPhone 削除で 9→8）
+- ScreenCombined / ScreenStep2 から `setDeathOpt` prop を削除
+
+#### ScreenPhone の扱い
+- screens.tsx には定義されているが **UI からは完全削除**
+- app-shell.tsx: import・screens配列エントリ・FLOW エントリをすべて削除
+- windows/page.tsx: ScreenPhone グループを削除
+
+#### その他 UI 変更
+- `ReqBadge`: 必須バッジコンポーネント追加
+- PIN 入力: 4ボックス → 6ボックスに変更
+- Simulator 上部バッジ: 横並び(`flex items-center gap-3`) → 縦積み(`flex flex-col gap-2`) に変更
+
+#### globals.css
+- `--font-jp` に Noto Sans JP を追加（`@font-face` 300/400/500/700）
+- `.fld:focus` から `box-shadow` を削除
+- `.pin-box` / `.pin-box:focus` を追加（width:44px height:56px, border-radius:12px）
+
+### 18.3 port スクリプトの変更点（scripts/port-claude-design-1.4.py）
+
+#### must_replace の old string 更新
+- `ScreenStep2` シグネチャ: `setDeathOpt = () => {},` を削除した新シグネチャに更新
+- `ScreenCombined` シグネチャ: 同様に更新
+- `PlanCard` シグネチャ: `death = true, onDeath = () => {}` を削除した `{ p, selected, onSelect }` に更新
+- 死亡保障トグル行: `must_replace` → `body.replace`（silent no-op 化、新kumikomi では削除済み）
+
+#### 新 must_replace / replace
+- `ikoMid`: `(IKO as Record<string, any>)[planIdFromSel(sel)]` 型アサーション追加
+- `wire_tip`: `PLAN_CARDS.map((p) =>` → `PLAN_CARDS.map((p, i) =>`
+
+#### 新型注釈
+```python
+"const PLAN_CARDS: (Plan & { planId: string })[] = ..."
+"function planIdFromSel(sel: string) {"
+"function deathFromSel(sel: string)  {"
+"const pinRefs = useRef<HTMLInputElement[]>([]);"
+"const setDigit = (i: number, v: string) => {"
+"const onPinKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {"
+"const onPinPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {"
+```
+
+### 18.4 windows/page.tsx の変更点
+- ScreenCombined 3箇所: `sel="cancer"` → `sel="cancer_d"` に変更（Simulator planName が undefined になっていたバグを修正）
+- ScreenStep2 は元から `sel="cancer_d"` 形式
+- ScreenForm の `sel="care"` 等は kokuchiPattern 専用で意図的に旧形式（Simulator 非表示のため影響なし）
+
+### 18.5 最終コミット状態
+```
+b2dde5f fix: windows/page.tsx sel cancer→cancer_d (Simulator plan badge fix)
+7a96d47 ScreenPhone を UI から削除（NSCR=8 に戻す）
+2ce6167 TD 組込1.5 handoff(4): PLAN_CARDS / ScreenPhone / ReqBadge / PIN 6-box
+```
+- `tsc --noEmit` = 0 errors
+- git push はうちださんがターミナルから実施
+
+### 18.6 次タスクへの引き継ぎプロンプト
+
+新しい Cowork セッションを開いたら、`handoff.md` を添付して以下をそのまま貼る:
+
+```
+添付の handoff.md を読んでください。セクション 18 が最新の状態です。
+theo-tdf Claude Design の実装を続けます。
+
+【今回のタスク】
+（ここに具体的な作業を記載）
+
+作業前に必ず以下を確認してください:
+1. kumikomi.html の該当箇所を Read して最新デザインを確認
+2. screens.tsx は port script で再生成するので直接編集しない
+3. tsc --noEmit でエラーがないことを確認して終了
+
+git コマンドは出力するだけ（実行はうちださんがターミナルから）。
+```

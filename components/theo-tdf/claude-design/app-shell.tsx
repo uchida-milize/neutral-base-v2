@@ -199,6 +199,7 @@ function Phone({
 const TWEAK_DEFAULTS = {
   patternB: false,
   simFirst: false,
+  planCardStyle: "card" as string,
   errMode: "inline" as string,
   benSameAddr: true,
   kokuchiPattern: "auto" as string,
@@ -233,11 +234,11 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
     <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
@@ -287,6 +288,16 @@ export function TheoTdfClaudeDesignShell() {
           <TweakSection label="全体表示パターン" />
           <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
           <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
+          <TweakSection label="プラン選択" />
+          <TweakSelect
+            label="プランカード表示"
+            value={tw.planCardStyle}
+            onChange={(v) => setTweak("planCardStyle", v)}
+            options={[
+              { value: "card",      label: "現行カード（10枚並べ）" },
+              { value: "accordion", label: "アコーディオン（提案）" },
+            ]}
+          />
           <TweakSection label="申込フォーム" />
           <TweakSelect
             label="入力エラー表示"
