@@ -1744,3 +1744,133 @@ theo-tdf Claude Design の実装を続けます。
 
 git コマンドは出力するだけ（実行はうちださんがターミナルから）。
 ```
+
+---
+
+## 19. セッションログ 2026-06-29 (handoff(9) 取り込み + windows サブページ分割)
+
+最終更新: 2026年6月29日
+
+### 19.1 取り込んだ handoff
+
+| バージョン | 内容 |
+|---|---|
+| TD 組込1.5-handoff(9) | PlanCardAccordion（アコーディオン表示スタイル）・告知10パターン・kokuchiPattern props・initialTipIdx（プランツールチップ展開）・benSameAddr（受取人住所分離）・各種バリアント追加 |
+
+### 19.2 kumikomi.html / screens.tsx の主な変更点
+
+#### PlanCardAccordion の追加
+- `ScreenStep2` に `planCardStyle="accordion"` / `initialPlanOpenId` props を追加
+- `PlanCardAccordion` コンポーネントに `initialTtOpen?: boolean` を追加（`useState(initialTtOpen ?? false)` で初期化）
+- port スクリプトで `body.replace`（`must_replace` ではなく）を使い `PlanCard` / `PlanCardAccordion` 両方の `useState(false)` を同時置換
+
+#### 告知10パターン（kokuchiPattern）
+- `ScreenForm` に `kokuchiPattern` / `deathOpt` props を追加
+- windows の告知グループ（key: `"form-kokuchi"`, badge: `"STEP 3 告知"`）で10バリアントを網羅
+
+#### フッターフロート対応（+48px 下パディング）
+- 全スクロールエリアに +48px のボトムパディングを追加（商品概要・完了は除外）
+- port スクリプトの `_grad_targets` を `(old_str, new_str_prefix)` タプルのリストに変更し、グラデーションと同時にパディングも付与
+
+#### 男性/女性ボタン幅の修正
+- `birthGenderFields` 内の全ラッパー div に `style={{ width: "100%" }}` を追記
+- ボタン並びを `display: grid; gridTemplateColumns: 1fr 1fr` に変更
+- `screen-flat .flex-1 { flex: none !important }` の影響で `flex-1` が無効化されていたのが根本原因 — inline style + grid で回避
+
+#### globals.css の screen-flat ルール（参考・変更なし）
+```css
+.screen-flat .overflow-y-auto { overflow-y: visible !important; }
+.screen-flat .flex-1 { flex: none !important; }
+.screen-flat .sticky { position: static !important; }
+```
+
+### 19.3 windows ページのサブページ分割
+
+#### 新ファイル構成
+
+| ファイル | 役割 |
+|---|---|
+| `app/theo-tdf/windows/shared.tsx` | 型定義（ScreenDef / ScreenGroupDef）・StaticScreen・ScreenGroupSection・`makeGroups(noop)` を集約 |
+| `app/theo-tdf/windows/page.tsx` | インデックス：H1 + グループ別ナビゲーションボタン |
+| `app/theo-tdf/windows/[group]/page.tsx` | 動的サブページ：`params.group` でグループを特定、ScreenGroupSection を表示。パンくず + 前後ナビ付き |
+
+#### URL 一覧
+
+| URL | グループ | バッジ |
+|---|---|---|
+| `/theo-tdf/windows` | インデックス（ナビボタン一覧） | — |
+| `/theo-tdf/windows/overview` | 商品概要 | STEP 1 |
+| `/theo-tdf/windows/step2` | プラン選択 | STEP 2 |
+| `/theo-tdf/windows/pin` | PINコード認証 | PIN認証 |
+| `/theo-tdf/windows/form` | 申込フォーム | STEP 3 |
+| `/theo-tdf/windows/form-kokuchi` | 申込フォーム — 告知10パターン | STEP 3 告知 |
+| `/theo-tdf/windows/step4` | 内容確認・お支払い | STEP 4 |
+| `/theo-tdf/windows/card` | クレジットカード承認 | 外部サイト |
+| `/theo-tdf/windows/done` | 完了 | STEP 5 |
+| `/theo-tdf/windows/ended` | 申込キャンセル終了 | 終了 |
+
+#### 設計のポイント
+- `makeGroups(noop)` はファクトリ関数。React 要素（`<ScreenOverview go={noop} />` 等）を呼び出し元で生成するため "use client" が前提
+- 共通の `StaticScreen` / `ScreenGroupSection` は `shared.tsx` に一元化し、インデックスとサブページの両方で利用
+- `tsc --noEmit` エラー 0 を確認済み
+
+### 19.4 viewUrl の確定（windows 全グループ）
+
+全スクリーンカードに `viewUrl` を付与済み（`/theo-tdf-view?s=N[&params]` 形式）。グループヘッダーの `viewS` は削除。
+
+| グループ | viewUrl パラメータ |
+|---|---|
+| 商品概要 | `?s=0` / `?s=0&patternB=1` |
+| プラン選択 | `?s=1` / `?s=1&simFirst=1` / `?s=1&planCardStyle=accordion&planOpenId=cancer_d` |
+| PIN認証 | `?s=2` |
+| 申込フォーム | `?s=3[&disclosure=1][&errMode=…][&errStep=…]` |
+| 告知10パターン | `?s=3&disclosure=1&kokuchiPattern=…` |
+| 内容確認 | `?s=4[&editKiyaku=1&editJuushin=1][&benSameAddr=0]` |
+| カード | `?s=5` / `?s=6` |
+| 完了 | `?s=7` / `?s=7&doneVariant=processing/error/maint` |
+| 終了 | リンクなし |
+
+### 19.5 git コミット候補
+
+```bash
+git add app/theo-tdf/windows/shared.tsx \
+        app/theo-tdf/windows/page.tsx \
+        "app/theo-tdf/windows/[group]/page.tsx" \
+        components/theo-tdf/claude-design/kumikomi.html \
+        components/theo-tdf/claude-design/screens.tsx \
+        scripts/port-claude-design-1.4.py
+git commit -m "feat: handoff(9) + windows sub-pages split by STEP group"
+```
+
+### 19.6 Figma 書き出しへの引き継ぎ（次タスク）
+
+**背景**: windows サブページ分割により、各 STEP の画面群が個別 URL で確認できるようになった。Figma MCP での書き出しはこの URL 体系を活用する。
+
+**推奨フロー**:
+1. まず `shared.tsx` の `makeGroups()` を読んで全バリアントの props を把握する
+2. `kumikomi.html` / `screens.tsx` を参照してコンポーネント構造・CSS クラス・CSS 変数を確認する
+3. `app/globals.css` + `components/theo-tdf/tokens.css` から Color Variables / Typography スケールを確認する
+4. Figma MCP で Variables（Color コレクション）→ Components（ボタン・フォームUI等）→ 画面 Frame の順に作成する
+
+**Figma 書き出し時の重要メモ**:
+- カラートークン: `--primary-color-*` / `--secondary-color-*` / `--button-color-*` / `--cta-color-*` (9段階) + `--warm-*` (4段階)
+- タイポグラフィ: `text-h1`（34px）〜 `text-tiny`（10px）、フォント = Noto Sans JP（日本語）+ Chillax（英数 見出し）+ Inter（コード系）
+- 画面幅: 390px、最小高さ: 693px（9:16 相当）
+- スコープクラス: `.theo-tdf-cd` + `.font-jp` が各画面ルートに付与される
+
+**次回セッションのキックオフ（HANDOFF.md 添付）**:
+```
+HANDOFF.md を読んでください。セクション 19 が最新状態です。
+theo-tdf の UI を Figma MCP で書き出したいです。
+
+【今回のタスク】
+STEP 1 商品概要（/theo-tdf/windows/overview）の画面群を Figma に書き出します。
+添付の画像を参照しながら、以下の順で進めてください:
+1. globals.css + components/theo-tdf/tokens.css を Read して Color Variables を Figma に登録
+2. Typography スケール（h1〜tiny）を Text Styles として登録
+3. ボタン・入力フォーム等の共通コンポーネントを Component Sets として作成
+4. 商品概要の各バリアントを Frame として配置（5パターン）
+
+git コマンドは出力するだけ（実行はうちださんがターミナルから）。
+screens.tsx は直接編集しない（port script で再生成）。
+```
