@@ -763,6 +763,11 @@
   }
   .no-sb::-webkit-scrollbar { width: 0; height: 0; }
   .no-sb { scrollbar-width: none; }
+
+  /* screen-flat: /theo-tdf/windows でページ内スクロールなし・コンテンツ全展開 */
+  .screen-flat .overflow-y-auto { overflow-y: visible !important; }
+  .screen-flat .flex-1 { flex: none !important; }
+  .screen-flat .sticky { position: static !important; }
   .fld:focus {
     outline: none;
     border-color: var(--primary-color-400);

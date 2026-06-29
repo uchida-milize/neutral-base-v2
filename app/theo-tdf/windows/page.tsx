@@ -49,12 +49,12 @@ type ScreenGroupDef = {
 /* ---- 単一の静的スクリーン ---- */
 function StaticScreen({
   label,
-  height,
-  fullSheet,
   children,
 }: {
   label: string;
+  /** @deprecated 固定高さ廃止。コンテンツの自然な高さで全展開 */
   height?: number;
+  /** @deprecated fullSheet も自然高さで展開 */
   fullSheet?: boolean;
   children: React.ReactNode;
 }) {
@@ -63,14 +63,12 @@ function StaticScreen({
       <figcaption>
         <p className="text-h6 font-semibold text-foreground">{label}</p>
       </figcaption>
+      {/* screen-flat: overflow-y-auto → visible / flex-1 → none / sticky → static */}
       <div
-        className={`theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm transition-colors duration-300${fullSheet ? " theo-sheet-full overflow-visible" : " overflow-hidden"}`}
-        style={{ width: 390, height: height ?? 812 }}
+        className="theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm overflow-hidden"
+        style={{ width: 390 }}
       >
-        <div
-          className="flex flex-col"
-          style={{ height: "100%" }}
-        >
+        <div className="flex flex-col">
           {children}
         </div>
       </div>
