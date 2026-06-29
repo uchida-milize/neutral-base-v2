@@ -1200,7 +1200,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             </div>
 
             {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-6 mt-8 bg-primary-10 px-4 pt-10 pb-2">
+            <div className="-mx-6 mt-8 bg-primary-10 px-4 pt-10 pb-6">
               <div className="mb-12">
                 <div className="text-center">
                   <span className="inline-block text-h3 font-bold text-neutral-900 px-2 py-[2px] rounded">必要書類</span>
@@ -1225,11 +1225,10 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
                 <Ic.chevD className="w-6 h-6 text-primary-500 animate-bounce" />
               </div>
-              <div className="border-t border-primary-100 mt-3 mb-2"></div>
-              <div className="text-left pb-1">
-                <span className="block text-[11px] text-neutral-400 leading-none">保険名称</span>
-                <p className="mt-1 text-[12px] text-neutral-600 leading-[140%]">無配当特定疾病障害介護保障保険（団体型）</p>
-              </div>
+            </div>
+            <div className="pt-3 pb-1">
+              <span className="block text-[11px] text-neutral-400 leading-none">保険名称</span>
+              <p className="mt-1 text-[12px] text-neutral-600 leading-[140%]">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
 
           </div>
