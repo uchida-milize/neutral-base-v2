@@ -378,7 +378,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
-        <div className="px-4 pt-6 pb-[72px] space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 mb-2">
@@ -1164,7 +1164,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-6 pt-6 pb-12" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-6 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
@@ -1370,10 +1370,10 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-                <div className="flex w-full gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
-                      className={`flex-1 h-12 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
+                      className={`h-12 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
                   ))}
                 </div>
               </div>
@@ -2020,11 +2020,11 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </div>
           <div ref={setFieldRef('benGender')} className="flex flex-col gap-2">
             <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-            <div className="flex w-full gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {["男性", "女性"].map((g) => (
                 <button key={g} onClick={() => setBenGender(g)}
                   style={errState.benGender ? errInputStyle : undefined}
-                  className={`flex-1 h-12 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : errState.benGender ? "border-[color:var(--color-attention)] text-neutral-600" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
+                  className={`h-12 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : errState.benGender ? "border-[color:var(--color-attention)] text-neutral-600" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
               ))}
             </div>
             {errMode === 'inline' && errState.benGender && <ErrText>{errMap.benGender}</ErrText>}
@@ -2792,7 +2792,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
           <Steps n={5} go={go} />
         </div>
 
-        <div className="px-4 pt-6 pb-[72px] space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <div className="px-1">
             <p className="text-h6 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
