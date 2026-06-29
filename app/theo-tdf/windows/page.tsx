@@ -63,11 +63,11 @@ function StaticScreen({
       </figcaption>
       <div
         className={`theo-tdf-cd font-jp relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm transition-colors duration-300${fullSheet ? " theo-sheet-full overflow-visible" : " overflow-hidden"}`}
-        style={{ width: 390, height }}
+        style={{ width: 390, height: height ?? 812 }}
       >
         <div
           className="flex flex-col"
-          style={height ? { height: "100%" } : { minHeight: 812 }}
+          style={{ height: "100%" }}
         >
           {children}
         </div>
@@ -710,6 +710,27 @@ export default function TheoTdfWindowsPage() {
             </a>
             {" "}を参照してください。
           </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Array.from({ length: 8 }, (_, i) => {
+              const labels = ["商品概要", "プラン選択", "PIN認証", "申込フォーム", "内容確認", "カード入力", "カード確認", "完了"];
+              return (
+                <a
+                  key={i}
+                  href={`/theo-tdf-view?s=${i}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-3 py-1 text-caption font-medium text-neutral-600 shadow-sm hover:border-primary hover:text-primary transition-colors"
+                >
+                  {labels[i]}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 opacity-60">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                </a>
+              );
+            })}
+          </div>
         </header>
       </div>
 

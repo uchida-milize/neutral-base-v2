@@ -283,20 +283,6 @@ export function TheoTdfClaudeDesignShell() {
               <Ic.chevR className="w-4 h-4" />
             </button>
           </div>
-          {/* bare view link — ブラウザ幅390pxで正しく見えるベアビュー */}
-          <a
-            href={`/theo-tdf-view?s=${scr}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-full bg-white border border-warm-200 px-3 h-9 text-[11px] font-medium text-neutral-500 shadow-sm hover:border-warm-300 hover:text-neutral-700 transition-colors"
-          >
-            HTMLで開く
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-          </a>
         </main>
         <TweaksSidebar>
           <TweakSection label="全体表示パターン" />
