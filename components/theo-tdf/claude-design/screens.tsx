@@ -1367,7 +1367,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-4 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-8 pb-40 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-6">
@@ -1894,7 +1894,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-40 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-6 -mt-6"><Steps n={3} go={go} /></div>
 
         {/* ② 上部サマリー：クリックで該当入力へスクロール */}
@@ -2107,7 +2107,10 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               {editErrors.length > 0 ? (
                 <div className="mt-2 pt-4 border-t border-warm-200 space-y-2">
                   {editErrors.map((e, i) => (
-                    <p key={i} className="text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>{e}</p>
+                    <div key={i} className="flex items-start gap-2 text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>
+                      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 mt-[2px]"><circle cx="10" cy="10" r="9"/><rect x="9" y="5.5" width="2" height="5.5" rx="1" fill="white"/><circle cx="10" cy="14" r="1.1" fill="white"/></svg>
+                      <span>{e}</span>
+                    </div>
                   ))}
                 </div>
               ) : (<>
