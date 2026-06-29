@@ -29,10 +29,12 @@ type ScreenDef = {
   /** 状態バリアント名 (「デフォルト」「重要事項ボトムシート」等) */
   label: string;
   el: React.ReactNode;
-  /** ボトムシート等 absolute 配置の状態バリアントは 820px 固定高さで描画 */
+  /** @deprecated 固定高さ廃止 */
   height?: number;
-  /** ハーフモーダル/ボトムシートをステッパー直下から全文表示する（.theo-sheet-full） */
+  /** absolute 配置のモーダル等を完全表示するため overflow-visible にする */
   fullSheet?: boolean;
+  /** このパターン専用の /theo-tdf-view URL（省略時はリンクなし） */
+  viewUrl?: string;
 };
 
 type ScreenGroupDef = {
@@ -46,27 +48,49 @@ type ScreenGroupDef = {
   viewS?: number;
 };
 
+const LINK_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 shrink-0">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    <polyline points="15 3 21 3 21 9"/>
+    <line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+);
+
 /* ---- 単一の静的スクリーン ---- */
 function StaticScreen({
   label,
+  fullSheet,
+  viewUrl,
   children,
 }: {
   label: string;
-  /** @deprecated 固定高さ廃止。コンテンツの自然な高さで全展開 */
   height?: number;
-  /** @deprecated fullSheet も自然高さで展開 */
+  /** absolute 配置のモーダル等を完全表示するため overflow-visible にする */
   fullSheet?: boolean;
+  /** ラベル横に表示する /theo-tdf-view リンク */
+  viewUrl?: string;
   children: React.ReactNode;
 }) {
+  /* 9:16 = 390 × 16/9 ≈ 693px を最小高さとして確保 */
   return (
     <figure className="flex flex-col items-start gap-2" style={{ width: 390 }}>
-      <figcaption>
+      <figcaption className="flex items-center gap-2">
         <p className="text-h6 font-semibold text-foreground">{label}</p>
+        {viewUrl && (
+          <a
+            href={viewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-2 py-0.5 text-[10px] font-medium text-neutral-400 shadow-sm hover:border-primary hover:text-primary transition-colors shrink-0"
+          >
+            HTML {LINK_ICON}
+          </a>
+        )}
       </figcaption>
       {/* screen-flat: overflow-y-auto → visible / flex-1 → none / sticky → static */}
       <div
-        className="theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm overflow-hidden"
-        style={{ width: 390 }}
+        className={`theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm${fullSheet ? " overflow-visible" : " overflow-hidden"}`}
+        style={{ width: 390, minHeight: 693 }}
       >
         <div className="flex flex-col">
           {children}
@@ -97,18 +121,13 @@ function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-2.5 py-0.5 text-[11px] font-medium text-neutral-500 shadow-sm hover:border-primary hover:text-primary transition-colors"
           >
-            HTMLで開く
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
+            HTMLで開く {LINK_ICON}
           </a>
         )}
       </div>
       <div className="flex items-start gap-6">
         {group.screens.map((s) => (
-          <StaticScreen key={s.key} label={s.label} height={s.height} fullSheet={s.fullSheet}>
+          <StaticScreen key={s.key} label={s.label} fullSheet={s.fullSheet} viewUrl={s.viewUrl}>
             {s.el}
           </StaticScreen>
         ))}
@@ -296,6 +315,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-accordion",
           label: "アコーディオン表示（がんプラン＋死亡保障 展開）",
+          viewUrl: "/theo-tdf-view?s=1&planCardStyle=accordion&planOpenId=cancer_d",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -388,6 +408,7 @@ export default function TheoTdfWindowsPage() {
           // errMode="inline": 「確認する」後に必須入力エラーを各フィールド下に赤字表示
           key: "form-err-inline",
           label: "エラー表示①：各入力の下に赤字（errMode=inline）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=inline",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -400,6 +421,7 @@ export default function TheoTdfWindowsPage() {
           // errMode="top": 「確認する」後に上部にエラー一覧（クリックで該当フィールドへジャンプ）
           key: "form-err-top",
           label: "エラー表示②：上部にまとめて（errMode=top）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=top",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -412,6 +434,7 @@ export default function TheoTdfWindowsPage() {
           // errMode="float" initialErrStep=0: 1/4 → 最初のエラー項目へ
           key: "form-err-float-1",
           label: "エラー表示③-a：フローティング「1/4 次の項目へ」（initialErrStep=0）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=0",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -424,6 +447,7 @@ export default function TheoTdfWindowsPage() {
           // errMode="float" initialErrStep=1: 2/4 → 2番目のエラー項目へ
           key: "form-err-float-2",
           label: "エラー表示③-b：フローティング「2/4 次の項目へ」（initialErrStep=1）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=1",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -436,6 +460,7 @@ export default function TheoTdfWindowsPage() {
           // errMode="float" initialErrStep=3: 4/4 → 最後のエラー項目へ（折り返しも確認）
           key: "form-err-float-4",
           label: "エラー表示③-c：フローティング「4/4 次の項目へ」（initialErrStep=3）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=3",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -458,6 +483,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-care_d",
           label: "① 障害・介護プラン（死亡あり）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=care_d",
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={true}
@@ -470,6 +496,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-care_n",
           label: "② 障害・介護プラン（死亡なし）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=care_n",
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={false}
@@ -482,6 +509,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cancer_d",
           label: "③ がんプラン（死亡あり）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cancer_d",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={true}
@@ -494,6 +522,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cancer_n",
           label: "④ がんプラン（死亡なし）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cancer_n",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={false}
@@ -506,6 +535,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cc_d",
           label: "⑤ がん・障害介護プラン（死亡あり）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cc_d",
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={true}
@@ -518,6 +548,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cc_n",
           label: "⑥ がん・障害介護プラン（死亡なし）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cc_n",
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={false}
@@ -530,6 +561,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-three_d",
           label: "⑦ 三大疾病プラン（死亡あり）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=three_d",
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={true}
@@ -542,6 +574,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-three_n",
           label: "⑧ 三大疾病プラン（死亡なし）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=three_n",
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={false}
@@ -554,6 +587,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-tc_d",
           label: "⑨ 三大疾病・障害介護プラン（死亡あり）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=tc_d",
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={true}
@@ -566,6 +600,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-tc_n",
           label: "⑩ 三大疾病・障害介護プラン（死亡なし）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=tc_n",
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={false}
@@ -608,6 +643,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-edit-both",
           label: "契約者情報＋保険金受取人 両方編集展開",
+          viewUrl: "/theo-tdf-view?s=4&editKiyaku=1&editJuushin=1",
           el: (
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
