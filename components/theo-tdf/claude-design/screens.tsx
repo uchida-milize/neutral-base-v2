@@ -1370,7 +1370,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-                <div className="flex gap-2">
+                <div className="flex w-full gap-2">
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
                       className={`flex-1 h-12 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
@@ -2020,7 +2020,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </div>
           <div ref={setFieldRef('benGender')} className="flex flex-col gap-2">
             <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-            <div className="flex gap-2">
+            <div className="flex w-full gap-2">
               {["男性", "女性"].map((g) => (
                 <button key={g} onClick={() => setBenGender(g)}
                   style={errState.benGender ? errInputStyle : undefined}
@@ -2980,7 +2980,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-              <div className="flex gap-2">
+              <div className="flex w-full gap-2">
                 {["男性", "女性"].map((g) => (
                   <button key={g} onClick={() => setGender(g)}
                     className={"flex-1 h-12 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
