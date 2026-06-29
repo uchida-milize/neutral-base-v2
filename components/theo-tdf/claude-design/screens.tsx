@@ -1355,22 +1355,22 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
     }, { passive: true });
   };
   const birthGenderFields = (
-            <div className="space-y-6">
+            <div style={{ width: "100%" }} className="space-y-6">
               <div>
                 <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
                 <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
               </div>
-              <div className="flex flex-col gap-2">
+              <div style={{ width: "100%" }} className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
-                <button type="button" onClick={() => setPickerOpen(true)}
+                <button type="button" onClick={() => setPickerOpen(true)} style={{ width: "100%" }}
                   className={`fld flex items-center justify-between gap-2 h-12 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${birth ? "text-neutral-800" : "text-neutral-400"}`}>
                   <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
                   <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
                 </button>
               </div>
-              <div className="flex flex-col gap-2">
+              <div style={{ width: "100%" }} className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "100%" }}>
                   {["男性", "女性"].map((g) => (
                     <button key={g} onClick={() => setGender(g)}
                       className={`h-12 rounded-lg border text-h6 transition-colors ${gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
@@ -2965,22 +2965,22 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
     }, { passive: true });
   };
   const birthGenderFields = (
-          <div className="space-y-6">
+          <div style={{ width: "100%" }} className="space-y-6">
             <div>
               <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
               <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
             </div>
-            <div className="flex flex-col gap-2">
+            <div style={{ width: "100%" }} className="flex flex-col gap-2">
               <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
-              <button type="button" onClick={() => setPickerOpen(true)}
+              <button type="button" onClick={() => setPickerOpen(true)} style={{ width: "100%" }}
                 className={"fld flex items-center justify-between gap-2 h-12 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
                 <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
                 <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
               </button>
             </div>
-            <div className="flex flex-col gap-2">
+            <div style={{ width: "100%" }} className="flex flex-col gap-2">
               <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "100%" }}>
                 {["男性", "女性"].map((g) => (
                   <button key={g} onClick={() => setGender(g)}
                     className={"h-12 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
