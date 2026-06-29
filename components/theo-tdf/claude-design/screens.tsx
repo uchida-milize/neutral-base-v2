@@ -271,14 +271,14 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
 // 必須バッジ（赤字・細い赤枠）
 export function ReqBadge() {
   return (
-    <span className="ml-2 inline-flex items-center align-middle text-[10px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
+    <span className="ml-2 inline-flex items-center align-middle text-[12px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
   );
 }
 
 // インラインのエラーメッセージ（小さめ・赤字・アイコン付き）
 export function ErrText({ children }: { children: React.ReactNode }) {
   return (
-    <span className="flex items-start gap-1 text-[10px] font-medium leading-snug" style={{ color: 'var(--color-attention)' }}>
+    <span className="flex items-start gap-1 text-[12px] font-medium leading-snug" style={{ color: 'var(--color-attention)' }}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 mt-px shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
       <span>{children}</span>
     </span>
@@ -733,7 +733,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     はい
                   </span>
-                  <span className="text-[10px] font-medium leading-tight" style={{ color: 'var(--color-attention)' }}>１つでも存在する</span>
+                  <span className="text-[12px] font-medium leading-tight" style={{ color: 'var(--color-attention)' }}>１つでも存在する</span>
                 </button>
                 <button onClick={onConfirm || onClose}
                   className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-3 font-bold border-2 transition-colors"
