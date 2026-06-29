@@ -1590,7 +1590,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
 
         {simFirst && (<>
         {/* ---- 積立金額・保障期間（プランより先） ---- */}
-        <div style={{ marginTop: '80px' }}>
+        <div>
         <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
           {birthGenderFields}
           <div className="sim-noborder">
@@ -3352,7 +3352,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
           </>)}
           {simFirst && (<>
           {/* 積立金額・保障期間を選ぶ（生年月日・性別を含む） */}
-          <div style={{ marginTop: '48px' }}>
+          <div>
           <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
             {birthGenderFields}
             <div className="sim-noborder">

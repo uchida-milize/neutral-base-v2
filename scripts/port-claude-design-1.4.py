@@ -275,7 +275,7 @@ ATOMS["GroupCard"] = '''function GroupCard({ title, sub, icon: Icon, children, c
           <Icon className="w-7 h-7 text-primary-600 shrink-0" />
         ) : null}
         <div className="min-w-0">
-          <p className="text-h6 font-bold text-neutral-800 leading-tight">{title}</p>
+          <p className="text-h4 font-bold text-neutral-800 leading-tight">{title}</p>
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>

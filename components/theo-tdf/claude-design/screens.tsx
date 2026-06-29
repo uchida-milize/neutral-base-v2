@@ -239,7 +239,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
           <Icon className="w-8 h-8 text-primary-600 shrink-0" />
         ) : null}
         <div className="min-w-0">
-          <p className="text-h6 font-bold text-neutral-800 leading-tight">{title}</p>
+          <p className="text-h4 font-bold text-neutral-800 leading-tight">{title}</p>
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
@@ -1401,7 +1401,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
 
         {simFirst && (<>
         {/* ---- 積立金額・保障期間（プランより先） ---- */}
-        <div style={{ marginTop: '80px' }}>
+        <div>
         <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
           {birthGenderFields}
           <div className="sim-noborder">
@@ -3072,7 +3072,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </>)}
           {simFirst && (<>
           {/* 積立金額・保障期間を選ぶ（生年月日・性別を含む） */}
-          <div style={{ marginTop: '48px' }}>
+          <div>
           <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
             {birthGenderFields}
             <div className="sim-noborder">
