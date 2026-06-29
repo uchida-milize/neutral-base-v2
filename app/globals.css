@@ -302,7 +302,7 @@
   /* -------- Body scale -------- */
   --text-body-lg:   1rem;     /* 16px */
   --text-body:      0.875rem; /* 14px */
-  --text-caption:   0.75rem;  /* 12px */
+  --text-caption:   0.875rem; /* 14px — handoff(7) */
   --text-tiny:      0.625rem; /* 10px */
 
   /* -------- Figma size: button height (desktop) -------- */
