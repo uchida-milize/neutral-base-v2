@@ -114,16 +114,6 @@ function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
         <span className="text-caption text-muted-foreground">
           {group.screens.length} パターン
         </span>
-        {group.viewS != null && (
-          <a
-            href={`/theo-tdf-view?s=${group.viewS}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-2.5 py-0.5 text-[11px] font-medium text-neutral-500 shadow-sm hover:border-primary hover:text-primary transition-colors"
-          >
-            HTMLで開く {LINK_ICON}
-          </a>
-        )}
       </div>
       <div className="flex items-start gap-6">
         {group.screens.map((s) => (
@@ -145,22 +135,24 @@ export default function TheoTdfWindowsPage() {
       key: "overview",
       title: "商品概要",
       badge: "STEP 1",
-      viewS: 0,
       screens: [
         {
           key: "overview",
           label: "デフォルト（パターンA）",
+          viewUrl: "/theo-tdf-view?s=0",
           el: <ScreenOverview go={noop} />,
         },
         {
           key: "overview-heigai",
           label: "弊害防止措置等の対応について（モーダル全文表示）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=0",
           el: <ScreenOverview go={noop} initialHeigaiOpen />,
         },
         {
           key: "combined",
           label: "パターンB（商品概要＋プラン選択統合）",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
             <ScreenCombined
               go={noop} sel="cancer_d" setSel={noop}
@@ -171,6 +163,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "combined-cta",
           label: "パターンB / ページ下部CTA（未同意）",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
             <ScreenCombined
               go={noop} sel="cancer_d" setSel={noop}
@@ -182,6 +175,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "combined-agreed",
           label: "パターンB / 同意チェック済・CTA活性",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
             <ScreenCombined
               go={noop} sel="cancer_d" setSel={noop}
@@ -198,11 +192,11 @@ export default function TheoTdfWindowsPage() {
       key: "step2",
       title: "プラン選択",
       badge: "STEP 2",
-      viewS: 1,
       screens: [
         {
           key: "step2",
           label: "デフォルト",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -214,6 +208,7 @@ export default function TheoTdfWindowsPage() {
           key: "st-notice",
           label: "重要事項ボトムシート（全文表示）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -225,6 +220,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-sim",
           label: "給付予想額アコーディオン展開",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -236,6 +232,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-cta",
           label: "ページ下部CTA（未同意・送信ボタン非活性）",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -247,6 +244,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-agreed",
           label: "同意チェック済・CTA活性",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -258,6 +256,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-verified",
           label: "メール認証済み・申込フォームへ進む",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -269,6 +268,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-tooltip",
           label: "プランツールチップ1つ展開（がん保障型）",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -280,6 +280,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-step2-simfirst",
           label: "積立金額・保障期間をプランより先に",
+          viewUrl: "/theo-tdf-view?s=1&simFirst=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -289,9 +290,9 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // 積立額×12×保障期間 = 150,000×12×25 = 4,500万 > 4,000万 → 保障金額上限エラー
           key: "st-step2-err-amount",
           label: "シミュレーション上限エラー（保障金額）",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -301,9 +302,9 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // 加入年齢(1944生まれ≒82歳)＋保障期間15年 = 97 > 90 → 保障満了上限エラー
           key: "st-step2-err-maturity",
           label: "シミュレーション上限エラー（保障満了）",
+          viewUrl: "/theo-tdf-view?s=1",
           el: (
             <ScreenStep2
               go={noop} sel="cancer_d" setSel={noop}
@@ -337,11 +338,13 @@ export default function TheoTdfWindowsPage() {
         {
           key: "pin",
           label: "デフォルト（未入力・認証ボタン非活性）",
+          viewUrl: "/theo-tdf-view?s=2",
           el: <ScreenPin go={noop} />,
         },
         {
           key: "pin-filled",
           label: "「666666」入力済・認証ボタン活性",
+          viewUrl: "/theo-tdf-view?s=2",
           el: <ScreenPin go={noop} initialPin="666666" />,
         },
       ],
@@ -352,15 +355,12 @@ export default function TheoTdfWindowsPage() {
       key: "form",
       title: "申込フォーム",
       badge: "STEP 3",
-      viewS: 3,
       screens: [
         {
-          // initialDisclosureOpen={true} で告知モーダルをマウント時に開いた状態で表示
           key: "form-disclosure",
           label: "モーダルあり：告知（全文表示）",
-          // ステッパー直下(140px)から告知モーダル全文を表示。height:auto のシート全高＋上部140に合わせる。
-          height: 2700,
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -372,6 +372,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "form",
           label: "モーダル無し：デフォルト",
+          viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -381,9 +382,9 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // initialSame={false} で「住所は契約者と同じ」を未チェック → 受取人住所の個別入力欄が出る
           key: "form-recipient-addr",
           label: "モーダル無し：受取人住所を個別入力（「契約者と同じ」未チェック）",
+          viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -395,7 +396,7 @@ export default function TheoTdfWindowsPage() {
         {
           key: "st-edit",
           label: "モーダルあり：積立修正シート＋給付予想額展開",
-          height: 820,
+          viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d"
@@ -617,21 +618,23 @@ export default function TheoTdfWindowsPage() {
       key: "step4",
       title: "内容確認・お支払い",
       badge: "STEP 4",
-      viewS: 4,
       screens: [
         {
           key: "step4",
           label: "デフォルト",
+          viewUrl: "/theo-tdf-view?s=4",
           el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} />,
         },
         {
           key: "st-acct",
           label: "お支払い詳細展開",
+          viewUrl: "/theo-tdf-view?s=4",
           el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialAcctOpen />,
         },
         {
           key: "st-agree",
           label: "同意項目①展開＋全チェック・CTA活性",
+          viewUrl: "/theo-tdf-view?s=4",
           el: (
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
@@ -652,9 +655,9 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // 被保険者の確認は AGREE_ITEMS の index 4。initialNat="other" で「日本国籍以外」選択を表示
           key: "st-insured-other",
           label: "被保険者の確認（日本国籍以外を選択）を開いた状態",
+          viewUrl: "/theo-tdf-view?s=4",
           el: (
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
@@ -663,9 +666,9 @@ export default function TheoTdfWindowsPage() {
           ),
         },
         {
-          // benSameAddr=false で「受取人住所を個別入力」状態の内容確認画面
           key: "st-step4-diffaddr",
           label: "保険金受取人の住所：別住所を入力（benSameAddr=false）",
+          viewUrl: "/theo-tdf-view?s=4&benSameAddr=0",
           el: (
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
@@ -681,18 +684,17 @@ export default function TheoTdfWindowsPage() {
       key: "card",
       title: "クレジットカード承認",
       badge: "外部サイト",
-      viewS: 5,
       screens: [
         {
           key: "card",
           label: "カード情報入力",
-          height: 812,
+          viewUrl: "/theo-tdf-view?s=5",
           el: <ScreenCardInput go={noop} />,
         },
         {
           key: "cardconf",
           label: "カード情報確認",
-          height: 812,
+          viewUrl: "/theo-tdf-view?s=6",
           el: <ScreenCardConfirm go={noop} />,
         },
       ],
@@ -703,29 +705,29 @@ export default function TheoTdfWindowsPage() {
       key: "done",
       title: "完了",
       badge: "STEP 5",
-      viewS: 7,
       screens: [
         {
           key: "done",
           label: "完了",
+          viewUrl: "/theo-tdf-view?s=7",
           el: <ScreenDone go={noop} />,
         },
         {
           key: "done-processing",
           label: "処理中",
-          height: 812,
+          viewUrl: "/theo-tdf-view?s=7&doneVariant=processing",
           el: <ScreenStatus variant="processing" go={noop} />,
         },
         {
           key: "done-error",
           label: "処理エラー",
-          height: 812,
+          viewUrl: "/theo-tdf-view?s=7&doneVariant=error",
           el: <ScreenStatus variant="error" go={noop} />,
         },
         {
           key: "done-maint",
           label: "メンテナンス中",
-          height: 812,
+          viewUrl: "/theo-tdf-view?s=7&doneVariant=maint",
           el: <ScreenStatus variant="maint" go={noop} />,
         },
       ],
