@@ -1100,7 +1100,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-800 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
-      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb pb-6">
         {/* ---- ヒーロー（ステータスバー含む、背景画像でスクロール） ---- */}
         {/* ---- ヒーロー: img で自然な高さ、コンテンツを絶対配置でオーバーレイ ---- */}
         <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
@@ -1367,7 +1367,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-4 pt-8 pb-40 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-8 pb-6 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-6">
@@ -1894,7 +1894,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-40 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-6 -mt-6"><Steps n={3} go={go} /></div>
 
         {/* ② 上部サマリー：クリックで該当入力へスクロール */}
@@ -2602,7 +2602,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
-      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-32 space-y-4">
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">

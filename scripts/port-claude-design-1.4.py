@@ -207,9 +207,9 @@ screen_combined = screen_combined.replace(
 # 外部 GMO カード画面 (bg-neutral-100 グレー) は対象外。
 _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
 _grad_targets = [
-    '<div className="px-4 pt-8 pb-40 space-y-8">',                          # ScreenStep2 content (pb-0→pb-40: footer overlap fix)
+    '<div className="px-4 pt-8 pb-6 space-y-8">',                          # ScreenStep2 content (pb-6: 24px footer gap)
     '<div className="px-4 py-10 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下、handoff(7): py-8→py-10)
-    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-40 space-y-6">',  # ScreenForm (pb-40: footer overlap fix)
+    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-6 space-y-6">',  # ScreenForm (pb-6: 24px footer gap)
     '<div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8">',  # ScreenStep4 (handoff(8): py-5→py-6)
     '<div className="px-4 pt-6">',                                          # ScreenOverview (hero+ステッパー下)
     '<div className="px-4 py-6 space-y-6">',                               # ScreenDone (handoff(8): space-y-5→space-y-6)
