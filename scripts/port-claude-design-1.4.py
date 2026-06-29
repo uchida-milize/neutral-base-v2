@@ -208,7 +208,7 @@ screen_combined = screen_combined.replace(
 _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
 _grad_targets = [
     '<div className="px-5 pt-8 pb-0 space-y-8">',                          # ScreenStep2 content (TD 組込1.5: pt-6→pt-8)
-    '<div className="px-5 py-8 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下)
+    '<div className="px-5 py-10 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下、handoff(7): py-8→py-10)
     '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">',  # ScreenForm
     '<div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">',  # ScreenStep4 (ステッパー下)
     '<div className="px-5 pt-6">',                                         # ScreenOverview (hero+ステッパー下)
@@ -637,7 +637,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (5) (kumikomi.html 単一ファイル版を正) (2026-06-26 取り込み)
+   原典: TD 組込1.5-handoff (7) (kumikomi.html 単一ファイル版を正) (2026-06-29 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
@@ -689,6 +689,66 @@ export type AgreeItemData = {
 type Go = (n: number) => void;
 
 '''
+
+# ---- Tailwind サイズグリッド正規化 ----
+# 許容ピクセル値: 1, 2, 4, 8, 12, 16, 24, 32, 40, 48, 56, 64, ... (24以降は8の倍数)
+# ・小数点クラス（-1.5, -2.5, -3.5等）→ 最寄りの許容値（切り上げ）
+# ・-0.5（2px）は許容値だが小数表記を廃止 → -[2px]（任意値）
+# ・整数 5(20px)/7(28px)/9(36px)/11(44px) → 切り上げ
+def normalize_grid(t: str) -> str:
+    import re as _re
+    # spacing/size プロパティ prefix
+    PROPS = [
+        'px', 'py', 'pt', 'pb', 'pl', 'pr', 'p',
+        'mx', 'my', 'mt', 'mb', 'ml', 'mr', 'm',
+        'gap-x', 'gap-y', 'gap',
+        'space-x', 'space-y',
+        'w', 'h', 'size',
+        'inset', 'top', 'bottom', 'left', 'right',
+        'min-w', 'min-h', 'max-w', 'max-h',
+    ]
+    # .5 系 (小数値を許容グリッドへ)
+    FRAC_MAP = {
+        '0.5': ('[2px]', ['py','px','pt','pb','pl','pr','p','mx','my','mt','mb','ml','mr','m',
+                           'gap-x','gap-y','gap','space-x','space-y','h','w','size',
+                           'inset','top','bottom','left','right']),
+        '1.5': ('2',     PROPS),
+        '2.5': ('3',     PROPS),
+        '3.5': ('4',     PROPS),
+        '4.5': ('4',     PROPS),  # 18px → 16px (最寄りは16か24、小さい方を選択)
+    }
+    for frac, (to_num, props) in FRAC_MAP.items():
+        for prop in sorted(props, key=len, reverse=True):  # longer first
+            # 負prefix variant (-mx-5 等) は先に処理
+            t = _re.sub(r'(?<![a-zA-Z0-9_])(-' + _re.escape(prop) + r')-' + _re.escape(frac) + r'\b',
+                        r'\1-' + to_num, t)
+            # 通常 prefix
+            t = _re.sub(r'\b' + _re.escape(prop) + r'-' + _re.escape(frac) + r'\b',
+                        prop + '-' + to_num, t)
+
+    # 整数 non-grid (20/28/36/44/52/60 px → 切り上げ)
+    INT_MAP = [
+        ('5', '6'),   # 20px → 24px
+        ('7', '8'),   # 28px → 32px
+        ('9', '10'),  # 36px → 40px
+        ('11', '12'), # 44px → 48px
+        ('13', '14'), # 52px → 56px
+        ('15', '16'), # 60px → 64px
+    ]
+    for from_n, to_n in INT_MAP:
+        for prop in sorted(PROPS, key=len, reverse=True):
+            # 負prefix
+            t = _re.sub(r'(?<![a-zA-Z0-9_])(-' + _re.escape(prop) + r')-' + from_n + r'\b',
+                        r'\1-' + to_n, t)
+            # 通常
+            t = _re.sub(r'\b' + _re.escape(prop) + r'-' + from_n + r'\b',
+                        prop + '-' + to_n, t)
+    return t
+
+body = normalize_grid(body)
+screen_combined = normalize_grid(screen_combined)
+if _heigai:
+    _heigai = normalize_grid(_heigai)
 
 # cn is imported but only used if needed; keep usage to avoid unused — reference in a noop is ugly.
 # Instead drop cn import if not used.
