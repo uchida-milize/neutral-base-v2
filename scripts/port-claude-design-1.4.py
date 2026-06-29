@@ -206,21 +206,37 @@ screen_combined = screen_combined.replace(
     "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} />",
     "<PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />")
 
-# ---- 各画面コンテンツ背景の白→薄ブルー縦グラデ (Claude Design / ScreenCombined と統一) ----
+# ---- 各画面コンテンツ背景の白→薄ブルー縦グラデ + フッターフロート用底部余白 +48px ----
 # ScreenCombined は kumikomi 側で既に content に gradient を持つ。他のフロー画面にも
 # hero / ヘッダ+ステッパー直下のコンテンツ起点コンテナへ同じグラデを適用する (お客様要望 2026-06-17)。
 # 外部 GMO カード画面 (bg-neutral-100 グレー) は対象外。
+# tuple: (元文字列, 新クラス名部分) -- 後ろに _SCREEN_GRAD + ">" を付加する。
+# pb 変換ルール: 既存値+48px。pb-0→pb-12(48px), py-6→pt-6 pb-[72px](24+48), py-10→pt-10 pb-[88px](40+48)
 _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}'
 _grad_targets = [
-    '<div className="px-5 pt-8 pb-0 space-y-8">',                          # ScreenStep2 content (handoff(9): px-4→px-5, pb-6→pb-0)
-    '<div className="px-5 py-10 flex flex-col items-center text-center">',  # ScreenPin   (handoff(9): px-4→px-5)
-    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-6">',  # ScreenForm (handoff(9): pt-6 pb-6→py-6)
-    '<div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8">',  # ScreenStep4 (handoff(8): py-5→py-6)
-    '<div className="px-5 pt-6">',                                          # ScreenOverview (handoff(9): px-4→px-5)
-    '<div className="px-4 py-6 space-y-6">',                               # ScreenDone (handoff(8): space-y-5→space-y-6)
+    ('<div className="px-5 pt-8 pb-0 space-y-8">',
+     '<div className="px-5 pt-8 pb-12 space-y-8"'),                                    # ScreenStep2: pb-0+48→pb-12
+    ('<div className="px-5 py-10 flex flex-col items-center text-center">',
+     '<div className="px-5 pt-10 pb-[88px] flex flex-col items-center text-center"'),  # ScreenPin: 40+48=88px
+    ('<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-6">',
+     '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-6"'),  # ScreenForm: 24+48=72px
+    ('<div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8">',
+     '<div className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-8"'),   # ScreenStep4: 24+48=72px
+    ('<div className="px-5 pt-6">',
+     '<div className="px-5 pt-6 pb-12"'),                                                # ScreenOverview: 0+48→pb-12
+    ('<div className="px-4 py-6 space-y-6">',
+     '<div className="px-4 pt-6 pb-[72px] space-y-6"'),                                # ScreenDone: 24+48=72px
 ]
-for _t in _grad_targets:
-    body = must_replace(body, _t, _t[:-1] + _SCREEN_GRAD + ">")
+for _old, _new in _grad_targets:
+    body = must_replace(body, _old, _new + _SCREEN_GRAD + ">")
+# カード画面（グラデなし、bg-neutral-100）: py-6→pt-6 pb-[72px] (24+48=72px)
+body = body.replace(
+    '<div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 py-6 space-y-4">',
+    '<div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px] space-y-4">')
+# ScreenCombined: kumikomi 側で gradient 済み、pb-0→pb-12 (+48px)
+screen_combined = screen_combined.replace(
+    'className="px-5 pt-6 pb-0 space-y-8"',
+    'className="px-5 pt-6 pb-12 space-y-8"')
 
 # ---- ATOM shadcn-wrapper replacements (proven template c495e75, text-h6) ----
 ATOMS = {}
