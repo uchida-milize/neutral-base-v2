@@ -1225,10 +1225,10 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <p className="text-caption font-bold text-primary-500">まずはプランを選んでみましょう</p>
                 <Ic.chevD className="w-6 h-6 text-primary-500 animate-bounce" />
               </div>
-              <div className="border-t border-primary-100 mt-8 mb-6"></div>
-              <div className="text-left pb-2">
-                <span className="inline-block text-h5 font-bold text-neutral-800 py-[2px] rounded">保険名称</span>
-                <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+              <div className="border-t border-primary-100 mt-4 mb-3"></div>
+              <div className="text-left pb-3">
+                <span className="block text-[11px] text-neutral-400 leading-none">保険名称</span>
+                <p className="mt-1 text-[12px] text-neutral-600 leading-[140%]">無配当特定疾病障害介護保障保険（団体型）</p>
               </div>
             </div>
 
