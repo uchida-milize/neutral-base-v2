@@ -223,9 +223,9 @@ _grad_targets = [
     ('<div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8">',
      '<div className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-8"'),   # ScreenStep4: 24+48=72px
     ('<div className="px-5 pt-6">',
-     '<div className="px-5 pt-6 pb-12"'),                                                # ScreenOverview: 0+48→pb-12
+     '<div className="px-5 pt-6"'),                                                      # ScreenOverview: pb追加なし
     ('<div className="px-4 py-6 space-y-6">',
-     '<div className="px-4 pt-6 pb-[72px] space-y-6"'),                                # ScreenDone: 24+48=72px
+     '<div className="px-4 py-6 space-y-6"'),                                           # ScreenDone: pb追加なし
 ]
 for _old, _new in _grad_targets:
     body = must_replace(body, _old, _new + _SCREEN_GRAD + ">")
