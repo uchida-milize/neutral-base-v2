@@ -28,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (7) (kumikomi.html 単一ファイル版を正) (2026-06-29 取り込み)
+   原典: TD 組込1.5-handoff (8) (kumikomi.html 単一ファイル版を正) (2026-06-29 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
@@ -243,7 +243,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
-      <CardContent className="p-6 space-y-3">{children}</CardContent>
+      <CardContent className="p-6 space-y-6">{children}</CardContent>
     </Card>
   );
 }
@@ -378,7 +378,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
+        <div className="px-6 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 mb-2">
@@ -725,7 +725,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
         <div className="px-6 py-3 border-t border-warm-200">
           {confirm ? (
             <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                 <button onClick={onCancel ? () => setAskExit(true) : onClose}
                   className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-3 font-bold border-2 transition-colors"
                   style={{ borderColor: 'var(--color-attention)', color: 'var(--color-attention)', background: '#FFF5F5' }}>
@@ -908,7 +908,7 @@ export function StepSection({ label, n, big, className, children }: { label?: st
     );
   }
   return (
-    <section className="space-y-4">
+    <section className="space-y-6">
       {label && (
         <div className="flex items-center gap-3">
           {n != null && (
@@ -1291,7 +1291,7 @@ export function NoticeContent() {
     ["三大疾病・障害介護プランを選択した場合", "積立期間中における三大疾病、障害介護にそなえたい"],
   ];
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <NoticeUl items={items1} />
       <NoticeUl items={items2} />
       <NoticeUl items={itemsTail} />
@@ -1336,7 +1336,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
     }, { passive: true });
   };
   const birthGenderFields = (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
                 <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
                 <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>
@@ -1942,7 +1942,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 契約者情報グループ */}
         <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-6">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
             <Field label="名" placeholder="太郎" required />
             <Field label="セイ" placeholder="ヤマダ" required />
@@ -1951,7 +1951,6 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <LockedField label="生年月日" value="1990 / 01 / 01" />
           <LockedField label="性別" value="男性" />
 
-          <SubLabel>連絡先</SubLabel>
           <Field label="郵便番号" placeholder="100-0001" required hint="郵便番号から住所を自動入力します" value={holder.zip} onChange={setH("zip")} />
           <Select label="都道府県" required value={holder.pref} options={PREFS} hint="郵便番号で自動入力" onChange={setH("pref")} />
           <Field label="市区町村" placeholder="千代田区" required hint="郵便番号で自動入力" value={holder.city} onChange={setH("city")} />
@@ -1979,7 +1978,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 保険金受取人グループ */}
         <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" iconSrc="/assets/theo-tdf/letter-heart-square.svg">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
             <Field label="名" placeholder="花子" required />
             <Field label="セイ" placeholder="ヤマダ" required />
@@ -2017,7 +2016,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </button>
 
           {!same && (
-          <div className="space-y-3">
+          <div className="space-y-6">
             <Field label="郵便番号" placeholder="100-0001" />
             <Select label="都道府県" value="都道府県を選択" options={PREFS} />
             <Field label="市区町村" placeholder="千代田区" />
@@ -2531,7 +2530,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                 onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}>
                 {it.id === "insured" && (
                   <div className="space-y-4 pt-1">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                       {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
                         <button key={k} onClick={() => setNat(k)}
                           className={`h-12 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
@@ -2542,7 +2541,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                     {nat === "other" && (
                       <div className="flex flex-col gap-2">
                         <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <ReqBadge /></span>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                           {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
                             <button key={k} onClick={() => setJpLang(k)}
                               className={`h-12 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
@@ -2608,7 +2607,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
           <Field label="カード名義（半角ローマ字）" placeholder="TARO YAMADA" required />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="有効期限（月／年）" placeholder="04 / 25" required />
             <Field label="セキュリティコード" placeholder="***" required />
           </div>
@@ -2785,18 +2784,18 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
               ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
               ["3", "初回保険料の引落し・保険開始", "翌月以降、THEO のご登録口座より。"],
             ].map(([n, t, d], idx, arr) => (
-              <div key={n}>
-                <div className="grid grid-cols-[1.75rem_1fr] gap-x-3">
+              <div key={n} className="flex gap-3">
+                {/* 左：丸数字＋接続線 */}
+                <div className="flex flex-col items-center" style={{ width: '28px', flexShrink: 0 }}>
                   <span className="grid place-items-center w-8 h-8 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
-                  <div className="pb-1">
-                    <p className="text-h6 font-bold text-neutral-800">{t}</p>
-                    <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
-                  </div>
                   {idx < arr.length - 1 && (
-                    <div className="flex justify-center items-center py-2 text-primary-300" style={{ marginTop: "-20px" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-                    </div>
+                    <div style={{ flex: 1, width: '2px', background: 'var(--primary-color-200)', minHeight: '24px', margin: '4px 0' }} />
                   )}
+                </div>
+                {/* 右：テキスト */}
+                <div style={{ paddingBottom: idx < arr.length - 1 ? '0' : '4px' }}>
+                  <p className="text-h6 font-bold text-neutral-800">{t}</p>
+                  <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
                 </div>
               </div>
             ))}
@@ -2941,7 +2940,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
     }, { passive: true });
   };
   const birthGenderFields = (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
               <h3 className="text-h6 font-medium text-neutral-800 leading-snug">生年月日・性別</h3>
               <p className="text-caption text-neutral-500 mt-1">お客様情報。保険料の算出に使用します。</p>

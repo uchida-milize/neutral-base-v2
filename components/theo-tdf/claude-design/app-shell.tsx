@@ -177,7 +177,7 @@ function Phone({
           <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch} z-30 pointer-events-none`} />
           {/* Status bar: hidden for overview (screen provides its own inside scroll) */}
           {!overviewMode && (
-            <div className={`shrink-0 flex items-center justify-between px-6 pt-2.5 pb-1 text-caption font-en font-medium ${status}`} style={statusStyle}>
+            <div className={`shrink-0 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium ${status}`} style={statusStyle}>
               <span>9:41</span>
               <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
             </div>

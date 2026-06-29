@@ -209,10 +209,10 @@ _SCREEN_GRAD = ' style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F
 _grad_targets = [
     '<div className="px-5 pt-8 pb-0 space-y-8">',                          # ScreenStep2 content (TD 組込1.5: pt-6→pt-8)
     '<div className="px-5 py-10 flex flex-col items-center text-center">',  # ScreenPin   (ステッパー下、handoff(7): py-8→py-10)
-    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-6">',  # ScreenForm
-    '<div className="flex-1 overflow-y-auto no-sb px-5 py-5 space-y-8">',  # ScreenStep4 (ステッパー下)
-    '<div className="px-5 pt-6">',                                         # ScreenOverview (hero+ステッパー下)
-    '<div className="px-5 py-6 space-y-5">',                               # ScreenDone (hero+ステッパー下)
+    '<div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-5 py-6 space-y-6">',  # ScreenForm (handoff(8): py-5→py-6)
+    '<div className="flex-1 overflow-y-auto no-sb px-5 py-6 space-y-8">',  # ScreenStep4 (handoff(8): py-5→py-6)
+    '<div className="px-5 pt-6">',                                          # ScreenOverview (hero+ステッパー下)
+    '<div className="px-5 py-6 space-y-6">',                               # ScreenDone (handoff(8): space-y-5→space-y-6)
 ]
 for _t in _grad_targets:
     body = must_replace(body, _t, _t[:-1] + _SCREEN_GRAD + ">")
@@ -279,7 +279,7 @@ ATOMS["GroupCard"] = '''function GroupCard({ title, sub, icon: Icon, children, c
           {sub && <p className="text-[11px] text-neutral-500 leading-tight">{sub}</p>}
         </div>
       </div>
-      <CardContent className="p-5 space-y-3">{children}</CardContent>
+      <CardContent className="p-5 space-y-6">{children}</CardContent>
     </Card>
   );
 }'''
@@ -532,8 +532,8 @@ body = must_replace(body,
     "  scrollToField(list[errStep % list.length].id);\n    setErrStep((s) => s + 1);")
 # float バー右側のピルに「現在N/合計M 次の項目へ」カウンターを表示
 body = must_replace(body,
-    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1">次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>',
-    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-2.5 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>')
+    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-3 py-1">次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>',
+    '<span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-3 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-3.5 h-3.5" /></span>')
 body = must_replace(body,
     "const errState = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};",
     "const errState: Record<string, boolean> = showErr ? { tel: !tel, benBirth: !benBirth, benGender: !benGender, rel: !rel } : {};")
@@ -542,8 +542,8 @@ body = must_replace(body, "const errOf = (id) => (errState[id] ? errMap[id] : un
 
 # NoticeContent の Ul ヘルパーを関数外に移動 (component created during render ESLint rule 対策)。
 # kumikomi でインライン定義されている const Ul を NoticeContent の手前に抽出して top-level に昇格させる。
-_UL_INNER = "  const Ul = ({ items }) => (\n    <ul className=\"space-y-1.5 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t, i) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );"
-_UL_OUTER = "function NoticeUl({ items }: { items: string[] }) {\n  return (\n    <ul className=\"space-y-1.5 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t: string, i: number) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );\n}\n\n/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */"
+_UL_INNER = "  const Ul = ({ items }) => (\n    <ul className=\"space-y-2 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t, i) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );"
+_UL_OUTER = "function NoticeUl({ items }: { items: string[] }) {\n  return (\n    <ul className=\"space-y-2 text-caption text-neutral-600 leading-relaxed\">\n      {items.map((t: string, i: number) => (\n        <li key={i} className=\"flex gap-1.5\"><span className=\"text-neutral-400 shrink-0\">・</span><span>{t}</span></li>\n      ))}\n    </ul>\n  );\n}\n\n/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */"
 if _UL_INNER in body:
     body = body.replace(_UL_INNER + "\n", "")  # Ul を NoticeContent 内から除去
     body = body.replace(
@@ -637,7 +637,7 @@ import { Card, CardContent } from "@/components/ui/card";
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
    Claude Design (claude.ai/design) 出力からポート。
-   原典: TD 組込1.5-handoff (7) (kumikomi.html 単一ファイル版を正) (2026-06-29 取り込み)
+   原典: TD 組込1.5-handoff (8) (kumikomi.html 単一ファイル版を正) (2026-06-29 取り込み)
 
    ★ shadcn ラッパー方針 (HANDOFF §11.4):
      共通 atom (Btn / Badge / Field / LockedField / GroupCard) は
