@@ -191,7 +191,7 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
 export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: Go }) {
   return (
-    <div className="flex justify-center items-center gap-0 px-6 py-2 bg-white border-b border-warm-200">
+    <div className="flex justify-center items-center gap-0 px-4 py-2 bg-white border-b border-warm-200">
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -259,7 +259,7 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
 export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 py-3 space-y-2 transition-colors duration-300";
+  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-4 py-3 space-y-2 transition-colors duration-300";
   return (
     <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
       style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
@@ -370,7 +370,7 @@ export function ScreenIntro({ go }: { go: Go }) {
       <AppBar title="保険" />
       <div className="flex-1 overflow-y-auto no-sb">
         {/* hero */}
-        <div className="px-6 pt-6 pb-8" style={{ backgroundImage: "url('/assets/theo-tdf/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="px-4 pt-6 pb-8" style={{ backgroundImage: "url('/assets/theo-tdf/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
           <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500">Embedded Insurance</p>
           <h1 className="mt-2 text-h2 font-bold leading-snug text-neutral-800">信頼を、もっと<br/>触れる距離に。</h1>
@@ -378,7 +378,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
-        <div className="px-6 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 mb-2">
@@ -697,7 +697,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
+        <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-3 border-b border-warm-200">
           <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800 min-w-0">
             <span className="grid place-items-center w-6 h-6 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
@@ -708,7 +708,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto no-sb px-6 py-4 space-y-3">
+        <div className="flex-1 overflow-y-auto no-sb px-4 py-4 space-y-3">
           <AgreeBlocks blocks={DISCLOSURE_INTRO} />
           <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
@@ -722,7 +722,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
             {qCards}
           </div>
         </div>
-        <div className="px-6 py-3 border-t border-warm-200">
+        <div className="px-4 py-3 border-t border-warm-200">
           {confirm ? (
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-x-3 gap-y-6">
@@ -758,7 +758,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
         <div className="absolute inset-0 z-[60] grid place-items-center px-8">
           <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
           <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
-            <div className="px-6 pt-6 pb-4 text-center">
+            <div className="px-4 pt-6 pb-4 text-center">
               <p className="text-h6 font-bold text-neutral-800 leading-relaxed">お申し込みが出来ません。<br/>終了してよいですか？</p>
             </div>
             <div className="grid grid-cols-2 border-t border-warm-200">
@@ -1143,7 +1143,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-6 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
@@ -1200,7 +1200,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             </div>
 
             {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-6 mt-8 bg-primary-10 px-6 pt-10 pb-[18px]">
+            <div className="-mx-6 mt-8 bg-primary-10 px-4 pt-10 pb-[18px]">
               <div className="mb-12">
                 <div className="text-center">
                   <span className="inline-block text-h3 font-bold text-neutral-900 px-2 py-[2px] rounded">必要書類</span>
@@ -1228,7 +1228,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             </div>
 
             {/* 保険名称：CTA（プランを選ぶ）直上にスクロール可能なパーツとして配置 */}
-            <div className="text-left pt-6 pb-1 px-6 -mx-6" style={{ background: 'var(--color-primary-10, #EEF5FF)', marginTop: 0 }}>
+            <div className="text-left pt-6 pb-1 px-4 -mx-6" style={{ background: 'var(--color-primary-10, #EEF5FF)', marginTop: 0 }}>
               <span className="inline-block text-h5 font-bold text-neutral-800 py-[2px] rounded">保険名称</span>
               <p className="mt-2 mb-6 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
@@ -1367,7 +1367,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-6 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-8 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-6">
@@ -1392,7 +1392,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </div>
 
         {/* ---- 保険料シミュレーション ---- */}
-        <div className="-mx-6 px-6 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="保険料シミュレーション" n={2} big className="mt-10">
           <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
         </StepSection>
@@ -1412,7 +1412,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </div>
 
         {/* ---- プラン選択 ---- */}
-        <div className="-mx-6 px-6 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="-mx-4 px-4 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="プランを選ぶ" n={2} big className="mt-10">
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
@@ -1432,7 +1432,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </>)}
 
         {/* ---- 申し込みをする（2ステップ） ---- */}
-        <div className={`-mx-6 px-6 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className={`-mx-4 px-4 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-10">
           {/* STEP 1 — 事前同意事項のご確認 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
@@ -1510,7 +1510,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-warm-200">
               <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -1519,7 +1519,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-6 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="px-4 py-4 overflow-y-auto no-sb space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -1532,7 +1532,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-6 py-3 border-t border-warm-200">
+            <div className="px-4 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
@@ -1553,7 +1553,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
       <AppBar title="保険" onBack={() => go(backScr)} />
       <div className="flex-1 overflow-y-auto no-sb">
         <Steps n={3} go={go} />
-        <div className="px-6 py-10 flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-10 flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
           <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-6">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
@@ -1894,7 +1894,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-6 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-6 -mt-6"><Steps n={3} go={go} /></div>
 
         {/* ② 上部サマリー：クリックで該当入力へスクロール */}
@@ -2086,13 +2086,13 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setEditOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-6 pt-4 pb-3">
+            <div className="flex items-center justify-between px-4 pt-4 pb-3">
               <h3 className="text-h5 font-bold text-neutral-800">積立内容を修正</h3>
               <button onClick={() => setEditOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-6 overflow-y-auto no-sb pb-2">
+            <div className="px-4 overflow-y-auto no-sb pb-2">
               {/* 選択プラン＋説明 */}
               <div className="flex flex-col gap-2 mb-4 pt-1">
                 <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
@@ -2133,7 +2133,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               </div>
               </>)}
             </div>
-            <div className="px-6 py-3 border-t border-warm-200">
+            <div className="px-4 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => setEditOpen(false)} disabled={editErrors.length > 0}>この内容で更新</Btn>
             </div>
           </div>
@@ -2306,7 +2306,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   return (
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
-      <div className="flex-1 overflow-y-auto no-sb px-6 py-6 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-6 -mt-6"><Steps n={4} go={go} /></div>
         <h2 className="text-h4 font-bold text-center" style={{ color: '#054EBA' }}>内容確認</h2>
         <StepSection>
@@ -2751,7 +2751,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
             <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
           {/* ヒーローコンテンツ */}
-          <div className="px-6 pt-4 pb-12 text-center">
+          <div className="px-4 pt-4 pb-12 text-center">
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
@@ -2767,7 +2767,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
           <Steps n={5} go={go} />
         </div>
 
-        <div className="px-6 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <div className="px-1">
             <p className="text-h6 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
@@ -2832,7 +2832,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
           <h2 className="text-h3 font-bold text-neutral-800">お申し込みを終了しました</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。<br/>再度お申し込みいただく場合は、はじめからやり直してください。</p>
         </div>
-        <div className="px-6 pb-6">
+        <div className="px-4 pb-6">
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-center">
             ご不明な点は THEO サポートまでお問い合わせください。
           </div>
@@ -2891,13 +2891,13 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
+        <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-3 border-b border-warm-200">
           <h3 className="text-h6 font-bold text-neutral-800 leading-snug">保険商品のご案内にあたりご確認・同意いただきたいこと</h3>
           <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto no-sb px-6 py-4 space-y-3">
+        <div className="flex-1 overflow-y-auto no-sb px-4 py-4 space-y-3">
           {(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (
             b.sec ? <p key={i} className="text-h6 font-bold text-neutral-800 pt-2">{b.sec}</p>
             : b.sub ? <p key={i} className="text-caption font-bold text-neutral-800 pt-1">{b.sub}</p>
@@ -2905,7 +2905,7 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
             : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
           ))}
         </div>
-        <div className="px-6 py-3 border-t border-warm-200">
+        <div className="px-4 py-3 border-t border-warm-200">
           <div className="flex gap-3 items-center">
             <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
             <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>
@@ -2997,7 +2997,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
         {/* 商品概要コンパクト */}
-        <div className="px-6 pt-4 pb-3 space-y-3">
+        <div className="px-4 pt-4 pb-3 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#065fe3' }}>THEOのお客様限定</span>
             <div className="flex items-center gap-2 shrink-0">
@@ -3046,13 +3046,13 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             </button>
           </div>
         </div>
-        </div>{/* /px-6 pt-4 pb-3 */}
+        </div>{/* /px-4 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-6 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
+        <div className="px-4 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
           <h2 className="text-h4 font-bold text-center" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
         </div>
-        <div className="px-6 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
           {!simFirst && birthGenderFields}
           {!simFirst && (<>
@@ -3064,7 +3064,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
-          <div className="-mx-6 px-6 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-10">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
@@ -3082,7 +3082,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </div>
           {/* プランを選ぶ */}
-          <div className="-mx-6 px-6 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className="-mx-4 px-4 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="プランを選ぶ" n={2} big className="mt-10">
               <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
               {PLAN_CARDS.map((p, i) => (
@@ -3099,7 +3099,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </>)}
           {/* 申し込みをする */}
-          <div className={`-mx-6 px-6 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className={`-mx-4 px-4 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-10">
               {/* 必要書類のご確認 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
@@ -3172,7 +3172,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-warm-200">
               <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -3181,7 +3181,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-6 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="px-4 py-4 overflow-y-auto no-sb space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -3194,7 +3194,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-6 py-3 border-t border-warm-200">
+            <div className="px-4 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
