@@ -25,6 +25,7 @@ import {
  *   errMode        "none" | "inline" | "top" | "float"
  *   errStep        フローティングエラーの初期ステップ（0–3）
  *   kokuchiPattern 告知パターン（care_d / care_n / cancer_d / ... / tc_n）
+ *   disclosure     "1" で告知モーダル（DisclosureSheet）を開いた状態で表示
  *   editKiyaku     "1" で契約者情報編集展開
  *   editJuushin    "1" で保険金受取人編集展開
  *   benSameAddr    "0" で受取人住所を個別入力
@@ -39,6 +40,7 @@ function ViewContent() {
   const errMode      = params.get("errMode") ?? "none";
   const errStep      = params.get("errStep") ? parseInt(params.get("errStep")!, 10) : 0;
   const kokuchiPat   = params.get("kokuchiPattern") ?? "auto";
+  const disclosure   = params.get("disclosure") === "1";
   const editKiyaku   = params.get("editKiyaku") === "1";
   const editJuushin  = params.get("editJuushin") === "1";
   const benSameAddr  = params.get("benSameAddr") !== "0";
@@ -67,7 +69,7 @@ function ViewContent() {
       key="3"
       go={noop} sel="cancer_d"
       m={10000} setM={noop} y={15} setY={noop}
-      initialDisclosureOpen={false}
+      initialDisclosureOpen={disclosure}
       errMode={errMode}
       initialErrStep={errStep}
       kokuchiPattern={kokuchiPat}

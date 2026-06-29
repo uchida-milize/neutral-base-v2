@@ -483,7 +483,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-care_d",
           label: "① 障害・介護プラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=care_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_d",
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={true}
@@ -496,7 +496,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-care_n",
           label: "② 障害・介護プラン（死亡なし）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=care_n",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_n",
           el: (
             <ScreenForm
               go={noop} sel="care" deathOpt={false}
@@ -509,7 +509,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cancer_d",
           label: "③ がんプラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cancer_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_d",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={true}
@@ -522,7 +522,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cancer_n",
           label: "④ がんプラン（死亡なし）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cancer_n",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_n",
           el: (
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={false}
@@ -535,7 +535,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cc_d",
           label: "⑤ がん・障害介護プラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cc_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_d",
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={true}
@@ -548,7 +548,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-cc_n",
           label: "⑥ がん・障害介護プラン（死亡なし）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=cc_n",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_n",
           el: (
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={false}
@@ -561,7 +561,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-three_d",
           label: "⑦ 三大疾病プラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=three_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_d",
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={true}
@@ -574,7 +574,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-three_n",
           label: "⑧ 三大疾病プラン（死亡なし）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=three_n",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_n",
           el: (
             <ScreenForm
               go={noop} sel="three" deathOpt={false}
@@ -587,7 +587,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-tc_d",
           label: "⑨ 三大疾病・障害介護プラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=tc_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_d",
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={true}
@@ -600,7 +600,7 @@ export default function TheoTdfWindowsPage() {
           key: "kokuchi-tc_n",
           label: "⑩ 三大疾病・障害介護プラン（死亡なし）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&kokuchiPattern=tc_n",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_n",
           el: (
             <ScreenForm
               go={noop} sel="three_care" deathOpt={false}
