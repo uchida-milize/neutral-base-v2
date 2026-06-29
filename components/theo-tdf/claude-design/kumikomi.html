@@ -392,7 +392,7 @@ function AppBar({ title, onBack, brandVisible = true }) {
 const STEP_TO_SCREEN = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
 function Steps({ n, of = 5, go }) {
   return (
-    <div className="flex justify-center items-center gap-0 px-4 py-2 bg-white border-b border-warm-200">
+    <div className="flex justify-center items-center gap-0 px-5 py-2 bg-white border-b border-warm-200">
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -432,18 +432,18 @@ function SectionLabel({ children }) {
 function GroupCard({ title, sub, icon: Icon, children, className, iconSrc }) {
   return (
     <section className={`rounded-2xl border border-warm-200 bg-white overflow-hidden shadow-sm ${className || ""}`}>
-      <div className="flex items-center gap-3 px-4 py-4 bg-white border-b" style={{ borderBottomColor: '#E7E5E4' }}>
+      <div className="flex items-center gap-3 px-5 py-4 bg-white border-b" style={{ borderBottomColor: '#E7E5E4' }}>
         {iconSrc ? (
           <img src={iconSrc} alt="" className="w-7 h-7 shrink-0" />
         ) : Icon ? (
           <Icon className="w-7 h-7 text-primary-600 shrink-0" />
         ) : null}
         <div className="min-w-0">
-          <p className="text-h7 font-bold text-neutral-800" style={{ lineHeight: '1.4' }}>{title}</p>
+          <p className="text-h5 font-bold text-neutral-800" style={{ lineHeight: '1.4' }}>{title}</p>
           {sub && <p className="text-neutral-500 leading-tight mt-1" style={{ fontSize: '12px' }}>{sub}</p>}
         </div>
       </div>
-      <div className="p-5 space-y-6">{children}</div>
+      <div className="p-4 space-y-6">{children}</div>
     </section>
   );
 }
@@ -459,7 +459,7 @@ function SubLabel({ children }) {
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
 function ActionBar({ children, solid, bg }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-4 py-3 space-y-2 transition-colors duration-300";
+  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-5 py-3 space-y-2 transition-colors duration-300";
   return (
     <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
       style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
@@ -471,14 +471,14 @@ function ActionBar({ children, solid, bg }) {
 // 必須バッジ（赤字・細い赤枠）
 function ReqBadge() {
   return (
-    <span className="ml-1.5 inline-flex items-center align-middle text-[12px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
+    <span className="ml-1.5 inline-flex items-center align-middle text-[10px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
   );
 }
 
 // インラインのエラーメッセージ（小さめ・赤字・アイコン付き）
 function ErrText({ children }) {
   return (
-    <span className="flex items-start gap-1 text-[12px] font-medium leading-snug" style={{ color: 'var(--color-attention)' }}>
+    <span className="flex items-start gap-1 font-medium leading-snug" style={{ fontSize: '12px', color: 'var(--color-attention)' }}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-3.5 h-3.5 mt-px shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
       <span>{children}</span>
     </span>
@@ -562,7 +562,7 @@ function ScreenIntro({ go }) {
       <AppBar title="保険" />
       <div className="flex-1 overflow-y-auto no-sb">
         {/* hero */}
-        <div className="px-4 pt-6 pb-8" style={{ backgroundImage: "url('assets/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="px-5 pt-6 pb-8" style={{ backgroundImage: "url('assets/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
           <img src="assets/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-7 mb-6" />
           <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500">Embedded Insurance</p>
           <h1 className="mt-2 text-h3 font-bold leading-snug text-neutral-800">信頼を、もっと<br/>触れる距離に。</h1>
@@ -889,7 +889,7 @@ function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCa
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-3 border-b border-warm-200">
+        <div className="flex items-center justify-between gap-2 px-5 pt-4 pb-3 border-b border-warm-200">
           <h3 className="flex items-center gap-2 text-h7 font-bold text-neutral-800 min-w-0">
             <span className="grid place-items-center w-5 h-5 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
@@ -914,7 +914,7 @@ function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCa
             {qCards}
           </div>
         </div>
-        <div className="px-4 py-3 border-t border-warm-200">
+        <div className="px-5 py-3 border-t border-warm-200">
           {confirm ? (
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-x-3 gap-y-6">
@@ -925,7 +925,7 @@ function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCa
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     はい
                   </span>
-                  <span className="text-[12px] font-medium leading-tight" style={{ color: 'var(--color-attention)' }}>１つでも存在する</span>
+                  <span className="text-[10px] font-medium leading-tight" style={{ color: 'var(--color-attention)' }}>１つでも存在する</span>
                 </button>
                 <button onClick={onConfirm || onClose}
                   className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-3 font-bold border-2 transition-colors"
@@ -950,7 +950,7 @@ function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCa
         <div className="absolute inset-0 z-[60] grid place-items-center px-8">
           <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
           <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
-            <div className="px-4 pt-6 pb-4 text-center">
+            <div className="px-5 pt-6 pb-4 text-center">
               <p className="text-h7 font-bold text-neutral-800 leading-relaxed">お申し込みが出来ません。<br/>終了してよいですか？</p>
             </div>
             <div className="grid grid-cols-2 border-t border-warm-200">
@@ -1013,6 +1013,8 @@ function PlanCard({ p, selected, onSelect }) {
 
 // アコーディオン式プランカード
 function PlanCardAccordion({ p, selected, onSelect, open, onToggle }) {
+  const death = p.death;
+  const [ttOpen, setTtOpen] = React.useState(false);
   return (
     <div className={`w-full rounded-2xl border bg-white overflow-hidden transition ${selected ? "border-primary-300" : "border-warm-200"}`} style={{ boxShadow: '0 0 8px rgba(27,49,87,0.08)' }}>
       {/* ヘッダー：タップでアコーディオン開閉 */}
@@ -1025,12 +1027,31 @@ function PlanCardAccordion({ p, selected, onSelect, open, onToggle }) {
           {selected && <Ic.check className="w-3 h-3" />}
         </span>
         <span className="flex-1 text-h7 font-bold text-neutral-800 leading-snug">{p.name}</span>
+        {p.tooltip && (
+          <button type="button" onClick={(e) => { e.stopPropagation(); setTtOpen((o) => !o); }}
+            className={`grid place-items-center w-5 h-5 rounded-full border text-[11px] font-bold leading-none shrink-0 transition-colors ${ttOpen ? "border-primary bg-primary-10 text-primary-600" : "border-neutral-300 bg-white text-neutral-400 hover:border-primary hover:text-primary-600"}`}>?</button>
+        )}
         {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}>
           <path d="M9 6l6 6-6 6" />
         </svg>
       </div>
+      {/* ツールチップ展開エリア */}
+      {ttOpen && p.tooltip && (
+        <div className="mx-4 mt-3 p-3.5 rounded-xl bg-primary-10 border border-primary-100 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-2">
+            <span className="text-caption font-bold text-neutral-800">死亡保障</span>
+            <span className={`text-h7 font-bold leading-none ${death ? "text-primary-600" : "text-neutral-400"}`}>{death ? "◯" : "✗"}</span>
+          </div>
+          {p.tooltip.sections.map((s, i) => (
+            <div key={i} className="space-y-1">
+              <p className="text-caption font-bold text-neutral-800 leading-snug">{s.head}</p>
+              <p className="text-caption text-neutral-700 leading-relaxed whitespace-pre-line">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      )}
       {/* リード文：常に表示 */}
       <div onClick={onToggle} className="px-4 py-3 cursor-pointer">
         <p className="text-caption text-neutral-500 leading-relaxed">{p.lead}</p>
@@ -1292,7 +1313,7 @@ function ScreenOverview({ go }) {
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-800 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
-      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb pb-6">
+      <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ---- ヒーロー（ステータスバー含む、背景画像でスクロール） ---- */}
         {/* ---- ヒーロー: img で自然な高さ、コンテンツを絶対配置でオーバーレイ ---- */}
         <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
@@ -1335,7 +1356,7 @@ function ScreenOverview({ go }) {
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-4 pt-6">
+        <div className="px-5 pt-6">
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
@@ -1392,7 +1413,7 @@ function ScreenOverview({ go }) {
             </div>
 
             {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-5 mt-8 bg-primary-10 px-4 pt-10 pb-6">
+            <div className="-mx-4 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
               <div className="mb-12">
                 <div className="text-center">
                   <span className="inline-block text-h4 font-bold text-neutral-900 px-2 py-0.5 rounded">必要書類</span>
@@ -1418,10 +1439,6 @@ function ScreenOverview({ go }) {
                 <Ic.chevD className="w-5 h-5 text-primary-500 animate-bounce" />
               </div>
             </div>
-            <div className="pt-3 pb-1">
-              <span className="block text-[11px] text-neutral-400 leading-none">保険名称</span>
-              <p className="mt-1 text-[12px] text-neutral-600 leading-[140%]">無配当特定疾病障害介護保障保険（団体型）</p>
-            </div>
 
           </div>
         </div>
@@ -1429,6 +1446,10 @@ function ScreenOverview({ go }) {
 
       <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
       <ActionBar solid>
+        <div style={{ marginBottom: '8px' }}>
+          <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
+          <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+        </div>
         <Btn kind="cta" onClick={() => go(1)}>プランを選ぶ<Ic.chevR className="w-4 h-4" /></Btn>
       </ActionBar>
     </>
@@ -1554,7 +1575,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-4 pt-8 pb-6 space-y-8">
+        <div className="px-5 pt-8 pb-0 space-y-8">
           <h2 className="text-h5 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
           {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
           <div className="space-y-6">
@@ -1588,7 +1609,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
 
         {simFirst && (<>
         {/* ---- 積立金額・保障期間（プランより先） ---- */}
-        <div>
+        <div style={{ marginTop: '24px' }}>
         <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
           {birthGenderFields}
           <div className="sim-noborder">
@@ -1697,7 +1718,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-warm-200">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
               <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -1706,7 +1727,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-4 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="px-5 py-4 overflow-y-auto no-sb space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -1719,7 +1740,7 @@ function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initi
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-4 py-3 border-t border-warm-200">
+            <div className="px-5 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
@@ -1740,7 +1761,7 @@ function ScreenPin({ go, onVerified, backScr = 1 }) {
       <AppBar title="保険" onBack={() => go(backScr)} />
       <div className="flex-1 overflow-y-auto no-sb">
         <Steps n={3} go={go} />
-        <div className="px-4 py-10 flex flex-col items-center text-center">
+        <div className="px-5 py-10 flex flex-col items-center text-center">
           <img src="assets/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
           <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-6">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
@@ -1968,7 +1989,10 @@ function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan,
       {errors.length > 0 ? (
         <div className="mt-4 pt-4 border-t border-warm-200 space-y-2">
           {errors.map((e, i) => (
-            <p key={i} className="text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>{e}</p>
+            <p key={i} className="flex items-start gap-2 text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" strokeLinecap="round"/></svg>
+              <span>{e}</span>
+            </p>
           ))}
         </div>
       ) : (<>
@@ -2081,8 +2105,8 @@ function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpe
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-6 space-y-6">
-        <div className="-mx-5 -mt-6"><Steps n={3} go={go} /></div>
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-6">
+        <div className="-mx-4 -mt-6"><Steps n={3} go={go} /></div>
 
         {/* ② 上部サマリー：クリックで該当入力へスクロール */}
         {errMode === 'top' && visibleErrs.length > 0 && (
@@ -2273,13 +2297,13 @@ function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpe
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setEditOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-4 pt-4 pb-3">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <h3 className="text-h6 font-bold text-neutral-800">積立内容を修正</h3>
               <button onClick={() => setEditOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-4 overflow-y-auto no-sb pb-2">
+            <div className="px-5 overflow-y-auto no-sb pb-2">
               {/* 選択プラン＋説明 */}
               <div className="flex flex-col gap-2 mb-4 pt-1">
                 <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
@@ -2294,10 +2318,10 @@ function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpe
               {editErrors.length > 0 ? (
                 <div className="mt-2 pt-4 border-t border-warm-200 space-y-2">
                   {editErrors.map((e, i) => (
-                    <div key={i} className="flex items-start gap-1.5 text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>
-                      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 mt-0.5"><circle cx="10" cy="10" r="9"/><rect x="9" y="5.5" width="2" height="5.5" rx="1" fill="white"/><circle cx="10" cy="14" r="1.1" fill="white"/></svg>
+                    <p key={i} className="flex items-start gap-2 text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" strokeLinecap="round"/></svg>
                       <span>{e}</span>
-                    </div>
+                    </p>
                   ))}
                 </div>
               ) : (<>
@@ -2323,7 +2347,7 @@ function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpe
               </div>
               </>)}
             </div>
-            <div className="px-4 py-3 border-t border-warm-200">
+            <div className="px-5 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => setEditOpen(false)} disabled={editErrors.length > 0}>この内容で更新</Btn>
             </div>
           </div>
@@ -2497,7 +2521,7 @@ const agreeItems = deathOpt ? AGREE_ITEMS : AGREE_ITEMS.filter((it) => it.id !==
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
       <div className="flex-1 overflow-y-auto no-sb px-4 py-6 space-y-8">
-        <div className="-mx-5 -mt-6"><Steps n={4} go={go} /></div>
+        <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>
         <h2 className="text-h5 font-bold text-center" style={{ color: '#054EBA' }}>内容確認</h2>
         <StepSection>
         <h2 className="text-h5 font-bold text-neutral-800">お申込み内容</h2>
@@ -2789,7 +2813,7 @@ function ScreenCardInput({ go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
-      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-32 space-y-4">
+      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 py-6 space-y-4">
         <h2 className="text-h6 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h7 font-bold text-neutral-800">
@@ -2941,7 +2965,7 @@ function ScreenDone({ go, variant = 'done' }) {
             <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
           {/* ヒーローコンテンツ */}
-          <div className="px-4 pt-4 pb-12 text-center">
+          <div className="px-5 pt-4 pb-12 text-center">
             <img src="assets/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
@@ -3022,7 +3046,7 @@ function ScreenEnded({ onRestart }) {
           <h2 className="text-h4 font-bold text-neutral-800">お申し込みを終了しました</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。<br/>再度お申し込みいただく場合は、はじめからやり直してください。</p>
         </div>
-        <div className="px-4 pb-6">
+        <div className="px-5 pb-6">
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-center">
             ご不明な点は THEO サポートまでお問い合わせください。
           </div>
@@ -3169,7 +3193,7 @@ function HeigaiModal({ open, onClose, onAgree }) {
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-3 border-b border-warm-200">
+        <div className="flex items-center justify-between gap-2 px-5 pt-4 pb-3 border-b border-warm-200">
           <h3 className="text-h7 font-bold text-neutral-800 leading-snug">保険商品のご案内にあたりご確認・同意いただきたいこと</h3>
           <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -3183,7 +3207,7 @@ function HeigaiModal({ open, onClose, onAgree }) {
             : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
           ))}
         </div>
-        <div className="px-4 py-3 border-t border-warm-200">
+        <div className="px-5 py-3 border-t border-warm-200">
           <div className="flex gap-3 items-center">
             <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
             <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>
@@ -3278,7 +3302,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
           </div>
         </div>
         {/* 商品概要コンパクト */}
-        <div className="px-4 pt-4 pb-3 space-y-3">
+        <div className="px-5 pt-4 pb-3 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#065fe3' }}>THEOのお客様限定</span>
             <div className="flex items-center gap-1.5 shrink-0">
@@ -3327,13 +3351,13 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
             </button>
           </div>
         </div>
-        </div>{/* /px-4 pt-4 pb-3 */}
+        </div>{/* /px-5 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-4 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
+        <div className="px-5 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
           <h2 className="text-h5 font-bold text-center" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
         </div>
-        <div className="px-4 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-6 pb-0 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
           {!simFirst && birthGenderFields}
           {!simFirst && (<>
@@ -3353,7 +3377,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
           </>)}
           {simFirst && (<>
           {/* 積立金額・保障期間を選ぶ（生年月日・性別を含む） */}
-          <div>
+          <div style={{ marginTop: '24px' }}>
           <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
             {birthGenderFields}
             <div className="sim-noborder">
@@ -3453,7 +3477,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-warm-200">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-warm-200">
               <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-0.5 text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -3462,7 +3486,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-4 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="px-5 py-4 overflow-y-auto no-sb space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -3475,7 +3499,7 @@ function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, em
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-4 py-3 border-t border-warm-200">
+            <div className="px-5 py-3 border-t border-warm-200">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
