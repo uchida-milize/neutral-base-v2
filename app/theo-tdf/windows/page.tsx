@@ -42,6 +42,8 @@ type ScreenGroupDef = {
   /** "STEP 1" / "PIN認証" / "外部サイト" 等 */
   badge?: string;
   screens: ScreenDef[];
+  /** /theo-tdf-view?s=N で開くベアビューの画面番号 */
+  viewS?: number;
 };
 
 /* ---- 単一の静的スクリーン ---- */
@@ -90,6 +92,21 @@ function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
         <span className="text-caption text-muted-foreground">
           {group.screens.length} パターン
         </span>
+        {group.viewS != null && (
+          <a
+            href={`/theo-tdf-view?s=${group.viewS}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-2.5 py-0.5 text-[11px] font-medium text-neutral-500 shadow-sm hover:border-primary hover:text-primary transition-colors"
+          >
+            HTMLで開く
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        )}
       </div>
       <div className="flex items-start gap-6">
         {group.screens.map((s) => (
@@ -111,6 +128,7 @@ export default function TheoTdfWindowsPage() {
       key: "overview",
       title: "商品概要",
       badge: "STEP 1",
+      viewS: 0,
       screens: [
         {
           key: "overview",
@@ -163,6 +181,7 @@ export default function TheoTdfWindowsPage() {
       key: "step2",
       title: "プラン選択",
       badge: "STEP 2",
+      viewS: 1,
       screens: [
         {
           key: "step2",
@@ -295,6 +314,7 @@ export default function TheoTdfWindowsPage() {
       key: "pin",
       title: "PINコード認証",
       badge: "PIN認証",
+      viewS: 2,
       screens: [
         {
           key: "pin",
@@ -314,6 +334,7 @@ export default function TheoTdfWindowsPage() {
       key: "form",
       title: "申込フォーム",
       badge: "STEP 3",
+      viewS: 3,
       screens: [
         {
           // initialDisclosureOpen={true} で告知モーダルをマウント時に開いた状態で表示
@@ -433,6 +454,7 @@ export default function TheoTdfWindowsPage() {
       key: "form-kokuchi",
       title: "申込フォーム — 告知10パターン",
       badge: "STEP 3 告知",
+      viewS: 3,
       screens: [
         {
           key: "kokuchi-care_d",
@@ -562,6 +584,7 @@ export default function TheoTdfWindowsPage() {
       key: "step4",
       title: "内容確認・お支払い",
       badge: "STEP 4",
+      viewS: 4,
       screens: [
         {
           key: "step4",
@@ -624,6 +647,7 @@ export default function TheoTdfWindowsPage() {
       key: "card",
       title: "クレジットカード承認",
       badge: "外部サイト",
+      viewS: 5,
       screens: [
         {
           key: "card",
@@ -645,6 +669,7 @@ export default function TheoTdfWindowsPage() {
       key: "done",
       title: "完了",
       badge: "STEP 5",
+      viewS: 7,
       screens: [
         {
           key: "done",
@@ -710,27 +735,6 @@ export default function TheoTdfWindowsPage() {
             </a>
             {" "}を参照してください。
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {Array.from({ length: 8 }, (_, i) => {
-              const labels = ["商品概要", "プラン選択", "PIN認証", "申込フォーム", "内容確認", "カード入力", "カード確認", "完了"];
-              return (
-                <a
-                  key={i}
-                  href={`/theo-tdf-view?s=${i}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-full border border-warm-300 bg-white px-3 py-1 text-caption font-medium text-neutral-600 shadow-sm hover:border-primary hover:text-primary transition-colors"
-                >
-                  {labels[i]}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 opacity-60">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </a>
-              );
-            })}
-          </div>
         </header>
       </div>
 
