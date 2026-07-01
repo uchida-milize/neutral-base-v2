@@ -1598,7 +1598,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           </div>
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
-          <p className="mt-3 text-h6 text-neutral-600 leading-relaxed">
+          <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
             ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載のPINコードを入力してください。
           </p>
 
@@ -2725,35 +2725,33 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
   const body = isErr
     ? "クレジットカード情報をご確認のうえ、再度操作をお願いいたします（E01260010）。"
     : isMaint
-    ? "ただいまシステムメンテナンスを実施しております。\nご迷惑をおかけしますが、しばらく経ってから再度お試しください。"
+    ? "ただいまシステムメンテナンスを実施しております。ご迷惑をおかけしますが、しばらく経ってから再度お試しください。"
     : "お手続きを処理しています。\nこのまましばらくお待ちください。";
   return (
-    <>
+    <div className="screen-fixed-height flex flex-col relative" style={{ flex: '1 1 0%' }}>
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
-      <div className="flex-1 flex flex-col relative" style={{ zIndex: 1 }}>
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
-          {isErr ? (
-            <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6" alt="エラー" />
-          ) : isMaint ? (
-            <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6" alt="メンテナンス中" />
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-          )}
-          <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
-          <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line" style={{ textWrap: 'pretty' }}>
-            {body}
-          </p>
-        </div>
+      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative" style={{ zIndex: 1 }}>
+        <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
+        {isErr ? (
+          <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6" alt="エラー" />
+        ) : isMaint ? (
+          <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6" alt="メンテナンス中" />
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        )}
+        <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
+        <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line text-left" style={{ textWrap: 'pretty' }}>
+          {body}
+        </p>
       </div>
       <ActionBar bg="#F2FBFE">
         <Btn kind="button" onClick={() => go(isErr ? 5 : 6)}>戻る</Btn>
       </ActionBar>
-    </>
+    </div>
   );
 }
 
@@ -2854,7 +2852,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
    ============================================================ */
 export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
   return (
-    <>
+    <div className="screen-fixed-height flex flex-col relative" style={{ flex: '1 1 0%' }}>
       {/* 固定ステータスバー */}
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
@@ -2875,7 +2873,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       <ActionBar bg="#F2FBFE">
         <Btn kind="button" onClick={onRestart}>はじめの画面に戻る</Btn>
       </ActionBar>
-    </>
+    </div>
   );
 }
 

@@ -783,6 +783,10 @@
   .screen-flat .overflow-y-auto { overflow-y: visible !important; }
   .screen-flat .flex-1 { flex: none !important; }
   .screen-flat .sticky { position: static !important; }
+  /* screen-fixed-height: 縦中央揃え＋ボタン下固定が必要な画面（ScreenStatus/ScreenEnded）*/
+  .screen-flat .screen-fixed-height { min-height: 693px; }
+  .screen-flat .screen-fixed-height .flex-1 { flex: 1 1 0% !important; }
+  .screen-flat .screen-fixed-height .sticky { position: sticky !important; bottom: 0 !important; }
   .fld:focus {
     outline: none;
     border-color: var(--primary-color-400);
