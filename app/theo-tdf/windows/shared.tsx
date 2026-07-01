@@ -144,6 +144,17 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=0",
           el: <ScreenOverview go={noop} initialHeigaiOpen />,
         },
+        {
+          key: "combined",
+          label: "パターンB（商品概要＋プラン選択統合）",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
+          el: (
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+            />
+          ),
+        },
       ],
     },
 
