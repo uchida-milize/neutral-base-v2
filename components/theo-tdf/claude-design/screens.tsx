@@ -667,17 +667,6 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
           </div>
         )}
       </div>
-      {/* YES/NO インジケーター */}
-      <div className="grid grid-cols-2 border-t border-warm-200">
-        <div className="flex items-center justify-center gap-2 py-3 border-r border-warm-200" style={{ background: '#FAFAFA' }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4" style={{ color: 'var(--color-attention)' }}><path d="M18 6L6 18M6 6l12 12"/></svg>
-          <span className="text-[14px] font-bold" style={{ color: 'var(--color-attention)' }}>はい</span>
-        </div>
-        <div className="flex items-center justify-center gap-2 py-3" style={{ background: '#FAFAFA' }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4" style={{ color: '#16A34A' }}><path d="M5 12l5 5L19 7"/></svg>
-          <span className="text-[14px] font-bold" style={{ color: '#16A34A' }}>いいえ</span>
-        </div>
-      </div>
     </div>
   );
 }
