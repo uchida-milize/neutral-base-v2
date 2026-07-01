@@ -42,28 +42,8 @@ export default function TheoTdfWindowsGroupPage() {
 
   return (
     <main className="mx-auto max-w-[1700px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
-      {/* パンくず */}
-      <div className="mb-8 flex items-center gap-2 text-caption text-muted-foreground">
-        <Link href="/theo-tdf/windows" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
-          {BACK_ICON} スクリーン一覧
-        </Link>
-        <span>/</span>
-        {group.badge && (
-          <>
-            <span className="font-mono uppercase tracking-[0.14em] text-primary-600">{group.badge}</span>
-            <span>/</span>
-          </>
-        )}
-        <span className="text-foreground font-medium">{group.title}</span>
-      </div>
-
-      {/* グループ表示 */}
-      <div className="overflow-x-auto pb-6">
-        <ScreenGroupSection group={group} />
-      </div>
-
       {/* 前後ナビゲーション */}
-      <div className="mt-12 flex items-center justify-between gap-4 border-t border-warm-200 pt-8">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           {prev && (
             <Link
@@ -98,6 +78,26 @@ export default function TheoTdfWindowsGroupPage() {
             </Link>
           )}
         </div>
+      </div>
+
+      {/* パンくず */}
+      <div className="mb-8 flex items-center gap-2 text-caption text-muted-foreground">
+        <Link href="/theo-tdf/windows" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
+          {BACK_ICON} スクリーン一覧
+        </Link>
+        <span>/</span>
+        {group.badge && (
+          <>
+            <span className="font-mono uppercase tracking-[0.14em] text-primary-600">{group.badge}</span>
+            <span>/</span>
+          </>
+        )}
+        <span className="text-foreground font-medium">{group.title}</span>
+      </div>
+
+      {/* グループ表示 */}
+      <div className="overflow-x-auto pb-6">
+        <ScreenGroupSection group={group} />
       </div>
     </main>
   );

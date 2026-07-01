@@ -144,41 +144,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=0",
           el: <ScreenOverview go={noop} initialHeigaiOpen />,
         },
-        {
-          key: "combined",
-          label: "パターンB（商品概要＋プラン選択統合）",
-          viewUrl: "/theo-tdf-view?s=0&patternB=1",
-          el: (
-            <ScreenCombined
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-            />
-          ),
-        },
-        {
-          key: "combined-cta",
-          label: "パターンB / ページ下部CTA（未同意）",
-          viewUrl: "/theo-tdf-view?s=0&patternB=1",
-          el: (
-            <ScreenCombined
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialShowSend
-            />
-          ),
-        },
-        {
-          key: "combined-agreed",
-          label: "パターンB / 同意チェック済・CTA活性",
-          viewUrl: "/theo-tdf-view?s=0&patternB=1",
-          el: (
-            <ScreenCombined
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialShowSend initialAgree
-            />
-          ),
-        },
       ],
     },
 
@@ -189,17 +154,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
       badge: "STEP 2",
       screens: [
         {
-          key: "step2",
-          label: "デフォルト",
-          viewUrl: "/theo-tdf-view?s=1",
-          el: (
-            <ScreenStep2
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-            />
-          ),
-        },
-        {
           key: "st-notice",
           label: "重要事項ボトムシート（全文表示）",
           fullSheet: true,
@@ -209,42 +163,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialNoticeOpen
-            />
-          ),
-        },
-        {
-          key: "st-sim",
-          label: "給付予想額アコーディオン展開",
-          viewUrl: "/theo-tdf-view?s=1",
-          el: (
-            <ScreenStep2
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialSimOpen
-            />
-          ),
-        },
-        {
-          key: "st-step2-cta",
-          label: "ページ下部CTA（未同意・送信ボタン非活性）",
-          viewUrl: "/theo-tdf-view?s=1",
-          el: (
-            <ScreenStep2
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialShowSend
-            />
-          ),
-        },
-        {
-          key: "st-step2-agreed",
-          label: "同意チェック済・CTA活性",
-          viewUrl: "/theo-tdf-view?s=1",
-          el: (
-            <ScreenStep2
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialShowSend initialAgree
             />
           ),
         },
@@ -352,19 +270,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
       badge: "STEP 3",
       screens: [
         {
-          key: "form-disclosure",
-          label: "モーダルあり：告知（全文表示）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_d"
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true}
-            />
-          ),
-        },
-        {
           key: "form",
           label: "モーダル無し：デフォルト",
           viewUrl: "/theo-tdf-view?s=3",
@@ -401,18 +306,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           ),
         },
         {
-          key: "form-err-inline",
-          label: "エラー表示①：各入力の下に赤字（errMode=inline）",
-          viewUrl: "/theo-tdf-view?s=3&errMode=inline",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_d"
-              m={10000} setM={noop} y={15} setY={noop}
-              errMode="inline" initialDisclosureOpen={false}
-            />
-          ),
-        },
-        {
           key: "form-err-top",
           label: "エラー表示②：上部にまとめて（errMode=top）",
           viewUrl: "/theo-tdf-view?s=3&errMode=top",
@@ -433,30 +326,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               errMode="float" initialDisclosureOpen={false} initialErrStep={0}
-            />
-          ),
-        },
-        {
-          key: "form-err-float-2",
-          label: "エラー表示③-b：フローティング「2/4 次の項目へ」（initialErrStep=1）",
-          viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=1",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_d"
-              m={10000} setM={noop} y={15} setY={noop}
-              errMode="float" initialDisclosureOpen={false} initialErrStep={1}
-            />
-          ),
-        },
-        {
-          key: "form-err-float-4",
-          label: "エラー表示③-c：フローティング「4/4 次の項目へ」（initialErrStep=3）",
-          viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=3",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_d"
-              m={10000} setM={noop} y={15} setY={noop}
-              errMode="float" initialDisclosureOpen={false} initialErrStep={3}
             />
           ),
         },
@@ -641,28 +510,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
               initialEditKiyaku initialEditJuushin
-            />
-          ),
-        },
-        {
-          key: "st-insured-other",
-          label: "被保険者の確認（日本国籍以外を選択）を開いた状態",
-          viewUrl: "/theo-tdf-view?s=4",
-          el: (
-            <ScreenStep4
-              go={noop} sel="cancer_d" m={10000} y={15}
-              initialOpenIdx={4}
-            />
-          ),
-        },
-        {
-          key: "st-step4-diffaddr",
-          label: "保険金受取人の住所：別住所を入力（benSameAddr=false）",
-          viewUrl: "/theo-tdf-view?s=4&benSameAddr=0",
-          el: (
-            <ScreenStep4
-              go={noop} sel="cancer_d" m={10000} y={15}
-              benSameAddr={false}
             />
           ),
         },
