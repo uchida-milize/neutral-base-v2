@@ -68,6 +68,7 @@ export type AgreeBlock = {
   cat?: string;
   checks?: string[];
   linkBtn?: { label: string; href: string };
+  bulletLinks?: { text: string; url: string }[];
 };
 
 export type AgreeItemData = {
@@ -1867,7 +1868,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0 }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0, initialKokuchiAgreed }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number; initialKokuchiAgreed?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
   const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
@@ -1875,6 +1876,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   const modalDeath = kokuchiPat ? kokuchiPat.death : deathOpt;
   // 告知ボタン押下でモーダルを表示（ページ表示時は非表示）
   const [infoPlan, setInfoPlan] = useState<Plan | null>(initialDisclosureOpen ? (modalPlan ?? null) : null);
+  const [kokuchiAgreed, setKokuchiAgreed] = useState(initialKokuchiAgreed ?? false);
   const [same, setSame] = useState(initialSame ?? true);
   const [editOpen, setEditOpen] = useState(initialEditOpen ?? false);
   const [sheetRes, setSheetRes] = useState(initialSheetRes ?? false);
@@ -1986,6 +1988,13 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </span>
             <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
           </button>
+          <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
+            onClick={() => setKokuchiAgreed((a) => !a)}>
+            <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+              {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
+            </span>
+            <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
+          </div>
         </div>
 
         <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
@@ -2015,7 +2024,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
         {formSplit && (
         <GroupCard title="団体特定コード" icon={Ic.tag}>
-          <Field label="団体特定コード" placeholder="1234567891234567" hint="団体からご案内のコードを入力してください" />
+          <Field label="団体特定コード" placeholder="1234567891234567" />
+          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
         </GroupCard>
         )}
 
@@ -2085,7 +2095,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         {/* 団体特定コード（パターンA：非分割時は保険金受取人の後） */}
         {!formSplit && (
         <GroupCard title="団体特定コード" icon={Ic.tag}>
-          <Field label="団体特定コード" placeholder="1234567891234567" hint="団体からご案内のコードを入力してください" />
+          <Field label="団体特定コード" placeholder="1234567891234567" />
+          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
         </GroupCard>
         )}
         </>)}
@@ -2215,10 +2226,16 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     t: "申込に関する注意事項の確認",
     blocks: [
       { ul: [
-        "お申し込み・告知内容は必ず被保険者ご本人さまがご入力ください。",
-        "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
-        "T&Dフィナンシャル生命のシステム上登録できない字体については、登録可能な漢字かカタカナでの登録となることをご了承ください。（保障内容やご契約後の諸手続き等に影響はありません）",
+        "お申し込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
+        "T&Dフィナンシャル生命のシステム上登録できない字体については、登録可能な漢字またはカタカナでの登録となります。なお、保障内容やご契約後の諸手続き等に影響はありません。",
+        "本保険のご加入手続き等にあたり、保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、保険契約の引受け・継続・維持管理、給付金のお支払い、その他保険に関連・付随する業務のために利用し、引受保険会社に提供します。個人情報に変更が生じた場合も同様に取り扱います。",
+        "保険医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、業務の適切な運営の確保その他必要と認められる範囲に限定して取り扱います。",
+        "個人番号および特定個人情報は、法令で定められた目的のみに利用し、その範囲を超えて利用または第三者提供は行いません。",
+      ] },
+      { bulletLinks: [
+        { text: "個人情報に関するお問い合わせ（開示・訂正・利用停止等）については、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
+        { text: "最新の内容は、T&Dフィナンシャル生命ホームページにてご確認ください。", url: "https://www.tdf-life.co.jp" },
       ] },
     ],
   },
@@ -2227,12 +2244,6 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     blocks: [
       { p: "以下の重要事項説明書をご確認ください。" },
       { download: "重要事項説明書" },
-    ],
-  },
-  {
-    t: "ほけん商品のお問い合わせについて",
-    blocks: [
-      { p: "本サービスはT＆Dフィナンシャル生命のほけん商品となります。詳細なほけん商品のお問い合わせについてはT＆Dフィナンシャル生命へお問い合わせください。" },
     ],
   },
   {
@@ -2259,6 +2270,21 @@ export function AgreeBlocks({ blocks }: { blocks: AgreeBlock[] }) {
               </li>
             ))}
           </ul>
+        );
+        if (b.bulletLinks) return (
+          <div key={i} className="space-y-3">
+            {b.bulletLinks.map((item, j) => (
+              <div key={j} className="flex gap-1.5">
+                <span className="text-neutral-400 shrink-0">・</span>
+                <span>
+                  <span className="text-caption text-neutral-600 leading-relaxed">{item.text}</span><br/>
+                  <a href={item.url} target="_blank" rel="noreferrer"
+                    className="text-caption underline break-all leading-relaxed"
+                    style={{ color: 'var(--color-link)' }}>{item.url}</a>
+                </span>
+              </div>
+            ))}
+          </div>
         );
         if (b.link) return <a key={i} href={b.link} target="_blank" rel="noreferrer" className="block text-caption underline break-all leading-relaxed" style={{ color: 'var(--color-link)' }}>{b.link}</a>;
         if (b.download) return (
@@ -2328,13 +2354,11 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, initialNat }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; initialNat?: string }) {
+export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
   const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
-  const [nat, setNat] = useState(initialNat ?? "jp");
-  const [jpLang, setJpLang] = useState("");
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [ikoAgree, setIkoAgree] = useState(false);
   // ご意向文のプラン種別部分（太字表示する中央部分。プラン×死亡保障の全10通り）
@@ -2409,7 +2433,6 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Field label="フリガナ" value="ヤマダ タロウ" />
               <LockedField label="生年月日" value="1990 / 01 / 01" />
               <LockedField label="性別" value="男性" />
-              <Field label="国籍" value="日本国籍" />
               <Field label="郵便番号" value="100-0001" hint="郵便番号から住所を自動入力します" />
               <Select label="都道府県" value="東京都" options={PREFS} />
               <Field label="市区町村" value="千代田区" />
@@ -2425,7 +2448,6 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Row k="フリガナ" v="ヤマダ タロウ" />
               <Row k="生年月日" v="1990 / 01 / 01" />
               <Row k="性別" v="男性" />
-              <Row k="国籍" v="日本国籍" />
               <div className="flex flex-col gap-[2px] py-3 border-b border-warm-200">
                 <span className="text-caption text-neutral-500">住所</span>
                 <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
@@ -2583,31 +2605,6 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             {agreeItems.map((it, i) => (
               <AgreeItem key={it.id || i} num={CIRC[i]} item={it} open={openIdx === i}
                 onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}>
-                {it.id === "insured" && (
-                  <div className="space-y-4 pt-1">
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-6">
-                      {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
-                        <button key={k} onClick={() => setNat(k)}
-                          className={`h-12 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
-                          {l}
-                        </button>
-                      ))}
-                    </div>
-                    {nat === "other" && (
-                      <div className="flex flex-col gap-2">
-                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <ReqBadge /></span>
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-6">
-                          {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
-                            <button key={k} onClick={() => setJpLang(k)}
-                              className={`h-12 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-white text-neutral-700 hover:border-primary-300"}`}>
-                              {l}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
               </AgreeItem>
             ))}
           </div>
@@ -2617,7 +2614,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             <span className={`grid place-items-center w-6 h-6 mt-[2px] rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-h6 text-neutral-700 leading-relaxed">①②③④について確認する</span>
+            <span className="text-h7 text-neutral-700 leading-relaxed">①②を確認し、③の内容に同意する</span>
           </button>
         </div>
       </div>

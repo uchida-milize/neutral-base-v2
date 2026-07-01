@@ -34,6 +34,7 @@ import {
  *   errStep        フローティングエラーの初期ステップ（0–3）
  *   kokuchiPattern 告知パターン（care_d / care_n / cancer_d / ... / tc_n）
  *   disclosure     "1" で告知モーダルを開いた状態で表示
+ *   kokuchiAgree   "1" で告知事項同意チェック済み状態
  *   editKiyaku     "1" で契約者情報編集展開
  *   editJuushin    "1" で保険金受取人編集展開
  *   benSameAddr    "0" で受取人住所を個別入力
@@ -53,7 +54,8 @@ function ViewContent() {
   const errMode      = params.get("errMode") ?? "none";
   const errStep      = params.get("errStep") ? parseInt(params.get("errStep")!, 10) : 0;
   const kokuchiPat   = params.get("kokuchiPattern") ?? "auto";
-  const disclosure   = params.get("disclosure") === "1";
+  const disclosure     = params.get("disclosure") === "1";
+  const kokuchiAgree   = params.get("kokuchiAgree") === "1";
   const editKiyaku   = params.get("editKiyaku") === "1";
   const editJuushin  = params.get("editJuushin") === "1";
   const benSameAddr  = params.get("benSameAddr") !== "0";
@@ -95,6 +97,7 @@ function ViewContent() {
       go={noop} sel={sel}
       m={10000} setM={noop} y={15} setY={noop}
       initialDisclosureOpen={disclosure}
+      initialKokuchiAgreed={kokuchiAgree}
       errMode={errMode}
       initialErrStep={errStep}
       kokuchiPattern={kokuchiPat}

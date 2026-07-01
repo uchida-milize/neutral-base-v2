@@ -651,7 +651,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           el: (
             <ScreenStep4
               go={noop} sel="cancer_d" m={10000} y={15}
-              initialOpenIdx={4} initialNat="other"
+              initialOpenIdx={4}
             />
           ),
         },
