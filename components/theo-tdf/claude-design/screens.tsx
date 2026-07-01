@@ -1203,7 +1203,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
               <div className="mt-6 space-y-6 mb-0">
                 <div className="text-left">
                   <a className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" style={{ paddingTop: '6px' }} />
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
                     詳細なサービス内容はこちら
                   </a>
                 </div>
@@ -1214,7 +1214,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" style={{ paddingTop: '6px' }} />
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
                     保険商品のご案内にあたりご確認・同意いただきたいこと
                   </button>
                 </div>
@@ -1543,7 +1543,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         {agree && (
           <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
             <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
               よくあるご質問
             </a>
           </div>
@@ -3077,7 +3077,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="space-y-4 mt-4">
             <div className="text-right">
               <a className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
                 詳細なサービス内容はこちら
               </a>
             </div>
@@ -3093,7 +3093,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           <div className="text-right mt-3">
             <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
               弊害防止措置等の対応について
             </button>
           </div>
@@ -3210,7 +3210,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             {agree && (
               <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
                 <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                  <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                  <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
                   よくあるご質問
                 </a>
               </div>
