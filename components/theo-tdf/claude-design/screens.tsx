@@ -2734,7 +2734,7 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       </div>
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
-      <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1, minHeight: '100svh' }}>
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
           {isErr ? (
@@ -2859,7 +2859,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
-      <div className="flex-1 overflow-y-auto no-sb flex flex-col" style={{ minHeight: '100svh' }}>
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
