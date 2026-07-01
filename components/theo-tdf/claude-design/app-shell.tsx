@@ -338,6 +338,7 @@ export function TheoTdfClaudeDesignShell() {
               { value: "processing", label: "処理中" },
               { value: "error",      label: "処理エラー" },
               { value: "maint",      label: "メンテナンス中" },
+              { value: "ended",      label: "申込みキャンセル" },
             ]}
           />
           <TweakSection label="内容確認画面" />

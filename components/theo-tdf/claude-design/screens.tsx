@@ -2736,13 +2736,13 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
       <div className="flex-1 flex flex-col items-center justify-center relative" style={{ zIndex: 1 }}>
         <div style={{ width: 300 }} className="text-center">
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
           {isErr ? (
-            <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6" alt="エラー" />
+            <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6 mx-auto block" alt="エラー" />
           ) : isMaint ? (
-            <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6" alt="メンテナンス中" />
+            <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6 mx-auto block" alt="メンテナンス中" />
           ) : (
-            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600 mx-auto block"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
           )}
           <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line text-center">
@@ -2759,6 +2759,7 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
 
 export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string }) {
   const doneBgRef = useRef<any>(null);
+  if (variant === 'ended') return <ScreenEnded onRestart={() => go(0)} />;
   if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;
   const bindDoneScroll = (el: any) => {
     if (!el || el.__bound) return;
@@ -2864,8 +2865,8 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       <div className="flex-1 flex flex-col" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8">
           <div style={{ width: 300 }} className="text-center">
-            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを<br/>終了しました</h2>
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
           </div>

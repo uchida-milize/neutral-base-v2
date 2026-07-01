@@ -15,6 +15,7 @@ import {
   ScreenCardConfirm,
   ScreenDone,
   ScreenStatus,
+  ScreenEnded,
   deathFromSel,
 } from "@/components/theo-tdf/claude-design/screens";
 
@@ -65,9 +66,11 @@ function ViewContent() {
   const sel = "cancer_d";
   const deathOpt = deathFromSel(sel);
 
-  /* 完了画面: doneVariant が processing/error/maint の場合は ScreenStatus */
+  /* 完了画面: doneVariant が processing/error/maint の場合は ScreenStatus、ended の場合は ScreenEnded */
   const doneScreen = doneVariant === "done"
     ? <ScreenDone key="7" go={noop} />
+    : doneVariant === "ended"
+    ? <ScreenEnded key="7e" onRestart={noop} />
     : <ScreenStatus key="7s" variant={doneVariant as "processing" | "error" | "maint"} go={noop} />;
 
   const screens: React.ReactNode[] = [

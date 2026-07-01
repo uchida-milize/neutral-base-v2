@@ -720,6 +720,12 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=7&doneVariant=maint",
           el: <ScreenStatus variant="maint" go={noop} />,
         },
+        {
+          key: "done-ended",
+          label: "申込みキャンセル",
+          viewUrl: "/theo-tdf-view?s=7&doneVariant=ended",
+          el: <ScreenEnded onRestart={noop} />,
+        },
       ],
     },
 
