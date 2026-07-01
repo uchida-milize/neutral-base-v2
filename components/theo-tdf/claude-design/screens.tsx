@@ -1146,7 +1146,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             </div>
           </div>
           {/* ロゴ：絶対配置（上左・ステータスバー直下） */}
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん"
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
           {/* テキスト：絶対配置 */}
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
