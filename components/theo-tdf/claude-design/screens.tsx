@@ -2734,7 +2734,7 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       </div>
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
-      <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1 }}>
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col relative" style={{ zIndex: 1, minHeight: '100svh' }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
           {isErr ? (
@@ -2786,12 +2786,12 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
             <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
           </div>
           {/* ヒーローコンテンツ */}
-          <div className="px-6 pt-4 pb-12 text-center">
+          <div className="px-5 pt-4 pb-12 text-center">
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
-            <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
+            <h2 className="text-h4 font-bold text-neutral-800">お申込が完了しました</h2>
             <p className="mt-2 text-caption text-neutral-500">申込番号　THEO-2026-000482</p>
           </div>
           </div>
@@ -2802,12 +2802,13 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
           <Steps n={5} go={go} />
         </div>
 
-        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6">
           <div className="px-1">
-            <p className="text-h6 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
-              査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。
+              査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
+              ※銀行のお取引状況等によっては、ご加入できない場合がございます。
             </p>
           </div>
 
@@ -2822,14 +2823,14 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
               <div key={n} className="flex gap-3">
                 {/* 左：丸数字＋接続線 */}
                 <div className="flex flex-col items-center" style={{ width: '28px', flexShrink: 0 }}>
-                  <span className="grid place-items-center w-8 h-8 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
+                  <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
                   {idx < arr.length - 1 && (
                     <div style={{ flex: 1, width: '2px', background: 'var(--primary-color-200)', minHeight: '24px', margin: '4px 0' }} />
                   )}
                 </div>
                 {/* 右：テキスト */}
                 <div style={{ paddingBottom: idx < arr.length - 1 ? '0' : '4px' }}>
-                  <p className="text-h6 font-bold text-neutral-800">{t}</p>
+                  <p className="text-h7 font-bold text-neutral-800">{t}</p>
                   <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
                 </div>
               </div>
@@ -2858,16 +2859,14 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
-      <div className="flex-1 overflow-y-auto no-sb flex flex-col">
+      <div className="flex-1 overflow-y-auto no-sb flex flex-col" style={{ minHeight: '100svh' }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
-          <div className="grid place-items-center w-16 h-16 rounded-full bg-warm-100 mb-6">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-8 h-8 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </div>
-          <h2 className="text-h3 font-bold text-neutral-800">お申し込みを終了しました</h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <h2 className="text-h4 font-bold text-neutral-800">お申し込みを終了しました</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。<br/>再度お申し込みいただく場合は、はじめからやり直してください。</p>
         </div>
-        <div className="px-6 pb-6">
+        <div className="px-5 pb-6">
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-center">
             ご不明な点は THEO サポートまでお問い合わせください。
           </div>
