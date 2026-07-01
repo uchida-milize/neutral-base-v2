@@ -2966,6 +2966,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
   const sendSecRef = useRef<any>(null);
   const [showSend, setShowSend] = useState(initialShowSend ?? false);
   const heroBgRef = useRef<any>(null);
+  const heroRef = useRef<any>(null);
   const [solid, setSolid] = useState(false);
   const bindScroll = (el: any) => {
     if (!el || el.__bound) return;
@@ -2973,7 +2974,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
     el.addEventListener("scroll", () => {
       const scrollY = el.scrollTop;
       if (heroBgRef.current) heroBgRef.current.style.transform = "translateY(" + (scrollY * 0.4) + "px)";
-      setSolid(scrollY > 160);
+      const h = heroRef.current;
+      setSolid(scrollY >= (h ? h.offsetHeight - 16 : 220));
       const sec = sendSecRef.current;
       if (sec) { const secTop = sec.getBoundingClientRect().top; const contBottom = el.getBoundingClientRect().bottom; setShowSend(secTop < contBottom - 64); }
     }, { passive: true });
@@ -3011,29 +3013,33 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
       </div>
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         {/* Hero */}
-        <div style={{ position: 'relative', height: '420px', overflow: 'hidden', boxShadow: '0 60px 60px 0 rgba(100,176,247,0.10)' }}>
+        <div ref={heroRef} style={{ position: 'relative', height: '620px', overflow: 'hidden' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
-              <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-            </div>
-            <div className="sticky top-0 z-20 transition-colors duration-200" style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
-              <div className="flex items-center justify-between px-3 h-14">
-                <span className="w-10 shrink-0" />
-                <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
-                  <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">THEO</span>
-                  <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
-                </div>
-                <span className="w-10 shrink-0" />
+          <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
+            <span>9:41</span>
+            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+          </div>
+          <div className="sticky top-0 z-20 transition-colors duration-200"
+               style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
+            <div className="flex items-center justify-between px-3 h-14">
+              <span className="w-10 shrink-0" />
+              <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
+                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">THEO</span>
+                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
               </div>
-            </div>
-            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
-            <div style={{ position: 'absolute', top: '175px', left: '20px', right: '20px' }}>
-              <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500" style={{ marginLeft: '4px' }}>Embedded Insurance</p>
-              <h1 className="mt-1 font-bold leading-snug text-neutral-800" style={{ fontSize: '31px', lineHeight: 1.3, marginLeft: '-2px' }}>つみたてながら、<br/>もしもに備える。</h1>
-              <p className="mt-2 text-h6 leading-relaxed text-neutral-700">将来に向けた<br/>資産形成のためのほけん</p>
+              <span className="w-10 shrink-0" />
             </div>
           </div>
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん"
+            style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
+          <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
+            <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
+            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
+            <p className="mt-2 text-h7 leading-relaxed" style={{ color: '#fff' }}>将来に向けた資産形成のためのほけん</p>
+          </div>
+          </div>{/* /absolute overlay */}
+          <img src="/assets/theo-tdf/hero-notch.svg" alt="" aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: -1, width: '100%', display: 'block', pointerEvents: 'none' }} />
         </div>
         {/* 商品概要コンパクト */}
         <div className="px-6 pt-4 pb-3 space-y-3">
