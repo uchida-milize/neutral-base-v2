@@ -2734,19 +2734,21 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       </div>
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
-      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative" style={{ zIndex: 1 }}>
-        <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
-        {isErr ? (
-          <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6" alt="エラー" />
-        ) : isMaint ? (
-          <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6" alt="メンテナンス中" />
-        ) : (
-          <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-        )}
-        <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
-        <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line text-left" style={{ textWrap: 'pretty' }}>
-          {body}
-        </p>
+      <div className="flex-1 flex flex-col items-center justify-center relative" style={{ zIndex: 1 }}>
+        <div style={{ width: 260 }}>
+          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
+          {isErr ? (
+            <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6" alt="エラー" />
+          ) : isMaint ? (
+            <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6" alt="メンテナンス中" />
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          )}
+          <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
+          <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line" style={{ textWrap: 'pretty' }}>
+            {body}
+          </p>
+        </div>
       </div>
       <ActionBar bg="#F2FBFE">
         <Btn kind="button" onClick={() => go(isErr ? 5 : 6)}>戻る</Btn>
@@ -2863,7 +2865,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを終了しました</h2>
-            <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。<br/>再度お申し込みいただく場合は、はじめからやり直してください。</p>
+            <p className="mt-3 text-caption text-neutral-500 leading-relaxed" style={{ textWrap: 'pretty' }}>今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
           </div>
         </div>
         <div className="px-5 pb-6">
