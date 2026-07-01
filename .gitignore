@@ -48,3 +48,4 @@ _tmp_*
 
 # Claude Code / Cowork のローカル設定 (マシン固有・コミット不要)
 .claude/settings.local.json
+out/
