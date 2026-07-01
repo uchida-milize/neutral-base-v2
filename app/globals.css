@@ -42,6 +42,21 @@
   src: url("/fonts/zen-kaku-gothic-new/ZenKakuGothicNew-Bold.ttf") format("truetype");
 }
 
+/* Geist — セルフホスト (public/fonts/) Variable フォント。
+   Next.js の var(--font-geist-sans) と並行して theo-tdf prototype で直接参照する。 */
+@font-face {
+  font-family: "Geist";
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/Geist-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/GeistMono-VariableFont_wght.ttf") format("truetype");
+}
+
 /* Noto Sans JP — セルフホスト (public/fonts/) で主要ウェイトを読み込み。
    handoff(4) で --font-jp の筆頭フォントに変更。weight 300 (Light) を追加。 */
 @font-face {

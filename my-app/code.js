@@ -1,10 +1,10 @@
 // ============================================================
 //  THEO × T&Dフィナンシャル生命 — Figma 完全逆輸入インポーター
 //  UIUX_Importer / figma_Importer プラグイン向け code.js
-//  生成: 2026-06-16  ベース: Vercel 公開最新 /theo-tdf/windows (全23画面)
+//  生成: 2026-06-30  ベース: Vercel 公開最新 /theo-tdf/windows (全27画面)
 //
 //  方針:
-//   - 23画面すべてを省略なしで具体描画（プレースホルダコメント無し）
+//   - 27画面すべてを省略なしで具体描画（プレースホルダコメント無し）
 //   - スプレッド演算子(...)不使用。Figmaノードへのカスタムプロパティ付与なし
 //     （プロト遷移は正規の node.reactions のみ使用）
 //   - 各画面はコンテンツ全体を表示する可変高さフレーム（クリップ無し）
@@ -12,14 +12,15 @@
 //     accordion / planCard / simSlider / benefitTable / extBar をすべて描画
 //   - Smart Animate でハッピーパス遷移を結線
 //
-//  23画面（カテゴリ別の行レイアウト）:
+//  27画面（カテゴリ別の行レイアウト）:
 //   [商品概要]   01 パターンA / 02 パターンB統合 / 03 B+下部CTA(未同意) / 04 B+同意済CTA活性
 //   [プラン選択] 05 デフォルト / 06 重要事項シート / 07 給付予想額展開 / 08 下部CTA(未同意) / 09 同意済CTA活性 / 10 メール認証済
 //   [PIN認証]    11 デフォルト / 12 666666入力済・活性
 //   [申込フォーム]13 1ページ / 14 2分割(契約者) / 15 2分割(受取人) / 16 積立修正シート
 //   [内容確認]   17 デフォルト / 18 支払詳細展開 / 19 同意全チェック・CTA活性 / 20 契約者+受取人 両編集
 //   [カード(外部GMO)] 21 入力 / 22 確認
-//   [完了]       23 完了
+//   [完了・ステータス] 23 完了 / 24 処理中 / 25 処理エラー / 26 メンテナンス中
+//   [終了]       27 終了（申込キャンセル）
 // ============================================================
 
 (async function () {
@@ -33,6 +34,96 @@
     figma.loadFontAsync({ family: "Inter", style: "Medium" }),
     figma.loadFontAsync({ family: "Inter", style: "Bold" }),
   ]);
+
+  // ============================================================
+  //  ① Colorバリアブル動的探索
+  //     theo-tdf コレクションの変数を name → Variable オブジェクト でマップ化
+  //     例: VAR["color/primary/500"] → Variable
+  // ============================================================
+  var VAR = {};
+  var VAR_COLLECTION_ID = null;
+  (function() {
+    try {
+      var allVars = figma.variables.getLocalVariables("COLOR");
+      for (var vi = 0; vi < allVars.length; vi++) {
+        VAR[allVars[vi].name] = allVars[vi];
+        if (!VAR_COLLECTION_ID) VAR_COLLECTION_ID = allVars[vi].variableCollectionId;
+      }
+    } catch(e) { /* variables API 非対応バージョンでは無視 */ }
+  })();
+
+  // ② コレクション内モード（theo-tdf）ID取得
+  var VAR_MODE_ID = null;
+  (function() {
+    if (!VAR_COLLECTION_ID) return;
+    try {
+      var col = figma.variables.getVariableCollectionById(VAR_COLLECTION_ID);
+      if (col && col.modes && col.modes.length > 0) {
+        // "theo-tdf" または先頭モードを採用
+        for (var mi = 0; mi < col.modes.length; mi++) {
+          if (/theo/i.test(col.modes[mi].name)) { VAR_MODE_ID = col.modes[mi].modeId; break; }
+        }
+        if (!VAR_MODE_ID) VAR_MODE_ID = col.modes[0].modeId;
+      }
+    } catch(e) {}
+  })();
+
+  // ③ 共通コンポーネント動的探索
+  //    ◇ で始まるコンポーネントを name → ComponentNode でマップ化
+  //    例: COMP["◇Btn"] → ComponentNode
+  var COMP = {};
+  (function() {
+    try {
+      var allComps = figma.root.findAll(function(n) {
+        return n.type === "COMPONENT" && n.name.indexOf("◇") === 0;
+      });
+      for (var ci = 0; ci < allComps.length; ci++) {
+        // 同名の場合は最初に見つかったものを優先
+        if (!COMP[allComps[ci].name]) COMP[allComps[ci].name] = allComps[ci];
+      }
+    } catch(e) {}
+  })();
+
+  // ── バリアブル紐付けヘルパー ──────────────────────────────────
+  // ノードの fills に Color Variable を紐付ける（変数が見つかった場合のみ）
+  function bindFillVar(node, varName) {
+    var v = VAR[varName];
+    if (!v) return;
+    try {
+      node.setBoundVariable("fills", v);
+    } catch(e) {}
+  }
+  // ノードの stroke に Color Variable を紐付ける
+  function bindStrokeVar(node, varName) {
+    var v = VAR[varName];
+    if (!v) return;
+    try {
+      node.setBoundVariable("strokes", v);
+    } catch(e) {}
+  }
+  // テキストノードの fills に Color Variable を紐付ける
+  function bindTextColorVar(node, varName) {
+    var v = VAR[varName];
+    if (!v) return;
+    try {
+      node.setBoundVariable("fills", v);
+    } catch(e) {}
+  }
+
+  // ── コンポーネントインスタンス生成ヘルパー ──────────────────────
+  // 見つかったコンポーネントのインスタンスを生成して parent に追加
+  // 見つからない場合は null を返す（呼び出し側がフォールバック描画）
+  function createInstance(compName, parent, x, y, w, h) {
+    var comp = COMP[compName];
+    if (!comp) return null;
+    try {
+      var inst = comp.createInstance();
+      inst.x = x; inst.y = y;
+      if (w && h) inst.resize(w, h);
+      if (parent) parent.appendChild(inst);
+      return inst;
+    } catch(e) { return null; }
+  }
 
   // ── カラーパレット (theo-tdf tokens) ──────────────────────────
   var C = {
@@ -68,8 +159,45 @@
     succ: { r: 0.122, g: 0.541, b: 0.298 },
     succ10:{ r: 0.910, g: 0.965, b: 0.933 },
     link: { r: 0.000, g: 0.400, b: 0.820 },
+    errBg:{ r: 1.000, g: 0.941, b: 0.941 },
   };
   var W = 390;
+
+  // ============================================================
+  //  バリアブル名テーブル（Colorコレクション名 → C.xxx のマッピング）
+  //  Figmaファイル内のバリアブル命名規則に合わせて変更してください
+  //  例: "color/primary/500" がない場合は空文字を設定 → 紐付けをスキップ
+  // ============================================================
+  var CVAR = {
+    p500:   "color/primary/500",
+    p600:   "color/primary/600",
+    p700:   "color/primary/700",
+    p300:   "color/primary/300",
+    p100:   "color/primary/100",
+    p10:    "color/primary/10",
+    btn:    "color/primary/500",
+    btn600: "color/primary/600",
+    cta:    "color/attention/500",
+    sec:    "color/secondary/500",
+    sec700: "color/secondary/700",
+    sec10:  "color/secondary/10",
+    sec100: "color/secondary/100",
+    w50:    "color/warm/50",
+    w100:   "color/warm/100",
+    w200:   "color/warm/200",
+    w300:   "color/warm/300",
+    n900:   "color/neutral/900",
+    n800:   "color/neutral/800",
+    n700:   "color/neutral/700",
+    n600:   "color/neutral/600",
+    n500:   "color/neutral/500",
+    n400:   "color/neutral/400",
+    n300:   "color/neutral/300",
+    white:  "color/base/white",
+    succ:   "color/success/500",
+    succ10: "color/success/10",
+    link:   "color/link/default",
+  };
 
   // ── ペイント/ファクトリ ───────────────────────────────────────
   function fill(color, opacity) {
@@ -86,19 +214,22 @@
     f.clipsContent = true;
     return f;
   }
-  function rect(parent, x, y, w, h, bg, r) {
+  // rect 生成後にバリアブル紐付けを試みる（bgKey: C のキー名文字列）
+  function rect(parent, x, y, w, h, bg, r, bgKey) {
     var nd = figma.createRectangle();
     nd.x = x; nd.y = y; nd.resize(w, h);
     nd.fills = bg ? fill(bg) : noFill();
     if (r !== undefined) nd.cornerRadius = r;
     parent.appendChild(nd);
+    if (bgKey && CVAR[bgKey]) bindFillVar(nd, CVAR[bgKey]);
     return nd;
   }
-  function rectB(parent, x, y, w, h, bg, bc, r, bw) {
-    var nd = rect(parent, x, y, w, h, bg, r);
+  function rectB(parent, x, y, w, h, bg, bc, r, bw, bgKey, bcKey) {
+    var nd = rect(parent, x, y, w, h, bg, r, bgKey);
     nd.strokes = fill(bc);
     nd.strokeWeight = bw || 1;
     nd.strokeAlign = "INSIDE";
+    if (bcKey && CVAR[bcKey]) bindStrokeVar(nd, CVAR[bcKey]);
     return nd;
   }
   function txt(parent, x, y, content, opts) {
@@ -117,6 +248,8 @@
     if (o.right) nd.textAlignHorizontal = "RIGHT";
     if (o.lh) nd.lineHeight = { unit: "PIXELS", value: o.lh };
     parent.appendChild(nd);
+    // テキストカラーのバリアブル紐付け（o.colorKey が指定された場合）
+    if (o.colorKey && CVAR[o.colorKey]) bindTextColorVar(nd, CVAR[o.colorKey]);
     return nd;
   }
   function divider(parent, x, y, w, color) {
@@ -127,7 +260,6 @@
     return nd;
   }
   function chevron(parent, x, y, dir, color, s) {
-    // 簡易シェブロン (› ∨) — テキストグリフで代用
     txt(parent, x, y, dir === "down" ? "∨" : dir === "up" ? "∧" : "›", { size: s || 14, color: color || C.n400 });
   }
 
@@ -140,12 +272,26 @@
     return y + 28;
   }
   function appBar(f, y, title) {
+    // ◇AppBar インスタンス優先
+    var inst = createInstance(CNAME.AppBar, f, 0, y, W, 52);
+    if (inst) {
+      try { inst.setProperties && inst.setProperties({ "Title": title || "つみたて安心ほけん" }); } catch(e) {}
+      return y + 52;
+    }
+    // フォールバック
     rect(f, 0, y, W, 52, C.p500);
     txt(f, 0, y + 8, "THEO", { size: 13, bold: true, color: C.white, w: W, center: true });
     txt(f, 0, y + 27, title || "つみたて安心ほけん", { size: 11, med: true, color: C.white, w: W, center: true });
     return y + 52;
   }
   function steps(f, y, active) {
+    // ◇Steps インスタンス優先
+    var inst = createInstance(CNAME.Steps, f, 0, y, W, 46);
+    if (inst) {
+      try { inst.setProperties && inst.setProperties({ "Active": active, "Step": active }); } catch(e) {}
+      return y + 46;
+    }
+    // フォールバック
     rect(f, 0, y, W, 46, C.white);
     divider(f, 0, y + 45, W, C.w200);
     var total = 5, cw = 28, lw = 24;
@@ -161,12 +307,51 @@
     return y + 46;
   }
   function actionBar(f, y, h, bg) {
+    // ◇ActionBar インスタンス優先
+    var inst = createInstance(CNAME.ActionBar, f, 0, y, W, h);
+    if (inst) { return y + h; }
+    // フォールバック
     rect(f, 0, y, W, h, bg || C.white);
     divider(f, 0, y, W, bg ? C.p100 : C.w200);
     return y + h;
   }
-  // Btn → shadcn Button 相当。kind: button(青) / danger(赤cta) / outline
+  // ============================================================
+  //  コンポーネント名テーブル（ファイル内の ◇コンポーネント名）
+  //  Figmaファイル内のコンポーネント名に合わせて変更してください
+  // ============================================================
+  var CNAME = {
+    Btn:        "◇Btn",
+    BtnDanger:  "◇Btn",       // variant で分岐
+    BtnOutline: "◇Btn",
+    Badge:      "◇Badge",
+    Field:      "◇Field",
+    LockedField:"◇LockedField",
+    Select:     "◇SelectField",
+    AppBar:     "◇AppBar",
+    ActionBar:  "◇ActionBar",
+    Steps:      "◇Steps",
+    GroupCard:  "◇GroupCard",
+    ReqBadge:   "◇ReqBadge",
+    Checkbox:   "◇Checkbox",
+  };
+
+  // Btn → ◇Btn インスタンス優先、なければプリミティブ描画
+  // kind: "button"(青) / "danger"(赤cta) / "outline"
   function Btn(f, x, y, w, label, kind, disabled) {
+    // コンポーネントインスタンス試行
+    var inst = createInstance(CNAME.Btn, f, x, y, w, 56);
+    if (inst) {
+      try {
+        // テキスト・バリアントの上書きを試みる（プロパティ名はファイルに依存）
+        inst.setProperties && inst.setProperties({
+          "Label": label,
+          "Kind":  kind || "button",
+          "State": disabled ? "disabled" : "default",
+        });
+      } catch(e) {}
+      return inst;
+    }
+    // フォールバック：プリミティブ描画
     var bgc = disabled
       ? (kind === "danger" ? { r: 1.0, g: 0.69, b: 0.69 } : { r: 0.72, g: 0.80, b: 0.95 })
       : kind === "danger" ? C.cta
@@ -178,17 +363,37 @@
     txt(f, x, y + 18, label, { size: 15, bold: true, color: fc, w: w, center: true });
     return nd;
   }
-  // Badge → shadcn Badge 相当 (secondary 淡色)
+  // Badge → ◇Badge インスタンス優先
   function Badge(f, x, y, label, tone) {
+    var inst = createInstance(CNAME.Badge, f, x, y);
+    if (inst) {
+      try {
+        inst.setProperties && inst.setProperties({ "Label": label, "Tone": tone || "default" });
+      } catch(e) {}
+      return label.length * 13 + 22; // 幅の概算を返す
+    }
+    // フォールバック
     var bg = tone === "succ" ? C.succ10 : C.sec10;
     var fc = tone === "succ" ? C.succ : C.sec700;
-    var w = label.length * 13 + 22;
-    rect(f, x, y, w, 22, bg, 11);
-    txt(f, x, y + 4, label, { size: 11, med: true, color: fc, w: w, center: true });
-    return w;
+    var bw = label.length * 13 + 22;
+    rect(f, x, y, bw, 22, bg, 11);
+    txt(f, x, y + 4, label, { size: 11, med: true, color: fc, w: bw, center: true });
+    return bw;
   }
-  // Field → Label + Input
+  // Field → ◇Field インスタンス優先
   function Field(f, x, y, w, label, value, required) {
+    var inst = createInstance(CNAME.Field, f, x, y, w, 74);
+    if (inst) {
+      try {
+        inst.setProperties && inst.setProperties({
+          "Label": label + (required ? " *" : ""),
+          "Value": value || "",
+          "Required": !!required,
+        });
+      } catch(e) {}
+      return y + 74;
+    }
+    // フォールバック
     txt(f, x, y, label + (required ? " *" : ""), { size: 11, med: true, color: C.n600 });
     rectB(f, x, y + 18, w, 44, C.white, C.w300, 12, 1);
     txt(f, x + 12, y + 31, value, { size: 13, color: value ? C.n800 : C.n300 });
@@ -354,89 +559,213 @@
     txt(f, 20, 162, "将来に向けた\n資産形成のためのほけん", { size: 13, color: C.n700, w: 340, lh: 20 });
     Badge(f, 20, 218, "THEOのお客様限定");
     txt(f, 20, 252, "引受保険会社  T&Dフィナンシャル生命保険株式会社", { size: 10, color: C.n600, w: 350 });
-    // 概要カード
-    var y = 320;
-    rectB(f, 16, y, 358, 150, C.white, C.w200, 16, 1);
-    txt(f, 28, y + 16, "詳細なサービス内容はこちら", { size: 13, bold: true, color: C.link });
-    divider(f, 28, y + 44, 334, C.w200);
-    txt(f, 28, y + 56, "保険名称", { size: 10, color: C.n400 });
-    txt(f, 28, y + 72, "無配当特定疾病障害介護保障保険（団体型）", { size: 12, color: C.n700, w: 330 });
-    txt(f, 28, y + 100, "保障期間", { size: 10, color: C.n400 });
-    txt(f, 28, y + 116, "5年〜40年（最大）", { size: 12, color: C.n700, w: 330 });
-    y += 162;
-    // 保険料バンド
-    rect(f, 16, y, 358, 56, C.w100, 14);
-    txt(f, 28, y + 20, "保険料", { size: 12, color: C.n500 });
-    txt(f, 200, y + 10, "480", { size: 28, bold: true, color: C.p500, right: true, w: 130, mono: true });
-    txt(f, 336, y + 20, " 円 / 月〜", { size: 12, color: C.n800 });
-    y += 70;
-    return y;
+    return 300;
   }
 
   // ============================================================
-  //  [商品概要 01-04]
+  //  feature icons 3列グリッド (商品概要 / パターンB 共通)
+  // ============================================================
+  function featureIcons(f, y) {
+    var labels = ["積立も\nあんしんに", "学資保険\nの代わりにも", "もしもの\n備えに"];
+    var colW = Math.floor(W / 3);
+    for (var i = 0; i < 3; i++) {
+      var cx = i * colW + Math.floor((colW - 36) / 2);
+      rect(f, cx, y, 36, 36, C.p10, 18);
+      txt(f, i * colW, y + 44, labels[i], { size: 11, bold: true, color: C.n700, w: colW, center: true, lh: 16 });
+    }
+    return y + 78;
+  }
+
+  // ============================================================
+  //  [商品概要 01]  パターンA（独立）
   // ============================================================
   function drawOverviewA() {
-    var f = frame("01 商品概要 / パターンA", 1000, C.w50);
+    var f = frame("01 商品概要 / パターンA", 1100, C.w50);
     var y = heroBlock(f);
-    txt(f, 20, y, "3つのプランから選ぶだけ", { size: 18, bold: true, color: C.n900 });
-    txt(f, 20, y + 28, "最短10分で、お申し込みが完了します。", { size: 12, color: C.n500, w: 340 });
-    y += 60;
-    var feats = [
-      ["積立も あんしんに", "働けなくなっても積立は止めない。"],
-      ["学資保険の代わりにも", "お子さまの将来の備えにも。"],
-      ["もしもの 備えに", "がん・障害・介護に幅広く対応。"],
-    ];
-    for (var i = 0; i < feats.length; i++) {
-      rectB(f, 16, y, 358, 58, C.white, C.w200, 12, 1);
-      rect(f, 28, y + 12, 34, 34, C.p10, 17);
-      txt(f, 74, y + 14, feats[i][0], { size: 13, bold: true, color: C.n800, w: 280 });
-      txt(f, 74, y + 33, feats[i][1], { size: 11, color: C.n500, w: 280 });
-      y += 66;
-    }
-    txt(f, 28, y + 4, "いつでも見直し・解約OK", { size: 11, med: true, color: C.succ });
+    y = steps(f, y, 1);
+    y += 16;
+
+    // feature icons
+    y = featureIcons(f, y);
+    y += 8;
+
+    // chart placeholder
+    rect(f, 16, y, 358, 120, C.p10, 16);
+    txt(f, 0, y + 50, "就業不能時も積立保障イメージ図", { size: 11, color: C.n400, w: W, center: true });
+    y += 132;
+
+    // 詳細サービスリンク（右寄せ）
+    txt(f, W - 200, y, "詳細なサービス内容はこちら ›", { size: 12, med: true, color: C.link });
     y += 28;
-    var ab = actionBar(f, y, 76);
-    Btn(f, 20, ab - 66, 350, "プランを選ぶ  ›", "button", false);
+
+    // 保障期間
+    txt(f, 20, y, "保障期間", { size: 13, bold: true, color: C.n800 });
+    y += 22;
+    txt(f, 20, y, "5年〜40年（最大）", { size: 12, color: C.n700, w: 350 });
+    y += 20;
+    txt(f, 20, y, "*保険期間は契約日から1年。保障期間満了まで1年ごとに更新。", { size: 10, color: C.n500, w: 350, lh: 14 });
+    y += 32;
+
+    // 弊害防止リンク（右寄せ）
+    txt(f, W - 240, y, "弊害防止措置等の対応について ›", { size: 12, med: true, color: C.link });
+    y += 36;
+
+    // 必要書類 blue band
+    rect(f, 0, y, W, 130, C.p10);
+    divider(f, 0, y, W, C.p100);
+    txt(f, 0, y + 14, "必要書類", { size: 16, bold: true, color: C.n900, w: W, center: true });
+    txt(f, 0, y + 36, "お手続きの際に必要となる書類を\nご準備ください", { size: 12, color: C.n500, w: W, center: true, lh: 18 });
+    rect(f, 155, y + 78, 80, 36, C.white, 8);
+    txt(f, 0, y + 86, "クレジットカード（本人名義）", { size: 11, med: true, color: C.n600, w: W, center: true });
+    y += 142;
+
+    divider(f, 20, y, 350, C.p100);
+    y += 20;
+
+    // 5つのプランから選ぶだけ
+    txt(f, 0, y, "5つのプランから選ぶだけ", { size: 20, bold: true, color: C.n900, w: W, center: true });
+    y += 30;
+    txt(f, 0, y, "最短10分で、お申し込みが完了します。", { size: 12, color: C.n500, w: W, center: true });
+    y += 28;
+
+    // いつでも解約OK バッジ
+    rect(f, 105, y, 180, 32, C.white, 16);
+    txt(f, 0, y + 8, "✓  いつでも見直し・解約OK", { size: 12, bold: true, color: C.succ, w: W, center: true });
+    y += 50;
+
+    // まずはプランを選んでみましょう + 矢印
+    txt(f, 0, y, "まずはプランを選んでみましょう", { size: 12, med: true, color: C.p500, w: W, center: true });
+    txt(f, 0, y + 20, "∨", { size: 16, color: C.p500, w: W, center: true });
+    y += 50;
+
+    // ActionBar: 保険名称ラベル + CTAボタン
+    var ab = actionBar(f, y + 8, 96);
+    txt(f, 20, y + 16, "保険名称", { size: 10, med: true, color: C.n400, mono: true });
+    txt(f, 20, y + 30, "無配当特定疾病障害介護保障保険（団体型）", { size: 11, color: C.n700, w: 350 });
+    Btn(f, 20, y + 50, 350, "プランを選ぶ  ›", "button", false);
     return endFrame(f, ab);
   }
 
+  // ============================================================
+  //  [商品概要 02-04]  パターンB 統合（概要コンパクト + シミュレーション）
+  // ============================================================
   function drawCombined(name, mode) {
     // mode: "base" | "cta" | "agreed"
-    var f = frame(name, 1400, C.w50);
+    var f = frame(name, 1800, C.w50);
     var y = heroBlock(f);
-    // 受け止めコピー + お客様情報
-    txt(f, 20, y, "さっそく、", { size: 20, bold: true, color: C.n900 });
-    txt(f, 20, y + 26, "プランを選んでみましょう", { size: 20, bold: true, color: C.n900 });
-    txt(f, 20, y + 56, "かんたん入力で保険料がすぐわかります", { size: 12, color: C.n500, w: 340 });
-    y += 86;
-    var gy = groupCard(f, 16, y, 358, 170, "生年月日・性別", "お客様情報。保険料の算出に使用します。");
-    SelectField(f, 32, gy + 6, 326, "生年月日", "1990 / 01 / 01", true);
-    var seg = gy + 86;
-    txt(f, 32, seg, "性別", { size: 11, med: true, color: C.n600 });
-    rectB(f, 32, seg + 18, 159, 42, C.p10, C.p500, 10, 1.5); txt(f, 32, seg + 30, "男性", { size: 13, bold: true, color: C.p700, w: 159, center: true });
-    rectB(f, 199, seg + 18, 159, 42, C.white, C.w300, 10, 1); txt(f, 199, seg + 30, "女性", { size: 13, color: C.n600, w: 159, center: true });
-    y += 186;
-    // プラン選択
-    txt(f, 20, y, "ご希望の保障プランをご選択ください", { size: 13, bold: true, color: C.n800 });
-    y = planCards(f, y + 28, "c") ;
-    // 必要書類
-    var dy = groupCard(f, 16, y, 358, 110, "必要書類のご確認");
-    txt(f, 32, dy + 8, "お手続きの際に必要となる書類をご準備ください。", { size: 12, color: C.n600, w: 326 });
-    rect(f, 32, dy + 34, 326, 30, C.sec10, 8);
-    txt(f, 44, dy + 42, "申込みには、ご本人様名義のクレジットカードが必要です", { size: 11, med: true, color: C.sec700, w: 310 });
+
+    // ── 商品概要コンパクト ──────────────────────────────────
+    rect(f, 0, y, W, 1, C.w200);
+    y += 16;
+
+    // THEOお客様限定バッジ + 引受保険会社
+    rect(f, 20, y, 120, 24, C.p500, 12);
+    txt(f, 20, y + 5, "THEOのお客様限定", { size: 10, bold: true, color: C.white, w: 120, center: true });
+    txt(f, W - 140, y + 3, "引受保険会社 T&D生命", { size: 9, color: C.n400 });
+    y += 36;
+
+    // feature icons 3列
+    y = featureIcons(f, y);
+    y += 8;
+
+    // chart placeholder
+    rect(f, 16, y, 358, 100, C.p10, 16);
+    txt(f, 0, y + 40, "就業不能時も積立保障イメージ図", { size: 11, color: C.n400, w: W, center: true });
+    y += 112;
+
+    // 保険名称・保障期間
+    txt(f, 20, y, "保険名称", { size: 12, bold: true, color: C.n800 });
+    y += 20;
+    txt(f, 20, y, "無配当特定疾病障害介護保障保険（団体型）", { size: 11, color: C.n700, w: 350 });
+    y += 22;
+    txt(f, 20, y, "保障期間", { size: 12, bold: true, color: C.n800 });
+    y += 20;
+    txt(f, 20, y, "5年〜40年（最大）", { size: 11, color: C.n700, w: 350 });
+    y += 20;
+    txt(f, 20, y, "*保険期間は契約日から1年。保障期間満了まで1年ごとに更新。", { size: 10, color: C.n500, w: 350, lh: 14 });
+    y += 32;
+
+    // 詳細サービスリンク + 弊害防止リンク
+    txt(f, 20, y, "詳細なサービス内容はこちら ›", { size: 12, med: true, color: C.link });
+    y += 24;
+    txt(f, W - 240, y, "弊害防止措置等の対応について ›", { size: 12, med: true, color: C.link });
+    y += 40;
+
+    // ── 橋渡しバナー ────────────────────────────────────────
+    rect(f, 0, y, W, 80, C.white, 0);
+    rect(f, 0, y, W, 80, C.p10, 0);
+    txt(f, 0, y + 26, "プランシミュレーション", { size: 18, bold: true, color: C.p600, w: W, center: true });
+    y += 80;
+
+    // ── プランシミュレーション section ──────────────────────
+    rect(f, 0, y, W, 8, C.p10); // gradient spacer
+    y += 20;
+
+    // 生年月日・性別
+    txt(f, 20, y, "生年月日・性別", { size: 13, bold: true, color: C.n800 });
+    txt(f, 20, y + 22, "お客様情報。保険料の算出に使用します。", { size: 11, color: C.n500, w: 350 });
+    y += 48;
+    SelectField(f, 20, y, 350, "生年月日", "1990 / 01 / 01", true);
+    y += 80;
+    txt(f, 20, y, "性別 *", { size: 11, med: true, color: C.n600 });
+    y += 16;
+    rectB(f, 20, y, 172, 44, C.p10, C.p500, 10, 1.5);
+    txt(f, 20, y + 12, "男性", { size: 13, bold: true, color: C.p700, w: 172, center: true });
+    rectB(f, 198, y, 172, 44, C.white, C.w300, 10, 1);
+    txt(f, 198, y + 12, "女性", { size: 13, color: C.n600, w: 172, center: true });
+    y += 60;
+
+    // ステップラベル: 1. プランを選ぶ
+    rect(f, 0, y, W, 2, C.p100);
+    y += 16;
+    rect(f, 20, y, 24, 24, C.p500, 12);
+    txt(f, 20, y + 5, "1", { size: 12, bold: true, color: C.white, w: 24, center: true, mono: true });
+    txt(f, 52, y + 5, "プランを選ぶ", { size: 14, bold: true, color: C.n800 });
+    y += 36;
+    txt(f, 20, y, "ご希望の保障プランをご選択ください", { size: 11, color: C.n500, w: 350 });
+    y += 20;
+    y = planCards(f, y, "c");
+
+    // ステップラベル: 2. 保険料シミュレーション
+    rect(f, 0, y, W, 2, C.p100);
+    y += 16;
+    rect(f, 20, y, 24, 24, C.p500, 12);
+    txt(f, 20, y + 5, "2", { size: 12, bold: true, color: C.white, w: 24, center: true, mono: true });
+    txt(f, 52, y + 5, "保険料シミュレーション", { size: 14, bold: true, color: C.n800 });
+    y += 44;
+    y = simSliders(f, y);
+    y += 16;
+
+    // ステップラベル: 3. 申し込みをする
+    rect(f, 0, y, W, 2, C.p100);
+    y += 16;
+    rect(f, 20, y, 24, 24, C.p500, 12);
+    txt(f, 20, y + 5, "3", { size: 12, bold: true, color: C.white, w: 24, center: true, mono: true });
+    txt(f, 52, y + 5, "申し込みをする", { size: 14, bold: true, color: C.n800 });
+    y += 44;
+
+    // 必要書類のご確認カード
+    rectB(f, 16, y, 358, 110, C.white, C.w200, 16, 1);
+    txt(f, 28, y + 14, "必要書類のご確認", { size: 13, bold: true, color: C.n800 });
+    txt(f, 28, y + 36, "お手続きの際に必要となる書類をご準備ください。", { size: 11, color: C.n600, w: 316 });
+    rect(f, 28, y + 60, 316, 36, C.w50, 10);
+    txt(f, 28, y + 68, "申込みは本人様名義のクレジットカードが必要です", { size: 11, med: true, color: C.n700, w: 316, center: true });
     y += 122;
-    // メール + 事前同意
+
+    // 事前同意事項のご確認カード
+    rectB(f, 16, y, 358, 110, C.white, C.w200, 16, 1);
+    txt(f, 28, y + 14, "事前同意事項のご確認", { size: 13, bold: true, color: C.n800 });
+    txt(f, 28, y + 36, "お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。", { size: 11, color: C.n600, w: 316, lh: 16 });
+    rectB(f, 28, y + 72, 316, 26, C.sec10, C.sec, 8, 1);
+    Badge(f, 36, y + 77, "重要");
+    txt(f, 88, y + 78, "重要事項・事前同意事項を確認する", { size: 11, med: true, color: C.link, w: 240 });
+    y += 122;
+
+    // メールアドレスのご入力カード
     var my = groupCard(f, 16, y, 358, 150, "メールアドレスのご入力");
     txt(f, 32, my + 6, "ご入力されたメールアドレス宛に、お申し込み手続きのご案内URLをお送りします。", { size: 11, color: C.n600, w: 326, lh: 16 });
     Field(f, 32, my + 44, 326, "メールアドレス", "taro@example.com", true);
     y += 162;
-    var ey = groupCard(f, 16, y, 358, 130, "事前同意事項のご確認");
-    txt(f, 32, ey + 6, "お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。", { size: 11, color: C.n600, w: 326, lh: 16 });
-    rectB(f, 32, ey + 44, 326, 44, C.white, C.w300, 10, 1);
-    Badge(f, 44, ey + 55, "重要");
-    txt(f, 96, ey + 56, "重要事項・事前同意事項を確認する", { size: 12, med: true, color: C.link, w: 250 });
-    y += 142;
 
     if (mode === "cta" || mode === "agreed") {
       var ab2 = actionBar(f, y + 8, 116, C.ctaBlue);
@@ -813,22 +1142,35 @@
   // ============================================================
   function drawDone() {
     var f = frame("23 完了", 900, C.w50);
+
+    // ヒーロー背景
     rect(f, 0, 0, W, 300, C.p500);
     var ov = rect(f, 0, 0, W, 300, C.w50); ov.opacity = 0.08;
+
+    // ステータスバー（ライト）
     statusBar(f, 0, false);
-    txt(f, 0, 70, "THEO  つみたて安心ほけん", { size: 13, bold: true, color: C.white, w: W, center: true });
-    rect(f, 163, 104, 64, 64, C.white, 32);
+
+    // ロゴ + チェックアイコン
+    txt(f, 0, 52, "THEO  つみたて安心ほけん", { size: 12, bold: true, color: C.white, w: W, center: true });
+    rect(f, 163, 90, 64, 64, C.white, 32);
+    // チェックマーク (2本の矩形で代用)
     rect(f, 177, 127, 10, 20, C.p500, 2);
     rect(f, 187, 137, 22, 10, C.p500, 2);
-    txt(f, 0, 178, "お申込が完了しました", { size: 22, bold: true, color: C.n800, w: W, center: true });
-    txt(f, 0, 208, "受付番号　THEO-2026-000482", { size: 12, color: C.n500, w: W, center: true });
-    steps(f, 300, 5);
-    var sy = 360;
-    txt(f, 20, sy, "THEO つみたて安心ほけんのお申込が完了しました。", { size: 14, bold: true, color: C.n800, w: 350 });
-    sy += 32;
+    txt(f, 0, 164, "お申込が完了しました", { size: 20, bold: true, color: C.n800, w: W, center: true });
+    txt(f, 0, 192, "申込番号　THEO-2026-000482", { size: 12, color: C.n500, w: W, center: true });
+
+    // Steps ステッパー（step 5 = 完了）
+    var sy = steps(f, 300, 5);
+
+    // 本文
+    sy += 16;
+    txt(f, 20, sy, "THEO つみたて安心ほけんのお申込が完了しました。", { size: 13, bold: true, color: C.n800, w: 350 });
+    sy += 28;
     txt(f, 20, sy, "受付確認メールをご確認ください。査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。", { size: 12, color: C.n600, w: 350, lh: 20 });
     sy += 60;
-    rectB(f, 16, sy, 358, 196, C.white, C.w200, 16, 1);
+
+    // このあとの流れ（接続線あり）
+    rectB(f, 16, sy, 358, 220, C.white, C.w200, 16, 1);
     txt(f, 28, sy + 14, "このあとの流れ", { size: 10, color: C.n400, mono: true });
     var flows = [
       ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
@@ -837,18 +1179,130 @@
     ];
     var fy = sy + 42;
     for (var i = 0; i < flows.length; i++) {
+      // 丸数字
       rect(f, 28, fy, 28, 28, C.p10, 14);
       txt(f, 28, fy + 6, flows[i][0], { size: 12, bold: true, color: C.p500, w: 28, center: true, mono: true });
+      // 接続線（最後以外）
+      if (i < flows.length - 1) {
+        rect(f, 40, fy + 28, 2, 26, C.p100);
+      }
+      // テキスト
       txt(f, 66, fy + 4, flows[i][1], { size: 13, bold: true, color: C.n800, w: 290 });
       txt(f, 66, fy + 22, flows[i][2], { size: 11, color: C.n500, w: 290 });
-      fy += 50;
+      fy += 56;
     }
-    sy += 208;
-    txt(f, 20, sy, "保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。", { size: 11, color: C.n500, w: 350, lh: 16 });
-    sy += 44;
+    sy += 232;
+
+    // 保険証券メモ
+    rect(f, 16, sy, 358, 52, C.w100, 12);
+    txt(f, 28, sy + 14, "保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。", { size: 11, color: C.n500, w: 318, lh: 16 });
+    sy += 64;
+
     var ab = actionBar(f, sy + 8, 76);
     Btn(f, 20, sy + 18, 350, "マイページに戻る", "button", false);
     return endFrame(f, ab);
+  }
+
+  // ============================================================
+  //  [ステータス 24-26]  variant: processing | error | maint
+  // ============================================================
+  function drawStatus(name, variant) {
+    var f = frame(name, 820, C.w50);
+
+    // 背景 (薄いグラデーション代替)
+    var bgTint = variant === "error" ? C.errBg : C.p10;
+    var bgOv = rect(f, 0, 0, W, 820, bgTint); bgOv.opacity = 0.5;
+
+    statusBar(f, 0, true);
+
+    // 中央コンテンツ (固定位置)
+    var cy = 200;
+
+    // ロゴ
+    txt(f, 0, cy, "THEO  つみたて安心ほけん", { size: 12, bold: true, color: C.p600, w: W, center: true });
+    cy += 40;
+
+    // アイコン円
+    var iconBg = variant === "error" ? C.errBg : C.p10;
+    var iconBd = variant === "error" ? { r: 1, g: 0.8, b: 0.8 } : C.p100;
+    rectB(f, 163, cy, 64, 64, iconBg, iconBd, 32, 1.5);
+
+    if (variant === "error") {
+      // ! アイコン代用
+      rect(f, 194, cy + 14, 4, 22, C.cta, 2);
+      rect(f, 194, cy + 40, 4, 6, C.cta, 2);
+    } else if (variant === "maint") {
+      // ⚙ 歯車代用 (小さい円2重)
+      rect(f, 179, cy + 22, 32, 20, C.p500, 10);
+      rect(f, 185, cy + 16, 20, 32, C.p500, 10);
+      rect(f, 185, cy + 24, 20, 16, C.white, 8);
+    } else {
+      // ⟳ スピナー代用 (弧)
+      rect(f, 183, cy + 16, 24, 6, C.p500, 3);
+      rect(f, 183, cy + 42, 24, 6, C.p300, 3);
+      rect(f, 177, cy + 22, 6, 20, C.p500, 3);
+      rect(f, 207, cy + 22, 6, 20, C.p300, 3);
+    }
+    cy += 80;
+
+    var heading = variant === "error" ? "処理エラー"
+                : variant === "maint" ? "メンテナンス中"
+                : "処理中";
+    txt(f, 0, cy, heading, { size: 22, bold: true, color: C.n800, w: W, center: true });
+    cy += 36;
+
+    var body = variant === "error"
+      ? "クレジットカード情報をご確認のうえ、\n再度操作をお願いいたします（E01260010）。"
+      : variant === "maint"
+      ? "ただいまシステムメンテナンスを実施しております。\nご迷惑をおかけしますが、しばらく経ってからお試しください。"
+      : "お手続きを処理しています。\nこのまましばらくお待ちください。";
+    txt(f, 20, cy, body, { size: 12, color: C.n500, w: 350, center: true, lh: 20 });
+    cy += 64;
+
+    // ActionBar
+    actionBar(f, 820 - 96, 96);
+    Btn(f, 20, 820 - 76, 350, "戻る", "button", false);
+    return endFrame(f, 820);
+  }
+
+  // ============================================================
+  //  [終了 27]  申込キャンセル
+  // ============================================================
+  function drawEnded() {
+    var f = frame("27 終了（申込キャンセル）", 820, C.w50);
+
+    statusBar(f, 0, true);
+
+    // 中央コンテンツ
+    var cy = 200;
+
+    // ロゴ
+    txt(f, 0, cy, "THEO  つみたて安心ほけん", { size: 12, bold: true, color: C.p600, w: W, center: true });
+    cy += 40;
+
+    // X アイコン円 (グレー)
+    rect(f, 163, cy, 64, 64, C.w200, 32);
+    // X = 2本の細い矩形を斜めに見立て、正直に2本の矩形で描く
+    rect(f, 187, cy + 20, 16, 3, C.n400, 2);
+    rect(f, 187, cy + 41, 16, 3, C.n400, 2);
+    rect(f, 186, cy + 20, 3, 24, C.n400, 2);
+    rect(f, 201, cy + 20, 3, 24, C.n400, 2);
+    cy += 80;
+
+    txt(f, 0, cy, "お申し込みを終了しました", { size: 20, bold: true, color: C.n800, w: W, center: true });
+    cy += 34;
+    txt(f, 20, cy, "今回のお申し込みは受付されていません。\n再度お申し込みいただく場合は、はじめからやり直してください。", { size: 12, color: C.n500, w: 350, center: true, lh: 20 });
+    cy += 60;
+
+    // サポートカード
+    var sy = 820 - 180;
+    rect(f, 16, sy, 358, 64, C.w100, 14);
+    txt(f, 28, sy + 20, "ご不明な点は THEO サポートまで\nお問い合わせください。", { size: 12, color: C.n500, w: 314, center: true, lh: 18 });
+
+    // ActionBar
+    actionBar(f, 820 - 96, 96);
+    Btn(f, 20, 820 - 76, 350, "はじめの画面に戻る", "button", false);
+    return endFrame(f, 820);
   }
 
   // ============================================================
@@ -882,7 +1336,12 @@
 
     card:       drawCardInput(),
     cardConf:   drawCardConfirm(),
-    done:       drawDone(),
+
+    done:        drawDone(),
+    statusProc:  drawStatus("24 処理中", "processing"),
+    statusErr:   drawStatus("25 処理エラー", "error"),
+    statusMaint: drawStatus("26 メンテナンス中", "maint"),
+    ended:       drawEnded(),
   };
 
   var rows = [
@@ -892,7 +1351,8 @@
     [S.form, S.formP1, S.formP2, S.formEdit],
     [S.step4, S.step4Acct, S.step4Agree, S.step4Edit],
     [S.card, S.cardConf],
-    [S.done],
+    [S.done, S.statusProc, S.statusErr, S.statusMaint],
+    [S.ended],
   ];
   var gapX = 64, gapY = 140, rowY = 0, all = [];
   for (var r = 0; r < rows.length; r++) {
@@ -912,11 +1372,24 @@
     [S.ovA, S.plan], [S.plan, S.planAgreed], [S.planAgreed, S.pin], [S.pin, S.pinFilled],
     [S.pinFilled, S.form], [S.form, S.step4], [S.step4, S.step4Agree], [S.step4Agree, S.card],
     [S.card, S.cardConf], [S.cardConf, S.done], [S.done, S.ovA],
+    // ステータス遷移
+    [S.cardConf, S.statusProc], [S.statusErr, S.card], [S.statusMaint, S.ovA],
   ];
   for (var fi = 0; fi < flow.length; fi++) linkFrames(flow[fi][0], flow[fi][1].id);
 
   figma.viewport.scrollAndZoomIntoView(all);
-  figma.closePlugin("✅ THEO " + all.length + "画面を完全生成しました（全カテゴリ・全バリアント＋遷移）");
+
+  // 探索結果サマリをメッセージに含める
+  var varCount = Object.keys(VAR).length;
+  var compCount = Object.keys(COMP).length;
+  var compNames = Object.keys(COMP).join(", ") || "なし";
+  figma.closePlugin(
+    "✅ THEO " + all.length + "画面を完全生成しました\n" +
+    "🎨 Colorバリアブル紐付: " + varCount + "個検出\n" +
+    "◇ コンポーネント紐付: " + compCount + "個検出 [" + compNames + "]\n" +
+    (varCount === 0 ? "⚠️ Colorバリアブルが見つかりません。CVARのキー名を確認してください。\n" : "") +
+    (compCount === 0 ? "⚠️ ◇コンポーネントが見つかりません。CNAMEのコンポーネント名を確認してください。" : "")
+  );
 
   } catch (err) {
     figma.closePlugin("❌ エラー: " + String(err && err.message ? err.message : err));

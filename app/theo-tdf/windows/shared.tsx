@@ -479,7 +479,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="care_d"
+              initialDisclosureOpen={true} kokuchiPattern="care_d"
             />
           ),
         },
@@ -492,7 +492,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="care_n"
+              initialDisclosureOpen={true} kokuchiPattern="care_n"
             />
           ),
         },
@@ -505,7 +505,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cancer_d"
+              initialDisclosureOpen={true} kokuchiPattern="cancer_d"
             />
           ),
         },
@@ -518,7 +518,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="cancer_d" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cancer_n"
+              initialDisclosureOpen={true} kokuchiPattern="cancer_n"
             />
           ),
         },
@@ -531,7 +531,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cc_d"
+              initialDisclosureOpen={true} kokuchiPattern="cc_d"
             />
           ),
         },
@@ -544,7 +544,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="cancer_care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="cc_n"
+              initialDisclosureOpen={true} kokuchiPattern="cc_n"
             />
           ),
         },
@@ -557,7 +557,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="three" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="three_d"
+              initialDisclosureOpen={true} kokuchiPattern="three_d"
             />
           ),
         },
@@ -570,7 +570,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="three" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="three_n"
+              initialDisclosureOpen={true} kokuchiPattern="three_n"
             />
           ),
         },
@@ -583,7 +583,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="three_care" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="tc_d"
+              initialDisclosureOpen={true} kokuchiPattern="tc_d"
             />
           ),
         },
@@ -596,7 +596,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             <ScreenForm
               go={noop} sel="three_care" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
-              kokuchiPattern="tc_n"
+              initialDisclosureOpen={true} kokuchiPattern="tc_n"
             />
           ),
         },

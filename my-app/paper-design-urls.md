@@ -5,6 +5,14 @@
 
 ---
 
+## STEP 0 — イントロ画面
+
+| # | 画面名 | URL |
+|---|---|---|
+| 00 | イントロ（ScreenIntro） | `https://neutral-base-escpn8c8q-tuchida-milize-projects.vercel.app/theo-tdf-view?intro=1` |
+
+---
+
 ## STEP 1 — 商品概要（5パターン）
 
 | # | 画面名 | URL |

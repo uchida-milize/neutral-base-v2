@@ -1124,7 +1124,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ---- ヒーロー（ステータスバー含む、背景画像でスクロール） ---- */}
         {/* ---- ヒーロー: img で自然な高さ、コンテンツを絶対配置でオーバーレイ ---- */}
-        <div ref={heroRef} style={{ position: 'relative', height: '500px', overflow: 'hidden' }}>
+        <div ref={heroRef} style={{ position: 'relative', height: '620px', overflow: 'hidden' }}>
           <img ref={heroBgRef} src="/assets/theo-tdf/hero_bg.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' }}>
           {/* フェイクステータスバー（プレースホルダー：Phone側は非表示、固定オーバーレイを上に描画） */}
@@ -1148,10 +1148,10 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
           {/* テキスト：絶対配置 */}
-          <div style={{ position: 'absolute', top: '182px', left: '20px', right: '20px' }}>
-            <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500" style={{ marginLeft: '4px' }}>Embedded Insurance</p>
-            <h1 className="mt-1 font-bold leading-snug text-neutral-800" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px' }}>つみたてながら、<br/>もしもに備える。</h1>
-            <p className="mt-2 text-h6 leading-relaxed text-neutral-700">将来に向けた<br/>資産形成のためのほけん</p>
+          <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
+            <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
+            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
+            <p className="mt-2 text-h7 leading-relaxed" style={{ color: '#fff' }}>将来に向けた資産形成のためのほけん</p>
           </div>
           </div>{/* /absolute overlay */}
           {/* 逆角丸：heroの下側を角丸に見せる白いノッチ */}
@@ -1164,12 +1164,12 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-6 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
               <div className="flex items-center justify-end gap-3 mb-8">
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[9px] text-neutral-400 leading-none whitespace-nowrap">引受保険会社</span>
                   <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
                 </div>
@@ -1200,28 +1200,28 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
 
               {/* 商品概要（図版の下） */}
               <div className="mt-6 space-y-6 mb-0">
-                <div className="text-right">
-                  <a className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
+                <div className="text-left">
+                  <a className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" style={{ paddingTop: '6px' }} />
                     詳細なサービス内容はこちら
                   </a>
                 </div>
                 <div className="text-left">
-                  <span className="inline-block text-h5 font-bold text-neutral-800 py-[2px] rounded">保障期間</span>
-                  <p className="mt-2 text-h6 text-neutral-700">5年〜40年（最大）</p>
+                  <span className="inline-block text-h6 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
+                  <p className="mt-2 text-h7 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
                 </div>
-                <div className="text-right">
-                  <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" />
-                    弊害防止措置等の対応について
+                <div className="text-left">
+                  <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+                    <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-4 h-4" style={{ paddingTop: '6px' }} />
+                    保険商品のご案内にあたりご確認・同意いただきたいこと
                   </button>
                 </div>
               </div>
             </div>
 
             {/* ▼ 誘導ブロック: フルブリードのブルー帯 — CTAと地続きにして同一グループと認識させる */}
-            <div className="-mx-4 mt-8 bg-primary-10 px-6 pt-10 pb-[18px]">
+            <div className="-mx-4 mt-8 bg-primary-10 px-5 pt-10 pb-[18px]">
               <div className="mb-12">
                 <div className="text-center">
                   <span className="inline-block text-h3 font-bold text-neutral-900 px-2 py-[2px] rounded">必要書類</span>
@@ -1253,7 +1253,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
       </div>
 
       <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
-      <ActionBar solid>
+      <ActionBar bg={atBottom ? "#E9F2FE" : undefined}>
         <div style={{ marginBottom: '8px' }}>
           <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
           <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
@@ -1276,59 +1276,89 @@ export function NoticeUl({ items }: { items: string[] }) {
 
 /* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */
 export function NoticeContent() {
-  const items1 = [
-    "お申込・告知内容は必ず被保険者ご本人さまがご入力ください。",
-    "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
-    "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-  ];
-  const items2 = [
-    "この保険は団体先を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて投資信託の毎月同額つみたて契約の利用者を被保険者とする、団体保険です。",
-    "保障期間中に被保険者が所定の状態に該当（または死亡）した場合に給付金等が支払われます。給付金額は、保険対象積立金額(毎月の積立金額×12)に基づいて計算され、加入時の保険対象積立金額が計算の基準となります。なお、保険料は毎年更新されます。",
-    "つみたてシミュレーションにおける目標金額や運用利益の保証、運用による損失を補填するものではありません。",
-    "がん給付金については、加入者ごとの責任開始日からその日を含めて９１日目より保障を開始します。責任開始日から一定の間、保障はありませんのでご注意ください。",
-    "被保険者が所定の状態に該当し給付金等をお支払いした場合、その後別の所定の状態に該当しても給付金等のお支払はありません。",
-    "お申し込みは、日本国内に在住し、ご自身で日本語の契約内容をご理解できることが条件となります。（死亡保険金受取人についても同様です。）",
-    "保険金受取人は、本人（被保険者）から見た続柄が「配偶者および2親等内の血族」までで指定いただきます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方を受取人とする契約は取り扱いません。",
-    "ご加入の際には健康告知が必要です。告知事項に該当する場合、お申込いただけません。",
-    "この保険には解約払戻金はありません。",
-    "この保険はクーリング・オフ制度の対象外です。",
-    "その他ご注意いただきたい事項についてくわしくは、重要事項説明書をご確認ください。",
-  ];
-  const itemsTail = [
-    "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-  ];
-  const iko = [
-    ["障害・介護プラン（死亡あり）を選択した場合", "積立期間中における障害・介護状態、死亡にそなえたい"],
-    ["障害・介護プランを選択した場合", "積立期間中における障害・介護状態にそなえたい"],
-    ["がんプラン（死亡あり）を選択した場合", "積立期間中におけるがん、死亡にそなえたい"],
-    ["がんプランを選択した場合", "積立期間中におけるがんにそなえたい"],
-    ["がん・障害介護プラン（死亡あり）を選択した場合", "積立期間中におけるがん、障害・介護状態、死亡にそなえたい"],
-    ["がん・障害介護プランを選択した場合", "積立期間中におけるがん、障害・介護状態にそなえたい"],
-    ["三大疾病プラン（死亡あり）を選択した場合", "積立期間中における三大疾病、死亡にそなえたい"],
-    ["三大疾病プランを選択した場合", "積立期間中における三大疾病にそなえたい"],
-    ["三大疾病・障害介護プラン（死亡あり）を選択した場合", "積立期間中における三大疾病、障害介護、死亡にそなえたい"],
-    ["三大疾病・障害介護プランを選択した場合", "積立期間中における三大疾病、障害介護にそなえたい"],
-  ];
+  const sections = [
+    {
+      head: "この保険について",
+      items: [
+        "この保険は、●●を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて投資信託の毎月同額つみたて契約の利用者を被保険者とする団体保険です。",
+        "保険期間中に被保険者が所定の状態に該当した場合、または死亡した場合、給付金等が支払われます。給付金額は、保険対象積立金額（毎月の積立金額×12）に基づき計算され、加入時の保険対象積立金額が基準となります。なお、保険料は毎年更新されます。",
+      ],
+    },
+    {
+      head: "保障内容および給付について",
+      items: [
+        "がん給付金は、加入者ごとの責任開始日から、その日を含めて91日目より保障を開始します。責任開始日から一定期間は保障がありませんのでご注意ください。",
+        "被保険者が所定の状態に該当し給付金等をお支払いした場合、その後、別の所定の状態に該当しても給付金等のお支払いはありません。",
+        "つみたてシミュレーションにおける目標金額や運用利益は保証されません。また、運用による損失を補填するものではありません。",
+      ],
+    },
+    {
+      head: "お申込みにあたっての注意事項",
+      items: [
+        "お申込・告知内容は、必ず被保険者ご本人様がご入力ください。",
+        "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
+        "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
+        "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
+        "保険金受取人は、被保険者から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
+        "この保険には解約払戻金はありません。",
+        "この保険はクーリング・オフ制度の対象外です。",
+        "投信口座の解約や積立投資の中止をされた場合、保険契約は解約いただくか、更新できませんのでご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として●●が有します。",
+      ],
+    },
+    {
+      head: "保障開始および更新について",
+      items: [
+        "この契約は、申込み日の翌々月の1日（午前0時）より保障が開始されます。",
+        "満期日までにご加入者から更新しない旨のお申出がない場合、団体の取り決めにより、原則として自動更新されます。",
+      ],
+    },
+    {
+      head: "電子交付の承諾について",
+      items: [
+        "当社は、保険業法施行規則第234条第4項に基づき、同条第1項第8号および第9号に定める書面に代えて、当該書面に記載すべき事項を電磁的方法により提供します。",
+        "お客様には、当社Webサイト上で内容をご確認いただき、電磁的方法による提供にご同意いただきます。",
+        "提供された内容は、お申込み手続完了後も、当社ホームページまたはマイページ等で閲覧・ダウンロードできます。",
+        "電磁的方法による提供に同意されない場合は、お問合せフォームよりご連絡ください。",
+      ],
+    },
+    {
+      head: "個人情報のお取り扱いについて",
+      items: [
+        "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
+        "個人情報に変更が生じた場合も、同様に取り扱います。",
+        "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
+        "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
+      ],
+      bulletLinks: [
+        { text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
+        { text: "最新の内容は、T&Dフィナンシャル生命ホームページにてご確認ください。", url: "https://www.tdf-life.co.jp" },
+      ],
+    },
+  ] as { head: string; items: string[]; bulletLinks?: { text: string; url: string }[] }[];
   return (
     <div className="space-y-6">
-      <NoticeUl items={items1} />
-      <NoticeUl items={items2} />
-      <NoticeUl items={itemsTail} />
-      <section className="space-y-2 pt-1">
-        <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
-          <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-[2px] text-[11px] font-bold leading-none">意向</span>
-          意向の確認
-        </p>
-        <p className="text-caption text-neutral-600 leading-relaxed">シミュレーションをもとにT&Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。</p>
-        <ul className="space-y-3">
-          {iko.map(([cond, want], i) => (
-            <li key={i} className="text-caption leading-relaxed">
-              <span className="flex gap-2 text-neutral-600"><span className="text-neutral-400 shrink-0">・</span><span>{cond}</span></span>
-              <span className="block pl-4 font-bold text-neutral-900">{want}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {sections.map((sec, si) => (
+        <section key={si} className="space-y-2">
+          <p className="text-caption font-bold text-neutral-800 leading-snug">{sec.head}</p>
+          <ul className="space-y-2 text-caption text-neutral-600 leading-relaxed">
+            {sec.items.map((t, i) => (
+              <li key={i} className="flex gap-1.5">
+                <span className="text-neutral-400 shrink-0">・</span>
+                <span>{t}</span>
+              </li>
+            ))}
+            {sec.bulletLinks && sec.bulletLinks.map((item, i) => (
+              <li key={`bl${i}`} className="flex gap-1.5">
+                <span className="text-neutral-400 shrink-0">・</span>
+                <span>
+                  <span>{item.text}</span><br/>
+                  <a href={item.url} target="_blank" rel="noreferrer" className="break-all underline text-caption" style={{ color: 'var(--color-link)' }}>{item.url}</a>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }

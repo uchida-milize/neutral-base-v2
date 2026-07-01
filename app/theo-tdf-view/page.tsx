@@ -4,6 +4,7 @@ import * as React from "react";
 import { useSearchParams } from "next/navigation";
 
 import {
+  ScreenIntro,
   ScreenOverview,
   ScreenCombined,
   ScreenStep2,
@@ -21,6 +22,7 @@ import {
  * /theo-tdf-view
  *
  * クエリパラメータ:
+ *   intro          "1" でイントロ画面（ScreenIntro）を表示
  *   s              画面番号 0–7
  *   patternB       "1" でパターンB（ScreenCombined）
  *   planCardStyle  "card" | "accordion"
@@ -40,6 +42,7 @@ import {
 function ViewContent() {
   const params = useSearchParams();
 
+  const intro        = params.get("intro") === "1";
   const s            = parseInt(params.get("s") ?? "0", 10);
   const patternB     = params.get("patternB") === "1";
   const planCardStyle = params.get("planCardStyle") ?? "card";
@@ -115,6 +118,11 @@ function ViewContent() {
     /* 7 完了 / 処理中 / エラー / メンテナンス */
     doneScreen,
   ];
+
+  /* intro=1 の場合は ScreenIntro を優先表示 */
+  if (intro) {
+    return <div className="flex flex-col min-h-screen"><ScreenIntro go={noop} /></div>;
+  }
 
   const idx = Math.max(0, Math.min(screens.length - 1, isNaN(s) ? 0 : s));
   return <div className="flex flex-col min-h-screen">{screens[idx]}</div>;

@@ -112,6 +112,63 @@
 
 ---
 
+## デザインシステム基盤 引き継ぎ情報（2026-06-29 構築済み）
+
+> 対象ファイル: `https://www.figma.com/design/7vRRacI3x2gedlqD0oj4ja/無題`
+> 以下の ID は次フェーズ（画面描画）で `use_figma` から参照すること。
+
+### Variables コレクション
+
+| 項目 | 値 |
+|---|---|
+| Collection name | `Color` |
+| Collection ID | `VariableCollectionId:4:3` |
+| Mode name | `theo-tdf` |
+| Mode ID | `4:1` |
+| 総変数数 | 44 変数 |
+
+#### 主要変数 ID（バインドに使う代表値）
+
+| 変数名 | ID |
+|---|---|
+| primary-color/10 | `VariableID:4:4` |
+| primary-color/100 | `VariableID:4:6` |
+| primary-color/500 | `VariableID:4:10` |
+| primary-color/600 | `VariableID:4:11` |
+| primary-color/700 | `VariableID:4:12` |
+| secondary-color/10 | `VariableID:4:13` |
+| secondary-color/700 | `VariableID:4:21` |
+| button-color/500 | `VariableID:4:28` |
+| button-color/600 | `VariableID:4:29` |
+| cta-color/500 | `VariableID:4:37` |
+| warm/50 | `VariableID:4:40` |
+| warm/100 | `VariableID:4:41` |
+| warm/200 | `VariableID:4:42` |
+| warm/300 | `VariableID:4:43` |
+| semantic/primary | `VariableID:4:44` |
+| semantic/button | `VariableID:4:45` |
+| semantic/cta | `VariableID:4:46` |
+| semantic/secondary | `VariableID:4:47` |
+
+### テキストスタイル（10種）
+
+`text/h1` / `text/h2` / `text/h3` / `text/h4` / `text/h5` / `text/h6` / `text/body-lg` / `text/body` / `text/caption` / `text/tiny`（全て Noto Sans JP ベース）
+
+### Components ページ（page ID: `4:58`）コンポーネント一覧
+
+| コンポーネント名 | node-id | type | バリアント数 |
+|---|---|---|---|
+| Btn | `5:22` | COMPONENT_SET | 10 (Kind×State) |
+| Badge | `5:29` | COMPONENT_SET | 3 (Tone) |
+| Steps | `6:77` | COMPONENT_SET | 5 (CurrentStep) |
+| AppBar | `7:14` | COMPONENT_SET | 2 (Style) |
+| ActionBar | `7:19` | COMPONENT_SET | 2 (Style) |
+| ReqBadge | `7:20` | COMPONENT | 1 |
+| GroupCard | `7:33` | COMPONENT_SET | 2 (HasIcon) |
+| Field | `7:50` | COMPONENT_SET | 4 (State) |
+
+---
+
 ## 重さで止まる場合の追加対策
 - それでも重いフェーズ（特に 2・4・5）は、さらに **1フェーズ＝2〜3画面**に割って実行（例: フェーズ2を 05-07 と 08-10 に分割）。
 - 1画面内でも「`use_figma` を1ノードずつ大量に呼ぶ」と遅くなるため、**1回の `use_figma` 呼び出しで複数ノードをまとめて生成**するよう指示する（共通指示に記載済み）。
