@@ -2861,7 +2861,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       </div>
       <div className="flex-1 flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center px-8">
-          <div style={{ width: 260 }}>
+          <div style={{ width: 260 }} className="text-center">
             <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10" />
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを終了しました</h2>
