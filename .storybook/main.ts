@@ -12,7 +12,9 @@ const config: StorybookConfig = {
   ],
   addons: [
     "@storybook/addon-essentials",
-    "storybook-addon-designs",
+    // storybook-addon-designs@6.x は Storybook 8 と非互換（@storybook/addons 削除済み）
+    // stories の parameters.designs はそのまま保持。SB8 対応版が出たら再追加。
+    // "storybook-addon-designs",
   ],
   framework: {
     name: "@storybook/react-vite",
