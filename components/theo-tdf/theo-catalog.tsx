@@ -15,6 +15,9 @@ import {
   StepSection,
   SimSliders,
   ActionBar,
+  PlanCard,
+  PlanCardAccordion,
+  PLANS,
 } from "@/components/theo-tdf/claude-design/screens";
 
 const PREFS = ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -74,6 +77,8 @@ export function TheoCatalog() {
   const noop = () => {};
   const [m, setM] = React.useState<number>(10000);
   const [y, setY] = React.useState<number>(15);
+  const [planSel, setPlanSel] = React.useState<string>("");
+  const [accordionOpen, setAccordionOpen] = React.useState<Record<string, boolean>>({});
 
   return (
     <div className="theo-tdf-cd font-jp">
@@ -249,6 +254,45 @@ export function TheoCatalog() {
             </ActionBar>
           </PhoneFrame>
         </Row>
+      </CatSection>
+
+
+      {/* ---- 12. PlanCard ---- */}
+      <CatSection title="PlanCard" sub="プラン選択カード（未選択 / 選択済 / ツールチップ展開）">
+        <Row>
+          {PLANS.slice(0, 3).map((p) => {
+            const id = p.id + "_d";
+            return (
+              <Preview key={id} label={p.name}>
+                <PlanCard
+                  p={{ ...p, id, name: p.name + "　死亡保障あり", death: true }}
+                  selected={planSel === id}
+                  onSelect={() => setPlanSel((prev) => (prev === id ? "" : id))}
+                  initialTtOpen={false}
+                />
+              </Preview>
+            );
+          })}
+        </Row>
+      </CatSection>
+
+      {/* ---- 13. PlanCardAccordion ---- */}
+      <CatSection title="PlanCardAccordion" sub="アコーディオン式プランカード（閉 / 展開 / 選択中）">
+        <div className="flex flex-col gap-3" style={{ maxWidth: 390 }}>
+          {PLANS.slice(0, 3).map((p) => {
+            const id = p.id + "_d";
+            return (
+              <PlanCardAccordion
+                key={id}
+                p={{ ...p, id, name: p.name + "　死亡保障あり", death: true }}
+                selected={planSel === id}
+                onSelect={() => setPlanSel((prev) => (prev === id ? "" : id))}
+                open={!!accordionOpen[id]}
+                onToggle={() => setAccordionOpen((prev) => ({ ...prev, [id]: !prev[id] }))}
+              />
+            );
+          })}
+        </div>
       </CatSection>
 
     </div>
