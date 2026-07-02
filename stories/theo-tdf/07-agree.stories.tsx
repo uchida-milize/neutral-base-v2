@@ -74,8 +74,10 @@ export const AgreeItemChecked: StoryObj = {
         num="1"
         item={{
           t: "重要事項の確認",
-          blocks: [{ p: "本保険の重要事項を確認してください。" }],
-          checks: ["上記の内容を確認し、同意します"],
+          blocks: [
+            { p: "本保険の重要事項を確認してください。" },
+            { checks: ["上記の内容を確認し、同意します"] },
+          ],
         }}
         open={true}
         onToggle={() => {}}
