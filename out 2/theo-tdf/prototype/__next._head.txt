@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[76779,["/_next/static/chunks/0ntkvxaqgltwh.js","/_next/static/chunks/07ewzrawdwz3f.js"],"ViewportBoundary"]
+3:I[76779,["/_next/static/chunks/0ntkvxaqgltwh.js","/_next/static/chunks/07ewzrawdwz3f.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[6726,["/_next/static/chunks/0ntkvxaqgltwh.js","/_next/static/chunks/07ewzrawdwz3f.js"],"IconMark"]
+0:{"rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"プロトタイプ | THEO × T&Dファイナンシャル"}],["$","meta","1",{"name":"description","content":"THEO「つみたて安心ほけん」申込フロー 5 ステップ・8 画面 (商品概要 → プラン選択 → PINコード認証 → 申込フォーム → 内容確認・お支払い → カード入力/確認 [外部 GMO・ステップ外] → 完了) を iPhone フレーム内でタップ操作できるクリッカブルプロトタイプ。表示オプション (パターンB 統合 / フォーム2ページ分割) も切り替え可能。Claude Design 出力 (TD 組込1.4) を本格 TSX 実装に取り込んだもの。"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0x3dzn~oxb6tn.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L5","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"BTAHFvQZSO2EC3k34Q1Qb"}

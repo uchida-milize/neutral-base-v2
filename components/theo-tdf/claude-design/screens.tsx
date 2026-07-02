@@ -1969,7 +1969,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6 space-y-3 mb-6">
           <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
           <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
-          <button onClick={() => setInfoPlan(modalPlan)}
+          <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
             className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
             <span className="flex items-center gap-3 min-w-0">
               <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
