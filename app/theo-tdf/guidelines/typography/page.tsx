@@ -17,7 +17,6 @@ import {
 import {
   SectionHeading,
   Section,
-  RadiusBox,
   FONT_SCALE,
   SPACING_SCALE,
 } from "@/components/guidelines/theo-tdf-shared";
@@ -25,7 +24,7 @@ import {
 export const metadata: Metadata = {
   title: "タイポグラフィ | ガイドライン | THEO × T&Dファイナンシャル 組込",
   description:
-    "9 段フォントスケール・4px スペーシンググリッド・角丸とシャドウのルール。",
+    "9 段フォントスケール・4px スペーシンググリッド。",
 };
 
 export default function TypographyPage() {
@@ -33,7 +32,6 @@ export default function TypographyPage() {
     <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       <TypographyRules />
       <SpacingHandoff />
-      <RadiusAndShadow />
     </main>
   );
 }
@@ -232,54 +230,3 @@ function SpacingHandoff() {
   );
 }
 
-/* ---------------------------------------------------------------- */
-/* Radius / Shadow / Spacing                                          */
-/* ---------------------------------------------------------------- */
-
-function RadiusAndShadow() {
-  return (
-    <Section id="radius">
-      <SectionHeading
-        eyebrow="Shape"
-        title="角丸とシャドウ"
-        description="角丸は意図的に階段状。ボタンは 10px、フォーム 14px、カード 18px、フィーチャーカード 24px の 4 段で構造を表します。"
-        audience="designer"
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <RadiusBox label="sm" value="6px" />
-        <RadiusBox label="md (button)" value="10px" />
-        <RadiusBox label="lg (form)" value="14px" />
-        <RadiusBox label="xl (card)" value="18px" />
-        <RadiusBox label="2xl (feature)" value="24px" />
-        <RadiusBox label="full (pill)" value="9999px" />
-      </div>
-
-      <Card className="mt-6 transition-colors duration-300">
-        <CardHeader>
-          <CardTitle className="text-h4">シャドウは 5 段階</CardTitle>
-          <CardDescription>
-            xs / sm / md / lg / navy (深さに応じて) 。navy シャドウは Primary
-            ボタンの hover / featured カードで限定使用。
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {[
-            { name: "xs", style: { boxShadow: "0 1px 2px 0 rgba(15, 23, 42, 0.04)" } },
-            { name: "sm", style: { boxShadow: "0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04)" } },
-            { name: "md", style: { boxShadow: "0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04)" } },
-            { name: "lg", style: { boxShadow: "0 12px 28px -8px rgba(15, 23, 42, 0.16), 0 8px 16px -8px rgba(15, 23, 42, 0.06)" } },
-            { name: "navy", style: { boxShadow: "0 16px 30px -12px rgba(27, 49, 87, 0.32)" } },
-          ].map((s) => (
-            <div
-              key={s.name}
-              className="grid h-20 place-items-center rounded-[14px] border border-border bg-card text-caption text-card-foreground"
-              style={s.style}
-            >
-              {s.name}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-    </Section>
-  );
-}
