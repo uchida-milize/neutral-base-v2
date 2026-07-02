@@ -1186,9 +1186,21 @@ function ComponentHandoff() {
       <SectionHeading
         eyebrow="Components Handoff"
         title="カスタムコンポーネント 使い方早見表"
-        description="screens.tsx で定義された theo-tdf 固有コンポーネントの props 一覧とコードスニペット。ライブプレビューはコンポーネントページを参照。"
+        description="screens.tsx で定義された theo-tdf 固有コンポーネントの props 一覧とコードスニペット。インタラクティブなライブプレビューは Storybook で確認できます。"
         audience="developer"
       />
+
+      <div className="flex">
+        <a
+          href="https://neutral-base-storybook.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-lg border border-primary-200 bg-primary-10 px-4 py-2.5 text-body font-medium text-primary-700 transition-colors hover:bg-primary-50"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Storybook でライブプレビュー
+        </a>
+      </div>
 
       <div className="space-y-6">
         <ComponentSnippet
