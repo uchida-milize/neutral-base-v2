@@ -6,6 +6,7 @@ import {
   Select,
   PREFS,
 } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 /* ============================================================
    Form atoms — Field / LockedField / Select
@@ -14,7 +15,10 @@ const meta: Meta<typeof Field> = {
   title: "theo-tdf/Form/Field",
   component: Field,
   tags: ["autodocs"],
-  parameters: { layout: "centered" },
+  parameters: {
+    layout: "centered",
+    designs: figmaDesign(FIGMA_URLS.components.field),
+  },
   decorators: [
     (Story) => (
       <div style={{ width: 360, padding: 24 }}>

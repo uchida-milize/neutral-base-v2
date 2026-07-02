@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { ScreenPin } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 const PhoneFrame = (Story: React.ComponentType) => (
   <div
@@ -22,7 +23,7 @@ const meta: Meta<typeof ScreenPin> = {
   title: "theo-tdf/Screens/03 ScreenPin (PIN認証)",
   component: ScreenPin,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: "fullscreen", designs: figmaDesign(FIGMA_URLS.pages.screens) },
   decorators: [PhoneFrame],
 };
 export default meta;

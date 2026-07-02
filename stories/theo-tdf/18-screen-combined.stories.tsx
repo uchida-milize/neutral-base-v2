@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { ScreenCombined } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 const PhoneFrame = (Story: React.ComponentType) => (
   <div
@@ -22,7 +23,7 @@ const meta: Meta<typeof ScreenCombined> = {
   title: "theo-tdf/Screens/08 ScreenCombined (パターンB統合)",
   component: ScreenCombined,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: "fullscreen", designs: figmaDesign(FIGMA_URLS.pages.screens) },
   decorators: [PhoneFrame],
 };
 export default meta;

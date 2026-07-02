@@ -5,6 +5,7 @@ import {
   ScreenDone,
   ScreenEnded,
 } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 const PhoneFrame = (Story: React.ComponentType) => (
   <div
@@ -27,7 +28,7 @@ const meta: Meta<typeof ScreenStatus> = {
   title: "theo-tdf/Screens/07 ScreenStatus / ScreenDone",
   component: ScreenStatus,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: "fullscreen", designs: figmaDesign(FIGMA_URLS.pages.screens) },
   decorators: [PhoneFrame],
 };
 export default meta;

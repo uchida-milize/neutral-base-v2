@@ -1,12 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { ScreenIntro } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 const meta: Meta<typeof ScreenIntro> = {
   title: "theo-tdf/Screens/00 ScreenIntro",
   component: ScreenIntro,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    designs: figmaDesign(FIGMA_URLS.pages.screens),
+  },
   decorators: [
     (Story) => (
       <div

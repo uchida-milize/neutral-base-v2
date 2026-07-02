@@ -5,6 +5,7 @@ import {
   ScreenCardConfirm,
   ExtBar,
 } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 const PhoneFrame = (Story: React.ComponentType) => (
   <div
@@ -27,7 +28,7 @@ const inputMeta: Meta<typeof ScreenCardInput> = {
   title: "theo-tdf/Screens/06 ScreenCardInput (カード入力)",
   component: ScreenCardInput,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: "fullscreen", designs: figmaDesign(FIGMA_URLS.pages.screens) },
   decorators: [PhoneFrame],
 };
 export default inputMeta;

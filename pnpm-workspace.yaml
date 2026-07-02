@@ -6,5 +6,7 @@
 # - sharp:         Next.js の画像最適化 (next/image)
 # - unrs-resolver: Next.js 16 の Rust 製モジュールリゾルバ
 allowBuilds:
+  core-js-pure: false
+  esbuild: false
   sharp: true
   unrs-resolver: true

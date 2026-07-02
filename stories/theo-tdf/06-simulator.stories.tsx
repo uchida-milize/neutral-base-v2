@@ -9,6 +9,7 @@ import {
   PLANS,
   Btn,
 } from "@/components/theo-tdf/claude-design/screens";
+import { figmaDesign, FIGMA_URLS } from "./figma-links";
 
 /* ============================================================
    Simulator — SimSliders / BenefitTable / Simulator / WheelCol / DateDrumSheet
@@ -17,6 +18,9 @@ const meta: Meta<typeof SimSliders> = {
   title: "theo-tdf/Simulator/SimSliders",
   component: SimSliders,
   tags: ["autodocs"],
+  parameters: {
+    designs: figmaDesign(FIGMA_URLS.components.simSliders),
+  },
   decorators: [
     (Story) => (
       <div style={{ width: 360, padding: 24, background: "#fff" }}>
