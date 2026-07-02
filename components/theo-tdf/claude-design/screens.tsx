@@ -1204,7 +1204,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    保険商品のご案内にあたりご確認・同意いただきたいこと
+                    ご案内にあたりご確認・同意いただきたいこと
                   </button>
                 </div>
               </div>
@@ -2964,7 +2964,7 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
         <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
-          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">保険商品のご案内にあたりご確認・同意いただきたいこと</h3>
+          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">ご案内にあたりご確認・同意いただきたいこと</h3>
           <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
@@ -3074,6 +3074,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>{/* /absolute overlay */}
           <img src="/assets/theo-tdf/hero-notch.svg" alt="" aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: -1, width: '100%', display: 'block', pointerEvents: 'none' }} />
         </div>
+        {/* ステッパー */}
+        <Steps n={1} go={go} />
         {/* 商品概要コンパクト */}
         <div className="px-6 pt-4 pb-3 space-y-3">
           <div className="flex items-center justify-between gap-3">
@@ -3127,8 +3129,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>{/* /px-6 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-6 py-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", boxShadow: "0 -8px 20px rgba(0,0,0,0.06)" }}>
-          <h2 className="text-h4 font-bold text-center" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
+        <div className="px-6 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
+          <div className="flex flex-col items-center gap-3">
+            <img src="/assets/theo-tdf/line-chart-dots-square.svg" alt="" style={{ width: '64px', height: '64px' }} />
+            <h2 className="text-h3 font-bold text-center" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
+          </div>
         </div>
         <div className="px-6 pt-6 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
