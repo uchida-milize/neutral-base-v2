@@ -43,11 +43,10 @@ export default function TheoTdfHome() {
               THEO × T&Dファイナンシャル · 組込申込
             </Badge>
             <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
-              <JpText>つみたて安心ほけん、その先の安心まで。</JpText>
+              <JpText>申込フロー 設計・開発リファレンス</JpText>
             </h1>
             <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
-              THEO ロボアドの体験を保ちながら、引受の <strong className="text-white">T&Dファイナンシャル生命</strong>{" "}
-              の信頼性を統一感のあるトーンで重ねた、組込申込フロー専用のデザインシステムです。
+              THEO「つみたて安心ほけん」（引受：<strong className="text-white">T&Dファイナンシャル生命</strong>）の組込申込フロー全画面と、カラートークン・コンポーネント・Tailwindクラス対応表をまとめたポータルです。
             </p>
           </div>
         </section>
@@ -75,7 +74,7 @@ export default function TheoTdfHome() {
               href="/theo-tdf/guidelines"
               icon={BookOpen}
               title="ガイドライン"
-              desc="ブランドの 4 つの柱、カラー運用 (THEO Blue / T&D Red / button / cta / warm)、ボタン体系、タイポグラフィ、アクセシビリティ方針。"
+              desc="デザインの方向性、カラートークン・Tailwindクラス対応表 (開発ハンドオフ)、ボタン体系、タイポグラフィ、アクセシビリティ方針。"
             />
             <NavCard
               href="/theo-tdf/components"

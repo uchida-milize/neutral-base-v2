@@ -212,9 +212,9 @@ function BrandPillars() {
   return (
     <Section>
       <SectionHeading
-        eyebrow="Brand Pillars"
-        title="ブランドの 4 つの柱"
-        description="すべてのデザイン判断はこの 4 つに照らして妥当性を確認します。迷ったら最も保守的な選択を採ります。"
+        eyebrow="Design Direction"
+        title="デザインの方向性"
+        description="申込フローのすべてのデザイン判断はこの 4 つの方向性に照らして妥当性を確認します。迷ったら最も保守的な選択を採ります。"
         audience="both"
       />
       <div className="grid gap-4 md:grid-cols-2">

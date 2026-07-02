@@ -95,9 +95,11 @@ const TENANTS: Tenant[] = [
   },
   {
     pathPrefix: "/theo-tdf",
-    brandLabel: "THEO × T&Dファイナンシャル",
+    brandLabel: "T&Dファイナンシャル生命",
     brandInitial: "T",
     brandHref: "/theo-tdf",
+    brandLogo: "/assets/theo-tdf/logo_td_financial.png",
+    brandLogoWithLabel: false,
     items: [
       { href: "/theo-tdf", label: "ホーム", match: "exact" },
       { href: "/theo-tdf/guidelines", label: "ガイドライン", match: "exact" },
