@@ -7,6 +7,8 @@ import {
   EyeIcon,
   AccessibilityIcon,
   TypeIcon,
+  RulerIcon,
+  LayoutTemplateIcon,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -160,13 +162,19 @@ const SUBPAGES = [
     href: "/theo-tdf/guidelines/typography",
     icon: TypeIcon,
     title: "タイポグラフィ",
-    description: "9 段フォントスケール・4px スペーシンググリッド・角丸とシャドウのルール。",
+    description: "9 段フォントスケール（34px〜12px）と日本語・数字フォントファミリーのルール。",
+  },
+  {
+    href: "/theo-tdf/guidelines/button-form",
+    icon: RulerIcon,
+    title: "スタイル",
+    description: "4px スペーシンググリッド・角丸の 6 段階スケール・シャドウ 5 段階の運用ルール。",
   },
   {
     href: "/theo-tdf/guidelines/components",
-    icon: SparklesIcon,
-    title: "コンポーネント",
-    description: "ボタン 5 種の使い分け・カスタムコンポーネント props 一覧・コードスニペット。",
+    icon: LayoutTemplateIcon,
+    title: "カスタムコンポーネント",
+    description: "申込フロー固有コンポーネント（AppBar / Steps / Btn / PlanCard 等）の props 一覧とコードスニペット。",
   },
   {
     href: "/theo-tdf/guidelines/accessibility",
