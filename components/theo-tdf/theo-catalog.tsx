@@ -18,6 +18,13 @@ import {
   PlanCard,
   PlanCardAccordion,
   PLANS,
+  StatusIcon,
+  AttentionNoticeCard,
+  SegmentedToggle,
+  AgreeCheckbox,
+  NumberedStepCard,
+  IconNoteCard,
+  NoteBox,
 } from "@/components/theo-tdf/claude-design/screens";
 
 const PREFS = ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -293,6 +300,95 @@ export function TheoCatalog() {
             );
           })}
         </div>
+      </CatSection>
+
+      {/* ---- 14. StatusIcon ---- */}
+      <CatSection title="StatusIcon" sub="処理結果アイコン（Success / Loading / Error / Maintenance / Cancelled）">
+        <Row>
+          {(["Success", "Loading", "Error", "Maintenance", "Cancelled"] as const).map((s) => (
+            <Preview key={s} label={s} width={120}>
+              <div className="flex justify-center">
+                <StatusIcon state={s} />
+              </div>
+            </Preview>
+          ))}
+        </Row>
+      </CatSection>
+
+      {/* ---- 15. AttentionNoticeCard ---- */}
+      <CatSection title="AttentionNoticeCard" sub="重要事項・事前同意への誘導ボタン">
+        <Preview label="AttentionNoticeCard">
+          <AttentionNoticeCard />
+        </Preview>
+      </CatSection>
+
+      {/* ---- 16. SegmentedToggle ---- */}
+      <CatSection title="SegmentedToggle" sub="セグメントトグル（通常 / エラー）">
+        <Row>
+          <Preview label="通常">
+            <SegmentedToggle
+              options={["男性", "女性"]}
+              value="男性"
+              onChange={() => {}}
+            />
+          </Preview>
+          <Preview label="エラー">
+            <SegmentedToggle
+              options={["男性", "女性"]}
+              value=""
+              onChange={() => {}}
+              error
+            />
+          </Preview>
+        </Row>
+      </CatSection>
+
+      {/* ---- 17. AgreeCheckbox ---- */}
+      <CatSection title="AgreeCheckbox" sub="同意チェックボックス（未チェック / チェック済）">
+        <Row>
+          <Preview label="未チェック">
+            <AgreeCheckbox checked={false} onChange={() => {}}>
+              上記の事前同意事項を確認し、同意します
+            </AgreeCheckbox>
+          </Preview>
+          <Preview label="チェック済">
+            <AgreeCheckbox checked={true} onChange={() => {}}>
+              上記の事前同意事項を確認し、同意します
+            </AgreeCheckbox>
+          </Preview>
+        </Row>
+      </CatSection>
+
+      {/* ---- 18. NumberedStepCard ---- */}
+      <CatSection title="NumberedStepCard" sub="番号付きステップカード">
+        <Preview label="NumberedStepCard">
+          <NumberedStepCard
+            heading="HOW IT WORKS"
+            steps={[
+              { title: "プランを選ぶ", desc: "ご希望の積立金額と保障期間を設定します。" },
+              { title: "告知に回答する", desc: "健康状態について簡単な質問にお答えください。" },
+              { title: "お申込み完了", desc: "内容を確認してお申込みを完了します。" },
+            ]}
+          />
+        </Preview>
+      </CatSection>
+
+      {/* ---- 19. IconNoteCard ---- */}
+      <CatSection title="IconNoteCard" sub="アイコン付きノートカード">
+        <Preview label="IconNoteCard">
+          <IconNoteCard iconSrc="/assets/theo-tdf/person-heart.svg">
+            ご契約者さまの情報をご確認ください。変更がある場合はTHEOアプリよりご連絡ください。
+          </IconNoteCard>
+        </Preview>
+      </CatSection>
+
+      {/* ---- 20. NoteBox ---- */}
+      <CatSection title="NoteBox" sub="注釈ボックス（グレー背景）">
+        <Preview label="NoteBox">
+          <NoteBox>
+            本保険は THEO の積立投資と組み合わせた保険商品です。詳細は重要事項説明書をご確認ください。
+          </NoteBox>
+        </Preview>
       </CatSection>
 
     </div>

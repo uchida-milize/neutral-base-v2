@@ -3286,3 +3286,190 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
     </>
   );
 }
+
+/* ================================================================
+   新規コンポーネント（Figma 🧩 Components ページ追加分）
+================================================================ */
+
+/* ---- StatusIcon ---- */
+export function StatusIcon({ state = "Success", className }: {
+  state?: "Success" | "Loading" | "Error" | "Maintenance" | "Cancelled";
+  className?: string;
+}) {
+  const base = `relative flex items-center justify-center rounded-full ${className ?? ""}`;
+  if (state === "Error") {
+    return (
+      <div className={`${base} size-16 overflow-hidden`}>
+        <img src="/assets/theo-tdf/icon_error.png" alt="エラー" className="absolute inset-0 w-full h-full object-contain" />
+      </div>
+    );
+  }
+  if (state === "Maintenance") {
+    return (
+      <div className={`${base} size-16 overflow-hidden`}>
+        <img src="/assets/theo-tdf/icon_maint.png" alt="メンテナンス" className="absolute inset-0 w-full h-full object-contain" />
+      </div>
+    );
+  }
+  if (state === "Loading") {
+    return (
+      <div className={`${base} size-16`}>
+        <svg viewBox="0 0 64 64" className="absolute inset-0 w-full h-full animate-spin" fill="none">
+          <circle cx="32" cy="32" r="26" stroke="#d6d3d1" strokeWidth="4" />
+          <path d="M32 6 A26 26 0 0 1 58 32" stroke="#065fe3" strokeWidth="4" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+  if (state === "Cancelled") {
+    return (
+      <div className={`${base} size-16 bg-[#EFEFEF]`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-neutral-400" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </div>
+    );
+  }
+  return (
+    <div className={`${base} size-16 bg-white shadow-sm`}>
+      <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="#065fe3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+  );
+}
+
+/* ---- AttentionNoticeCard ---- */
+export function AttentionNoticeCard({ label, onClick }: {
+  label?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-4 py-4 rounded-[14px] border-2 text-left transition-opacity hover:opacity-80"
+      style={{ background: "#fff4f6", borderColor: "#ffaebd" }}
+    >
+      <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: "#ff3156" }}>重要</span>
+      <span className="flex-1 text-h6 font-bold text-neutral-800 leading-snug">
+        {label ?? "重要事項・事前同意事項を確認する"}
+      </span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-neutral-400 shrink-0">
+        <path d="M9 6l6 6-6 6" />
+      </svg>
+    </button>
+  );
+}
+
+/* ---- SegmentedToggle ---- */
+export function SegmentedToggle({ options, value, onChange, error }: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+  error?: boolean;
+}) {
+  return (
+    <div className="flex gap-2">
+      {options.map((opt) => {
+        const selected = opt === value;
+        return (
+          <button
+            key={opt}
+            type="button"
+            onClick={() => onChange(opt)}
+            className={`flex-1 h-12 rounded-[10px] border text-h6 transition-colors ${
+              error
+                ? "border-[#d70027] bg-[#fff5f5] text-neutral-600"
+                : selected
+                  ? "border-primary bg-primary-10 text-primary-700 font-bold"
+                  : "border-warm-300 bg-white text-neutral-600"
+            }`}
+            style={error ? { boxShadow: "0 0 0 1px #d70027" } : undefined}
+          >
+            {opt}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---- AgreeCheckbox ---- */
+export function AgreeCheckbox({ checked, onChange, children }: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <label className="flex items-start gap-3 cursor-pointer">
+      <span className="shrink-0 mt-0.5 grid place-items-center w-6 h-6 rounded-[4px] border-2 border-warm-300 bg-white transition-colors" style={checked ? { borderColor: "var(--color-primary)", background: "var(--color-primary)" } : undefined}>
+        {checked && (
+          <svg viewBox="0 0 12 10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-2.5">
+            <path d="M1 5l3.5 3.5L11 1" />
+          </svg>
+        )}
+      </span>
+      <span className="text-caption text-neutral-700 leading-relaxed">
+        {children ?? "上記の事前同意事項を確認し、同意します"}
+      </span>
+    </label>
+  );
+}
+
+/* ---- NumberedStepCard ---- */
+export type StepItem = { title: string; desc: string };
+
+export function NumberedStepCard({ heading, steps }: {
+  heading?: string;
+  steps: StepItem[];
+}) {
+  return (
+    <div className="w-full rounded-[16px] border border-warm-200 bg-white p-6">
+      {heading && (
+        <p className="text-[11px] font-medium tracking-[0.14em] uppercase text-neutral-800 font-mono mb-3">{heading}</p>
+      )}
+      <div>
+        {steps.map((step, i) => {
+          const isLast = i === steps.length - 1;
+          return (
+            <div key={i} className="flex gap-3">
+              <div className="flex flex-col items-center shrink-0 w-7">
+                <span className="grid place-items-center w-7 h-7 rounded-full shrink-0 text-[13px] font-semibold" style={{ background: "#e9f2fe", color: "#054eba" }}>
+                  {i + 1}
+                </span>
+                {!isLast && <div className="w-0.5 flex-1 min-h-6 my-1" style={{ background: "#62a0fb" }} />}
+              </div>
+              <div className={`flex-1 ${isLast ? "" : "pb-4"}`}>
+                <p className="text-h6 font-bold text-neutral-800 leading-snug">{step.title}</p>
+                <p className="mt-0.5 text-caption text-neutral-500 leading-relaxed">{step.desc}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ---- IconNoteCard ---- */
+export function IconNoteCard({ iconSrc, children }: {
+  iconSrc: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-[14px] border border-warm-200 bg-white px-3 py-3.5">
+      <img src={iconSrc} alt="" className="w-10 h-10 shrink-0 object-contain" />
+      <p className="text-caption font-medium text-neutral-700 leading-relaxed">{children}</p>
+    </div>
+  );
+}
+
+/* ---- NoteBox ---- */
+export function NoteBox({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-[14px] p-4" style={{ background: "#f5f5f4" }}>
+      <p className="text-caption text-neutral-500 leading-relaxed">{children}</p>
+    </div>
+  );
+}
