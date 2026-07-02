@@ -3296,24 +3296,24 @@ export function StatusIcon({ state = "Success", className }: {
   state?: "Success" | "Loading" | "Error" | "Maintenance" | "Cancelled" | "Locked";
   className?: string;
 }) {
-  const base = `relative flex items-center justify-center rounded-full ${className ?? ""}`;
+  const base = `relative flex items-center justify-center ${className ?? ""}`;
   if (state === "Error") {
     return (
-      <div className={`${base} size-16 overflow-hidden`}>
-        <img src="/assets/theo-tdf/icon_error.png" alt="エラー" className="absolute inset-0 w-full h-full object-contain" />
+      <div className={`${base} size-16`}>
+        <img src="/assets/theo-tdf/icon_error.png" alt="エラー" className="w-full h-full object-contain" />
       </div>
     );
   }
   if (state === "Maintenance") {
     return (
-      <div className={`${base} size-16 overflow-hidden`}>
-        <img src="/assets/theo-tdf/icon_maint.png" alt="メンテナンス" className="absolute inset-0 w-full h-full object-contain" />
+      <div className={`${base} size-16`}>
+        <img src="/assets/theo-tdf/icon_maint.png" alt="メンテナンス" className="w-full h-full object-contain" />
       </div>
     );
   }
   if (state === "Loading") {
     return (
-      <div className={`${base} size-16`}>
+      <div className={`${base} size-16 rounded-full`}>
         <svg viewBox="0 0 64 64" className="absolute inset-0 w-full h-full animate-spin" fill="none">
           <circle cx="32" cy="32" r="26" stroke="#d6d3d1" strokeWidth="4" />
           <path d="M32 6 A26 26 0 0 1 58 32" stroke="#065fe3" strokeWidth="4" strokeLinecap="round" />
@@ -3323,8 +3323,8 @@ export function StatusIcon({ state = "Success", className }: {
   }
   if (state === "Cancelled") {
     return (
-      <div className={`${base} size-16 bg-[#EFEFEF]`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-neutral-400" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+      <div className={`${base} size-16`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="#b5b0ab" strokeWidth="2.5" strokeLinecap="round">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </div>
@@ -3332,7 +3332,7 @@ export function StatusIcon({ state = "Success", className }: {
   }
   if (state === "Locked") {
     return (
-      <div className={`${base} size-[72px] bg-white border border-warm-200`}>
+      <div className={`${base} size-[72px] rounded-[14px] bg-white border border-warm-200`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="#065fe3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="5" y="11" width="14" height="10" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" />
@@ -3342,7 +3342,7 @@ export function StatusIcon({ state = "Success", className }: {
     );
   }
   return (
-    <div className={`${base} size-16 bg-white shadow-sm`}>
+    <div className={`${base} size-16 rounded-full bg-white shadow-sm`}>
       <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="#065fe3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M5 13l4 4L19 7" />
       </svg>
