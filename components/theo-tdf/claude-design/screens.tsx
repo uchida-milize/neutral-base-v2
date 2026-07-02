@@ -3293,7 +3293,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
 /* ---- StatusIcon ---- */
 export function StatusIcon({ state = "Success", className }: {
-  state?: "Success" | "Loading" | "Error" | "Maintenance" | "Cancelled";
+  state?: "Success" | "Loading" | "Error" | "Maintenance" | "Cancelled" | "Locked";
   className?: string;
 }) {
   const base = `relative flex items-center justify-center rounded-full ${className ?? ""}`;
@@ -3326,6 +3326,17 @@ export function StatusIcon({ state = "Success", className }: {
       <div className={`${base} size-16 bg-[#EFEFEF]`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-neutral-400" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </div>
+    );
+  }
+  if (state === "Locked") {
+    return (
+      <div className={`${base} size-[72px] bg-white border border-warm-200`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="#065fe3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          <circle cx="12" cy="16" r="1" fill="#065fe3" stroke="none" />
         </svg>
       </div>
     );

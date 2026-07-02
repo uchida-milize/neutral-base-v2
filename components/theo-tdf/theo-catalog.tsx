@@ -305,7 +305,7 @@ export function TheoCatalog() {
       {/* ---- 14. StatusIcon ---- */}
       <CatSection title="StatusIcon" sub="処理結果アイコン（Success / Loading / Error / Maintenance / Cancelled）">
         <Row>
-          {(["Success", "Loading", "Error", "Maintenance", "Cancelled"] as const).map((s) => (
+          {(["Success", "Loading", "Error", "Maintenance", "Cancelled", "Locked"] as const).map((s) => (
             <Preview key={s} label={s} width={120}>
               <div className="flex justify-center">
                 <StatusIcon state={s} />
