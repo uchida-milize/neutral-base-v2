@@ -3122,7 +3122,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="text-right mt-3">
             <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
               <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
-              弊害防止措置等の対応について
+              ご案内にあたりご確認・同意いただきたいこと
             </button>
           </div>
         </div>
