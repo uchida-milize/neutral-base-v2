@@ -173,15 +173,15 @@ function resolveTenant(pathname: string): Tenant {
   return GENERIC;
 }
 
-/** Storybook ロゴアイコン (simple-icons ベース, 24×24) */
+/** Storybook ロゴアイコン — ブランドカラー #FF4785 */
 function StorybookIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
       viewBox="0 0 24 24"
-      fill="currentColor"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
+      fill="#FF4785"
     >
       {/* 右肩の折れ込みタブ */}
       <path d="M16.71.243l-.12 2.71a.18.18 0 0 0 .29.15l1.06-.8.9.7a.18.18 0 0 0 .28-.16L18.97.577zM19.75 1.93l.2 4.9-1.3-.4.1-1.8-1.1.8-1.1-.9.1 2-1.3-.3-.2-4.7 1.5-.1 1.1 1 1.1-.9z" />
@@ -193,21 +193,26 @@ function StorybookIcon({ className }: { className?: string }) {
   );
 }
 
-/** Figma ロゴアイコン (公式 SVG ベース, 24×24) */
+/** Figma ロゴアイコン — 公式5色 */
 function FigmaIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
       viewBox="0 0 24 24"
-      fill="currentColor"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
     >
-      <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" />
-      <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" />
-      <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-      <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" />
-      <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" />
+      {/* 左上: Red */}
+      <path fill="#F24E1E" d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" />
+      {/* 右上: Coral */}
+      <path fill="#FF7262" d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" />
+      {/* 右中: Blue */}
+      <path fill="#1ABCFE" d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+      {/* 左下: Purple */}
+      <path fill="#A259FF" d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" />
+      {/* 左中: Green */}
+      <path fill="#0ACF83" d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" />
     </svg>
   );
 }
