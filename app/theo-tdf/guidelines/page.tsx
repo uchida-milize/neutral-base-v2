@@ -632,7 +632,7 @@ function TypographyRules() {
       <SectionHeading
         eyebrow="Typography"
         title="UI Heading + Body の 9 段スケール"
-        description="画面内最大見出し (h1 = 34px) から ラベル (h6 = 16px) まで 6 段の UI Heading + Body/Caption の計 9 段。フォントは Zen Kaku Gothic New + Geist Sans。"
+        description="画面内最大見出し (h1 = 34px) から ラベル (h6 = 16px) まで 6 段の UI Heading + Body/Caption の計 9 段。フォントは Geist Sans（ラテン・コード共通）+ Noto Sans JP（日本語）+ Chillax（大見出し英数字）。"
         audience="both"
       />
       <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
@@ -713,20 +713,21 @@ function TypographyRules() {
           </CardHeader>
           <CardContent className="space-y-1.5 text-body text-muted-foreground">
             <p>
-              ラテン: <strong className="text-foreground">Geist Sans</strong>{" "}
-              (Google Fonts CDN)
+              ラテン・コード共通:{" "}
+              <strong className="text-foreground">Geist Sans</strong>{" "}
+              (セルフホスト・npm パッケージ経由、<code>--font-sans</code> / <code>--font-mono</code> 両方に適用)
             </p>
             <p>
               日本語: <strong className="text-foreground">Noto Sans JP</strong>{" "}
               (セルフホスト · 100–900 の 9 ウェイト)
             </p>
             <p>
-              コード: <strong className="text-foreground">Inter</strong>{" "}
-              (Google Fonts、`--font-mono` 変数経由で全 `font-mono` utility に適用)
+              大見出し英数字: <strong className="text-foreground">Chillax</strong>{" "}
+              (セルフホスト · Medium 500 のみ、<code>font-chillax</code> utility 経由)
             </p>
             <p className="text-caption">
-              見出し font-weight = 600 / 本文 line-height = 1.6 / 見出し
-              tracking = -0.02em 起点で段階的に緩める。
+              見出し font-weight = 600 (SemiBold) / 本文 line-height = 1.6 / 見出し
+              tracking = −0.02em 起点で段階的に緩める。
             </p>
           </CardContent>
         </Card>
