@@ -22,6 +22,8 @@ type NavItem = {
   label: string;
   /** active 判定: "exact" = 完全一致、"prefix" = 前方一致 (子ルート含む) */
   match: "exact" | "prefix";
+  /** 外部リンク: true のとき target="_blank" で開き、active 判定をしない */
+  external?: boolean;
 };
 
 type Tenant = {
@@ -106,6 +108,19 @@ const TENANTS: Tenant[] = [
       { href: "/theo-tdf/components", label: "コンポーネント", match: "exact" },
       { href: "/theo-tdf/prototype", label: "プロトタイプ", match: "exact" },
       { href: "/theo-tdf/windows", label: "スクリーン", match: "exact" },
+      // ─── 外部リンク ───────────────────────────────────────
+      {
+        href: "https://neutral-base-storybook.vercel.app",
+        label: "Storybook",
+        match: "exact",
+        external: true,
+      },
+      {
+        href: "https://www.figma.com/design/YBJqblcAwrxktgLgGAKyWW/T-D-%E7%B5%84%E8%BE%BC%E3%83%9A%E3%83%BC%E3%82%B8",
+        label: "Figma",
+        match: "exact",
+        external: true,
+      },
     ],
   },
   {
@@ -233,22 +248,42 @@ function SiteHeaderInner() {
         {/* Nav (focus モードでは非表示) */}
         {!focusMode && (
           <nav className="flex items-center gap-1">
-            {tenant.items.map((item) => {
-              const active = isActive(item, pathname);
+            {tenant.items.map((item, i) => {
+              // 外部リンクの手前にセパレータを挿入
+              const prevItem = tenant.items[i - 1];
+              const showSep = item.external && prevItem && !prevItem.external;
+              const active = !item.external && isActive(item, pathname);
+              const cls = [
+                "rounded-md px-3 py-1.5 text-caption font-medium transition-colors",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              ].join(" ");
+
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={[
-                    "rounded-md px-3 py-1.5 text-caption font-medium transition-colors",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  ].join(" ")}
-                >
-                  {item.label}
-                </Link>
+                <React.Fragment key={item.href}>
+                  {showSep && (
+                    <span className="mx-1 hidden sm:inline-block h-5 w-px bg-border" />
+                  )}
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cls}
+                    >
+                      {item.label} ↗
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={cls}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </React.Fragment>
               );
             })}
             {/* theo-tdf は保険商品のため常時ライト固定 → テーマトグルを出さない */}
