@@ -754,8 +754,8 @@ function AccessibilityRules() {
     <Section id="a11y">
       <SectionHeading
         eyebrow="Accessibility"
-        title="20 代から 70 代までを一枚の UI で支える"
-        description="theo-tdf (THEO「つみたて安心ほけん」) のユーザー層は 20 代の新規契約者から 70 代の既契約者まで幅広い。WCAG 2.2 AA を最低ラインとし、年齢階層を問わず迷わず操作できる UI を目指します。"
+        title="WCAG 2.2 AA 準拠。年齢・習熟度を問わず操作できることを最低条件とする"
+        description="契約者の年齢層やデバイス習熟度にかかわらず、UI が破綻しないことを最低条件とします。WCAG 2.2 AA を基準とし、コントラスト・タップ領域・フォームの入力補助を実装レベルで担保します。"
         audience="both"
       />
 
@@ -949,8 +949,8 @@ function ContentRules() {
     <Section id="content">
       <SectionHeading
         eyebrow="Voice & Content"
-        title="コピーは事実から、語尾は『です・ます』"
-        description="theo-tdf のデジタル UI 文言は、業務系・金融系のフォーマルなトーンに統一されています。エンタープライズ管理画面の信頼感と、保険プロダクトに必要な誤読の少なさを両立させます。"
+        title="Tone：です・ます統一。Content：数値・仕様は一次ソースから"
+        description="語調（Tone）と内容の誠実さ（Content）は別の問題として扱います。語尾を『です・ます』に統一しつつ、文言の根拠には必ず一次ソースを置き、誇張・推測を混入させません。"
         audience="designer"
       />
 
