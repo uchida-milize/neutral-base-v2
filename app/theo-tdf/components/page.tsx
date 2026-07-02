@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { UikitCatalog } from "@/components/uikit-catalog";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { BrandGradients } from "@/components/theo-tdf/brand-gradients";
 import { TheoCatalog } from "@/components/theo-tdf/theo-catalog";
@@ -61,7 +60,6 @@ export default function XxxComponentsPage() {
         <TheoCatalog />
       </section>
 
-      <UikitCatalog />
     </main>
   );
 }
