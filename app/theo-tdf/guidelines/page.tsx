@@ -65,9 +65,11 @@ export default function TdGuidelinesPage() {
       <ColorRules />
       <ButtonRules />
       <TypographyRules />
+      <SpacingHandoff />
       <AccessibilityRules />
       <RadiusAndShadow />
       <ContentRules />
+      <ComponentHandoff />
       <Footer />
     </main>
   );
@@ -669,6 +671,41 @@ function TypographyRules() {
         </Table>
       </div>
 
+      {/* タイポグラフィ Tailwind スニペット */}
+      <Card className="mt-6 transition-colors duration-300">
+        <CardHeader>
+          <CardTitle className="text-h4">タイポグラフィ スニペット（コピペ用）</CardTitle>
+          <CardDescription>
+            Tailwind 任意スケール（<code>text-xl</code> 等）は使わず、必ず下の utility class を使います。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`/* ページ見出し */
+<h1 className="text-display-2 font-semibold tracking-tight">申込フロー 設計・開発リファレンス</h1>
+
+/* セクション見出し */
+<h2 className="text-h2 font-semibold tracking-tight">コンポーネントセット</h2>
+
+/* カードタイトル */
+<h3 className="text-h3 font-semibold tracking-tight">AppBar & Steps</h3>
+
+/* 小見出し */
+<p className="text-h4 font-semibold">フォーム項目名</p>
+
+/* 本文リード */
+<p className="text-body-lg text-muted-foreground">申込フローの概要説明文。</p>
+
+/* 本文標準 */
+<p className="text-body text-muted-foreground">内容説明テキスト。</p>
+
+/* メタ / ラベル (eyebrow) */
+<span className="text-caption font-medium uppercase tracking-[0.18em] text-primary">Components</span>
+
+/* コード */
+<code className="font-mono text-caption">--primary-color-500</code>`}</pre>
+        </CardContent>
+      </Card>
+
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <Card className="transition-colors duration-300">
           <CardHeader className="pb-2">
@@ -985,6 +1022,317 @@ function ContentRules() {
             <p>余白は十分に取り、密度はミドル〜高。テーブルとフォームが主役。</p>
           </CardContent>
         </Card>
+      </div>
+    </Section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* 9. スペーシング ハンドオフ                                          */
+/* ---------------------------------------------------------------- */
+
+const SPACING_SCALE = [
+  { token: "spacing/0",  tw: "p-0 / gap-0 / m-0",    px: 0 },
+  { token: "spacing/1",  tw: "p-1 / gap-1 / mt-1",    px: 4 },
+  { token: "spacing/2",  tw: "p-2 / gap-2 / mt-2",    px: 8 },
+  { token: "spacing/3",  tw: "p-3 / gap-3 / mt-3",    px: 12 },
+  { token: "spacing/4",  tw: "p-4 / gap-4 / mt-4",    px: 16 },
+  { token: "spacing/5",  tw: "p-5 / gap-5 / mt-5",    px: 20 },
+  { token: "spacing/6",  tw: "p-6 / gap-6 / mt-6",    px: 24 },
+  { token: "spacing/8",  tw: "p-8 / gap-8 / mt-8",    px: 32 },
+  { token: "spacing/10", tw: "p-10 / gap-10 / mt-10", px: 40 },
+  { token: "spacing/12", tw: "p-12 / gap-12 / mt-12", px: 48 },
+  { token: "spacing/16", tw: "p-16 / gap-16 / mt-16", px: 64 },
+  { token: "spacing/20", tw: "p-20 / gap-20 / mt-20", px: 80 },
+  { token: "spacing/24", tw: "p-24 / gap-24 / mt-24", px: 96 },
+  { token: "spacing/30", tw: "mt-30 / pb-30",          px: 120 },
+];
+
+function SpacingHandoff() {
+  return (
+    <Section id="spacing">
+      <SectionHeading
+        eyebrow="Spacing"
+        title="4px グリッドベースのスペーシング"
+        description="余白・ギャップ・パディングはすべて 4px を 1 単位とした Tailwind spacing スケールに合わせます。Figma の spacing Variables と 1:1 で対応しています。直接 px 値は書かず、Tailwind class を使います。"
+        audience="developer"
+      />
+      <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-40">Figma Variable</TableHead>
+              <TableHead>Tailwind class</TableHead>
+              <TableHead className="w-20 text-right">px</TableHead>
+              <TableHead className="w-32">スケール</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {SPACING_SCALE.map((row) => (
+              <TableRow key={row.token}>
+                <TableCell className="font-mono text-caption">{row.token}</TableCell>
+                <TableCell><code className="text-caption text-muted-foreground">{row.tw}</code></TableCell>
+                <TableCell className="text-right tabular-nums text-muted-foreground">{row.px}</TableCell>
+                <TableCell>
+                  <div
+                    className="h-3 rounded-sm bg-primary/30"
+                    style={{ width: Math.min(row.px, 120) }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <Card className="mt-6 transition-colors duration-300">
+        <CardHeader>
+          <CardTitle className="text-h4">よく使うパターン</CardTitle>
+          <CardDescription>コンポーネント実装でよく登場する spacing の組み合わせ。</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`/* カード内余白 */
+<div className="p-4 space-y-3">           /* p-4=16px, y-gap=12px */
+
+/* セクション間 (ページ内) */
+<section className="mt-30">               /* 120px */
+<section className="mt-12">               /* 48px (小セクション) */
+
+/* フォームフィールド間 */
+<div className="flex flex-col gap-4">     /* 16px */
+
+/* ボタン内横パディング */
+<button className="px-6 py-3">           /* px=24px, py=12px */
+
+/* リスト行 (icon + label) */
+<div className="flex items-center gap-3 py-2">  /* icon-label=12px, y=8px */
+
+/* カードグリッド */
+<div className="grid gap-4 md:grid-cols-2">     /* gap=16px */`}</pre>
+        </CardContent>
+      </Card>
+    </Section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* 10. コンポーネント ハンドオフ                                        */
+/* ---------------------------------------------------------------- */
+
+type PropDef = {
+  name: string;
+  type: string;
+  required: boolean;
+  default?: string;
+};
+
+function ComponentSnippet({
+  name,
+  desc,
+  props,
+  code,
+}: {
+  name: string;
+  desc: string;
+  props: PropDef[];
+  code: string;
+}) {
+  return (
+    <Card className="transition-colors duration-300">
+      <CardHeader className="pb-2">
+        <div className="flex flex-wrap items-start gap-3">
+          <code className="rounded-md border border-border bg-muted px-2 py-1 text-h5 font-semibold">{`<${name}>`}</code>
+          <CardDescription className="mt-1 text-body">{desc}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="overflow-hidden rounded-md border border-border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-32">prop</TableHead>
+                <TableHead>型</TableHead>
+                <TableHead className="w-20">必須</TableHead>
+                <TableHead className="w-32">default</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {props.map((p) => (
+                <TableRow key={p.name}>
+                  <TableCell className="font-mono text-caption font-semibold">{p.name}</TableCell>
+                  <TableCell className="font-mono text-caption text-muted-foreground">{p.type}</TableCell>
+                  <TableCell>
+                    {p.required ? (
+                      <span className="rounded-full bg-secondary-10 px-2 py-0.5 text-tiny font-medium text-secondary-700">必須</span>
+                    ) : (
+                      <span className="text-caption text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-mono text-caption text-muted-foreground">{p.default ?? "—"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{code}</pre>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ComponentHandoff() {
+  return (
+    <Section id="components-handoff">
+      <SectionHeading
+        eyebrow="Components Handoff"
+        title="カスタムコンポーネント 使い方早見表"
+        description="screens.tsx で定義された theo-tdf 固有コンポーネントの props 一覧とコードスニペット。ライブプレビューはコンポーネントページを参照。"
+        audience="developer"
+      />
+
+      <div className="space-y-6">
+        <ComponentSnippet
+          name="Btn"
+          desc="5 種 × full / disabled 対応ボタン"
+          props={[
+            { name: "kind", type: '"cta" | "button" | "outline" | "ghost" | "danger"', required: true },
+            { name: "full",     type: "boolean", required: false, default: "true"  },
+            { name: "disabled", type: "boolean", required: false, default: "false" },
+          ]}
+          code={`<Btn kind="cta">申込を確定する</Btn>
+<Btn kind="button" full={false}>確認する</Btn>
+<Btn kind="outline" full={false}>戻る</Btn>
+<Btn kind="ghost"   full={false}>スキップ</Btn>
+<Btn kind="danger"  full={false}>解約する</Btn>
+<Btn kind="cta" disabled>申込む（disabled）</Btn>`}
+        />
+
+        <ComponentSnippet
+          name="Field"
+          desc="テキスト入力（4 状態: default / filled / error / disabled）"
+          props={[
+            { name: "label",       type: "string",                  required: true  },
+            { name: "placeholder", type: "string",                  required: false },
+            { name: "required",    type: "boolean",                 required: false },
+            { name: "value",       type: "string",                  required: false },
+            { name: "error",       type: "string",                  required: false },
+            { name: "errMode",     type: '"inline" | "below"',      required: false, default: '"below"' },
+            { name: "disabled",    type: "boolean",                 required: false },
+          ]}
+          code={`<Field label="姓" placeholder="山田" required />
+<Field label="姓" value="山田" required />
+<Field label="姓" required error="姓を入力してください" errMode="inline" />
+<Field label="生年月日" value="1990 / 01 / 01" disabled />`}
+        />
+
+        <ComponentSnippet
+          name="LockedField"
+          desc="読み取り専用フィールド（変更不可。disabled より意図が明確）"
+          props={[
+            { name: "label", type: "string", required: true },
+            { name: "value", type: "string", required: true },
+          ]}
+          code={`<LockedField label="生年月日" value="1990 / 01 / 01" />
+<LockedField label="性別" value="男性" />`}
+        />
+
+        <ComponentSnippet
+          name="Select"
+          desc="ドロップダウン選択（3 状態）"
+          props={[
+            { name: "label",    type: "string",   required: true  },
+            { name: "options",  type: "string[]", required: true  },
+            { name: "required", type: "boolean",  required: false },
+            { name: "error",    type: "string",   required: false },
+            { name: "errMode",  type: '"inline" | "below"', required: false, default: '"below"' },
+            { name: "disabled", type: "boolean",  required: false },
+          ]}
+          code={`import { PREFS } from "@/components/theo-tdf/claude-design/screens";
+
+<Select label="都道府県" required options={PREFS} />
+<Select label="都道府県" options={PREFS} error="選択してください" errMode="inline" />
+<Select label="都道府県" options={PREFS} disabled />`}
+        />
+
+        <ComponentSnippet
+          name="GroupCard"
+          desc="入力グループのコンテナ（タイトル + アイコン + Field群をまとめる）"
+          props={[
+            { name: "title",   type: "string", required: true  },
+            { name: "sub",     type: "string", required: false },
+            { name: "iconSrc", type: "string", required: false },
+          ]}
+          code={`<GroupCard
+  title="契約者情報"
+  sub="ご契約者ご本人さまの情報"
+  iconSrc="/assets/theo-tdf/person-heart.svg"
+>
+  <Field label="姓" placeholder="山田" required />
+  <Field label="名" placeholder="太郎" required />
+  <LockedField label="生年月日" value="1990 / 01 / 01" />
+</GroupCard>`}
+        />
+
+        <ComponentSnippet
+          name="StepSection"
+          desc="STEP 番号バッジ付きセクション"
+          props={[
+            { name: "label", type: "string",  required: true  },
+            { name: "n",     type: "number",  required: true  },
+            { name: "big",   type: "boolean", required: false, default: "false" },
+          ]}
+          code={`{/* 通常 (フォーム用) */}
+<StepSection label="メールアドレス" n={1}>
+  <Field label="メールアドレス" placeholder="example@email.com" required />
+</StepSection>
+
+{/* big = true でバッジ・ラベルが大きくなる (シミュレーション用) */}
+<StepSection label="保険料シミュレーション" n={2} big>
+  <SimSliders m={m} setM={setM} y={y} setY={setY} />
+</StepSection>`}
+        />
+
+        <ComponentSnippet
+          name="ActionBar"
+          desc="画面下部スティッキーバー（通常: 白背景 / solid: ブルー帯）"
+          props={[
+            { name: "solid", type: "boolean", required: false, default: "false" },
+          ]}
+          code={`{/* 通常: 白背景 */}
+<ActionBar>
+  <Btn kind="cta">次へ進む</Btn>
+</ActionBar>
+
+{/* solid: ブルー帯（申込確定画面で使用） */}
+<ActionBar solid>
+  <Btn kind="cta">申込む</Btn>
+  <Btn kind="ghost" full={false}>キャンセル</Btn>
+</ActionBar>`}
+        />
+
+        <ComponentSnippet
+          name="SimSliders"
+          desc="積立金額・保障期間 div ベーススライダー（Figma capture 対応）"
+          props={[
+            { name: "m",    type: "number",                     required: true },
+            { name: "setM", type: "(val: number) => void",      required: true },
+            { name: "y",    type: "number",                     required: true },
+            { name: "setY", type: "(val: number) => void",      required: true },
+          ]}
+          code={`const [m, setM] = React.useState(10000);  // 積立金額 (円)
+const [y, setY] = React.useState(15);     // 保障期間 (年)
+
+<SimSliders m={m} setM={setM} y={y} setY={setY} />`}
+        />
+      </div>
+
+      {/* import まとめ */}
+      <div className="mt-6 rounded-lg border border-border bg-card p-5 transition-colors duration-300">
+        <h3 className="text-h4 font-semibold">一括 import</h3>
+        <pre className="mt-3 overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`import {
+  AppBar, Steps, Badge, Btn, Field, Select,
+  LockedField, GroupCard, ActionBar, SimSliders,
+  ReqBadge, ErrText, StepSection, PREFS,
+} from "@/components/theo-tdf/claude-design/screens";`}</pre>
       </div>
     </Section>
   );
