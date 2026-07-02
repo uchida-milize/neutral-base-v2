@@ -26,33 +26,24 @@ export const metadata: Metadata = {
 export default function TheoTdfHome() {
   return (
     <>
-      {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
-      <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
-        <section className="relative overflow-hidden rounded-2xl bg-primary-500 text-white transition-colors duration-300">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,116,141,0.40),transparent_55%)]"
-          />
-          {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
-          <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
-            <Badge
-              variant="secondary"
-              className="gap-1.5 bg-white/10 text-caption text-white"
-            >
-              <ShieldCheck className="size-3" />
-              THEO × T&Dファイナンシャル · 組込申込
-            </Badge>
-            <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
-              <JpText>申込フロー 設計・開発リファレンス</JpText>
-            </h1>
-            <p className="mt-4 max-w-2xl text-body text-white/80 sm:text-body-lg">
-              THEO「つみたて安心ほけん」（引受：<strong className="text-white">T&Dファイナンシャル生命</strong>）の組込申込フロー全画面と、カラートークン・コンポーネント・Tailwindクラス対応表をまとめたポータルです。
-            </p>
-          </div>
-        </section>
-      </div>
-
-      <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+        {/* Hero テキスト（白背景・他ページと統一） */}
+        <div className="mb-12">
+          <Badge variant="secondary" className="gap-1.5 text-caption">
+            <ShieldCheck className="size-3" />
+            THEO × T&Dファイナンシャル · 組込申込
+          </Badge>
+          <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
+            <JpText>
+              <span className="bg-gradient-to-r from-primary-600 to-button-color-400 bg-clip-text text-transparent">
+                申込フロー 設計・開発リファレンス
+              </span>
+            </JpText>
+          </h1>
+          <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">
+            THEO「つみたて安心ほけん」（引受：<strong className="text-foreground">T&Dファイナンシャル生命</strong>）の組込申込フロー全画面と、カラートークン・コンポーネント・Tailwindクラス対応表をまとめたポータルです。
+          </p>
+        </div>
         <OverviewSection
           guidelinesHref="/theo-tdf/guidelines"
           tenant="THEO × T&Dファイナンシャル"
