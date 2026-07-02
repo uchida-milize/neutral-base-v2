@@ -20,18 +20,20 @@ import {
   SectionHeading,
   Section,
   RadiusBox,
+  SPACING_SCALE,
 } from "@/components/guidelines/theo-tdf-shared";
 
 export const metadata: Metadata = {
   title: "ボタン・フォーム | ガイドライン | THEO × T&Dファイナンシャル 組込",
   description:
-    "5 種ボタンの用途ルール・1 画面 1 CTA 規律・角丸とシャドウの階段スケール。",
+    "5 種ボタンの用途ルール・1 画面 1 CTA 規律・4px スペーシング・角丸とシャドウの階段スケール。",
 };
 
 export default function ButtonFormPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
       <ButtonRules />
+      <SpacingHandoff />
       <RadiusAndShadow />
     </main>
   );
@@ -100,6 +102,76 @@ function ButtonRules() {
               </TableBody>
             </Table>
           </div>
+        </CardContent>
+      </Card>
+    </Section>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* スペーシング ハンドオフ                                             */
+/* ---------------------------------------------------------------- */
+
+function SpacingHandoff() {
+  return (
+    <Section id="spacing">
+      <SectionHeading
+        eyebrow="Spacing"
+        title="4px グリッドベースのスペーシング"
+        description="余白・ギャップ・パディングはすべて 4px を 1 単位とした Tailwind spacing スケールに合わせます。Figma の spacing Variables と 1:1 で対応しています。直接 px 値は書かず、Tailwind class を使います。"
+        audience="developer"
+      />
+      <div className="overflow-hidden rounded-md border border-border transition-colors duration-300">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-40">Figma Variable</TableHead>
+              <TableHead>Tailwind class</TableHead>
+              <TableHead className="w-20 text-right">px</TableHead>
+              <TableHead className="w-32">スケール</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {SPACING_SCALE.map((row) => (
+              <TableRow key={row.token}>
+                <TableCell className="font-mono text-caption">{row.token}</TableCell>
+                <TableCell><code className="text-caption text-muted-foreground">{row.tw}</code></TableCell>
+                <TableCell className="text-right tabular-nums text-muted-foreground">{row.px}</TableCell>
+                <TableCell>
+                  <div
+                    className="h-3 rounded-sm bg-primary/30"
+                    style={{ width: Math.min(row.px, 120) }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <Card className="mt-6 transition-colors duration-300">
+        <CardHeader>
+          <CardTitle className="text-h4">よく使うパターン</CardTitle>
+          <CardDescription>コンポーネント実装でよく登場する spacing の組み合わせ。</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="overflow-x-auto rounded-md bg-muted/60 p-4 font-mono text-tiny leading-relaxed text-muted-foreground">{`/* カード内余白 */
+<div className="p-4 space-y-3">           /* p-4=16px, y-gap=12px */
+
+/* セクション間 (ページ内) */
+<section className="mt-30">               /* 120px */
+<section className="mt-12">               /* 48px (小セクション) */
+
+/* フォームフィールド間 */
+<div className="flex flex-col gap-4">     /* 16px */
+
+/* ボタン内横パディング */
+<button className="px-6 py-3">           /* px=24px, py=12px */
+
+/* リスト行 (icon + label) */
+<div className="flex items-center gap-3 py-2">  /* icon-label=12px, y=8px */
+
+/* カードグリッド */
+<div className="grid gap-4 md:grid-cols-2">     /* gap=16px */`}</pre>
         </CardContent>
       </Card>
     </Section>
