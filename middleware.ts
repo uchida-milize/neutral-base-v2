@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
-
 /**
  * Basic Authentication middleware
  *
@@ -17,6 +15,11 @@ import { NextRequest, NextResponse } from "next/server";
  *   4. Save → 自動で再デプロイされる (もしくは何か commit して push)
  *
  * ローカル開発 (`pnpm dev`) では認証をスキップするので、毎回ダイアログが出ない。
+ *
+ * NOTE: next/server を import せず純粋な Web 標準 API を使用。
+ * これにより Next.js (x-middleware-next ヘッダーで pass-through を判定) と
+ * Vercel 静的デプロイ (Storybook 等) の両方で同じファイルが動作する。
+ * __dirname 等の Node.js グローバルへの依存を排除する目的もある。
  */
 
 const REALM = "neutral-base preview";
@@ -30,16 +33,21 @@ const PUBLIC_PATHS = [
   "/sitemap.xml",
 ];
 
-export function middleware(req: NextRequest) {
+/** pass-through レスポンス。NextResponse.next() と等価。 */
+function next(): Response {
+  return new Response(null, { headers: { "x-middleware-next": "1" } });
+}
+
+export function middleware(req: Request) {
   // ローカル開発はバイパス
   if (process.env.NODE_ENV === "development") {
-    return NextResponse.next();
+    return next();
   }
 
   // 静的アセットはバイパス
-  const { pathname } = req.nextUrl;
+  const pathname = new URL(req.url).pathname;
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
+    return next();
   }
 
   const expectedUser = process.env.BASIC_AUTH_USER;
@@ -47,7 +55,7 @@ export function middleware(req: NextRequest) {
 
   // env 未設定なら fail closed (誤って全公開しないため)
   if (!expectedUser || !expectedPass) {
-    return new NextResponse(
+    return new Response(
       "Basic Auth credentials are not configured on this deployment. " +
         "Set BASIC_AUTH_USER and BASIC_AUTH_PASS in Vercel project environment variables.",
       { status: 500 },
@@ -66,7 +74,7 @@ export function middleware(req: NextRequest) {
         const user = decoded.slice(0, sepIdx);
         const pass = decoded.slice(sepIdx + 1);
         if (user === expectedUser && pass === expectedPass) {
-          return NextResponse.next();
+          return next();
         }
       }
     } catch {
@@ -75,7 +83,7 @@ export function middleware(req: NextRequest) {
   }
 
   // 認証チャレンジ
-  return new NextResponse("Authentication required", {
+  return new Response("Authentication required", {
     status: 401,
     headers: {
       "WWW-Authenticate": `Basic realm="${REALM}", charset="UTF-8"`,
