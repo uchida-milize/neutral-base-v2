@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AutoButtonGrid } from "@/components/guidelines/auto-button-grid";
-import { BrandGradients } from "@/components/theo-tdf/brand-gradients";
 import {
   SectionHeading,
   Section,
@@ -24,9 +23,9 @@ import {
 } from "@/components/guidelines/theo-tdf-shared";
 
 export const metadata: Metadata = {
-  title: "コンポーネント | ガイドライン | THEO × T&Dファイナンシャル 組込",
+  title: "カスタムコンポーネント | ガイドライン | THEO × T&Dファイナンシャル 組込",
   description:
-    "ボタン 5 種の使い分け・カスタムコンポーネント props 一覧・コードスニペット。",
+    "ボタン 5 種の用途ルール・1 画面 1 CTA 規律・カスタムコンポーネント props 一覧。",
 };
 
 export default function ComponentsPage() {
@@ -47,24 +46,13 @@ function ButtonRules() {
     <Section id="buttons">
       <SectionHeading
         eyebrow="Buttons"
-        title="5 種類のボタンを意味で使い分ける"
-        description="theo-tdf のボタン体系は tokens.css の --button-* / --cta-* に定義されています。「純赤 = 申込/前進」「THEO Blue = 通常確定」「グレー = キャンセル」「白枠 = サブ」「destructive = 削除」を厳密に分けます。実機の通常ボタンは青グラデ (#075FE3→#64B0F7)、申込確定は赤グラデ (#E83A3C→#F66A6C) で描画します。"
+        title="5 種類のボタン — 用途で選ぶ"
+        description="kind prop で用途を宣言します。cta（申込/前進）/ button（通常確定）/ outline（サブアクション）/ ghost（キャンセル・後退）/ danger（削除・解約）。色は tokens.css の --cta-* / --button-* から自動反映されます。1 画面に cta は 1 つまで、という規律を必ず守ってください。"
         audience="both"
       />
 
       {/* 5 種ボタン (テナントの tokens.css の値を自動反映) */}
       <AutoButtonGrid />
-
-      {/* グラデーション & 新中立面 (TD 組込1.4 で追加) */}
-      <div className="mt-8 space-y-3">
-        <h3 className="text-h4 font-semibold">グラデーション &amp; 中立面（TD 組込1.4）</h3>
-        <p className="max-w-3xl text-body text-muted-foreground">
-          実機プロトタイプでは、通常 CTA・申込確定ボタンと、ステッパーの番号バッジ・アプリヘッダーに青系グラデーションを使用します。
-          無効フィールドやプラン選択帯・補償ラベルなどの中立面は <code>#EFEFEF</code> に統一しました。
-          値は申込フロー画面（<code>claude-design/screens.tsx</code>）と一致します。
-        </p>
-        <BrandGradients />
-      </div>
 
       <Card className="mt-6 transition-colors duration-300">
         <CardHeader>

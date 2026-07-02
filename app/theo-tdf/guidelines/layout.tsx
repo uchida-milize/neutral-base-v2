@@ -6,7 +6,7 @@ const NAV = [
   { href: "/theo-tdf/guidelines", label: "概要" },
   { href: "/theo-tdf/guidelines/color", label: "カラー" },
   { href: "/theo-tdf/guidelines/typography", label: "タイポグラフィ" },
-  { href: "/theo-tdf/guidelines/components", label: "コンポーネント" },
+  { href: "/theo-tdf/guidelines/components", label: "カスタムコンポーネント" },
   { href: "/theo-tdf/guidelines/accessibility", label: "アクセシビリティ" },
 ];
 

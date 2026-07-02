@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AutoColorScale, AutoWarmScale } from "@/components/guidelines/auto-color-scale";
+import { BrandGradients } from "@/components/theo-tdf/brand-gradients";
 import {
   SectionHeading,
   Section,
@@ -274,6 +275,17 @@ function ColorRules() {
           />
         </CardContent>
       </Card>
+
+      {/* グラデーション & 中立面 (TD 組込1.4 で追加) */}
+      <div className="mt-8 space-y-3">
+        <h3 className="text-h4 font-semibold">グラデーション &amp; 中立面（TD 組込1.4）</h3>
+        <p className="max-w-3xl text-body text-muted-foreground">
+          実機プロトタイプでは、通常 CTA・申込確定ボタンと、ステッパーの番号バッジ・アプリヘッダーに青系グラデーションを使用します。
+          無効フィールドやプラン選択帯・補償ラベルなどの中立面は <code>#EFEFEF</code> に統一しました。
+          値は申込フロー画面（<code>claude-design/screens.tsx</code>）と一致します。
+        </p>
+        <BrandGradients />
+      </div>
 
       <div className="mt-6 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
         <h3 className="text-h4 font-semibold">テナント差し替え点</h3>
