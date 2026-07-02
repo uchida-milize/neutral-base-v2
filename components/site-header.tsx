@@ -173,6 +173,45 @@ function resolveTenant(pathname: string): Tenant {
   return GENERIC;
 }
 
+/** Storybook ロゴアイコン (simple-icons ベース, 24×24) */
+function StorybookIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* 右肩の折れ込みタブ */}
+      <path d="M16.71.243l-.12 2.71a.18.18 0 0 0 .29.15l1.06-.8.9.7a.18.18 0 0 0 .28-.16L18.97.577zM19.75 1.93l.2 4.9-1.3-.4.1-1.8-1.1.8-1.1-.9.1 2-1.3-.3-.2-4.7 1.5-.1 1.1 1 1.1-.9z" />
+      {/* 本体フレーム */}
+      <path d="M5.5 5.96a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1H5.5zm.5 1.5h12v11H6z" />
+      {/* 内側 "A" マーク */}
+      <path d="M10.5 15.83c.1-1.3 1.2-2.1 2.7-2.1 1.7 0 2.6.9 2.6 2.4v4h-2v-.6c-.4.5-1 .8-1.6.8-1.1-.2-1.8-.9-1.8-1.8 0-1.2 1-2 2.7-2 .2 0 .4 0 .6.1v-1.1c0-.4-.2-.6-.6-.6-.4 0-.6.2-.6.5zm1 3.3c0 .4.3.6.7.6.5 0 1-.3 1-.8v-.5c-.2-.1-.4-.1-.6-.1-.7 0-1.1.3-1.1.8z" />
+    </svg>
+  );
+}
+
+/** Figma ロゴアイコン (公式 SVG ベース, 24×24) */
+function FigmaIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" />
+      <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" />
+      <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+      <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" />
+      <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" />
+    </svg>
+  );
+}
+
 function isActive(item: NavItem, pathname: string): boolean {
   if (item.match === "exact") return pathname === item.href;
   return pathname === item.href || pathname.startsWith(item.href + "/");
@@ -270,9 +309,17 @@ function SiteHeaderInner() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={cls}
+                      title={item.label}
+                      aria-label={`${item.label}（別タブで開く）`}
+                      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
-                      {item.label} ↗
+                      {item.label === "Storybook" ? (
+                        <StorybookIcon className="size-5" />
+                      ) : item.label === "Figma" ? (
+                        <FigmaIcon className="size-5" />
+                      ) : (
+                        <span className="text-caption font-medium">{item.label} ↗</span>
+                      )}
                     </a>
                   ) : (
                     <Link
