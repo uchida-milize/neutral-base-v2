@@ -195,7 +195,7 @@ function SubpageNav() {
       <div className="grid gap-4 md:grid-cols-2">
         {SUBPAGES.map(({ href, icon: Icon, title, description }) => (
           <Link key={href} href={href} className="group block">
-            <Card className="h-full transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-accent/30">
+            <Card className="h-full shadow-sm transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-accent/30 group-hover:shadow-md">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">

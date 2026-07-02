@@ -53,7 +53,7 @@ function PhoneFrame({ label, children }: { label: string; children: React.ReactN
   return (
     <figure className="flex flex-col items-start gap-2 shrink-0" style={{ width: 390 }}>
       <figcaption className="text-h6 font-semibold text-foreground">{label}</figcaption>
-      <div className="theo-tdf-cd font-jp rounded-2xl border border-warm-200 bg-warm-50 shadow-sm overflow-hidden w-full">
+      <div className="theo-tdf-cd font-jp rounded-2xl bg-warm-50 overflow-hidden w-full">
         {children}
       </div>
     </figure>
@@ -70,7 +70,7 @@ function Preview({ label, children, width = 390 }: { label: string; children: Re
   return (
     <figure className="flex flex-col gap-2 shrink-0" style={{ width }}>
       <figcaption className="text-caption font-medium text-muted-foreground">{label}</figcaption>
-      <div className="theo-tdf-cd font-jp rounded-xl border border-warm-200 bg-white p-4 shadow-sm">
+      <div className="theo-tdf-cd font-jp rounded-xl bg-white p-4">
         {children}
       </div>
     </figure>
