@@ -100,25 +100,20 @@ function NavCard({
   desc: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="group block rounded-xl border border-border bg-card p-5 text-card-foreground transition-colors duration-300 hover:border-primary"
-    >
-      <div className="flex items-start gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-md bg-accent text-accent-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-          <Icon className="size-5" aria-hidden />
-        </span>
-        <div className="min-w-0">
-          <Card className="border-0 bg-transparent p-0 shadow-none">
-            <CardHeader className="p-0">
-              <CardTitle className="text-h4">{title}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 pt-2">
-              <CardDescription className="text-body">{desc}</CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+    <Link href={href} className="group block">
+      <Card className="h-full shadow-sm transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-accent/30 group-hover:shadow-md">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+              <Icon className="size-4" aria-hidden />
+            </span>
+            <CardTitle className="text-h4 transition-colors group-hover:text-primary">{title}</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-body text-muted-foreground">{desc}</p>
+        </CardContent>
+      </Card>
     </Link>
   );
 }
