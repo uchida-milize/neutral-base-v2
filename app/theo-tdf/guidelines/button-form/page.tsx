@@ -14,8 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { AutoButtonGrid } from "@/components/guidelines/auto-button-grid";
 import {
   SectionHeading,
   Section,
@@ -32,79 +30,9 @@ export const metadata: Metadata = {
 export default function ButtonFormPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
-      <ButtonRules />
       <SpacingHandoff />
       <RadiusAndShadow />
     </main>
-  );
-}
-
-/* ---------------------------------------------------------------- */
-/* ボタン運用                                                         */
-/* ---------------------------------------------------------------- */
-
-function ButtonRules() {
-  return (
-    <Section id="buttons">
-      <SectionHeading
-        eyebrow="Buttons"
-        title="5 種類のボタン — 用途で選ぶ"
-        description="kind prop で用途を宣言します。cta（申込/前進）/ button（通常確定）/ outline（サブアクション）/ ghost（キャンセル・後退）/ danger（削除・解約）。色は tokens.css の --cta-* / --button-* から自動反映されます。1 画面に cta は 1 つまで、という規律を必ず守ってください。"
-        audience="both"
-      />
-
-      {/* 5 種ボタン (テナントの tokens.css の値を自動反映) */}
-      <AutoButtonGrid />
-
-      <Card className="mt-6 transition-colors duration-300">
-        <CardHeader>
-          <CardTitle className="text-h4">1 画面 1 つだけ、の規律</CardTitle>
-          <CardDescription>
-            純赤 (cta) と通常ボタン (THEO Blue) が同一画面で主役を争うのは原則禁止。並べる場合は純赤を 1 つに絞り、通常ボタンは neutral / outline に降格させること。
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-hidden rounded-md border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>状況</TableHead>
-                  <TableHead>OK / NG</TableHead>
-                  <TableHead>理由</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>申込フォームの最下部 (送信)</TableCell>
-                  <TableCell><Badge>OK</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">前進アクションは cta 赤で 1 つに収束</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>キャンセル + 送信を並べる</TableCell>
-                  <TableCell><Badge>OK</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">cta + neutral の主従関係</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>cta 純赤 と 通常ボタン THEO Blue を同列</TableCell>
-                  <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">どちらが主か判断できなくなる</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>キャンセル を赤にする</TableCell>
-                  <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">赤は前進専用。後退・否定には使わない</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>大面積の赤い背景</TableCell>
-                  <TableCell><Badge variant="destructive">NG</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">cta 赤はピンポイント。装飾には使わない</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </Section>
   );
 }
 
