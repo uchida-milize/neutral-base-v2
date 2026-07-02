@@ -173,22 +173,28 @@ function resolveTenant(pathname: string): Tenant {
   return GENERIC;
 }
 
-/** Storybook ロゴアイコン — ブランドカラー #FF4785 */
+/** Storybook ロゴアイコン — 公式アプリアイコン風（ピンク角丸 + 白S + ブックマークリボン） */
 function StorybookIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 24 24"
+      viewBox="0 -4 24 28"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
-      fill="#FF4785"
+      fill="none"
     >
-      {/* 右肩の折れ込みタブ */}
-      <path d="M16.71.243l-.12 2.71a.18.18 0 0 0 .29.15l1.06-.8.9.7a.18.18 0 0 0 .28-.16L18.97.577zM19.75 1.93l.2 4.9-1.3-.4.1-1.8-1.1.8-1.1-.9.1 2-1.3-.3-.2-4.7 1.5-.1 1.1 1 1.1-.9z" />
-      {/* 本体フレーム */}
-      <path d="M5.5 5.96a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1H5.5zm.5 1.5h12v11H6z" />
-      {/* 内側 "A" マーク */}
-      <path d="M10.5 15.83c.1-1.3 1.2-2.1 2.7-2.1 1.7 0 2.6.9 2.6 2.4v4h-2v-.6c-.4.5-1 .8-1.6.8-1.1-.2-1.8-.9-1.8-1.8 0-1.2 1-2 2.7-2 .2 0 .4 0 .6.1v-1.1c0-.4-.2-.6-.6-.6-.4 0-.6.2-.6.5zm1 3.3c0 .4.3.6.7.6.5 0 1-.3 1-.8v-.5c-.2-.1-.4-.1-.6-.1-.7 0-1.1.3-1.1.8z" />
+      {/* ブックマークリボン — ピンク矩形の右上から突き出る（rect の背後に描画） */}
+      <path fill="white" d="M17 -4h4v9l-2-1.5-2 1.5V-4z" />
+      {/* ピンクの角丸正方形 */}
+      <rect width="24" height="24" rx="3.5" fill="#FF4785" />
+      {/* 白い S レターフォーム */}
+      <path
+        d="M16 7C16 5 7.5 5 7.5 9C7.5 13 16.5 13 16.5 17C16.5 21 8 21 8 19"
+        stroke="white"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        fill="none"
+      />
     </svg>
   );
 }
