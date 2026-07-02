@@ -1669,12 +1669,47 @@ export function FeatValue({ v }: { v: string }) {
   );
 }
 
+// divベースのカスタムスライダー（Figmaキャプチャ対応・ネイティブinput[range]の代替）
+function DivSlider({ min, max, step, value, onChange }: {
+  min: number; max: number; step: number; value: number;
+  onChange: (val: number) => void;
+}) {
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const pct = ((value - min) / (max - min)) * 100;
+  const calc = (clientX: number) => {
+    const rect = trackRef.current!.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const raw = min + ratio * (max - min);
+    const stepped = Math.round(raw / step) * step;
+    onChange(Math.max(min, Math.min(max, stepped)));
+  };
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    calc(e.clientX);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.buttons & 1) calc(e.clientX);
+  };
+  return (
+    <div ref={trackRef} className="relative w-full h-5 flex items-center cursor-pointer mt-2 select-none"
+      onPointerDown={onPointerDown} onPointerMove={onPointerMove}>
+      {/* トラック（背景） */}
+      <div className="absolute inset-x-0 h-[6px] rounded-full bg-warm-200" />
+      {/* フィル（進行部分） */}
+      <div className="absolute left-0 h-[6px] rounded-full"
+        style={{ width: `${pct}%`, backgroundColor: "var(--primary-color-500)" }} />
+      {/* サム（つまみ） */}
+      <div className="absolute w-[18px] h-[18px] rounded-full bg-white shadow-md border-2"
+        style={{ left: `calc(${pct}% - 9px)`, borderColor: "var(--primary-color-500)" }} />
+    </div>
+  );
+}
+
 // Shared積立スライダー（Simulator と 申込フォームの修正シートで共用）
 export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
-  const sliderStyle = { accentColor: "var(--primary-color-500)" };
-  const onM = (e: React.ChangeEvent<HTMLInputElement>) => { setM(+e.target.value); onInput && onInput(); };
-  const onY = (e: React.ChangeEvent<HTMLInputElement>) => { setY(+e.target.value); onInput && onInput(); };
+  const onM = (val: number) => { setM(val); onInput && onInput(); };
+  const onY = (val: number) => { setY(val); onInput && onInput(); };
   // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限・ステップにスナップ）
   const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
   const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
@@ -1691,8 +1726,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
             <span className="text-caption"> 円</span>
           </span>
         </div>
-        <input type="range" min="5000" max="150000" step="1000" value={m} onChange={onM}
-          style={sliderStyle} className="w-full mt-2 h-2 cursor-pointer" />
+        <DivSlider min={5000} max={150000} step={1000} value={m} onChange={onM} />
         <div className="flex justify-between font-mono text-[12px] text-neutral-400 mt-1">
           <span>5,000円</span><span>150,000円</span>
         </div>
@@ -1707,8 +1741,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
             <span className="text-caption"> 年</span>
           </span>
         </div>
-        <input type="range" min="5" max="30" step="1" value={y} onChange={onY}
-          style={sliderStyle} className="w-full mt-2 h-2 cursor-pointer" />
+        <DivSlider min={5} max={30} step={1} value={y} onChange={onY} />
         <div className="flex justify-between font-mono text-[12px] text-neutral-400 mt-1">
           <span>5年</span><span>30年</span>
         </div>
