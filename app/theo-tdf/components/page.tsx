@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { UikitCatalog } from "@/components/uikit-catalog";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { BrandGradients } from "@/components/theo-tdf/brand-gradients";
+import { TheoCatalog } from "@/components/theo-tdf/theo-catalog";
 
 export const metadata: Metadata = {
   title: "Components | THEO × T&Dファイナンシャル 組込",
@@ -46,6 +47,18 @@ export default function XxxComponentsPage() {
           <code> #EFEFEF</code> を使います（値は <code>claude-design/screens.tsx</code> と一致）。
         </p>
         <BrandGradients />
+      </section>
+
+      {/* theo-tdf 固有コンポーネントカタログ */}
+      <section className="mb-16">
+        <h2 className="text-h3 font-semibold tracking-tight mb-2">
+          カスタムコンポーネント（申込フロー固有）
+        </h2>
+        <p className="mb-8 max-w-3xl text-body text-muted-foreground">
+          <code>screens.tsx</code> で定義されたtheo-tdf専用コンポーネント。
+          Figmaのコンポーネント管理と対応しています。
+        </p>
+        <TheoCatalog />
       </section>
 
       <UikitCatalog />
