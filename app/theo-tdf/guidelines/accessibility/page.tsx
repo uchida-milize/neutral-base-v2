@@ -42,7 +42,7 @@ function AccessibilityRules() {
       />
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
@@ -66,7 +66,7 @@ function AccessibilityRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">
@@ -91,7 +91,7 @@ function AccessibilityRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">タッチターゲット</CardTitle>
           </CardHeader>
@@ -104,7 +104,7 @@ function AccessibilityRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">フォーカス可視化</CardTitle>
           </CardHeader>
@@ -171,7 +171,7 @@ function ContentRules() {
       />
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">言語・トーン</CardTitle>
           </CardHeader>
@@ -186,7 +186,7 @@ function ContentRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">具体例</CardTitle>
           </CardHeader>
@@ -214,7 +214,7 @@ function ContentRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">ケース・記号</CardTitle>
           </CardHeader>
@@ -228,7 +228,7 @@ function ContentRules() {
           </CardContent>
         </Card>
 
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">雰囲気 (Vibe)</CardTitle>
           </CardHeader>

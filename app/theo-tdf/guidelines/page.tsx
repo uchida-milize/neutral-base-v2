@@ -128,7 +128,7 @@ function BrandPillars() {
       />
       <div className="grid gap-4 md:grid-cols-2">
         {PILLARS.map(({ icon: Icon, title, body }) => (
-          <Card key={title} className="transition-colors duration-300">
+          <Card key={title} className="shadow-none transition-colors duration-300">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
                 <span className="grid size-9 place-items-center rounded-md bg-accent text-accent-foreground">

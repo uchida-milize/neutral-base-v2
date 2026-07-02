@@ -119,7 +119,7 @@ function TypographyRules() {
       </Card>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">フォントスタック</CardTitle>
           </CardHeader>
@@ -143,7 +143,7 @@ function TypographyRules() {
             </p>
           </CardContent>
         </Card>
-        <Card className="transition-colors duration-300">
+        <Card className="shadow-none transition-colors duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-h4">禁止事項</CardTitle>
           </CardHeader>
