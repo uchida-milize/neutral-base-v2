@@ -3575,7 +3575,7 @@ export function NumberedSectionHeading({ n, children }: {
     <div className="flex items-center gap-2">
       <span
         className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
-        style={{ background: "var(--color-button)" }}
+        style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}
       >
         {n}
       </span>
@@ -3716,8 +3716,8 @@ export function NumberedDisclosureItem({ n, title, children, open, onToggle }: {
         onClick={onToggle}
       >
         <span
-          className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
-          style={{ background: "var(--color-button)" }}
+          className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-neutral-700 shrink-0"
+          style={{ background: "#cccccc" }}
         >
           {n}
         </span>

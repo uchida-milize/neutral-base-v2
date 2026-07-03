@@ -9,10 +9,10 @@ const NAV = [
   { href: "/theo-tdf/components/buttons", label: "ボタン" },
   { href: "/theo-tdf/components/labels", label: "ラベル・バッジ" },
   { href: "/theo-tdf/components/forms", label: "フォーム入力" },
-  { href: "/theo-tdf/components/cards", label: "セクション・カード" },
-  { href: "/theo-tdf/components/plan", label: "プラン選択" },
+  { href: "/theo-tdf/components/cards", label: "セクション" },
+  { href: "/theo-tdf/components/plan", label: "カード・プラン選択" },
   { href: "/theo-tdf/components/disclosure", label: "開示・折り畳み" },
-  { href: "/theo-tdf/components/status", label: "ステータス" },
+  { href: "/theo-tdf/components/status", label: "アイコン" },
   { href: "/theo-tdf/components/action", label: "アクション" },
 ];
 

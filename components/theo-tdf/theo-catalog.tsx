@@ -51,22 +51,35 @@ export function Row({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-wrap gap-6 items-start">{children}</div>;
 }
 
-/* Preview — 白コンポーネントが見えるよう背景 #EFEFEF */
-export function Preview({ label, children, width = 390 }: { label: string; children: React.ReactNode; width?: number }) {
+/* Preview — bg prop で背景切替（デフォルト #EFEFEF） */
+export function Preview({ label, children, width = 390, bg = "#EFEFEF" }: {
+  label: string;
+  children: React.ReactNode;
+  width?: number;
+  bg?: string;
+}) {
   return (
     <figure className="flex flex-col gap-2 shrink-0" style={{ width }}>
       <figcaption className="text-caption font-medium text-muted-foreground">{label}</figcaption>
-      <div className="theo-tdf-cd font-jp rounded-xl p-4 border border-warm-200" style={{ background: "#EFEFEF" }}>
+      <div className="theo-tdf-cd font-jp rounded-xl p-4 border border-warm-200" style={{ background: bg }}>
         {children}
       </div>
     </figure>
   );
 }
 
-function AssetCard({ label, children, bg = "bg-white" }: { label: string; children: React.ReactNode; bg?: string }) {
+function AssetCard({ label, children, bg = "bg-white", style }: {
+  label: string;
+  children: React.ReactNode;
+  bg?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <figure className="flex flex-col gap-2 shrink-0">
-      <div className={`flex items-center justify-center rounded-xl border border-warm-200 ${bg} p-4`} style={{ minWidth: 160, minHeight: 80 }}>
+      <div
+        className={`flex items-center justify-center rounded-xl border border-warm-200 ${bg} p-4`}
+        style={{ minWidth: 160, minHeight: 80, ...style }}
+      >
         {children}
       </div>
       <figcaption className="text-caption text-muted-foreground text-center">{label}</figcaption>
@@ -80,22 +93,30 @@ export function SubHead({ children }: { children: React.ReactNode }) {
 
 /* ================================================================
    1. ブランドアセット
+   Logo コンポーネント / ロゴ画像 / 背景画像 / AppBar / Phone UI Chrome
 ================================================================ */
 export function BrandSection() {
+  const noop = () => {};
   return (
     <div className="theo-tdf-cd font-jp">
       <SubHead>Logo コンポーネント</SubHead>
       <Row>
-        <AssetCard label="variant=default"><Logo variant="default" /></AssetCard>
-        <AssetCard label="variant=blue"><Logo variant="blue" /></AssetCard>
+        {/* variant=default は白地だと見えないので EFEFEF 背景 */}
+        <AssetCard label="variant=default" bg="" style={{ background: "#EFEFEF", minWidth: 200, minHeight: 100 }}>
+          <Logo variant="default" className="h-14 w-auto" />
+        </AssetCard>
+        <AssetCard label="variant=blue" style={{ minWidth: 200, minHeight: 100 }}>
+          <Logo variant="blue" className="h-14 w-auto" />
+        </AssetCard>
       </Row>
       <SubHead>ロゴ 画像ファイル</SubHead>
       <Row>
+        {/* logo_theo_insurance.svg は白背景だと見えないので EFEFEF */}
+        <AssetCard label="logo_theo_insurance.svg" bg="" style={{ background: "#EFEFEF" }}>
+          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="" className="h-8 w-auto" />
+        </AssetCard>
         <AssetCard label="logo_theo_insurance_blue.svg">
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="" className="h-8 w-auto" />
-        </AssetCard>
-        <AssetCard label="logo_theo_insurance.svg">
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="" className="h-8 w-auto" />
         </AssetCard>
         <AssetCard label="logo_td.png">
           <img src="/assets/theo-tdf/logo_td.png" alt="" className="h-8 w-auto" />
@@ -120,32 +141,15 @@ export function BrandSection() {
             <img src={`/assets/theo-tdf/${file}`} alt="" className="h-20 w-auto rounded-lg object-cover" />
           </AssetCard>
         ))}
-        <AssetCard label="hero-notch.svg" bg="bg-primary-600">
+        {/* hero-notch.svg は EFEFEF 背景（青ではない） */}
+        <AssetCard label="hero-notch.svg" bg="" style={{ background: "#EFEFEF" }}>
           <img src="/assets/theo-tdf/hero-notch.svg" alt="" className="h-8 w-auto" />
         </AssetCard>
       </Row>
-      <SubHead>アイコン画像</SubHead>
+      <SubHead>AppBar</SubHead>
       <Row>
-        <AssetCard label="icon_lock.svg">
-          <img src="/assets/theo-tdf/icon_lock.svg" alt="" className="w-12 h-12" />
-        </AssetCard>
-        <AssetCard label="icon_error.png">
-          <img src="/assets/theo-tdf/icon_error.png" alt="" className="w-12 h-12 object-contain" />
-        </AssetCard>
-        <AssetCard label="icon_maint.png">
-          <img src="/assets/theo-tdf/icon_maint.png" alt="" className="w-12 h-12 object-contain" />
-        </AssetCard>
-      </Row>
-      <SubHead>デコレーション SVG</SubHead>
-      <Row>
-        {[
-          "activity-heart-circle","calendar","graduation-cap","hand-holding-heart",
-          "info-circle","letter-heart-square","line-chart-dots-square","person-heart",
-        ].map((name) => (
-          <AssetCard key={name} label={name}>
-            <img src={`/assets/theo-tdf/${name}.svg`} alt="" className="w-10 h-10" />
-          </AssetCard>
-        ))}
+        <PhoneFrame label="State=Default"><AppBar title="保険" /></PhoneFrame>
+        <PhoneFrame label="State=Empty"><AppBar title="お申込み完了" /></PhoneFrame>
       </Row>
       <SubHead>Phone UI Chrome</SubHead>
       <Row>
@@ -165,21 +169,16 @@ export function BrandSection() {
 }
 
 /* ================================================================
-   2. ナビゲーション
+   2. ナビゲーション — Steps のみ（AppBar は BrandSection へ）
 ================================================================ */
 export function NavigationSection() {
   const noop = () => {};
   return (
     <div className="theo-tdf-cd font-jp">
-      <SubHead>AppBar</SubHead>
-      <Row>
-        <PhoneFrame label="State=Default"><AppBar title="保険" /></PhoneFrame>
-        <PhoneFrame label="State=Empty"><AppBar title="お申込み完了" /></PhoneFrame>
-      </Row>
       <SubHead>Steps</SubHead>
       <Row>
         {[1, 2, 3, 4, 5].map((n) => (
-          <Preview key={n} label={`n=${n}/5`} width={300}>
+          <Preview key={n} label={`n=${n}/5`} width={300} bg="#ffffff">
             <Steps n={n} of={5} go={noop} />
           </Preview>
         ))}
@@ -299,7 +298,8 @@ export function FormsSection() {
 }
 
 /* ================================================================
-   6. セクション・カード
+   6. セクション（旧：セクション・カード）
+   NumberedSectionHeading / CardHeader / StepSection のみ
 ================================================================ */
 export function CardsSection() {
   const noop = () => {};
@@ -336,6 +336,24 @@ export function CardsSection() {
           </StepSection>
         </Preview>
       </Row>
+    </div>
+  );
+}
+
+/* ================================================================
+   7. カード・プラン選択（旧：プラン選択）
+   GroupCard / BirthDateGenderBlock / NumberedStepCard / IconNoteCard /
+   NoteBox / AttentionNoticeCard / ConfirmRow / AddressRow / ConfirmCard +
+   PremiumSimulationCard / SliderField / PlanCard / PlanCardAccordion
+================================================================ */
+export function PlanSection() {
+  const [m, setM] = React.useState(10000);
+  const [y, setY] = React.useState(15);
+  const [planSel, setPlanSel] = React.useState("");
+  const [accordionOpen, setAccordionOpen] = React.useState<Record<string, boolean>>({});
+  return (
+    <div className="theo-tdf-cd font-jp">
+      {/* ── 旧 CardsSection から移動 ── */}
       <SubHead>GroupCard</SubHead>
       <Row>
         <Preview label="契約者情報">
@@ -406,31 +424,18 @@ export function CardsSection() {
           </ConfirmCard>
         </Preview>
       </Row>
-    </div>
-  );
-}
-
-/* ================================================================
-   7. プラン選択
-================================================================ */
-export function PlanSection() {
-  const [m, setM] = React.useState(10000);
-  const [y, setY] = React.useState(15);
-  const [planSel, setPlanSel] = React.useState("");
-  const [accordionOpen, setAccordionOpen] = React.useState<Record<string, boolean>>({});
-  return (
-    <div className="theo-tdf-cd font-jp">
+      {/* ── プラン選択コンポーネント ── */}
       <SubHead>PremiumSimulationCard（インタラクティブ）</SubHead>
-      <Preview label="PremiumSimulationCard" width={390}>
+      <Preview label="PremiumSimulationCard" width={390} bg="#ffffff">
         <PremiumSimulationCard m={m} setM={setM} y={y} setY={setY} planType="がん保障型" deathCoverage />
       </Preview>
       <SubHead>SliderField</SubHead>
       <Row>
-        <Preview label="積立金額" width={390}>
+        <Preview label="積立金額" width={390} bg="#ffffff">
           <SliderField label="毎月の積立金額" value={m} min={5000} max={150000} step={1000} onChange={setM}
             formatValue={(v) => `${v.toLocaleString()}円`} minLabel="5,000円" maxLabel="150,000円" />
         </Preview>
-        <Preview label="保障期間" width={390}>
+        <Preview label="保障期間" width={390} bg="#ffffff">
           <SliderField label="保障期間" value={y} min={5} max={30} step={1} onChange={setY}
             formatValue={(v) => `${v}年`} minLabel="5年" maxLabel="30年" />
         </Preview>
@@ -519,11 +524,13 @@ export function DisclosureSection() {
 }
 
 /* ================================================================
-   9. ステータス
+   9. アイコン（旧：ステータス）
+   StatusIcon + アイコン画像 + デコレーション SVG（ブランドから移動）
 ================================================================ */
 export function StatusSection() {
   return (
     <div className="theo-tdf-cd font-jp">
+      <SubHead>StatusIcon</SubHead>
       <Row>
         {(["Success","Loading","Error","Maintenance","Cancelled","Locked"] as const).map((s) => (
           <Preview key={s} label={s} width={120}>
@@ -531,6 +538,29 @@ export function StatusSection() {
               <StatusIcon state={s} />
             </div>
           </Preview>
+        ))}
+      </Row>
+      <SubHead>アイコン画像</SubHead>
+      <Row>
+        <AssetCard label="icon_lock.svg">
+          <img src="/assets/theo-tdf/icon_lock.svg" alt="" className="w-12 h-12" />
+        </AssetCard>
+        <AssetCard label="icon_error.png">
+          <img src="/assets/theo-tdf/icon_error.png" alt="" className="w-12 h-12 object-contain" />
+        </AssetCard>
+        <AssetCard label="icon_maint.png">
+          <img src="/assets/theo-tdf/icon_maint.png" alt="" className="w-12 h-12 object-contain" />
+        </AssetCard>
+      </Row>
+      <SubHead>デコレーション SVG</SubHead>
+      <Row>
+        {[
+          "activity-heart-circle","calendar","graduation-cap","hand-holding-heart",
+          "info-circle","letter-heart-square","line-chart-dots-square","person-heart",
+        ].map((name) => (
+          <AssetCard key={name} label={name}>
+            <img src={`/assets/theo-tdf/${name}.svg`} alt="" className="w-10 h-10" />
+          </AssetCard>
         ))}
       </Row>
     </div>
@@ -570,15 +600,15 @@ export function ActionSection() {
 export function TheoCatalog() {
   return (
     <div className="theo-tdf-cd font-jp">
-      <CatSection title="ブランドアセット" sub="ロゴ・背景画像・アイコン・デコレーション・Phone UI Chrome"><BrandSection /></CatSection>
-      <CatSection title="ナビゲーション" sub="AppBar / Steps"><NavigationSection /></CatSection>
+      <CatSection title="ブランドアセット" sub="Logo / 背景画像 / AppBar / Phone UI Chrome"><BrandSection /></CatSection>
+      <CatSection title="ナビゲーション" sub="Steps"><NavigationSection /></CatSection>
       <CatSection title="ボタン" sub="Btn — cta / button / outline / ghost / danger"><ButtonsSection /></CatSection>
       <CatSection title="ラベル・バッジ" sub="Badge / ReqBadge / ErrText / SelectedPlanBadge"><LabelsSection /></CatSection>
       <CatSection title="フォーム入力" sub="Field / DatePicker / LockedField / Select / SegmentedToggle / GenderField / AgreeCheckbox"><FormsSection /></CatSection>
-      <CatSection title="セクション・カード" sub="NumberedSectionHeading / CardHeader / StepSection / GroupCard / BirthDateGenderBlock / NumberedStepCard / IconNoteCard / NoteBox / AttentionNoticeCard / ConfirmRow・AddressRow・ConfirmCard"><CardsSection /></CatSection>
-      <CatSection title="プラン選択" sub="PremiumSimulationCard / SliderField / PlanCard / PlanCardAccordion"><PlanSection /></CatSection>
+      <CatSection title="セクション" sub="NumberedSectionHeading / CardHeader / StepSection"><CardsSection /></CatSection>
+      <CatSection title="カード・プラン選択" sub="GroupCard / ConfirmCard / PremiumSimulationCard / PlanCard など"><PlanSection /></CatSection>
       <CatSection title="開示・折り畳み" sub="AccordionDropdown / NumberedDisclosureItem"><DisclosureSection /></CatSection>
-      <CatSection title="ステータス" sub="StatusIcon — Success / Loading / Error / Maintenance / Cancelled / Locked"><StatusSection /></CatSection>
+      <CatSection title="アイコン" sub="StatusIcon / アイコン画像 / デコレーション SVG"><StatusSection /></CatSection>
       <CatSection title="アクション" sub="ActionBar — normal / solid"><ActionSection /></CatSection>
     </div>
   );

@@ -17,10 +17,10 @@ const CATEGORIES = [
   { slug: "buttons",     icon: Square,         title: "ボタン",             desc: "Btn — cta / button / outline / ghost / danger" },
   { slug: "labels",      icon: Tag,            title: "ラベル・バッジ",      desc: "Badge / ReqBadge / ErrText / SelectedPlanBadge" },
   { slug: "forms",       icon: FormInput,      title: "フォーム入力",       desc: "Field / DatePicker / LockedField / Select / SegmentedToggle / GenderField / AgreeCheckbox" },
-  { slug: "cards",       icon: LayoutGrid,     title: "セクション・カード",  desc: "NumberedSectionHeading / CardHeader / GroupCard / ConfirmCard など" },
-  { slug: "plan",        icon: CreditCard,     title: "プラン選択",         desc: "PremiumSimulationCard / SliderField / PlanCard / PlanCardAccordion" },
+  { slug: "cards",       icon: LayoutGrid,     title: "セクション",          desc: "NumberedSectionHeading / CardHeader / StepSection" },
+  { slug: "plan",        icon: CreditCard,     title: "カード・プラン選択", desc: "GroupCard / ConfirmCard / PremiumSimulationCard / PlanCard など" },
   { slug: "disclosure",  icon: ChevronDown,    title: "開示・折り畳み",     desc: "AccordionDropdown / NumberedDisclosureItem" },
-  { slug: "status",      icon: CircleCheck,    title: "ステータス",         desc: "StatusIcon — Success / Loading / Error / Maintenance / Cancelled / Locked" },
+  { slug: "status",      icon: CircleCheck,    title: "アイコン",           desc: "StatusIcon / アイコン画像 / デコレーション SVG" },
   { slug: "action",      icon: Zap,            title: "アクション",         desc: "ActionBar — normal / solid" },
 ];
 
