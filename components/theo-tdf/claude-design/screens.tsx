@@ -3482,3 +3482,416 @@ export function NoteBox({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+/* ============================================================
+   New Components — batch 2
+   ============================================================ */
+
+/* ---- Logo ---- */
+export function Logo({ variant = "default", className }: {
+  variant?: "default" | "blue";
+  className?: string;
+}) {
+  const src = variant === "blue"
+    ? "/assets/theo-tdf/logo_theo_insurance_blue.svg"
+    : "/assets/theo-tdf/logo_theo_insurance.svg";
+  return (
+    <img src={src} alt="THEO つみたて安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
+  );
+}
+
+/* ---- PhoneStatusBar ---- */
+export function PhoneStatusBar({ time = "9:41" }: { time?: string }) {
+  return (
+    <div className="flex items-center justify-between px-5 h-[37px] bg-white">
+      <span className="text-[15px] font-semibold tracking-tight">{time}</span>
+      <div className="flex items-center gap-1.5">
+        <svg viewBox="0 0 17 12" fill="none" className="w-4 h-3" aria-hidden>
+          <rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" />
+          <rect x="4.5" y="3.5" width="3" height="8.5" rx="1" fill="currentColor" />
+          <rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" fillOpacity="0.35" />
+          <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" fillOpacity="0.35" />
+        </svg>
+        <svg viewBox="0 0 16 12" fill="none" className="w-4 h-3" aria-hidden>
+          <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" fill="currentColor" />
+          <path d="M4 6.5C5.5 5 6.7 4.5 8 4.5s2.5.5 4 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M1 3.5C3 1.5 5.3.5 8 .5s5 1 7 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <svg viewBox="0 0 25 12" fill="none" className="w-6 h-3" aria-hidden>
+          <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="currentColor" strokeOpacity="0.35" />
+          <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor" />
+          <path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fillOpacity="0.4" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/* ---- HomeIndicator ---- */
+export function HomeIndicator() {
+  return (
+    <div className="flex justify-center items-end h-[23px] pb-1 bg-white">
+      <div className="w-32 h-1 rounded-full bg-neutral-800 opacity-20" />
+    </div>
+  );
+}
+
+/* ---- DatePicker ---- */
+export function DatePicker({ label, required, error, errMode = "inline", disabled }: {
+  label: string;
+  required?: boolean;
+  error?: string;
+  errMode?: "inline";
+  disabled?: boolean;
+}) {
+  const hasError = !!error;
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-caption font-medium text-neutral-700">
+        {label}{required && <ReqBadge />}
+      </label>
+      <div className={[
+        "flex items-center h-[52px] rounded-[10px] border bg-white px-3.5 gap-2 transition-colors",
+        hasError ? "border-[#d70027] shadow-[0_0_0_1px_#d70027]" : "border-warm-300",
+        disabled ? "bg-warm-50 opacity-60 pointer-events-none" : "",
+      ].join(" ")}>
+        <span className="flex-1 text-h6 text-neutral-400">選択してください</span>
+        <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5 shrink-0 text-neutral-400" aria-hidden>
+          <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </div>
+      {hasError && errMode === "inline" && <ErrText>{error}</ErrText>}
+    </div>
+  );
+}
+
+/* ---- NumberedSectionHeading ---- */
+export function NumberedSectionHeading({ n, children }: {
+  n: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
+        style={{ background: "var(--color-button)" }}
+      >
+        {n}
+      </span>
+      <span className="text-h5 font-bold text-neutral-800">{children}</span>
+    </div>
+  );
+}
+
+/* ---- CardHeader ---- */
+export type CardHeaderState = "Locked" | "Editable" | "Plain" | "Editing";
+
+export function CardHeader({ title, state = "Plain", onEdit, onSave, onCancel }: {
+  title: string;
+  state?: CardHeaderState;
+  onEdit?: () => void;
+  onSave?: () => void;
+  onCancel?: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-2">
+      <span className="text-h6 font-semibold text-neutral-800">{title}</span>
+      {state === "Locked" && (
+        <span className="flex items-center gap-1 text-caption text-neutral-400">
+          <svg viewBox="0 0 14 16" fill="none" className="w-3.5 h-4" aria-hidden>
+            <path d="M11 6V5a4 4 0 0 0-8 0v1H2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1Z" stroke="currentColor" strokeWidth="1.2" />
+          </svg>
+          変更不可
+        </span>
+      )}
+      {state === "Editable" && (
+        <button type="button" onClick={onEdit} className="flex items-center gap-1 text-caption font-medium text-primary">
+          <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4" aria-hidden>
+            <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+          </svg>
+          編集
+        </button>
+      )}
+      {state === "Editing" && (
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={onCancel} className="text-caption text-neutral-500">キャンセル</button>
+          <button type="button" onClick={onSave} className="text-caption font-semibold text-white px-3 py-1 rounded-full" style={{ background: "var(--color-primary)" }}>保存</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---- ConfirmRow ---- */
+export function ConfirmRow({ label, children }: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-baseline gap-4 py-2.5 border-b border-warm-100 last:border-0">
+      <span className="text-caption text-neutral-500 shrink-0" style={{ minWidth: 72 }}>{label}</span>
+      <span className="text-caption font-medium text-neutral-800 flex-1 leading-relaxed">{children}</span>
+    </div>
+  );
+}
+
+/* ---- AddressRow ---- */
+export function AddressRow({ label = "住所", postalCode, address }: {
+  label?: string;
+  postalCode: string;
+  address: string;
+}) {
+  return (
+    <div className="flex items-start gap-4 py-2.5 border-b border-warm-100 last:border-0">
+      <span className="text-caption text-neutral-500 shrink-0" style={{ minWidth: 72 }}>{label}</span>
+      <div className="flex-1">
+        <p className="text-caption font-medium text-neutral-800">〒{postalCode}</p>
+        <p className="text-caption font-medium text-neutral-800 leading-relaxed mt-0.5">{address}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---- ConfirmCard ---- */
+export function ConfirmCard({ title, state, children }: {
+  title: string;
+  state?: CardHeaderState;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="w-full rounded-[16px] border border-warm-200 bg-white px-4 pt-2 pb-1">
+      <CardHeader title={title} state={state ?? "Plain"} />
+      <div>{children}</div>
+    </div>
+  );
+}
+
+/* ---- AccordionDropdown ---- */
+export function AccordionDropdown({ title, children, open, onToggle }: {
+  title: string;
+  children?: React.ReactNode;
+  open?: boolean;
+  onToggle?: () => void;
+}) {
+  return (
+    <div className="w-full rounded-[14px] border border-warm-200 bg-white overflow-hidden">
+      <button
+        type="button"
+        className="w-full flex items-center justify-between px-4 py-4 text-left"
+        onClick={onToggle}
+      >
+        <span className="text-h6 font-medium text-neutral-800">{title}</span>
+        <svg
+          viewBox="0 0 16 16"
+          fill="none"
+          className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 text-caption text-neutral-600 leading-relaxed border-t border-warm-100 pt-3">
+          {children ?? <p className="text-neutral-400">コンテンツエリア</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---- NumberedDisclosureItem ---- */
+export function NumberedDisclosureItem({ n, title, children, open, onToggle }: {
+  n: number;
+  title: string;
+  children?: React.ReactNode;
+  open?: boolean;
+  onToggle?: () => void;
+}) {
+  return (
+    <div className="w-full rounded-[14px] border border-warm-200 bg-white overflow-hidden">
+      <button
+        type="button"
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
+        onClick={onToggle}
+      >
+        <span
+          className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
+          style={{ background: "var(--color-button)" }}
+        >
+          {n}
+        </span>
+        <span className="flex-1 text-h6 font-medium text-neutral-800">{title}</span>
+        <svg
+          viewBox="0 0 16 16"
+          fill="none"
+          className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 text-caption text-neutral-600 leading-relaxed border-t border-warm-100 pt-3">
+          {children ?? <p className="text-neutral-400">コンテンツエリア</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---- GenderField ---- */
+export function GenderField({ value, onChange, required, error }: {
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+  error?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-caption font-medium text-neutral-700">
+        性別{required && <ReqBadge />}
+      </label>
+      <SegmentedToggle options={["男性", "女性"]} value={value} onChange={onChange} error={error} />
+    </div>
+  );
+}
+
+/* ---- BirthDateGenderBlock ---- */
+export function BirthDateGenderBlock({ birthDateError, genderValue = "", genderError, onGenderChange }: {
+  birthDateError?: string;
+  genderValue?: string;
+  genderError?: boolean;
+  onGenderChange?: (v: string) => void;
+}) {
+  return (
+    <div className="w-full rounded-[16px] border border-warm-200 bg-white px-4 py-5">
+      <h3 className="text-h5 font-bold text-neutral-800">生年月日・性別</h3>
+      <p className="text-caption text-neutral-500 mt-0.5 mb-4">お客様情報。保険料の算出に使用します。</p>
+      <div className="flex flex-col gap-4">
+        <DatePicker label="生年月日" required error={birthDateError} />
+        <GenderField value={genderValue} onChange={onGenderChange ?? (() => {})} required error={genderError} />
+      </div>
+    </div>
+  );
+}
+
+/* ---- SelectedPlanBadge ---- */
+export function SelectedPlanBadge({ planType, deathCoverage }: {
+  planType?: string;
+  deathCoverage?: boolean;
+}) {
+  return (
+    <div className="inline-flex items-start gap-2 rounded-[10px] border border-warm-200 bg-white px-3 py-2">
+      <span className="text-caption text-neutral-500 shrink-0">選択プラン</span>
+      <div className="flex flex-wrap gap-1.5">
+        {planType && <span className="text-caption font-semibold text-neutral-800">{planType}</span>}
+        {deathCoverage && <span className="text-caption font-semibold text-neutral-800">死亡保障あり</span>}
+      </div>
+    </div>
+  );
+}
+
+/* ---- SliderField ---- */
+export function SliderField({ label, value, min, max, step = 1, onChange, formatValue, minLabel, maxLabel }: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onChange?: (v: number) => void;
+  formatValue?: (v: number) => string;
+  minLabel?: string;
+  maxLabel?: string;
+}) {
+  const fv = formatValue ?? ((v: number) => v.toLocaleString());
+  return (
+    <div className="w-full">
+      <div className="flex items-baseline justify-between mb-2">
+        <span className="text-caption font-medium text-neutral-700">{label}</span>
+        <span className="text-h5 font-bold" style={{ color: "var(--color-primary)" }}>{fv(value)}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={onChange ? (e) => onChange(Number(e.target.value)) : undefined}
+        readOnly={!onChange}
+        className="w-full h-1 rounded-full appearance-none cursor-pointer"
+        style={{ accentColor: "var(--color-primary)" }}
+      />
+      {(minLabel || maxLabel) && (
+        <div className="flex justify-between mt-1.5">
+          <span className="text-[11px] text-neutral-400">{minLabel}</span>
+          <span className="text-[11px] text-neutral-400">{maxLabel}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---- PremiumSimulationCard ---- */
+export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planType, deathCoverage }: {
+  m: number;
+  setM: (v: number) => void;
+  y: number;
+  setY: (v: number) => void;
+  premium?: number;
+  planType?: string;
+  deathCoverage?: boolean;
+}) {
+  const [tableOpen, setTableOpen] = React.useState(false);
+  return (
+    <div className="w-full rounded-[16px] border border-warm-200 bg-white p-5">
+      {(planType || deathCoverage) && (
+        <div className="mb-4">
+          <SelectedPlanBadge planType={planType} deathCoverage={deathCoverage} />
+        </div>
+      )}
+      <p className="text-caption text-neutral-500 mb-5 leading-relaxed">
+        保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。
+      </p>
+      <div className="flex flex-col gap-6">
+        <SliderField
+          label="毎月の積立金額"
+          value={m}
+          min={5000}
+          max={150000}
+          step={1000}
+          onChange={setM}
+          formatValue={(v) => `${v.toLocaleString()}円`}
+          minLabel="5,000円"
+          maxLabel="150,000円"
+        />
+        <SliderField
+          label="保障期間"
+          value={y}
+          min={5}
+          max={30}
+          step={1}
+          onChange={setY}
+          formatValue={(v) => `${v}年`}
+          minLabel="5年"
+          maxLabel="30年"
+        />
+      </div>
+      <div className="mt-5 pt-4 border-t border-warm-100 flex items-baseline justify-between">
+        <span className="text-caption text-neutral-500">初年度の月払保険料</span>
+        <span className="font-bold leading-none" style={{ color: "var(--color-primary)", fontSize: 28 }}>
+          {premium.toLocaleString()}<span className="text-h6 font-semibold">円</span>
+        </span>
+      </div>
+      <div className="mt-3">
+        <AccordionDropdown
+          title="保険料テーブルをみる"
+          open={tableOpen}
+          onToggle={() => setTableOpen(!tableOpen)}
+        >
+          <p className="text-neutral-400">保険料テーブルの内容がここに表示されます。</p>
+        </AccordionDropdown>
+      </div>
+    </div>
+  );
+}
