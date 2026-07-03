@@ -1594,9 +1594,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
         <Steps n={3} go={go} />
         <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
-          <div className="grid place-items-center w-16 h-16 rounded-full bg-primary-10 text-primary-600 mb-6">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          </div>
+          <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
           <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
             ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載のPINコードを入力してください。
