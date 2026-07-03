@@ -7,7 +7,6 @@ const NAV = [
   { href: "/theo-tdf/guidelines/color", label: "カラー" },
   { href: "/theo-tdf/guidelines/typography", label: "タイポグラフィ" },
   { href: "/theo-tdf/guidelines/button-form", label: "スタイル" },
-  { href: "/theo-tdf/guidelines/components", label: "カスタムコンポーネント" },
   { href: "/theo-tdf/guidelines/accessibility", label: "アクセシビリティ" },
 ];
 

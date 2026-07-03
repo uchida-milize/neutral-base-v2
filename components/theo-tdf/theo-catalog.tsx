@@ -75,7 +75,7 @@ function AssetCard({ label, children, bg = "bg-white" }: { label: string; childr
 }
 
 export function SubHead({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-h5 font-semibold mb-3 mt-6 first:mt-0 text-foreground">{children}</h3>;
+  return <h3 className="text-h5 font-semibold mb-3 mt-10 first:mt-0 text-foreground">{children}</h3>;
 }
 
 /* ================================================================

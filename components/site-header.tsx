@@ -104,8 +104,8 @@ const TENANTS: Tenant[] = [
     brandLogoWithLabel: false,
     items: [
       { href: "/theo-tdf", label: "ホーム", match: "exact" },
-      { href: "/theo-tdf/guidelines", label: "ガイドライン", match: "exact" },
-      { href: "/theo-tdf/components", label: "コンポーネント", match: "exact" },
+      { href: "/theo-tdf/guidelines", label: "ガイドライン", match: "prefix" },
+      { href: "/theo-tdf/components", label: "コンポーネント", match: "prefix" },
       { href: "/theo-tdf/prototype", label: "プロトタイプ", match: "exact" },
       { href: "/theo-tdf/windows", label: "スクリーン", match: "exact" },
       // ─── 外部リンク ───────────────────────────────────────
