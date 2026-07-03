@@ -16,6 +16,10 @@ export default function Page() {
       <div className="mb-14 overflow-x-auto"><LabelsSection /></div>
       <Section>
         <SectionHeading eyebrow="Props Reference" title="使い方早見表" description="各バッジ・ラベルコンポーネントの props。" audience="developer" />
+        <div className="flex flex-wrap gap-2 mt-2 mb-6">
+          <span className="text-caption text-muted-foreground self-center">Storybook で詳細を確認：</span>
+          <a href="https://neutral-base-storybook.vercel.app/?path=/docs/theo-tdf-atoms-badge--docs" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-md border border-[#FF4785]/30 bg-[#FF4785]/5 px-2.5 py-1 text-[11px] font-medium text-[#FF4785] hover:bg-[#FF4785]/10 transition-colors"><svg viewBox="0 -4 24 28" className="h-3 w-3 shrink-0" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M17 -4h4v9l-2-1.5-2 1.5V-4z"/><rect width="24" height="24" rx="3.5" fill="#FF4785"/><path d="M16 7C16 5 7.5 5 7.5 9C7.5 13 16.5 13 16.5 17C16.5 21 8 21 8 19" stroke="white" strokeWidth="2.4" strokeLinecap="round" fill="none"/></svg>Badge</a>
+        </div>
         <div className="space-y-6">
           <ComponentSnippet name="Badge" desc="ラベル・タグ（tone で色変更）"
             props={[{ name: "tone", type: '"secondary" | "primary" | "warm"', required: false, default: '"secondary"' }]}

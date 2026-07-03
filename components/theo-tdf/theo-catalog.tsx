@@ -252,6 +252,41 @@ export function LabelsSection() {
           <SelectedPlanBadge planType="がん保障型" deathCoverage />
         </Preview>
       </Row>
+      <SubHead>NoteBox</SubHead>
+      <Row>
+        <Preview label="NoteBox">
+          <NoteBox>本保険は THEO の積立投資と組み合わせた保険商品です。詳細は重要事項説明書をご確認ください。</NoteBox>
+        </Preview>
+      </Row>
+      <SubHead>AttentionNoticeCard</SubHead>
+      <Row>
+        <Preview label="AttentionNoticeCard"><AttentionNoticeCard /></Preview>
+      </Row>
+      <SubHead>ConfirmRow / AddressRow / ConfirmCard</SubHead>
+      <Row>
+        <Preview label="ConfirmRow" width={340}>
+          <div>
+            <ConfirmRow label="契約プラン">がん保障型　死亡保障あり</ConfirmRow>
+            <ConfirmRow label="保障期間">15年</ConfirmRow>
+            <ConfirmRow label="積立金額">毎月 10,000円</ConfirmRow>
+          </div>
+        </Preview>
+        <Preview label="AddressRow" width={340}>
+          <AddressRow postalCode="100-0001" address="東京都千代田区丸の内１丁目 丸の内ビル10F" />
+        </Preview>
+        <Preview label="ConfirmCard — Locked" width={370}>
+          <ConfirmCard title="積立内容" state="Locked">
+            <ConfirmRow label="契約プラン">がん保障型　死亡保障あり</ConfirmRow>
+            <ConfirmRow label="保障期間">15年</ConfirmRow>
+          </ConfirmCard>
+        </Preview>
+        <Preview label="ConfirmCard — Editable" width={370}>
+          <ConfirmCard title="お客様情報" state="Editable">
+            <ConfirmRow label="氏名">山田 太郎</ConfirmRow>
+            <AddressRow postalCode="100-0001" address="東京都千代田区丸の内１丁目" />
+          </ConfirmCard>
+        </Preview>
+      </Row>
     </div>
   );
 }
@@ -399,41 +434,6 @@ export function PlanSection() {
           <IconNoteCard iconSrc="/assets/theo-tdf/person-heart.svg">
             ご契約者さまの情報をご確認ください。変更がある場合はTHEOアプリよりご連絡ください。
           </IconNoteCard>
-        </Preview>
-      </Row>
-      <SubHead>NoteBox</SubHead>
-      <Row>
-        <Preview label="NoteBox">
-          <NoteBox>本保険は THEO の積立投資と組み合わせた保険商品です。詳細は重要事項説明書をご確認ください。</NoteBox>
-        </Preview>
-      </Row>
-      <SubHead>AttentionNoticeCard</SubHead>
-      <Row>
-        <Preview label="AttentionNoticeCard"><AttentionNoticeCard /></Preview>
-      </Row>
-      <SubHead>ConfirmRow / AddressRow / ConfirmCard</SubHead>
-      <Row>
-        <Preview label="ConfirmRow" width={340}>
-          <div>
-            <ConfirmRow label="契約プラン">がん保障型　死亡保障あり</ConfirmRow>
-            <ConfirmRow label="保障期間">15年</ConfirmRow>
-            <ConfirmRow label="積立金額">毎月 10,000円</ConfirmRow>
-          </div>
-        </Preview>
-        <Preview label="AddressRow" width={340}>
-          <AddressRow postalCode="100-0001" address="東京都千代田区丸の内１丁目 丸の内ビル10F" />
-        </Preview>
-        <Preview label="ConfirmCard — Locked" width={370}>
-          <ConfirmCard title="積立内容" state="Locked">
-            <ConfirmRow label="契約プラン">がん保障型　死亡保障あり</ConfirmRow>
-            <ConfirmRow label="保障期間">15年</ConfirmRow>
-          </ConfirmCard>
-        </Preview>
-        <Preview label="ConfirmCard — Editable" width={370}>
-          <ConfirmCard title="お客様情報" state="Editable">
-            <ConfirmRow label="氏名">山田 太郎</ConfirmRow>
-            <AddressRow postalCode="100-0001" address="東京都千代田区丸の内１丁目" />
-          </ConfirmCard>
         </Preview>
       </Row>
       {/* ── プラン選択コンポーネント ── */}
