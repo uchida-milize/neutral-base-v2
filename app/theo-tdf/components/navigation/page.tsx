@@ -11,11 +11,11 @@ export default function Page() {
       <header className="mb-10 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">Components</p>
         <h1 className="mt-2 text-display-3 font-semibold tracking-tight">ナビゲーション</h1>
-        <p className="mt-3 text-body text-muted-foreground">画面上部の固定ヘッダー（AppBar）と STEP インジケーター（Steps）。</p>
+        <p className="mt-3 text-body text-muted-foreground">Steps / Btn / ActionBar — 画面操作系コンポーネント。AppBar はブランドアセットページ参照。</p>
       </header>
       <div className="mb-14 overflow-x-auto"><NavigationSection /></div>
       <Section>
-        <SectionHeading eyebrow="Props Reference" title="使い方早見表" description="AppBar と Steps の props 一覧とコードスニペット。" audience="developer" />
+        <SectionHeading eyebrow="Props Reference" title="使い方早見表" description="Steps / Btn / ActionBar の props 一覧。" audience="developer" />
         <div className="space-y-6">
           <ComponentSnippet name="AppBar" desc="画面上部の固定ヘッダー"
             props={[{ name: "title", type: "string", required: true }]}

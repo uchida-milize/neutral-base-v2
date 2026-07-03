@@ -169,7 +169,7 @@ export function BrandSection() {
 }
 
 /* ================================================================
-   2. ナビゲーション — Steps のみ（AppBar は BrandSection へ）
+   2. ナビゲーション（Steps + Btn + ActionBar を統合）
 ================================================================ */
 export function NavigationSection() {
   const noop = () => {};
@@ -183,16 +183,7 @@ export function NavigationSection() {
           </Preview>
         ))}
       </Row>
-    </div>
-  );
-}
-
-/* ================================================================
-   3. ボタン
-================================================================ */
-export function ButtonsSection() {
-  return (
-    <div className="theo-tdf-cd font-jp">
+      <SubHead>Btn</SubHead>
       <Row>
         {(["cta", "button", "outline", "ghost", "danger"] as const).map((kind) => (
           <Preview key={kind} label={`kind="${kind}"`} width={220}>
@@ -207,9 +198,30 @@ export function ButtonsSection() {
           </Preview>
         ))}
       </Row>
+      <SubHead>ActionBar</SubHead>
+      <Row>
+        <PhoneFrame label="variant=normal">
+          <div className="h-20 bg-warm-50 flex items-center justify-center">
+            <span className="text-caption text-neutral-400">コンテンツエリア</span>
+          </div>
+          <ActionBar><Btn kind="cta">次へ進む</Btn></ActionBar>
+        </PhoneFrame>
+        <PhoneFrame label="variant=solid（ブルー帯）">
+          <div className="h-20 bg-warm-50 flex items-center justify-center">
+            <span className="text-caption text-neutral-400">コンテンツエリア</span>
+          </div>
+          <ActionBar solid>
+            <Btn kind="cta">申込む</Btn>
+            <Btn kind="ghost" full={false}>キャンセル</Btn>
+          </ActionBar>
+        </PhoneFrame>
+      </Row>
     </div>
   );
 }
+
+/* ButtonsSection / ActionSection — 後方互換エイリアス */
+export function ButtonsSection() { return <NavigationSection />; }
 
 /* ================================================================
    4. ラベル・バッジ
@@ -567,32 +579,8 @@ export function StatusSection() {
   );
 }
 
-/* ================================================================
-   10. アクション
-================================================================ */
-export function ActionSection() {
-  return (
-    <div className="theo-tdf-cd font-jp">
-      <Row>
-        <PhoneFrame label="variant=normal">
-          <div className="h-20 bg-warm-50 flex items-center justify-center">
-            <span className="text-caption text-neutral-400">コンテンツエリア</span>
-          </div>
-          <ActionBar><Btn kind="cta">次へ進む</Btn></ActionBar>
-        </PhoneFrame>
-        <PhoneFrame label="variant=solid（ブルー帯）">
-          <div className="h-20 bg-warm-50 flex items-center justify-center">
-            <span className="text-caption text-neutral-400">コンテンツエリア</span>
-          </div>
-          <ActionBar solid>
-            <Btn kind="cta">申込む</Btn>
-            <Btn kind="ghost" full={false}>キャンセル</Btn>
-          </ActionBar>
-        </PhoneFrame>
-      </Row>
-    </div>
-  );
-}
+/* ActionSection — 後方互換エイリアス */
+export function ActionSection() { return <NavigationSection />; }
 
 /* ================================================================
    TheoCatalog — 全セクション統合（後方互換）
@@ -601,15 +589,14 @@ export function TheoCatalog() {
   return (
     <div className="theo-tdf-cd font-jp">
       <CatSection title="ブランドアセット" sub="Logo / 背景画像 / AppBar / Phone UI Chrome"><BrandSection /></CatSection>
-      <CatSection title="ナビゲーション" sub="Steps"><NavigationSection /></CatSection>
-      <CatSection title="ボタン" sub="Btn — cta / button / outline / ghost / danger"><ButtonsSection /></CatSection>
+      <CatSection title="ナビゲーション" sub="Steps / Btn / ActionBar"><NavigationSection /></CatSection>
       <CatSection title="ラベル・バッジ" sub="Badge / ReqBadge / ErrText / SelectedPlanBadge"><LabelsSection /></CatSection>
       <CatSection title="フォーム入力" sub="Field / DatePicker / LockedField / Select / SegmentedToggle / GenderField / AgreeCheckbox"><FormsSection /></CatSection>
       <CatSection title="セクション" sub="NumberedSectionHeading / CardHeader / StepSection"><CardsSection /></CatSection>
       <CatSection title="カード・プラン選択" sub="GroupCard / ConfirmCard / PremiumSimulationCard / PlanCard など"><PlanSection /></CatSection>
       <CatSection title="開示・折り畳み" sub="AccordionDropdown / NumberedDisclosureItem"><DisclosureSection /></CatSection>
       <CatSection title="アイコン" sub="StatusIcon / アイコン画像 / デコレーション SVG"><StatusSection /></CatSection>
-      <CatSection title="アクション" sub="ActionBar — normal / solid"><ActionSection /></CatSection>
+      
     </div>
   );
 }
