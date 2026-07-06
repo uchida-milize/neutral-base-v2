@@ -269,10 +269,10 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
   );
 }
 
-// 必須バッジ（赤字・細い赤枠）
+// 必須マーク（赤字アスタリスク）
 export function ReqBadge() {
   return (
-    <span className="ml-2 inline-flex items-center align-middle text-[10px] font-medium leading-none px-1 py-[2px] rounded-[2px]" style={{ color: 'var(--color-attention)', border: '1px solid var(--color-attention)' }}>必須</span>
+    <span className="ml-0.5 inline-flex items-center align-middle font-bold leading-none" style={{ color: 'var(--color-attention)' }}>*</span>
   );
 }
 
