@@ -1381,10 +1381,9 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-6 pt-8 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-          <h2 className="text-h4 font-bold text-center leading-snug" style={{ color: '#054EBA' }}>プランシミュレーション</h2>
-          {/* ---- 受け止めコピー + お客様情報（生年月日・性別を先に入力） ---- */}
-          <div className="space-y-6">
+        <div className="px-6 pt-6 pb-12 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          {/* ---- お客様情報（生年月日・性別） ---- */}
+          <div className="space-y-4">
             <div className="flex items-center gap-2 text-caption text-primary-700 px-1">
               <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
             </div>
@@ -1392,7 +1391,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
           </div>
 
           {/* ---- プラン選択 ---- */}
-          <div style={{ marginTop: '80px' }}>
+          <div>
           <StepSection label="プランを選ぶ" n={1} big>
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
