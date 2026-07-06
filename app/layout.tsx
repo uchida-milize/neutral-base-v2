@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
-import { Inter } from "next/font/google";
+import { inter } from "@/lib/fonts";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 /**
  * 全テナントの tokens.css を root layout で import。

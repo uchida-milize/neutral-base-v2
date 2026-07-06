@@ -83,9 +83,9 @@
   --accent: var(--primary-color-10);              /* hover 等の薄い背景 */
   --accent-foreground: var(--primary-color-700);
 
-  /* フォント — theo-tdf は Zen Kaku Gothic New (handoff 1.5 より) */
-  --font-jp: "Zen Kaku Gothic New", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
-  --font-en: "Geist", var(--font-geist-sans), -apple-system, sans-serif;
+  /* フォント — 日本語は Noto Sans JP、英数字は Inter に統一 */
+  --font-jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+  --font-en: "Inter", var(--font-inter), -apple-system, sans-serif;
   --font-mono: "Geist Mono", var(--font-geist-mono), monospace;
 
   /* theo-tdf-scope 用エイリアス — 直接参照したい場面で使用 */

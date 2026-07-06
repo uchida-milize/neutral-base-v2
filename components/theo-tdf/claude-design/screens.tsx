@@ -23,6 +23,7 @@ import { Badge as UIBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { inter } from "@/lib/fonts";
 
 /* ============================================================
    THEO 組込保険 — Screens + shared wireframe atoms
@@ -157,10 +158,10 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 }
 
 // Phone app bar (THEO header)
-// 共有グラデーション: ステータスバー(33px)+ヘッダー(48px) を1枚の連続グラデとして描画
+// 共有グラデーション: ステータスバー(33px)+ヘッダー(40px) を1枚の連続グラデとして描画
 export const HEADER_GRAD_CSS: React.CSSProperties = {
   backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)",
-  backgroundSize: "100% 81px",
+  backgroundSize: "100% 73px",
   backgroundRepeat: "no-repeat",
 };
 export const HEADER_GRAD_STATUS: React.CSSProperties = { ...HEADER_GRAD_CSS, backgroundPosition: "0 0" };
@@ -170,17 +171,17 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
   // 完了画面は空のAppBar
   if (title === "お申込み完了") {
     return (
-      <div className="sticky top-0 z-20 text-primary-foreground h-12" style={HEADER_GRAD_APPBAR} />
+      <div className="sticky top-0 z-20 text-primary-foreground h-10" style={HEADER_GRAD_APPBAR} />
     );
   }
   return (
     <div className="sticky top-0 z-20 text-primary-foreground" style={HEADER_GRAD_APPBAR}>
-      <div className="flex items-center justify-between px-3 h-12">
+      <div className="flex items-center justify-between px-3 h-10">
         <span className="w-10 shrink-0" />
         <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
-          <span className="font-en font-semibold tracking-[0.1em] text-h6">XXX</span>
-          <span className="text-h6 font-medium truncate">つみたて安心ほけん</span>
-          <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;XXX&gt;</span>
+          <span className="font-en font-semibold tracking-[0.1em] text-h6 leading-none">XXX</span>
+          <span className="text-h6 font-medium truncate leading-none">つみたて安心ほけん</span>
+          <span className="font-en text-[10px] font-medium opacity-75 shrink-0 leading-none">&lt;XXX&gt;</span>
         </div>
         <span className="w-10 shrink-0" />
       </div>
@@ -233,7 +234,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
   // shadcn <Card> + <CardContent> へ委譲。ヘッダーはブランド淡色帯。
   return (
     <Card className={`gap-0 overflow-hidden rounded-2xl border-warm-200 bg-white py-0 shadow-sm ${className || ""}`}>
-      <div className="flex items-center gap-3 px-6 py-4 bg-primary-10 border-b border-primary-100">
+      <div className="flex items-center gap-3 px-6 py-4 bg-white border-b border-primary-100">
         {iconSrc ? (
           <img src={iconSrc} alt="" className="w-8 h-8 shrink-0" />
         ) : Icon ? (
@@ -722,22 +723,20 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                 <button onClick={onCancel ? () => setAskExit(true) : onClose}
-                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-3 font-bold border-2 transition-colors"
-                  style={{ borderColor: 'var(--color-attention)', color: 'var(--color-attention)', background: '#FFF5F5' }}>
-                  <span className="flex items-center gap-2 text-h6 font-bold">
+                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold bg-warm-100 text-neutral-600 transition-colors">
+                  <span className="flex items-center gap-2 text-h6 font-bold text-neutral-700">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     はい
                   </span>
-                  <span className="text-[10px] font-medium leading-tight" style={{ color: 'var(--color-attention)' }}>１つでも存在する</span>
+                  <span className="text-[10px] font-medium leading-tight text-neutral-400">１つでも存在する</span>
                 </button>
                 <button onClick={onConfirm || onClose}
-                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-3 font-bold border-2 transition-colors"
-                  style={{ borderColor: '#16A34A', color: '#16A34A', background: '#F0FDF4' }}>
+                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold bg-primary text-white transition-colors">
                   <span className="flex items-center gap-2 text-h6 font-bold">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M5 12l5 5L19 7"/></svg>
                     いいえ
                   </span>
-                  <span className="text-[10px] font-medium leading-tight" style={{ color: '#16A34A' }}>すべていいえ</span>
+                  <span className="text-[10px] font-medium leading-tight text-white/80">すべていいえ</span>
                 </button>
               </div>
               <p className="text-center text-[11px] text-neutral-400">すべての項目が「いいえ」の場合に進めます</p>
@@ -1130,7 +1129,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           {/* インラインAppBar - スクロール後にsolid化 */}
           <div className="sticky top-0 z-20 transition-colors duration-200"
                style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
-            <div className="flex items-center justify-between px-3 h-12">
+            <div className="flex items-center justify-between px-3 h-10">
               <span className="w-10 shrink-0" />
               <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
@@ -1717,7 +1716,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
           <span className="text-h6 font-medium text-neutral-800 leading-snug">毎月の積立金額<br/><span className="text-caption text-neutral-500">（ご希望給付額）</span></span>
           <span className="flex items-baseline gap-1 text-neutral-800">
             <input type="text" inputMode="numeric" value={yen(m)} onChange={onMText} onBlur={onMBlur} aria-label="毎月の積立金額"
-              className="num-input text-h3 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "5.5em", fontFamily: "var(--font-inter)" }} />
+              className={`num-input text-h3 font-semibold text-primary-600 tabular-nums text-right ${inter.className}`} style={{ width: "5.5em" }} />
             <span className="text-caption"> 円</span>
           </span>
         </div>
@@ -1732,7 +1731,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
           <span className="text-h6 font-medium text-neutral-800">保障期間</span>
           <span className="flex items-baseline gap-1 text-neutral-800">
             <input type="text" inputMode="numeric" value={y} onChange={onYText} onBlur={onYBlur} aria-label="保障期間"
-              className="num-input text-h3 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "2.4em", fontFamily: "var(--font-inter)" }} />
+              className={`num-input text-h3 font-semibold text-primary-600 tabular-nums text-right ${inter.className}`} style={{ width: "2.4em" }} />
             <span className="text-caption"> 年</span>
           </span>
         </div>
@@ -1788,7 +1787,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
       <div className="flex items-center justify-between rounded-xl bg-primary-10 px-4 py-3">
         <span className="text-caption font-medium text-primary-700">最大給付金額</span>
         <span className="text-primary-600">
-          <span className="text-h2 font-semibold tabular-nums" style={{ fontFamily: "var(--font-inter)" }}>{man(maxBenefit)}</span>
+          <span className={`text-h2 font-semibold tabular-nums ${inter.className}`}>{man(maxBenefit)}</span>
           <span className="text-h6"> 万円</span>
         </span>
       </div>
@@ -1860,7 +1859,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
         <div className="mt-4 pt-4 border-t border-warm-200 flex items-center justify-between">
           <span className="text-caption font-medium text-neutral-500">初年度の月払保険料</span>
           <span className="text-primary-600">
-            <span className="text-h2 font-semibold tabular-nums" style={{ fontFamily: "var(--font-inter)" }}>{(parseInt((plan.price||'0').replace(/[^0-9]/g,''),10)*1).toLocaleString('ja-JP')}</span>
+            <span className={`text-h2 font-semibold tabular-nums ${inter.className}`}>{(parseInt((plan.price||'0').replace(/[^0-9]/g,''),10)*1).toLocaleString('ja-JP')}</span>
             <span className="text-h6"> 円</span>
           </span>
         </div>
@@ -3076,7 +3075,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           <div className="sticky top-0 z-20 transition-colors duration-200"
                style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
-            <div className="flex items-center justify-between px-3 h-12">
+            <div className="flex items-center justify-between px-3 h-10">
               <span className="w-10 shrink-0" />
               <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
