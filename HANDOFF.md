@@ -1228,7 +1228,7 @@ theo-tdf の `/prototype` `/windows` を、Claude Design の最新出力に合�
 
 **Tailwind 準拠トークン正規化**
 
-- `bg-[color:var(--secondary-color-*)]` → `bg-secondary-*` (全 JSX)
+- `bg-[color:var(--secondary-color-N)]` → `bg-secondary-*` (全 JSX)
 - `bg-[color:var(--cta-color-500)]` 等 → `bg-cta-*` (全 JSX)
 - `@theme inline` から冗長な `--color-primary-color-*` / `--color-secondary-color-*` エントリを除去 (Tailwind v4 では `--primary-*` をそのまま utility として公開できる)
 - 生 hex の埋め込みを grep チェックし残置ゼロを確認
@@ -1259,10 +1259,10 @@ theo-tdf の `/prototype` `/windows` を、Claude Design の最新出力に合�
 - `app/globals.css` — Display/UI Heading 2 スケール定義、`@theme inline` 簡素化
 - `app/guidelines/page.tsx` — `TYPE_SCALE` 配列を 14 エントリ版に更新
 - `app/{xxx,aaa,acme,td-financial,theo-tdf}/guidelines/page.tsx` — `FONT_SCALE` 配列を 9 エントリ版 (h1〜h6 + body-lg/body/caption) に更新
-- `components/theo-tdf/claude-design/screens.tsx` — `text-cd-h{2-7}` → `text-h{1-6}`、`bg-[color:var(--secondary-*)]` → `bg-secondary-*`
+- `components/theo-tdf/claude-design/screens.tsx` — `text-cd-h{2-7}` → `text-h{1-6}`、`bg-[color:var(--secondary-N)]` → `bg-secondary-N`
 - `components/theo-tdf/claude-design/app-shell.tsx` — 同上
 - `components/flow-diagram.tsx` — `bg-[color:var(--secondary-color-10,#...)]` → `bg-secondary-10`、`text-h7` 廃止
-- `components/guidelines/auto-button-grid.tsx` — `bg-[color:var(--cta-*)]` → `bg-cta-*`
+- `components/guidelines/auto-button-grid.tsx` — `bg-[color:var(--cta-N)]` → `bg-cta-N`
 - `components/guidelines/auto-color-scale.tsx` — `text-h7` 廃止
 - `components/auto-tenant-card.tsx` — `text-h7` 廃止
 - `components/mock-viewer/canvas-grid.tsx` — `text-h7` 廃止

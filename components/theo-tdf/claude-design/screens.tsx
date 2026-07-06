@@ -3063,22 +3063,18 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <Steps n={1} go={go} />
         {/* 商品概要コンパクト */}
         <div className="px-6 pt-4 pb-3 space-y-2">
-          {/* バッジ：中央配置 */}
-          <div className="flex justify-center">
-            <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
-          </div>
-          {/* ロゴ＋ブランド名：中央配置 */}
-          <div className="flex items-center justify-center gap-2">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[30px]" />
-            <div className="flex flex-col leading-tight">
-              <span className="text-[10px] text-neutral-500 font-medium">くみこみ</span>
-              <span className="text-[14px] text-neutral-700 font-bold">安心ほけん</span>
-            </div>
-          </div>
           {/* 引受保険会社：右寄せ */}
           <div className="flex items-center justify-end gap-2">
             <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+          </div>
+          {/* バッジ：中央配置 */}
+          <div className="flex justify-center">
+            <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
+          </div>
+          {/* ロゴ：中央配置 */}
+          <div className="flex items-center justify-center">
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[42px]" />
           </div>
           <div style={{ paddingTop: '8px', paddingBottom: '16px' }}>
           <div className="grid grid-cols-3 gap-2">
