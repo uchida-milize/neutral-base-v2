@@ -26,16 +26,16 @@
  * ================================================================= */
 
 .theo-tdf-scope {
-  /* ---- 1. primary-color (Primary #065fe3 — Ink Blue) ---- */
-  --primary-color-10:  #e9f2fe;
-  --primary-color-50:  #c9defe;
-  --primary-color-100: #98c1fc;
-  --primary-color-200: #62a0fb;
-  --primary-color-300: #2f81fa;
-  --primary-color-400: #0768f8;
-  --primary-color-500: #065fe3;   /* anchor (H≈216° S≈95% L≈46%) */
-  --primary-color-600: #054eba;
-  --primary-color-700: #033784;
+  /* ---- 1. primary-color (Primary #1aa5dc — Sky Blue) ---- */
+  --primary-color-10:  #e8f7fc;
+  --primary-color-50:  #d1eefa;
+  --primary-color-100: #ade1f5;
+  --primary-color-200: #7fd0f0;
+  --primary-color-300: #52bfeb;
+  --primary-color-400: #2db2e6;
+  --primary-color-500: #1aa5dc;   /* anchor (H≈197° S≈79% L≈48%) */
+  --primary-color-600: #1586b2;
+  --primary-color-700: #0f6080;
 
   /* ---- 2. secondary-color (Secondary #ff748d — Coral) ---- */
   --secondary-color-10:  #fff4f6;
@@ -48,31 +48,27 @@
   --secondary-color-600: #ff3156;
   --secondary-color-700: #d70027;
 
-  /* ---- 3. button-color (Button #007dff — Bright Blue, filled CTA) ---- */
-  --button-color-10:  #ebf5ff;
-  --button-color-50:  #cce5ff;
-  --button-color-100: #9eceff;
-  --button-color-200: #6bb4ff;
-  --button-color-300: #3b9bff;
-  --button-color-400: #1487ff;
-  --button-color-500: #007dff;     /* anchor (H≈211° S=100% L=50%) */
-  --button-color-600: #0066d1;
-  --button-color-700: #004894;
+  /* ---- 3. button-color → primary と統一 (Sky Blue) ---- */
+  --button-color-10:  var(--primary-color-10);
+  --button-color-50:  var(--primary-color-50);
+  --button-color-100: var(--primary-color-100);
+  --button-color-200: var(--primary-color-200);
+  --button-color-300: var(--primary-color-300);
+  --button-color-400: var(--primary-color-400);
+  --button-color-500: var(--primary-color-500);
+  --button-color-600: var(--primary-color-600);
+  --button-color-700: var(--primary-color-700);
 
-  /* ---- 4. cta-color (CTA #ff2d2d — 申込確定専用、強い純赤) ---- *
-   * 役割で区別:
-   *   secondary-color : badge / 重要ラベル / コーラルアクセント (#ff748d)
-   *   cta-color       : 申込/前進ボタン (1 画面 1 つ) — secondary より純赤で訴求力高
-   */
-  --cta-color-10:  #ffeeee;
-  --cta-color-50:  #ffd5d5;
-  --cta-color-100: #ffafaf;
-  --cta-color-200: #ff8585;
-  --cta-color-300: #ff5d5d;
-  --cta-color-400: #ff3e3e;
-  --cta-color-500: #ff2d2d;        /* anchor (H=0° S=100% L≈59%) */
-  --cta-color-600: #f60000;
-  --cta-color-700: #ae0000;
+  /* ---- 4. cta-color → primary と統一 (Sky Blue) ---- */
+  --cta-color-10:  var(--primary-color-10);
+  --cta-color-50:  var(--primary-color-50);
+  --cta-color-100: var(--primary-color-100);
+  --cta-color-200: var(--primary-color-200);
+  --cta-color-300: var(--primary-color-300);
+  --cta-color-400: var(--primary-color-400);
+  --cta-color-500: var(--primary-color-500);
+  --cta-color-600: var(--primary-color-600);
+  --cta-color-700: var(--primary-color-700);
 
   /* ---- 5. warm bg scale (Stone neutral) ---- */
   --warm-50:  #f2fbfe;
@@ -81,7 +77,7 @@
   --warm-300: #d6d3d1;
 
   /* ---- 6. semantic shortcuts (shadcn primitives が自動追従) ---- */
-  --primary: var(--primary-color-500);            /* Ink Blue #065fe3 */
+  --primary: var(--primary-color-500);            /* Sky Blue #1aa5dc */
   --primary-foreground: #ffffff;
   --ring: var(--primary-color-500);
   --accent: var(--primary-color-10);              /* hover 等の薄い背景 */
