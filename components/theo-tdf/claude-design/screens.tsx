@@ -789,7 +789,7 @@ export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; se
         <div className="mx-4 mt-3 p-4 rounded-xl bg-primary-10 border border-primary-100 space-y-3" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-2">
             <span className="text-caption font-bold text-neutral-800">死亡保障</span>
-            <span className={`text-h6 font-bold leading-none ${death ? "text-primary-600" : "text-neutral-400"}`}>{death ? "◯" : "✗"}</span>
+            <img src={death ? "/assets/theo-tdf/death-coverage-circle.svg" : "/assets/theo-tdf/death-coverage-x.svg"} alt={death ? "あり" : "なし"} className="w-5 h-5" />
           </div>
           {p.tooltip?.sections.map((s, i) => (
             <div key={i} className="space-y-1">
@@ -845,7 +845,7 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
         <div className="mx-4 mt-3 p-4 rounded-xl bg-primary-10 border border-primary-100 space-y-3" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-2">
             <span className="text-caption font-bold text-neutral-800">死亡保障</span>
-            <span className={`text-h6 font-bold leading-none ${death ? "text-primary-600" : "text-neutral-400"}`}>{death ? "◯" : "✗"}</span>
+            <img src={death ? "/assets/theo-tdf/death-coverage-circle.svg" : "/assets/theo-tdf/death-coverage-x.svg"} alt={death ? "あり" : "なし"} className="w-5 h-5" />
           </div>
           {p.tooltip?.sections.map((s, i) => (
             <div key={i} className="space-y-1">
