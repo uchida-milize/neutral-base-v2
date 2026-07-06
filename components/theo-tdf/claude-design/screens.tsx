@@ -2126,13 +2126,14 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             <span className="flex items-center gap-3 text-left">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0"><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
               <span className="flex flex-col leading-tight font-bold">
-                <span className="text-caption">未入力の必須項目が</span>
+                <span className="text-caption">入力エラーが</span>
                 <span className="text-h6"><span className="text-h4 tabular-nums">{visibleErrs.length}</span>件あります</span>
               </span>
             </span>
             <span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-3 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-4 h-4" /></span>
           </button>
         )}
+        {!(errMode === 'float' && visibleErrs.length > 0) && (
         <div className={`rounded-xl border px-4 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
@@ -2149,6 +2150,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             <span className="text-neutral-700 tabular-nums">{y}年</span>
           </div>
         </div>
+        )}
         <div className="flex items-center justify-center gap-3">
           <button onClick={onBack} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
           <div style={{ width: '100%', maxWidth: '260px' }}>
