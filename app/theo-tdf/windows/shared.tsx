@@ -52,6 +52,9 @@ export const LINK_ICON = (
 
 /* ---- 単一の静的スクリーン ---- */
 
+/** フルシートモーダルの表示窓の高さに加える、モーダル上端より上の余白 (px) */
+const MODAL_CROP_LEAD_IN = 200;
+
 export function StaticScreen({
   label,
   fullSheet,
@@ -64,10 +67,31 @@ export function StaticScreen({
   viewUrl?: string;
   children: React.ReactNode;
 }) {
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [cropHeight, setCropHeight] = React.useState<number | null>(null);
+  const [shiftUp, setShiftUp] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!fullSheet || !contentRef.current) return;
+    const el = contentRef.current;
+    const measure = () => {
+      const sheet = el.querySelector<HTMLElement>(".sheet-up");
+      if (!sheet) return;
+      const totalHeight = el.scrollHeight;
+      const sheetHeight = sheet.getBoundingClientRect().height;
+      setCropHeight(sheetHeight + MODAL_CROP_LEAD_IN);
+      setShiftUp(Math.max(0, totalHeight - sheetHeight - MODAL_CROP_LEAD_IN));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fullSheet]);
+
   return (
     <figure className="flex flex-col items-start gap-2" style={{ width: 390 }}>
-      <figcaption className="flex items-center gap-2">
-        <p className="text-h6 font-semibold text-foreground">{label}</p>
+      <figcaption className="flex items-start gap-2">
+        <p className="text-h6 font-semibold text-foreground leading-snug" style={{ minHeight: "2.6em" }}>{label}</p>
         {viewUrl && (
           <a
             href={viewUrl}
@@ -81,10 +105,10 @@ export function StaticScreen({
       </figcaption>
       {/* screen-flat: overflow-y-auto → visible / flex-1 → none / sticky → static */}
       <div
-        className={`theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm${fullSheet ? " overflow-visible" : " overflow-hidden"}`}
-        style={{ width: 390, minHeight: 693 }}
+        className={`theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm${fullSheet ? " overflow-hidden" : " overflow-hidden"}`}
+        style={{ width: 390, minHeight: fullSheet ? undefined : 693, height: fullSheet ? (cropHeight ?? undefined) : undefined }}
       >
-        <div className="flex flex-col">
+        <div ref={contentRef} className="flex flex-col" style={fullSheet ? { transform: `translateY(-${shiftUp}px)` } : undefined}>
           {children}
         </div>
       </div>
@@ -271,6 +295,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
         {
           key: "st-edit",
           label: "モーダルあり：積立修正シート＋給付予想額展開",
+          fullSheet: true,
           viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
@@ -558,21 +583,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           key: "done-ended",
           label: "申込みキャンセル",
           viewUrl: "/theo-tdf-view?s=7&doneVariant=ended",
-          el: <ScreenEnded onRestart={noop} />,
-        },
-      ],
-    },
-
-    /* ---- 08 申込キャンセル終了 ---- */
-    {
-      key: "ended",
-      title: "申込キャンセル終了",
-      badge: "終了",
-      screens: [
-        {
-          key: "ended",
-          label: "デフォルト（「告知に同意しない」でキャンセル後）",
-          height: 812,
           el: <ScreenEnded onRestart={noop} />,
         },
       ],
