@@ -386,6 +386,10 @@ export function ScreenIntro({ go }: { go: Go }) {
               <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">このアプリだけの備え</p>
               <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4 shrink-0" />
             </div>
+            <div className="mb-2 px-1">
+              <p className="text-[11px] text-neutral-400 leading-none mb-0.5">保険名称</p>
+              <p className="text-[11px] text-neutral-600 leading-relaxed">無配当特定疾病障害介護保障保険（団体型）</p>
+            </div>
             <p className="text-h5 font-bold text-neutral-800 leading-relaxed">
               働けなくなっても、<br/>つみたては止めない。
             </p>
@@ -546,47 +550,18 @@ export const KOKUCHI_PATTERNS = [
 ];
 
 export const PLANS: Plan[] = [
-  { id: "cancer", name: "がん保障型", price: "¥980", death: true,
-    lead: "がんと診断された場合に、給付金が支払われます",
-    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] } },
-  { id: "three", name: "三大疾病保障型", price: "¥1,180", death: true,
-    lead: "がん・急性心筋梗塞・脳卒中と診断された場合に、給付金が支払われます",
-    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\nがん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] } },
-  { id: "care", name: "障害介護保障型", price: "¥680", death: true,
-    lead: "障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
-  { id: "cancer_care", name: "がん・障害介護保障型", price: "¥1,480", death: true,
-    lead: "がんと診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["がん診断給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
-    tooltip: { sections: [
-      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
-  { id: "three_care", name: "三大疾病・障害介護保障型", price: "¥1,780", death: true,
-    lead: "三大疾病と診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["三大疾病給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
-    tooltip: { sections: [
-      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\n※がん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
+  { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "免責期間：60日"] },
+  { id: "b", name: "がん", price: "¥980", lead: "初めてがんと診断された場合に、給付金が支払われます",
+    feat: ["診断一時金：¥300,000", "保険期間：1年", "告知のみ・診査不要"] },
+  { id: "c", name: "安心セット", tag: "おすすめ", price: "¥1,290", lead: "障害・介護状態になった場合、または初めてがんと診断された場合に、給付金が支払われます",
+    feat: ["障害・介護：月額 最大 ¥50,000", "がん診断一時金：¥300,000", "保険期間：1年（自動更新）"] },
 ];
 
-// 10枚カード（プラン×死亡保障）
-export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.flatMap((p) => [
-  { ...p, id: p.id + '_d', planId: p.id, death: true,  name: p.name + '　死亡保障あり' },
-  { ...p, id: p.id + '_n', planId: p.id, death: false, name: p.name + '　死亡保障なし' },
-]);
-export function planIdFromSel(sel: string) { return sel ? sel.replace(/_[dn]$/, '') : 'cancer'; }
-export function deathFromSel(sel: string)  { return !sel || !sel.endsWith('_n'); }
+// プランカード（3プラン固定価格）
+export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.map((p) => ({ ...p, planId: p.id }));
+export function planIdFromSel(sel: string) { return sel || 'a'; }
+export function deathFromSel(sel: string)  { return true; }
 
 /* 告知項目（ノックアウト告知）— 区分はラベル（太字・改行）＋本文のリスト形式。別表は内側の表組みのまま */
 export function KoTable({ rows }: { rows: any[] }) {
@@ -910,7 +885,7 @@ export function StepSection({ label, n, big, className, children }: { label?: st
       <section className={`space-y-4 ${className || ""}`}>
         <div className="flex items-center gap-3">
           {n != null && (
-            <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
           )}
           <h2 className="text-h4 font-bold text-neutral-800">{label}</h2>
         </div>
@@ -923,7 +898,7 @@ export function StepSection({ label, n, big, className, children }: { label?: st
       {label && (
         <div className="flex items-center gap-3">
           {n != null && (
-            <span className="grid place-items-center w-8 h-8 rounded-full text-white font-en text-h5 font-bold shrink-0" style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}>{n}</span>
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
           )}
           <span className="font-mono text-caption tracking-[0.14em] uppercase text-primary-600 whitespace-nowrap">{label}</span>
           <span className="flex-1 h-px bg-warm-200" />
@@ -1413,17 +1388,43 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
             <div className="flex items-center gap-2 text-caption text-primary-700 px-1">
               <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
             </div>
-            {!simFirst && birthGenderFields}
+            {birthGenderFields}
           </div>
 
-          {!simFirst && (<>
           {/* ---- プラン選択 ---- */}
           <div style={{ marginTop: '80px' }}>
           <StepSection label="プランを選ぶ" n={1} big>
           <div>
             <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
           </div>
-          <PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />
+          <div className="flex flex-col" style={{ gap: '16px' }}>
+            {PLANS.map((p) => (
+              <button key={p.id} onClick={() => setSel(p.id)} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition ${sel === p.id ? "border-primary ring-2 ring-primary/30" : "border-warm-200"}`}>
+                <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${sel === p.id ? "bg-primary-10 border-primary-100" : "bg-warm-50 border-warm-200"}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`grid place-items-center w-5 h-5 rounded-full border-2 ${sel === p.id ? "border-primary bg-primary text-white" : "border-warm-300"}`}>
+                      {sel === p.id && <Ic.check className="w-3 h-3" />}
+                    </span>
+                    <span className="text-h6 font-bold text-neutral-800">{p.name}</span>
+                  </div>
+                  {p.tag && <Badge tone="secondary">{p.tag}</Badge>}
+                </div>
+                <div className="p-4">
+                  <p className="text-caption text-neutral-500">{p.lead}</p>
+                  <div className="mt-3 flex items-baseline justify-end gap-1 text-neutral-800">
+                    <span className="font-en text-h4 font-semibold tabular-nums">{p.price.replace("¥", "")}</span><span className="text-caption"> 円 / 月</span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 border-t border-warm-200 pt-3">
+                    {p.feat.map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-caption text-neutral-600">
+                        <Ic.check className="w-3.5 h-3.5 text-primary shrink-0" />{f.replace(/¥([\d,]+)/g, "$1 円")}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </button>
+            ))}
+          </div>
           <p className="text-caption text-neutral-500 leading-relaxed px-1">
             ※ 保険料は年齢・性別により変動します。
           </p>
@@ -1431,50 +1432,26 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </div>
 
         {/* ---- 保険料シミュレーション ---- */}
-        <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
-        <StepSection label="保険料シミュレーション" n={2} big className="mt-10">
-          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
+        <div className="-mx-6 px-6 py-6 relative" style={{ background: "var(--warm-100)" }}>
+        <StepSection label="保険料シミュレーション" n={2} big className="mt-8">
+          <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLANS.find((p) => p.id === sel)?.name : null} plan={PLANS.find((p) => p.id === sel)} startAge={ageFromBirth(birth)} />
         </StepSection>
         </div>
-        </>)}
-
-        {simFirst && (<>
-        {/* ---- 積立金額・保障期間（プランより先） ---- */}
-        <div style={{ marginTop: '24px' }}>
-        <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
-          {birthGenderFields}
-          <div className="sim-noborder">
-            <p className="text-caption text-neutral-600 leading-relaxed mb-4">保障する積立金額と保障期間を選択してください。</p>
-             <SimSliders m={m} setM={setM} y={y} setY={setY} />
-          </div>
-        </StepSection>
-        </div>
-
-        {/* ---- プラン選択 ---- */}
-        <div className="-mx-4 px-4 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
-        <StepSection label="プランを選ぶ" n={2} big className="mt-10">
-          <div>
-            <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
-          </div>
-          <PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />
-          <p className="text-caption text-neutral-500 leading-relaxed px-1">※ 保険料は年齢・性別により変動します。</p>
-        </StepSection>
-        </div>
-
-        {/* ---- 給付予想額 ---- */}
-        <StepSection label="保険料テーブル" n={3} big className="mt-10">
-          <div className="rounded-2xl border border-warm-200 bg-white p-6">
-            <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
-            <BenefitTable m={m} y={y} plan={plan} />
-          </div>
-        </StepSection>
-        </>)}
 
         {/* ---- 申し込みをする（2ステップ） ---- */}
-        <div className={`-mx-4 px-4 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
-        <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-10">
-          {/* STEP 1 — 事前同意事項のご確認 */}
+        <div className="-mx-6 px-6 py-6" style={{ background: "#e7edf7" }}>
+        <StepSection label="申し込みをする" n={3} big className="mt-8">
+          {/* STEP 1 — メールアドレスのご入力 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
+            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">
+              ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
+            </p>
+            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+          </div>
+
+          {/* STEP 2 — 事前同意事項のご確認 */}
+          <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
             <button onClick={() => setNoticeOpen(true)}
@@ -1492,25 +1469,15 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
               <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
             </div>
           </div>
-
-          {/* STEP 2 — メールアドレスのご入力 */}
-          <div ref={sendSecRef} className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
-            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
-            <p className="text-caption text-neutral-600 leading-relaxed">
-              ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
-            </p>
-            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
-          </div>
-          {agree && <div style={{ height: '80px' }} aria-hidden="true" />}
         </StepSection>
         </div>
         </div>
       </div>
 
-      <ActionBar bg={showSend ? "#F2FBFE" : undefined}>
+      <ActionBar bg={showSend ? "#e7edf7" : undefined}>
         <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
           <Ic.doc className="w-4 h-4 mt-[2px] text-neutral-400 shrink-0" />
-          申込みは本人様名義のクレジットカードが必要です
+          申込みには、ご本人様名義のクレジットカードが必要です
         </div>
         {emailVerified && showSend && (
           <div className="fade-in flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
@@ -1580,10 +1547,6 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
     </>
   );
 }
-
-/* ============================================================
-   SCREEN — PINコード認証（メールのURLから遷移して入力）
-   ============================================================ */
 export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }) {
   const [pin, setPin] = useState(initialPin ?? "");
   const [show, setShow] = useState(false);
@@ -2023,6 +1986,9 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 契約者情報グループ */}
         <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-6">
+          <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
+            <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
+          </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
             <Field label="名" placeholder="太郎" required />
@@ -2112,11 +2078,10 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <Field label="電話番号" placeholder="090-0000-0000" />
         </GroupCard>
 
-        {/* 団体特定コード（パターンA：非分割時は保険金受取人の後） */}
+        {/* 団体特定コード（最下部） */}
         {!formSplit && (
         <GroupCard title="団体特定コード" icon={Ic.tag}>
-          <Field label="団体特定コード" placeholder="1234567891234567" />
-          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
+          <Field label="団体特定コード" placeholder="TDF-0000-0000" hint="団体からご案内のコードを入力してください" />
         </GroupCard>
         )}
         </>)}
@@ -2243,23 +2208,87 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 // 重要事項（①⑤⑦⑧を残す — ②③④⑥は別場所で表記のため削除）
 export const AGREE_ITEMS: AgreeItemData[] = [
   {
+    id: "kiyaku",
     t: "申込に関する注意事項の確認",
     blocks: [
       { ul: [
-        "お申し込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
+        "お申し込み・告知内容は必ず被保険者ご本人さまがご入力ください。",
+        "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
+        "T&Dフィナンシャル生命のシステム上登録できない字体については、登録可能な漢字かカタカナでの登録となることをご了承ください。（保障内容やご契約後の諸手続き等に影響はありません）",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-        "T&Dフィナンシャル生命のシステム上登録できない字体については、登録可能な漢字またはカタカナでの登録となります。なお、保障内容やご契約後の諸手続き等に影響はありません。",
-        "本保険のご加入手続き等にあたり、保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、保険契約の引受け・継続・維持管理、給付金のお支払い、その他保険に関連・付随する業務のために利用し、引受保険会社に提供します。個人情報に変更が生じた場合も同様に取り扱います。",
-        "保険医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、業務の適切な運営の確保その他必要と認められる範囲に限定して取り扱います。",
-        "個人番号および特定個人情報は、法令で定められた目的のみに利用し、その範囲を超えて利用または第三者提供は行いません。",
-      ] },
-      { bulletLinks: [
-        { text: "個人情報に関するお問い合わせ（開示・訂正・利用停止等）については、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
-        { text: "最新の内容は、T&Dフィナンシャル生命ホームページにてご確認ください。", url: "https://www.tdf-life.co.jp" },
       ] },
     ],
   },
   {
+    id: "privacy",
+    kind: "agree",
+    t: "個人情報のお取り扱いについて",
+    blocks: [
+      { ul: [
+        "本保険のご加入手続き等について、保険契約者（団体）は加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）〔以下、個人情報〕を各種保険契約の引受け・継続・維持管理、給付金の支払い、その他保険に関連・付随する業務のために利用し、引受保険会社に前記目的の範囲内で提供します。今後個人情報に変更等が発生した際にも、それぞれ前記に準じ個人情報が取扱われます。",
+        "保険医療等の機微（センシティブ）情報については、保険業法施行規則により、業務の適切な運営の確保その他必要と認められる目的に利用目的が限定されています。",
+        "個人番号及び特定個人情報の取扱いについて\n個人番号及び特定個人情報については、「行政手続における特定の個人を識別するための番号の利用等に関する法律」第9条に基づき、団体保険、団体年金保険、および財形保険に関する支払い調書等作成事務に利用目的を限定しており、当該利用目的の範囲を超えた利用、第三者提供はいたしません。",
+        "T&Dフィナンシャル生命では、お客さまの個人情報に関するお問い合わせ窓口を設けています。保有個人データの開示、訂正、利用停止などのご請求、その他個人情報に関するお問い合わせは下記までご連絡いただけますようお願いします。",
+      ] },
+      { link: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
+      { ul: ["最新の内容はT&Dフィナンシャル生命ホームページ（https://www.tdf-life.co.jp）にてご確認ください。"] },
+    ],
+  },
+  {
+    id: "paperless",
+    kind: "agree",
+    t: "ペーパーレス申込の同意",
+    blocks: [
+      { p: "ペーパーレス手続きとは、情報端末（以下「タブレット等」といいます）による生命保険契約のお申込み手続きです。" },
+      { ul: [
+        "お客さま自身によるペーパーレス手続きのお願い\nタブレット等の画面等でおこなう各種ご確認・入力は被保険者さま（以下「お客さま」といいます）ご自身によりおこなってください。",
+        "セキュリティについて\n1. お客さまがタブレット等で確認・入力したすべての情報は、当社において電磁的記録（電子データ）によって保管します。\n2. タブレット等の情報端末内にお客さまの情報は保存しません。データの伝送についても、データを暗号化するなどのセキュリティ対策を講じます。",
+      ] },
+    ],
+  },
+  {
+    id: "kokuchi",
+    t: "健康告知について",
+    blocks: [
+      { p: "下記の内容をご確認のうえ、お申し込みください。" },
+      { p: "保険商品お申し込みの方へ" },
+      { p: "ご加入にあたっては、被保険者の現在の健康状態等について告知をしていただく義務があります。" },
+      { p: "ご加入にあたっては、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、身体の障がい状況について「告知事項」で当社がおたずねすることについて、事実をありのままに正確にもれなくお知らせ（告知）ください。" },
+      { p: "ご加入（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、給付金はお支払いできません。" },
+      { p: "（事例）加入前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目には該当しませんが、加入3ヶ月後に直接的な原因による脳梗塞を発症した場合などもお支払いできないことがあります。" },
+      { p: "※ただし、以下の場合には責任開始期以後発生した原因によるものとみなし、給付金をお支払いします。" },
+      { ul: [
+        "責任開始期から1年を経過した後で支払事由が生じた場合",
+        "責任開始期以降、その疾病やケガによって医師の診察を受けたことがなくかつ診断等による異常な指摘も受けていないこと。ただし、その原因となった病気やケガによる症状について被保険者が認識または自覚していた場合を除きます。",
+      ] },
+      { note: "【告知事項】\n以下の質問についてすべて「いいえ」であることをご確認ください。1つでも「はい」があると、ご加入いただけません。" },
+      { ul: [
+        "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）",
+        "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。",
+      ] },
+      { table: [["検査名", "内視鏡検査・便潜血検査・マンモグラフィ検査・腫瘍マーカー（CEA、AFP、CA19-9、PSA）"]] },
+      { ul: ["過去5年以内の病気について、以下に該当することはありますか。\n・病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）\n・下記表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。"] },
+      { table: [
+        ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
+        ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
+        ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
+        ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
+        ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
+        ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"],
+        ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
+      ] },
+      { ul: ["つぎのいずれか1つでも該当することはありますか。\n・今までに、がん（上皮内がん、肉腫、白血病、悪性リンパ腫、骨髄腫を含む）、高度異形成または骨髄異形成症候群になったことがある。\n・今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）。\n・現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折などにより現在一時的に必要とする場合も含みます。（1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄）"] },
+    ],
+  },
+  {
+    id: "insured",
+    t: "被保険者の確認",
+    blocks: [
+      { p: "該当するいずれかにチェックを入れてください。" },
+    ],
+  },
+  {
+    id: "juuyou",
     t: "重要事項説明の確認",
     blocks: [
       { p: "以下の重要事項説明書をご確認ください。" },
@@ -2267,6 +2296,26 @@ export const AGREE_ITEMS: AgreeItemData[] = [
     ],
   },
   {
+    id: "iko",
+    t: "意向の確認",
+    blocks: [
+      { p: "シミュレーションをもとにT＆Dフィナンシャル生命が推定したお客さまのご意向は以下の通りです。" },
+      { ul: [
+        "障害・介護プランを選択した場合\n積立期間中における障害・介護状態にそなえたい",
+        "がんプランを選択した場合\n積立期間中におけるがんにそなえたい",
+        "安心セットを選択した場合\n積立期間中における障害・介護状態、がんにそなえたい",
+      ] },
+    ],
+  },
+  {
+    id: "inquiry",
+    t: "ほけん商品のお問い合わせについて",
+    blocks: [
+      { p: "本サービスはT＆Dフィナンシャル生命のほけん商品となります。詳細なほけん商品のお問い合わせについてはT＆Dフィナンシャル生命へお問い合わせください。" },
+    ],
+  },
+  {
+    id: "mykiyaku",
     t: "マイページの利用規約",
     blocks: [
       { p: "マイページのご利用にあたっては、以下の利用規約をご確認ください。" },
@@ -2381,6 +2430,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [ikoAgree, setIkoAgree] = useState(false);
+  const [nat, setNat] = useState("jp");
+  const [jpLang, setJpLang] = useState("");
   // ご意向文のプラン種別部分（太字表示する中央部分。プラン×死亡保障の全10通り）
   const IKO = {
     cancer:      { d: "がん、死亡", n: "がん" },
@@ -2625,6 +2676,31 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             {agreeItems.map((it, i) => (
               <AgreeItem key={it.id || i} num={CIRC[i]} item={it} open={openIdx === i}
                 onToggle={() => setOpenIdx((o) => (o === i ? -1 : i))}>
+                {it.id === "insured" && (
+                  <div className="space-y-4 pt-1">
+                    <div className="grid grid-cols-2 gap-3">
+                      {[["jp", "日本国籍"], ["other", "日本国籍以外"]].map(([k, l]) => (
+                        <button key={k} onClick={() => setNat(k)}
+                          className={`h-11 rounded-lg border text-h6 transition-colors ${nat === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                    {nat === "other" && (
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-caption font-medium text-neutral-600">日本国内に移住し、将来日本に永住する意思が確実であり、日本語の読み書きができる <span className="text-[color:var(--secondary-color-700)]">*</span></span>
+                        <div className="grid grid-cols-2 gap-3">
+                          {[["yes", "できる"], ["no", "できない"]].map(([k, l]) => (
+                            <button key={k} onClick={() => setJpLang(k)}
+                              className={`h-11 rounded-lg border text-h6 transition-colors ${jpLang === k ? "border-primary bg-primary-10 text-primary-700 font-medium" : "border-warm-300 bg-warm-50 text-neutral-700 hover:border-primary-300"}`}>
+                              {l}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </AgreeItem>
             ))}
           </div>
@@ -2634,7 +2710,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             <span className={`grid place-items-center w-6 h-6 mt-[2px] rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-h7 text-neutral-700 leading-relaxed">①②を確認し、③の内容に同意する</span>
+            <span className="text-h7 text-neutral-700 leading-relaxed">①④⑤⑥⑦⑧について確認、②③について同意する</span>
           </button>
         </div>
       </div>
@@ -2830,7 +2906,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
         </div>
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
-        <div>
+        <div className="sticky top-0 z-30">
           <Steps n={5} go={go} />
         </div>
 
