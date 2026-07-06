@@ -57,7 +57,7 @@ type FlowEntry = {
    PIN認証は STEP2 として番号付き、カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
   { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
-  { key: "pin",      label: "PINコード認証",        en: "PIN Verify",       noNum: true, scr: [2] },
+  { key: "pin",      label: "PINコード認証",        en: "PIN Verify",                    scr: [2] },
   { key: "form",     label: "申込フォーム",        en: "Application",      scr: [3] },
   { key: "step4",    label: "内容確認",            en: "Confirm",          scr: [4] },
   { key: "card",     label: "クレジットカード承認", en: "Card Auth (外部)", ext: true, noNum: true, scr: [5, 6] },
