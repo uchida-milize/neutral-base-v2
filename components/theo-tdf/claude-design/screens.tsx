@@ -1696,14 +1696,19 @@ function DivSlider({ min, max, step, value, onChange }: {
 }
 
 // Shared積立スライダー（Simulator と 申込フォームの修正シートで共用）
+// 全角数字を半角に正規化（IME入力での全角混入対策）
+export function toHalfWidthDigits(s: string) {
+  return s.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+}
+
 export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const onM = (val: number) => { setM(val); onInput && onInput(); };
   const onY = (val: number) => { setY(val); onInput && onInput(); };
   // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限・ステップにスナップ）
-  const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
+  const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
   const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
-  const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = e.target.value.replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
+  const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
   const onYBlur = () => { const v = Math.min(30, Math.max(5, Math.round(y || 0) || 5)); setY(v); };
   return (
     <>
