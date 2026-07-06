@@ -2874,7 +2874,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
                 <div className="flex flex-col items-center" style={{ width: '28px', flexShrink: 0 }}>
                   <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
                   {idx < arr.length - 1 && (
-                    <div style={{ flex: 1, width: '2px', background: 'var(--primary-color-200)', minHeight: '24px', margin: '4px 0' }} />
+                    <div style={{ flex: 1, width: '2px', background: '#AAA', minHeight: '24px', margin: '4px 0' }} />
                   )}
                 </div>
                 {/* 右：テキスト */}
@@ -3183,9 +3183,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="-mx-4 px-4 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="プランを選ぶ" n={2} big className="mt-10">
               <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
-              {PLAN_CARDS.map((p, i) => (
-                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} initialTtOpen={i === initialTipIdx} />
-              ))}
+              <PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />
             </StepSection>
           </div>
           {/* 給付予想額 */}
