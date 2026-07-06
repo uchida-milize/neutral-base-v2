@@ -1141,7 +1141,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           </div>
           {/* ロゴ：絶対配置（上左・ステータスバー直下） */}
           <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん"
-            style={{ position: 'absolute', top: '48px', left: '15px', height: '1.52rem' }} />
+            style={{ position: 'absolute', top: '48px', left: '18px', height: '1.52rem' }} />
           {/* テキスト：絶対配置 */}
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
@@ -3080,7 +3080,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             </div>
           </div>
           <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん"
-            style={{ position: 'absolute', top: '48px', left: '15px', height: '1.52rem' }} />
+            style={{ position: 'absolute', top: '48px', left: '18px', height: '1.52rem' }} />
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
             <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
@@ -3103,7 +3103,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
           </div>
           {/* ロゴ：中央配置 */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center" style={{ marginTop: '16px' }}>
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[33.6px]" />
           </div>
           <div style={{ paddingTop: '48px', paddingBottom: '16px' }}>
