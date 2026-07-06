@@ -224,13 +224,14 @@ export function TheoTdfClaudeDesignShell() {
     let target = Math.max(0, Math.min(NSCR - 1, n));
     // scr=1 (ScreenStep2) は patternB 常時 ON のため非表示 — スキップ
     if (target === 1) target = n > scr ? 2 : 0;
+    setTerminated(false);
     setScr(target);
   };
 
   const curStep = stepOfScreen(scr);
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
   const curStepNo = STEP_NUMS[curStep];
-  const overviewMode = (scr === 0 || scr === 7) && !terminated;
+  const overviewMode = (scr === 0 || scr === 7) || terminated;
 
   const screens = [
     patternB ? (
