@@ -3063,14 +3063,20 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <Steps n={1} go={go} />
         {/* 商品概要コンパクト */}
         <div className="px-6 pt-4 pb-3 space-y-3">
-          <div className="flex items-center justify-between gap-3">
+          {/* バッジ：中央配置 */}
+          <div className="flex justify-center">
             <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#065fe3' }}>XXX のお客様限定</span>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
-              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
-            </div>
           </div>
-          <div style={{ paddingTop: '32px', paddingBottom: '24px' }}>
+          {/* ロゴ：中央配置 */}
+          <div className="flex justify-center pt-1">
+            <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-[42px]" />
+          </div>
+          {/* 引受保険会社：右寄せ */}
+          <div className="flex items-center justify-end gap-2">
+            <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
+            <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+          </div>
+          <div style={{ paddingTop: '16px', paddingBottom: '24px' }}>
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
@@ -3079,7 +3085,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-1">
                 <img src={f.src} alt="" style={{ width: '32px', height: '32px' }} />
-                <p className="text-[11px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
+                <p className="text-[13px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
               </div>
             ))}
           </div>
