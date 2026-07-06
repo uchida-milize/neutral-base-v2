@@ -853,7 +853,7 @@
   --success: #1f8a4c;
   --success-10: #e8f6ee;
   /* テキストリンク専用 (TD 組込1.4 — button-600 相当) */
-  --color-link: #0066d1;
+  --color-link: #1aa5dc;
   /* 注意/エラー文・必須印専用 (TD 組込1.5 — kumikomi 定義に一致) */
   --color-attention: #d70027;
 }

@@ -550,18 +550,47 @@ export const KOKUCHI_PATTERNS = [
 ];
 
 export const PLANS: Plan[] = [
-  { id: "a", name: "障害・介護", price: "¥480", lead: "障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "免責期間：60日"] },
-  { id: "b", name: "がん", price: "¥980", lead: "初めてがんと診断された場合に、給付金が支払われます",
-    feat: ["診断一時金：¥300,000", "保険期間：1年", "告知のみ・診査不要"] },
-  { id: "c", name: "安心セット", tag: "おすすめ", price: "¥1,290", lead: "障害・介護状態になった場合、または初めてがんと診断された場合に、給付金が支払われます",
-    feat: ["障害・介護：月額 最大 ¥50,000", "がん診断一時金：¥300,000", "保険期間：1年（自動更新）"] },
+  { id: "cancer", name: "がん保障型", price: "¥980", death: true,
+    lead: "がんと診断された場合に、給付金が支払われます",
+    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+    ] } },
+  { id: "three", name: "三大疾病保障型", price: "¥1,180", death: true,
+    lead: "がん・急性心筋梗塞・脳卒中と診断された場合に、給付金が支払われます",
+    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\nがん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+    ] } },
+  { id: "care", name: "障害介護保障型", price: "¥680", death: true,
+    lead: "障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
+    tooltip: { sections: [
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] } },
+  { id: "cancer_care", name: "がん・障害介護保障型", price: "¥1,480", death: true,
+    lead: "がんと診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["がん診断給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
+    tooltip: { sections: [
+      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] } },
+  { id: "three_care", name: "三大疾病・障害介護保障型", price: "¥1,780", death: true,
+    lead: "三大疾病と診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
+    feat: ["三大疾病給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
+    tooltip: { sections: [
+      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\n※がん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
+      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
+    ] } },
 ];
 
-// プランカード（3プラン固定価格）
-export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.map((p) => ({ ...p, planId: p.id }));
-export function planIdFromSel(sel: string) { return sel || 'a'; }
-export function deathFromSel(sel: string)  { return true; }
+// 10枚カード（プラン×死亡保障）
+export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.flatMap((p) => [
+  { ...p, id: p.id + '_d', planId: p.id, death: true,  name: p.name + '　死亡保障あり' },
+  { ...p, id: p.id + '_n', planId: p.id, death: false, name: p.name + '　死亡保障なし' },
+]);
+export function planIdFromSel(sel: string) { return sel ? sel.replace(/_[dn]$/, '') : 'cancer'; }
+export function deathFromSel(sel: string)  { return !sel || !sel.endsWith('_n'); }
 
 /* 告知項目（ノックアウト告知）— 区分はラベル（太字・改行）＋本文のリスト形式。別表は内側の表組みのまま */
 export function KoTable({ rows }: { rows: any[] }) {
@@ -3069,14 +3098,14 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
           {/* バッジ：中央配置 */}
-          <div className="flex justify-center">
+          <div className="flex justify-center" style={{ marginTop: '48px' }}>
             <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
           </div>
           {/* ロゴ：中央配置 */}
           <div className="flex items-center justify-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[33.6px]" />
           </div>
-          <div style={{ paddingTop: '8px', paddingBottom: '16px' }}>
+          <div style={{ paddingTop: '48px', paddingBottom: '16px' }}>
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
@@ -3090,7 +3119,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             ))}
           </div>
           {/* 図版 + 商品概要 */}
-          <div className="mt-2 overflow-hidden">
+          <div style={{ marginTop: '64px' }} className="overflow-hidden">
             <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
           </div>
           <div className="space-y-4 mt-4">
@@ -3099,10 +3128,6 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ marginTop: '-2px' }} />
                 詳細なサービス内容はこちら
               </a>
-            </div>
-            <div className="text-left">
-              <span className="inline-block text-h5 font-bold text-neutral-800 py-[2px] rounded">保険名称</span>
-              <p className="mt-2 text-h6 text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
             <div className="text-left">
               <span className="inline-block text-h5 font-bold text-neutral-800 py-[2px] rounded">保障期間</span>
@@ -3122,7 +3147,6 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div style={{ height: '60px' }} />
         <div className="px-6 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
           <div className="flex flex-col items-center gap-3">
-            <img src="/assets/theo-tdf/line-chart-dots-square.svg" alt="" style={{ width: '64px', height: '64px' }} />
             <h2 className="text-h3 font-bold text-center" style={{ color: '#1586b2' }}>プランシミュレーション</h2>
           </div>
         </div>
@@ -3217,6 +3241,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
       <ActionBar bg={showSend ? "#F2FBFE" : undefined}>
         {showSend && (
           <div className="fade-in space-y-2">
+            <div style={{ marginBottom: '8px' }}>
+              <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+            </div>
             {emailVerified ? (
               <>
                 <div className="flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
