@@ -2916,8 +2916,8 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       </div>
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
-      <div className="flex-1 flex flex-col" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="flex-1 flex flex-col items-center justify-center px-8">
+      <div className="flex-1 flex flex-col overflow-y-auto no-sb" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="flex-1 flex flex-col items-center justify-center px-8 py-8 shrink-0">
           <div style={{ width: 300 }} className="text-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -2925,7 +2925,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
           </div>
         </div>
-        <div className="px-5 pb-6">
+        <div className="px-5 pb-6 shrink-0">
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-left">
             ご不明な点は XXX サポートまでお問い合わせください。
           </div>
