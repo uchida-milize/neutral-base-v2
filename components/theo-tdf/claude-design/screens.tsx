@@ -157,10 +157,10 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 }
 
 // Phone app bar (THEO header)
-// 共有グラデーション: ステータスバー(33px)+ヘッダー(56px) を1枚の連続グラデとして描画
+// 共有グラデーション: ステータスバー(33px)+ヘッダー(48px) を1枚の連続グラデとして描画
 export const HEADER_GRAD_CSS: React.CSSProperties = {
   backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)",
-  backgroundSize: "100% 89px",
+  backgroundSize: "100% 81px",
   backgroundRepeat: "no-repeat",
 };
 export const HEADER_GRAD_STATUS: React.CSSProperties = { ...HEADER_GRAD_CSS, backgroundPosition: "0 0" };
@@ -170,12 +170,12 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
   // 完了画面は空のAppBar
   if (title === "お申込み完了") {
     return (
-      <div className="sticky top-0 z-20 text-primary-foreground h-14" style={HEADER_GRAD_APPBAR} />
+      <div className="sticky top-0 z-20 text-primary-foreground h-12" style={HEADER_GRAD_APPBAR} />
     );
   }
   return (
     <div className="sticky top-0 z-20 text-primary-foreground" style={HEADER_GRAD_APPBAR}>
-      <div className="flex items-center justify-between px-3 h-14">
+      <div className="flex items-center justify-between px-3 h-12">
         <span className="w-10 shrink-0" />
         <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
           <span className="font-en font-semibold tracking-[0.1em] text-h6">XXX</span>
@@ -1130,7 +1130,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           {/* インラインAppBar - スクロール後にsolid化 */}
           <div className="sticky top-0 z-20 transition-colors duration-200"
                style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
-            <div className="flex items-center justify-between px-3 h-14">
+            <div className="flex items-center justify-between px-3 h-12">
               <span className="w-10 shrink-0" />
               <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
@@ -1783,7 +1783,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
       <div className="flex items-center justify-between rounded-xl bg-primary-10 px-4 py-3">
         <span className="text-caption font-medium text-primary-700">最大給付金額</span>
         <span className="text-primary-600">
-          <span className="font-en text-h2 font-semibold tabular-nums">{man(maxBenefit)}</span>
+          <span className="text-h2 font-semibold tabular-nums" style={{ fontFamily: "var(--font-inter)" }}>{man(maxBenefit)}</span>
           <span className="text-h6"> 万円</span>
         </span>
       </div>
@@ -1855,7 +1855,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
         <div className="mt-4 pt-4 border-t border-warm-200 flex items-center justify-between">
           <span className="text-caption font-medium text-neutral-500">初年度の月払保険料</span>
           <span className="text-primary-600">
-            <span className="font-en text-h2 font-semibold tabular-nums">{(parseInt((plan.price||'0').replace(/[^0-9]/g,''),10)*1).toLocaleString('ja-JP')}</span>
+            <span className="text-h2 font-semibold tabular-nums" style={{ fontFamily: "var(--font-inter)" }}>{(parseInt((plan.price||'0').replace(/[^0-9]/g,''),10)*1).toLocaleString('ja-JP')}</span>
             <span className="text-h6"> 円</span>
           </span>
         </div>
@@ -2010,13 +2010,13 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         </div>
 
         <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
-          <Ic.shield className="w-4 h-4 shrink-0" />XXX 口座情報の一部を自動入力しています。
+          <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
         </div>
 
         {/* 契約者情報グループ */}
         <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-6">
           <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
-            <Ic.shield className="w-4 h-4 shrink-0" />XXX 口座情報の一部を自動入力しています。
+            <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
@@ -3070,7 +3070,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           <div className="sticky top-0 z-20 transition-colors duration-200"
                style={solid ? HEADER_GRAD_APPBAR : { background: 'transparent' }}>
-            <div className="flex items-center justify-between px-3 h-14">
+            <div className="flex items-center justify-between px-3 h-12">
               <span className="w-10 shrink-0" />
               <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
@@ -3175,7 +3175,6 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <StepSection label="積立金額・保障期間を選ぶ" n={1} big>
             {birthGenderFields}
             <div className="sim-noborder">
-              <p className="text-caption text-neutral-600 leading-relaxed mb-4">保障する積立金額と保障期間を選択してください。</p>
                <SimSliders m={m} setM={setM} y={y} setY={setY} />
             </div>
           </StepSection>
