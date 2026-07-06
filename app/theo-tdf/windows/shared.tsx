@@ -52,7 +52,7 @@ export const LINK_ICON = (
 
 /* ---- 単一の静的スクリーン ---- */
 
-/** フルシートモーダルの表示窓の高さに加える、モーダル上端より上の余白 (px) */
+/** フルシートモーダルの表示窓の高さに加える、モーダル上端より上の背景プレビュー分の余白 (px) */
 const MODAL_CROP_LEAD_IN = 200;
 
 export function StaticScreen({
@@ -69,22 +69,33 @@ export function StaticScreen({
 }) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [cropHeight, setCropHeight] = React.useState<number | null>(null);
-  const [shiftUp, setShiftUp] = React.useState(0);
 
   React.useEffect(() => {
     if (!fullSheet || !contentRef.current) return;
     const el = contentRef.current;
+
     const measure = () => {
+      // モーダルの外枠 (dimmer + sheet-up を包む absolute inset-0 の層)
+      const modalWrap = Array.from(el.querySelectorAll<HTMLElement>('[class*="absolute"][class*="inset-0"]'))
+        .find((node) => node.querySelector(".sheet-up"));
       const sheet = el.querySelector<HTMLElement>(".sheet-up");
-      if (!sheet) return;
-      const totalHeight = el.scrollHeight;
+      if (!modalWrap || !sheet) return;
+      // 高さ制約 (max-h-[88%] 等) は縮小後のコンテナ比率で再計算されクランプされてしまうため撤廃し、内容を完全展開する
+      sheet.style.maxHeight = "none";
       const sheetHeight = sheet.getBoundingClientRect().height;
-      setCropHeight(sheetHeight + MODAL_CROP_LEAD_IN);
-      setShiftUp(Math.max(0, totalHeight - sheetHeight - MODAL_CROP_LEAD_IN));
+      const total = MODAL_CROP_LEAD_IN + sheetHeight;
+      // 背景プレビュー(Y0〜200)の直後にモーダルが来るよう、モーダル外枠自体を Y0起点・高さ固定で再配置する
+      modalWrap.style.top = "0px";
+      modalWrap.style.bottom = "auto";
+      modalWrap.style.height = `${total}px`;
+      setCropHeight(total);
     };
+
     measure();
+    const sheet = el.querySelector<HTMLElement>(".sheet-up");
     const ro = new ResizeObserver(measure);
     ro.observe(el);
+    if (sheet) ro.observe(sheet);
     return () => ro.disconnect();
   }, [fullSheet]);
 
@@ -105,10 +116,10 @@ export function StaticScreen({
       </figcaption>
       {/* screen-flat: overflow-y-auto → visible / flex-1 → none / sticky → static */}
       <div
-        className={`theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm${fullSheet ? " overflow-hidden" : " overflow-hidden"}`}
+        className="theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm overflow-hidden"
         style={{ width: 390, minHeight: fullSheet ? undefined : 693, height: fullSheet ? (cropHeight ?? undefined) : undefined }}
       >
-        <div ref={contentRef} className="flex flex-col" style={fullSheet ? { transform: `translateY(-${shiftUp}px)` } : undefined}>
+        <div ref={contentRef} className="flex flex-col">
           {children}
         </div>
       </div>
