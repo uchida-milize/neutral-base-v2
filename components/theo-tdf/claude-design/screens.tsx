@@ -1178,7 +1178,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
-                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-12 h-12" />, t: "学資保険\nの代わりにも" },
+                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
                   { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
@@ -3115,7 +3115,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
-              { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険\nの代わりにも" },
+              { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
               { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-1">
