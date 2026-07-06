@@ -33,7 +33,7 @@ export default function TheoTdfHome() {
             <ShieldCheck className="size-3" />
             THEO × T&Dファイナンシャル · 組込申込
           </Badge>
-          <h1 className="mt-4 bg-gradient-to-r from-primary-600 to-button-color-400 bg-clip-text text-display-2 font-semibold leading-tight tracking-tight text-transparent sm:text-display-1">
+          <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1" style={{ color: "#1AA5DC" }}>
             <JpText>申込フロー 設計・開発リファレンス</JpText>
           </h1>
           <p className="mt-4 max-w-2xl text-body text-muted-foreground sm:text-body-lg">

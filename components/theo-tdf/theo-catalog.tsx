@@ -340,6 +340,10 @@ export function FormsSection() {
           <AgreeCheckbox checked={true} onChange={() => {}}>上記の事前同意事項を確認し、同意します</AgreeCheckbox>
         </Preview>
       </Row>
+      <SubHead>BirthDateGenderBlock</SubHead>
+      <Row>
+        <Preview label="BirthDateGenderBlock"><BirthDateGenderBlock /></Preview>
+      </Row>
     </div>
   );
 }
@@ -410,10 +414,6 @@ export function PlanSection() {
             <LockedField label="生年月日" value="1990 / 01 / 01" />
           </GroupCard>
         </Preview>
-      </Row>
-      <SubHead>BirthDateGenderBlock</SubHead>
-      <Row>
-        <Preview label="BirthDateGenderBlock"><BirthDateGenderBlock /></Preview>
       </Row>
       <SubHead>NumberedStepCard</SubHead>
       <Row>
