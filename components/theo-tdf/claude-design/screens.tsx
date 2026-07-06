@@ -307,7 +307,8 @@ export function Field({ label, placeholder, required, hint, value, onChange, dis
         onChange={onChange}
         disabled={disabled}
         aria-invalid={invalid || undefined}
-        className={`fld h-12 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : invalid ? "border-[color:var(--color-attention)] bg-white text-neutral-800" : "border-warm-300 bg-white text-neutral-800"}`}
+        style={invalid ? errInputStyle : undefined}
+        className={`fld h-12 rounded-lg border px-3 text-h6 placeholder:text-neutral-400 ${disabled ? "border-warm-200 bg-warm-200/60 text-neutral-400 cursor-not-allowed" : invalid ? `border-[color:var(--color-attention)] ${ERR_INPUT_CLS}` : "border-warm-300 bg-white text-neutral-800"}`}
       />
       {errMode === "inline" && error && <ErrText>{error}</ErrText>}
       {hint && <span className="text-caption text-neutral-400">{hint}</span>}
@@ -1177,12 +1178,12 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[42px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
-                  { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-10 h-10" />, t: "積立も\nあんしんに" },
-                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-10 h-10" />, t: "学資保険\nの代わりにも" },
-                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-10 h-10" />, t: "もしもの\n備えに" },
+                  { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
+                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-12 h-12" />, t: "学資保険\nの代わりにも" },
+                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
-                    <div className="text-primary" style={{width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#065FE3'}}>{f.svg}</div>
+                    <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#065FE3'}}>{f.svg}</div>
                     <p className="text-caption font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
                   </div>
                 ))}
@@ -3113,7 +3114,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-1">
-                <img src={f.src} alt="" style={{ width: '32px', height: '32px' }} />
+                <img src={f.src} alt="" style={{ width: '40px', height: '40px' }} />
                 <p className="text-[16px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
               </div>
             ))}
@@ -3238,8 +3239,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
       </div>
-      <ActionBar bg={showSend ? "#F2FBFE" : undefined}>
-        {showSend && (
+      <ActionBar bg="#F2FBFE">
           <div className="fade-in space-y-2">
             <div style={{ marginBottom: '8px' }}>
               <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
@@ -3266,7 +3266,6 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               </div>
             )}
           </div>
-        )}
       </ActionBar>
       <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
       <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
