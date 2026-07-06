@@ -53,10 +53,10 @@ type FlowEntry = {
   subs?: string[];
 };
 
-/* PIN認証・カード承認(外部) は番号なし → 5 numbered steps total. */
+/* patternB 固定（商品概要+プラン選択統合）→ プラン選択は独立ステップとして表示しない。
+   PIN認証は STEP2 として番号付き、カード承認(外部) は番号なし → 5 numbered steps total. */
 const FLOW: FlowEntry[] = [
   { key: "overview", label: "商品概要",            en: "Product",          scr: [0] },
-  { key: "step2",    label: "プラン選択",          en: "Plan / Coverage",  scr: [1] },
   { key: "pin",      label: "PINコード認証",        en: "PIN Verify",       noNum: true, scr: [2] },
   { key: "form",     label: "申込フォーム",        en: "Application",      scr: [3] },
   { key: "step4",    label: "内容確認",            en: "Confirm",          scr: [4] },
@@ -79,7 +79,7 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
       <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-400">
         Embedded Insurance
       </p>
-      <h1 className="mt-1 text-h4 font-bold text-neutral-800">THEO 組込保険</h1>
+      <h1 className="mt-1 text-h4 font-bold text-neutral-800">XXX 組込保険</h1>
       <p className="text-caption text-neutral-400 mt-0.5">
         ワイヤーフレーム / 全{TOTAL_STEPS}ステップ
       </p>
@@ -197,7 +197,8 @@ function Phone({
 }
 
 const TWEAK_DEFAULTS = {
-  patternB: false,
+  // patternB は常に true（商品概要+プラン選択統合）— UI非表示
+  patternB: true,
   simFirst: false,
   planCardStyle: "card" as string,
   errMode: "inline" as string,
@@ -218,13 +219,12 @@ export function TheoTdfClaudeDesignShell() {
   const NSCR = 8;
 
   const patternB = tw.patternB;
-  const setPatternB = (v: boolean) => {
-    setTweak("patternB", v);
-    setScr(0);
-  };
 
   const go = (n: number) => {
-    setScr(Math.max(0, Math.min(NSCR - 1, n)));
+    let target = Math.max(0, Math.min(NSCR - 1, n));
+    // scr=1 (ScreenStep2) は patternB 常時 ON のため非表示 — スキップ
+    if (target === 1) target = n > scr ? 2 : 0;
+    setScr(target);
   };
 
   const curStep = stepOfScreen(scr);
@@ -285,8 +285,7 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
-          <TweakSection label="全体表示パターン" />
-          <TweakToggle label="パターンB（商品概要+プラン選択統合）" value={tw.patternB} onChange={(v) => setPatternB(v)} />
+          <TweakSection label="積立金額・保障期間を選ぶ" />
           <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
           <TweakSection label="プラン選択" />
           <TweakSelect
@@ -315,7 +314,7 @@ export function TheoTdfClaudeDesignShell() {
             value={tw.kokuchiPattern}
             onChange={(v) => setTweak("kokuchiPattern", v)}
             options={[
-              { value: "auto",     label: "auto（プラン連動）" },
+              { value: "auto",     label: "自動（選択中のプラン）" },
               { value: "care_d",   label: "① 障害・介護プラン（死亡あり）" },
               { value: "care_n",   label: "② 障害・介護プラン" },
               { value: "cancer_d", label: "③ がんプラン（死亡あり）" },
@@ -326,6 +325,16 @@ export function TheoTdfClaudeDesignShell() {
               { value: "three_n",  label: "⑧ 三大疾病プラン" },
               { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
               { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
+            ]}
+          />
+          <TweakSection label="内容確認画面" />
+          <TweakSelect
+            label="保険金受取人の住所"
+            value={tw.benSameAddr ? "same" : "diff"}
+            onChange={(v) => setTweak("benSameAddr", v === "same")}
+            options={[
+              { value: "same", label: "契約者と同じ（チェック）" },
+              { value: "diff", label: "別住所を入力" },
             ]}
           />
           <TweakSection label="完了画面" />
@@ -339,16 +348,6 @@ export function TheoTdfClaudeDesignShell() {
               { value: "error",      label: "処理エラー" },
               { value: "maint",      label: "メンテナンス中" },
               { value: "ended",      label: "申込みキャンセル" },
-            ]}
-          />
-          <TweakSection label="内容確認画面" />
-          <TweakSelect
-            label="保険金受取人の住所"
-            value={tw.benSameAddr ? "same" : "diff"}
-            onChange={(v) => setTweak("benSameAddr", v === "same")}
-            options={[
-              { value: "same", label: "契約者と同じ（チェック）" },
-              { value: "diff", label: "別住所を入力" },
             ]}
           />
         </TweaksSidebar>

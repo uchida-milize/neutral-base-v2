@@ -178,9 +178,9 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
       <div className="flex items-center justify-between px-3 h-14">
         <span className="w-10 shrink-0" />
         <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
-          <span className="font-en font-semibold tracking-[0.1em] text-h6">THEO</span>
-          <span className="text-h6 font-medium truncate">つみたて安心ほけん</span>
-          <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;THEO&gt;</span>
+          <span className="font-en font-semibold tracking-[0.1em] text-h6">XXX</span>
+          <span className="text-h6 font-medium truncate">くみこみ安心ほけん</span>
+          <span className="font-en text-[10px] font-medium opacity-75 shrink-0">&lt;XXX&gt;</span>
         </div>
         <span className="w-10 shrink-0" />
       </div>
@@ -372,10 +372,10 @@ export function ScreenIntro({ go }: { go: Go }) {
       <div className="flex-1 overflow-y-auto no-sb">
         {/* hero */}
         <div className="px-6 pt-6 pb-8" style={{ backgroundImage: "url('/assets/theo-tdf/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
+          <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500">Embedded Insurance</p>
           <h1 className="mt-2 text-h2 font-bold leading-snug text-neutral-800">信頼を、もっと<br/>触れる距離に。</h1>
-          <p className="mt-3 text-h6 leading-relaxed text-neutral-700">THEO の資産運用に、<br/>もしものときの備えをひとつに。</p>
+          <p className="mt-3 text-h6 leading-relaxed text-neutral-700">XXX の資産運用に、<br/>もしものときの備えをひとつに。</p>
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
@@ -1103,14 +1103,14 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
             <div className="flex items-center justify-between px-3 h-14">
               <span className="w-10 shrink-0" />
               <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
-                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">THEO</span>
-                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
+                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
+                <span className="text-h6 font-medium truncate text-white">くみこみ安心ほけん</span>
               </div>
               <span className="w-10 shrink-0" />
             </div>
           </div>
           {/* ロゴ：絶対配置（上左・ステータスバー直下） */}
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん"
+          <img src="/assets/theo-tdf/dammy_logo.svg" alt="くみこみ安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
           {/* テキスト：絶対配置 */}
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
@@ -1141,11 +1141,11 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
               </div>
               <div className="flex justify-center">
                 <div className="inline-flex items-center px-4 py-2 rounded-full font-bold text-white" style={{ backgroundColor: '#065fe3', fontSize: '0.82rem' }}>
-                  THEOのお客様限定
+                  XXX のお客様限定
                 </div>
               </div>
               <div className="mt-4 flex flex-col items-center gap-4">
-                <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心 ほけん" className="h-[42px]" />
+                <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-[42px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-10 h-10" />, t: "積立も\nあんしんに" },
@@ -1385,7 +1385,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
           {/* ---- お客様情報（生年月日・性別） ---- */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-caption text-primary-700 px-1">
-              <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
+              <Ic.shield className="w-4 h-4 shrink-0" />XXX 口座情報の一部を自動入力しています。
             </div>
             {birthGenderFields}
           </div>
@@ -1555,7 +1555,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
       <div className="flex-1 overflow-y-auto no-sb">
         <Steps n={3} go={go} />
         <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-6" />
+          <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
           <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
@@ -1588,7 +1588,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
       </div>
       <ActionBar>
         <p className="text-caption text-neutral-500 leading-relaxed px-1">
-          本お手続きは「THEO つみたて安心ほけん」のお申し込みです。<br/>
+          本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
         <div className="flex items-center justify-center gap-3">
@@ -1980,13 +1980,13 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         </div>
 
         <div className="px-1 flex items-center gap-2 text-caption text-primary-700">
-          <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
+          <Ic.shield className="w-4 h-4 shrink-0" />XXX 口座情報の一部を自動入力しています。
         </div>
 
         {/* 契約者情報グループ */}
         <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-6">
           <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
-            <Ic.shield className="w-4 h-4 shrink-0" />THEO 口座情報の一部を自動入力しています。
+            <Ic.shield className="w-4 h-4 shrink-0" />XXX 口座情報の一部を自動入力しています。
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
@@ -2842,7 +2842,7 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
       <div className="flex-1 flex flex-col items-center justify-center relative" style={{ zIndex: 1 }}>
         <div style={{ width: 300 }} className="text-center">
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
+          <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
           {isErr ? (
             <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6 mx-auto block" alt="エラー" />
           ) : isMaint ? (
@@ -2894,12 +2894,12 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
           </div>
           {/* ヒーローコンテンツ */}
           <div className="px-5 pt-4 pb-12 text-center">
-            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mx-auto mb-8" />
+            <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
             <h2 className="text-h4 font-bold text-neutral-800">お申込が完了しました</h2>
-            <p className="mt-2 text-caption text-neutral-500">申込番号　THEO-2026-000482</p>
+            <p className="mt-2 text-caption text-neutral-500">申込番号　XXX-2026-000001</p>
           </div>
           </div>
         </div>
@@ -2911,7 +2911,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
 
         <div className="px-4 py-6 space-y-6">
           <div className="px-1">
-            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">THEO つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
@@ -2925,7 +2925,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
             {[
               ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
               ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
-              ["3", "初回保険料の引落し・保険開始", "翌月以降、THEO のご登録口座より。"],
+              ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
             ].map(([n, t, d], idx, arr) => (
               <div key={n} className="flex gap-3">
                 {/* 左：丸数字＋接続線 */}
@@ -2971,7 +2971,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
       <div className="flex-1 flex flex-col" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8">
           <div style={{ width: 300 }} className="text-center">
-            <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="THEO つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
+            <img src="/assets/theo-tdf/dammy_logo_blue.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを<br/>終了しました</h2>
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
@@ -2979,7 +2979,7 @@ export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
         </div>
         <div className="px-5 pb-6">
           <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed text-left">
-            ご不明な点は THEO サポートまでお問い合わせください。
+            ご不明な点は XXX サポートまでお問い合わせください。
           </div>
         </div>
       </div>
@@ -3131,13 +3131,13 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <div className="flex items-center justify-between px-3 h-14">
               <span className="w-10 shrink-0" />
               <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
-                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">THEO</span>
-                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
+                <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
+                <span className="text-h6 font-medium truncate text-white">くみこみ安心ほけん</span>
               </div>
               <span className="w-10 shrink-0" />
             </div>
           </div>
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="THEO つみたて安心ほけん"
+          <img src="/assets/theo-tdf/dammy_logo.svg" alt="くみこみ安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '15px', height: '1.9rem' }} />
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
@@ -3152,7 +3152,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         {/* 商品概要コンパクト */}
         <div className="px-6 pt-4 pb-3 space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#065fe3' }}>THEOのお客様限定</span>
+            <span className="text-[10px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#065fe3' }}>XXX のお客様限定</span>
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
               <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
@@ -3568,10 +3568,10 @@ export function Logo({ variant = "default", className }: {
   className?: string;
 }) {
   const src = variant === "blue"
-    ? "/assets/theo-tdf/logo_theo_insurance_blue.svg"
-    : "/assets/theo-tdf/logo_theo_insurance.svg";
+    ? "/assets/theo-tdf/dammy_logo_blue.svg"
+    : "/assets/theo-tdf/dammy_logo.svg";
   return (
-    <img src={src} alt="THEO つみたて安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
+    <img src={src} alt="くみこみ安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
   );
 }
 
