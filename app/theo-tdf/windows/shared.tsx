@@ -88,6 +88,12 @@ export function StaticScreen({
       modalWrap.style.top = "0px";
       modalWrap.style.bottom = "auto";
       modalWrap.style.height = `${total}px`;
+      // 背後の実画面は見せず、Y0〜200 の帯は単色グレーで塗りつぶす（モーダル自体の見た目は変更しない）
+      const dimmer = modalWrap.querySelector<HTMLElement>(":scope > div:first-child");
+      if (dimmer && dimmer !== sheet) {
+        dimmer.style.backgroundColor = "#D4D4D4";
+        dimmer.style.opacity = "1";
+      }
       setCropHeight(total);
     };
 
