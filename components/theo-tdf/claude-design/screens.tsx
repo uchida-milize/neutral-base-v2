@@ -237,7 +237,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
         {iconSrc ? (
           <img src={iconSrc} alt="" className="w-8 h-8 shrink-0" />
         ) : Icon ? (
-          <Icon className="w-8 h-8 text-primary-600 shrink-0" />
+          <Icon className="w-8 h-8 text-primary shrink-0" />
         ) : null}
         <div className="min-w-0">
           <p className="text-h4 font-bold text-neutral-800 leading-tight">{title}</p>
@@ -707,7 +707,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
           <AgreeBlocks blocks={DISCLOSURE_INTRO} />
           <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
-            <p className="text-caption leading-relaxed" style={{ color: '#1586b2' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
+            <p className="text-caption leading-relaxed" style={{ color: '#1AA5DC' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
           </div>
           <div className="space-y-3">
             <div className="pt-8">
@@ -1189,7 +1189,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 ))}
                 </div>
               </div>
-              <div className="mt-6 overflow-hidden">
+              <div className="mt-6 overflow-hidden rounded-[16px] border border-warm-200">
                 <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
               </div>
 
@@ -1712,7 +1712,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
           <span className="text-h6 font-medium text-neutral-800 leading-snug">毎月の積立金額<br/><span className="text-caption text-neutral-500">（ご希望給付額）</span></span>
           <span className="flex items-baseline gap-1 text-neutral-800">
             <input type="text" inputMode="numeric" value={yen(m)} onChange={onMText} onBlur={onMBlur} aria-label="毎月の積立金額"
-              className="num-input font-en text-h4 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "5.5em" }} />
+              className="num-input text-h3 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "5.5em", fontFamily: "var(--font-inter)" }} />
             <span className="text-caption"> 円</span>
           </span>
         </div>
@@ -1727,7 +1727,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
           <span className="text-h6 font-medium text-neutral-800">保障期間</span>
           <span className="flex items-baseline gap-1 text-neutral-800">
             <input type="text" inputMode="numeric" value={y} onChange={onYText} onBlur={onYBlur} aria-label="保障期間"
-              className="num-input font-en text-h4 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "2.4em" }} />
+              className="num-input text-h3 font-semibold text-primary-600 tabular-nums text-right" style={{ width: "2.4em", fontFamily: "var(--font-inter)" }} />
             <span className="text-caption"> 年</span>
           </span>
         </div>
@@ -1986,7 +1986,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         )}
 
         {(!formSplit || formPage === 1) && (<>
-        <h2 className="text-h5 font-bold text-center" style={{ color: '#1586b2', marginTop: '32px', marginBottom: '32px' }}>加入手続き</h2>
+        <h2 className="text-h5 font-bold text-center" style={{ color: '#1AA5DC', marginTop: '32px', marginBottom: '32px' }}>加入手続き</h2>
 
         {/* 告知をする */}
         <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6 space-y-3 mb-6">
@@ -2399,7 +2399,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
       <div className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
         <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>
-        <h2 className="text-h4 font-bold text-center" style={{ color: '#1586b2' }}>内容確認</h2>
+        <h2 className="text-h4 font-bold text-center" style={{ color: '#1AA5DC' }}>内容確認</h2>
         <StepSection>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
@@ -3120,7 +3120,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             ))}
           </div>
           {/* 図版 + 商品概要 */}
-          <div style={{ marginTop: '64px' }} className="overflow-hidden">
+          <div style={{ marginTop: '64px' }} className="overflow-hidden rounded-[16px] border border-warm-200">
             <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
           </div>
           <div className="space-y-4 mt-4">
@@ -3148,7 +3148,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div style={{ height: '60px' }} />
         <div className="px-4 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
           <div className="flex flex-col items-center gap-3">
-            <h2 className="text-h3 font-bold text-center" style={{ color: '#1586b2' }}>プランシミュレーション</h2>
+            <h2 className="text-h3 font-bold text-center" style={{ color: '#1AA5DC' }}>プランシミュレーション</h2>
           </div>
         </div>
         <div className="px-4 pt-6 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>

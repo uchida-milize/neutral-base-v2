@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 /**
  * 全テナントの tokens.css を root layout で import。
@@ -38,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${GeistSans.variable} h-full antialiased`}
+      className={`${GeistSans.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body
