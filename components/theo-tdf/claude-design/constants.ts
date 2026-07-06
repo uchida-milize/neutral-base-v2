@@ -1,0 +1,10 @@
+export const APP_BRAND = "XXX";
+export const APP_PRODUCT_LONG = "つみたて安心ほけん";
+export const APP_PRODUCT_KUMIKOMI = "くみこみ安心ほけん";
+export const INSURER_NAME = "T&Dフィナンシャル生命";
+export const ASSET_BASE = "/assets/theo-tdf/";
+export const DEMO_CONTRACT_NO = "XXX-2026-000001";
+export const COLOR_PRIMARY = "#1aa5dc";
+export const COLOR_PRIMARY_DARK = "#1586b2";
+export const GRAD_PRIMARY = "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)";
+export const GRAD_DANGER = "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)";

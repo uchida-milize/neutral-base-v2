@@ -25,6 +25,31 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { inter } from "@/lib/fonts";
 
+// 分割ファイルからのインポート（内部参照用）
+import {
+  DISCLOSURE_INTRO,
+  DISCLOSURE_HEAD,
+  G_RECENT,
+  BETSU_TOP,
+  BETSU_BOTTOM,
+  TABLE_CARE,
+  TABLE_DEATH,
+  RECENT_ROW,
+  KO_DEATH,
+  KO_CARE,
+  KO_CANCER,
+  KO_THREE,
+  KO_ORDER,
+  koTableFor,
+  KOKUCHI_PATTERNS,
+} from './disclosure';
+import {
+  PLANS,
+  PLAN_CARDS,
+  planIdFromSel,
+  deathFromSel,
+} from './plans';
+
 /* ============================================================
    THEO 組込保険 — Screens + shared wireframe atoms
    ============================================================
@@ -437,162 +462,10 @@ export function ScreenIntro({ go }: { go: Go }) {
 /* ============================================================
    SCREEN 2 — プラン選択
    ============================================================ */
-/* 告知事項（健康告知）— 4プラン共通のベース項目。
-   ※ 先進医療プランは告知不要。各プラン固有の告知文言は添付PPTX反映時に上書きします。 */
-export const DISCLOSURE_INTRO = [
-  { head: "告知に関する重要事項" },
-  { p: "下記の内容をご確認のうえ、お申し込みください。" },
-  { strong: "保険商品お申し込みの方へ" },
-  { p: "募集用資料・告知書・告知説明資料等において、ご契約者や被保険者は健康状態等について告知をしていただく義務があります。" },
-  { p: "生命保険は、多数の人々が公平に保険料を出し合い、相互に保険し合う制度です。したがって、初めから健康状態の良くない方や危険な職業に従事されている方等が無条件に契約されますと、保険料負担の公平性が保てません。" },
-  { p: "ご契約にあたっては、過去の傷病歴（傷病名・治療期間等）、現在の健康状態、身体の障がい状態、職業歴とうについて「告知書」で当社がおたずねすることについて、事実をありのままに正確にもれなくお知らせ（告知）ください" },
-  { p: "ご契約（責任開始期）前に生じた病気やケガにより、支払事由が生じた場合には、保険金・給付金はお支払い出来ません。（事例）契約前より高血圧・脂質異常で定期的に服薬中の場合\n以下告知項目に該当しませんが、契約3ヶ月後に直接的な原因により脳梗塞が発症した場合などはお支払い出来ないことがあります。" },
-  { p: "※ただし、以下のような場合には責任開始期以後発生した原因によるものとみなし、保険金・給付金をお支払いします。" },
-  { ul: [
-    "責任開始期から2年を経過した後で支払事由が生じた場合",
-    "責任開始期以降、その疾病やケガによって医師の診察を受けたことがなく、かつ診断等による異常な指摘も受けていない場合。ただし、その原因となった病気やケガによる症状について被保険者が認識または自覚していた場合を除きます。",
-  ] },
-];
-
-/* ── 告知項目テンプレート（取り込み用PPTXの4区分）──
-   死亡用 / がん用 / 三大疾病用 / 障害・介護用 を、プラン×死亡保障で組み合わせて出し分ける。 */
-export const DISCLOSURE_HEAD = [
-  { head: "告知重要事項" },
-  { p: "各項目をご確認のうえ、以下の内容にご回答ください。" },
-];
-// 最近の健康状態（全パターン共通・先頭に1度だけ）
-export const G_RECENT = [
-  { cat: "最近の健康状態" },
-  { p: "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）" },
-];
-// 別表（病気・ケガ）— 死亡用・障害介護用で使用。目の行だけ差し替え
-export const BETSU_TOP = [
-  ["心臓・血液", "狭心症、心筋梗塞、心臓弁膜症、不整脈、心筋症、心不全、大動脈瘤"],
-  ["脳", "脳卒中（脳出血、脳梗塞、くも膜下出血）、脳動脈瘤、脳しゅよう"],
-  ["精神・神経", "認知症、うつ病、統合失調症、アルコール依存症、てんかん、パーキンソン病、脊髄小脳変性症、多系統萎縮症、筋萎縮性側索硬化症、多発性硬化症"],
-  ["肝臓・腎臓・膵臓", "慢性肝炎、肝硬変、慢性腎炎、ネフローゼ、腎不全、すい炎"],
-  ["肺", "肺気腫、閉塞性肺疾患、間質性肺炎、誤嚥性肺炎"],
-];
-export const BETSU_BOTTOM = [
-  ["悪性新生物", "がん、肉腫、悪性の腫瘍、白血病、悪性リンパ腫、骨髄腫、骨髄異形成症候群"],
-  ["その他", "合併症を伴う糖尿病、膠原病（関節リウマチ、全身性エリテマトーデス（SLE）、強皮症、多発性筋炎、結節性多発動脈周囲炎）"],
-];
-export const TABLE_CARE = [...BETSU_TOP, ["目", "緑内障、加齢黄斑変性症、網膜色素変性症"], ...BETSU_BOTTOM];
-export const TABLE_DEATH = [...BETSU_TOP, ["目", "—"], ...BETSU_BOTTOM];
-
-// ── 告知項目（ノックアウト告知）：取り込み用PPTXの4区分を、プラン×死亡保障で組み合わせて1つに ──
-// paras は { t:本文, sub?:別表 } の配列。別表は対応する設問の直後に表示する。
-export const RECENT_ROW = { k: "最近の健康状態", paras: [{ t: "最近3ヶ月以内に、医師より検査・入院・手術を勧められたことがありますか。（検査には、健康診断、人間ドック、歯科検査、アレルギー検査を含みません）" }] };
-// 死亡用
-export const KO_DEATH = [
-  RECENT_ROW,
-  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。", sub: TABLE_DEATH }] },
-];
-// 障害・介護用
-export const KO_CARE = [
-  RECENT_ROW,
-  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に別表の病気で、医師による診療・検査・治療・薬の処方を受けたことがありますか。", sub: TABLE_CARE }] },
-  { k: "身体の障がい・介護状態について", paras: [
-    { t: "つぎのいずれか1つでも該当することはありますか。" },
-    { t: "●今までに、公的介護保険制度の要介護または要支援の認定を受けていたこと、もしくは、認定申請をしたことがある（40歳未満の方は該当しません）" },
-    { t: "●現在、つぎの1〜5の日常生活のいずれかにおいて、他の方の介助またはご自身で補助具を必要とすることがある。＊骨折中などにより現在一時的に必要とする場合も含みます。＜1.歩行 2.衣服の着替え 3.入浴 4.食事 5.排泄＞" },
-  ] },
-];
-// がん用
-export const KO_CANCER = [
-  RECENT_ROW,
-  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" }] },
-  { k: "がんについて", paras: [{ t: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" }] },
-  { k: "健康診断・人間ドックについて", paras: [{ t: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。" }, { t: "異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" }], checks: ["『内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
-];
-// 三大疾病用
-export const KO_THREE = [
-  RECENT_ROW,
-  { k: "病気・ケガについて", paras: [{ t: "過去5年以内に、病気で継続して7日以上の入院をしたことまたは手術を受けたことがありますか。（新型コロナウイルスによる入院は含みません。）" }] },
-  { k: "がんについて", paras: [{ t: "今までに、がん（上皮内がんを含みます）・肉腫・悪性リンパ腫・白血病にかかったこと、または上皮内異形成になったことがありますか。" }] },
-  { k: "健康診断・人間ドックについて", paras: [{ t: "過去2年以内に健康診断・人間ドックにおいて、以下の検査を受けて、異常の指摘を受けたことがありますか。" }, { t: "異常とは、要再検査・要精密検査・要治療をいいます。ただし、再検査・精密検査の結果、「異常なし」と診断された場合を除きます。" }], checks: ["『心電図検査・内視鏡検査・便潜血検査・マンモグラフィ検査』", "『しゅようマーカー（CEA、AFP、CA19-9、PSA）』"] },
-  { k: "女性の方", paras: [{ t: "現在妊娠していますか。" }] },
-];
-export const KO_ORDER = ["最近の健康状態", "病気・ケガについて", "がんについて", "健康診断・人間ドックについて", "身体の障がい・介護状態について", "女性の方"];
-
-// プラン×死亡保障 → ノックアウト告知（同一区分はマージし重複本文はまとめる。対応表どおりの組み合わせ）
-export function koTableFor(planId: string, death: boolean) {
-  const map = {
-    cancer:      death ? [KO_DEATH, KO_CANCER] : [KO_CANCER],
-    three:       death ? [KO_DEATH, KO_THREE]  : [KO_THREE],
-    care:        [KO_CARE],
-    cancer_care: [KO_CARE, KO_CANCER],
-    three_care:  [KO_CARE, KO_THREE],
-  };
-  const blocks: any[] = ((map as Record<string, any[]>)[planId] || [KO_CANCER]);
-  const byKey: Record<string, any> = {};
-  for (const block of blocks) {
-    for (const row of block) {
-      if (!byKey[row.k]) byKey[row.k] = { k: row.k, paras: [], checks: [] };
-      const tgt = byKey[row.k];
-      (row.paras || []).forEach((p: any) => { if (!tgt.paras.some((q: any) => q.t === p.t)) tgt.paras.push(p); });
-      (row.checks || []).forEach((c: any) => { if (!tgt.checks.includes(c)) tgt.checks.push(c); });
-    }
-  }
-  return KO_ORDER.filter((k) => byKey[k]).map((k) => byKey[k]);
-}
-
-// 告知項目プレビュー用パターン（プラン×死亡保障の全10通り）— Tweaks「告知項目パターン」で切替
-export const KOKUCHI_PATTERNS = [
-  { key: 'care_d',   plan: 'care',        death: true,  label: '① 障害・介護プラン（死亡あり）' },
-  { key: 'care_n',   plan: 'care',        death: false, label: '② 障害・介護プラン' },
-  { key: 'cancer_d', plan: 'cancer',      death: true,  label: '③ がんプラン（死亡あり）' },
-  { key: 'cancer_n', plan: 'cancer',      death: false, label: '④ がんプラン' },
-  { key: 'cc_d',     plan: 'cancer_care', death: true,  label: '⑤ がん・障害介護プラン（死亡あり）' },
-  { key: 'cc_n',     plan: 'cancer_care', death: false, label: '⑥ がん・障害介護プラン' },
-  { key: 'three_d',  plan: 'three',       death: true,  label: '⑦ 三大疾病プラン（死亡あり）' },
-  { key: 'three_n',  plan: 'three',       death: false, label: '⑧ 三大疾病プラン' },
-  { key: 'tc_d',     plan: 'three_care',  death: true,  label: '⑨ 三大疾病・障害介護プラン（死亡あり）' },
-  { key: 'tc_n',     plan: 'three_care',  death: false, label: '⑩ 三大疾病・障害介護プラン' },
-];
-
-export const PLANS: Plan[] = [
-  { id: "cancer", name: "がん保障型", price: "¥980", death: true,
-    lead: "がんと診断された場合に、給付金が支払われます",
-    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] } },
-  { id: "three", name: "三大疾病保障型", price: "¥1,180", death: true,
-    lead: "がん・急性心筋梗塞・脳卒中と診断された場合に、給付金が支払われます",
-    feat: ["診断給付金：最大 ¥1,000,000（逓減給付型）", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\nがん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-    ] } },
-  { id: "care", name: "障害介護保障型", price: "¥680", death: true,
-    lead: "障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["給付：月額 最大 ¥50,000", "保険期間：1年（自動更新）", "告知のみ・診査不要"],
-    tooltip: { sections: [
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
-  { id: "cancer_care", name: "がん・障害介護保障型", price: "¥1,480", death: true,
-    lead: "がんと診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["がん診断給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
-    tooltip: { sections: [
-      { head: "「がん」とは", body: "がん（悪性新生物）を指します。\n前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
-  { id: "three_care", name: "三大疾病・障害介護保障型", price: "¥1,780", death: true,
-    lead: "三大疾病と診断された場合、または障害・介護状態になった場合に、給付金が支払われます",
-    feat: ["三大疾病給付金：最大 ¥1,000,000", "障害・介護：月額 最大 ¥50,000", "保険期間：1年（自動更新）"],
-    tooltip: { sections: [
-      { head: "三大疾病とは", body: "以下の病気を指します。\n・がん（悪性新生物）\n・急性心筋梗塞\n・脳卒中\n※がん（悪性新生物）について、前がん状態の病変、境界悪性、上皮内がんは、保障対象とはなりません。したがって子宮筋腫のような良性新生物、大腸の粘膜内がんなどの上皮内がんは、保障対象とはなりません。" },
-      { head: "障害・介護状態とは", body: "以下の状態を指します。\n・障害等級2級以上の状態\n・要介護2以上の状態" },
-    ] } },
-];
-
-// 10枚カード（プラン×死亡保障）
-export const PLAN_CARDS: (Plan & { planId: string })[] = PLANS.flatMap((p) => [
-  { ...p, id: p.id + '_d', planId: p.id, death: true,  name: p.name + '　死亡保障あり' },
-  { ...p, id: p.id + '_n', planId: p.id, death: false, name: p.name + '　死亡保障なし' },
-]);
-export function planIdFromSel(sel: string) { return sel ? sel.replace(/_[dn]$/, '') : 'cancer'; }
-export function deathFromSel(sel: string)  { return !sel || !sel.endsWith('_n'); }
+/* PLANS, PLAN_CARDS, planIdFromSel, deathFromSel → plans.tsx へ移動 */
+/* DISCLOSURE_INTRO 等の告知定数           → disclosure.tsx へ移動 */
+export * from './disclosure';
+export * from './plans';
 
 /* 告知項目（ノックアウト告知）— 区分はラベル（太字・改行）＋本文のリスト形式。別表は内側の表組みのまま */
 export function KoTable({ rows }: { rows: any[] }) {
