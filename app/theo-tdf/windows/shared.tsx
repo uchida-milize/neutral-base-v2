@@ -3,9 +3,7 @@
 import * as React from "react";
 
 import {
-  ScreenOverview,
   ScreenCombined,
-  ScreenStep2,
   ScreenPin,
   ScreenForm,
   ScreenStep4,
@@ -125,7 +123,7 @@ export function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
 
 export function makeGroups(noop: () => void): ScreenGroupDef[] {
   return [
-    /* ---- 01 商品概要 ---- */
+    /* ---- 01 商品概要（プラン選択を統合、パターンA/B廃止） ---- */
     {
       key: "overview",
       title: "商品概要",
@@ -133,119 +131,85 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
       screens: [
         {
           key: "overview",
-          label: "デフォルト（パターンA）",
-          viewUrl: "/theo-tdf-view?s=0",
-          el: <ScreenOverview go={noop} />,
-        },
-        {
-          key: "overview-heigai",
-          label: "弊害防止措置等の対応について（モーダル全文表示）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=0",
-          el: <ScreenOverview go={noop} initialHeigaiOpen />,
-        },
-        {
-          key: "combined",
-          label: "パターンB（商品概要＋プラン選択統合）",
+          label: "通常の画面",
           viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
             <ScreenCombined
-              go={noop} sel="a" setSel={noop}
+              go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
             />
           ),
         },
-      ],
-    },
-
-    /* ---- 02 プラン選択 ---- */
-    {
-      key: "step2",
-      title: "プラン選択",
-      badge: "STEP 2",
-      screens: [
         {
-          key: "st-notice",
-          label: "重要事項ボトムシート（全文表示）",
+          key: "overview-heigai",
+          label: "同意事項モーダル（全文表示）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=1",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
-              initialNoticeOpen
+              initialHeigaiOpen
             />
           ),
         },
         {
-          key: "st-step2-verified",
-          label: "メール認証済み・申込フォームへ進む",
-          viewUrl: "/theo-tdf-view?s=1",
-          el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialShowSend initialAgree emailVerified
-            />
-          ),
-        },
-        {
-          key: "st-step2-tooltip",
+          key: "overview-tooltip",
           label: "プランツールチップ1つ展開（がん保障型）",
-          viewUrl: "/theo-tdf-view?s=1",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialTipIdx={0}
             />
           ),
         },
         {
-          key: "st-step2-simfirst",
+          key: "overview-simfirst",
           label: "積立金額・保障期間をプランより先に",
-          viewUrl: "/theo-tdf-view?s=1&simFirst=1",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1&simFirst=1",
           el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               simFirst
             />
           ),
         },
         {
-          key: "st-step2-err-amount",
-          label: "シミュレーション上限エラー（保障金額）",
-          viewUrl: "/theo-tdf-view?s=1",
+          key: "overview-accordion",
+          label: "アコーディオン表示（がんプラン＋死亡保障 展開）",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1&planCardStyle=accordion&planOpenId=cancer_d",
           el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              planCardStyle="accordion" initialPlanOpenId="cancer_d"
+            />
+          ),
+        },
+        {
+          key: "overview-err-amount",
+          label: "シミュレーション上限エラー（保障金額）",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
+          el: (
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
               m={150000} setM={noop} y={25} setY={noop}
               initialSimOpen
             />
           ),
         },
         {
-          key: "st-step2-err-maturity",
+          key: "overview-err-maturity",
           label: "シミュレーション上限エラー（保障満了）",
-          viewUrl: "/theo-tdf-view?s=1",
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialBirth="1944-01-01" initialSimOpen
-            />
-          ),
-        },
-        {
-          key: "st-step2-accordion",
-          label: "アコーディオン表示（がんプラン＋死亡保障 展開）",
-          viewUrl: "/theo-tdf-view?s=1&planCardStyle=accordion&planOpenId=cancer_d",
-          el: (
-            <ScreenStep2
-              go={noop} sel="a" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              planCardStyle="accordion" initialPlanOpenId="cancer_d"
             />
           ),
         },
@@ -286,7 +250,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
-              go={noop} sel="a"
+              go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={false}
             />
@@ -298,7 +262,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
-              go={noop} sel="a"
+              go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               initialSame={false} initialDisclosureOpen={false}
             />
@@ -310,9 +274,21 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3",
           el: (
             <ScreenForm
-              go={noop} sel="a"
+              go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               initialEditOpen initialSheetRes initialDisclosureOpen={false}
+            />
+          ),
+        },
+        {
+          key: "form-err-inline",
+          label: "エラー表示①：各入力の下に赤字（errMode=inline）",
+          viewUrl: "/theo-tdf-view?s=3&errMode=inline",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_d"
+              m={10000} setM={noop} y={15} setY={noop}
+              errMode="inline" initialDisclosureOpen={false}
             />
           ),
         },
@@ -322,7 +298,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&errMode=top",
           el: (
             <ScreenForm
-              go={noop} sel="a"
+              go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               errMode="top" initialDisclosureOpen={false}
             />
@@ -330,11 +306,11 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
         },
         {
           key: "form-err-float-1",
-          label: "エラー表示③-a：フローティング「1/4 次の項目へ」（initialErrStep=0）",
+          label: "エラー表示③：下部フローティング「1/4 次の項目へ」（initialErrStep=0）",
           viewUrl: "/theo-tdf-view?s=3&errMode=float&errStep=0",
           el: (
             <ScreenForm
-              go={noop} sel="a"
+              go={noop} sel="cancer_d"
               m={10000} setM={noop} y={15} setY={noop}
               errMode="float" initialDisclosureOpen={false} initialErrStep={0}
             />
@@ -357,7 +333,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_d",
           el: (
             <ScreenForm
-              go={noop} sel="a" deathOpt={true}
+              go={noop} sel="care_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="care_d"
             />
@@ -370,7 +346,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_n",
           el: (
             <ScreenForm
-              go={noop} sel="a" deathOpt={false}
+              go={noop} sel="care_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="care_n"
             />
@@ -383,7 +359,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_d",
           el: (
             <ScreenForm
-              go={noop} sel="a" deathOpt={true}
+              go={noop} sel="cancer_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="cancer_d"
             />
@@ -396,7 +372,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_n",
           el: (
             <ScreenForm
-              go={noop} sel="a" deathOpt={false}
+              go={noop} sel="cancer_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="cancer_n"
             />
@@ -409,7 +385,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_d",
           el: (
             <ScreenForm
-              go={noop} sel="c" deathOpt={true}
+              go={noop} sel="cancer_care_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="cc_d"
             />
@@ -422,7 +398,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_n",
           el: (
             <ScreenForm
-              go={noop} sel="c" deathOpt={false}
+              go={noop} sel="cancer_care_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="cc_n"
             />
@@ -435,7 +411,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_d",
           el: (
             <ScreenForm
-              go={noop} sel="b" deathOpt={true}
+              go={noop} sel="three_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="three_d"
             />
@@ -448,7 +424,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_n",
           el: (
             <ScreenForm
-              go={noop} sel="b" deathOpt={false}
+              go={noop} sel="three_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="three_n"
             />
@@ -461,7 +437,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_d",
           el: (
             <ScreenForm
-              go={noop} sel="c" deathOpt={true}
+              go={noop} sel="three_care_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="tc_d"
             />
@@ -474,7 +450,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_n",
           el: (
             <ScreenForm
-              go={noop} sel="c" deathOpt={false}
+              go={noop} sel="three_care_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="tc_n"
             />
@@ -493,13 +469,13 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           key: "step4",
           label: "デフォルト",
           viewUrl: "/theo-tdf-view?s=4",
-          el: <ScreenStep4 go={noop} sel="a" m={10000} y={15} />,
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} />,
         },
         {
           key: "st-acct",
           label: "お支払い詳細展開",
           viewUrl: "/theo-tdf-view?s=4",
-          el: <ScreenStep4 go={noop} sel="a" m={10000} y={15} initialAcctOpen />,
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialAcctOpen />,
         },
         {
           key: "st-agree",
@@ -507,7 +483,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=4",
           el: (
             <ScreenStep4
-              go={noop} sel="a" m={10000} y={15}
+              go={noop} sel="cancer_d" m={10000} y={15}
               initialOpenIdx={0}
               initialChecks={[true, true, true, true, true]}
             />
@@ -519,7 +495,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=4&editKiyaku=1&editJuushin=1",
           el: (
             <ScreenStep4
-              go={noop} sel="a" m={10000} y={15}
+              go={noop} sel="cancer_d" m={10000} y={15}
               initialEditKiyaku initialEditJuushin
             />
           ),

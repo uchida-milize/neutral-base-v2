@@ -3009,12 +3009,12 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialBirth, initialSimOpen }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
-  const [heigaiOpen, setHeigaiOpen] = useState(false);
+  const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
   const [noticeOpen, setNoticeOpen] = useState(false);
-  const [birth, setBirth] = useState("");
+  const [birth, setBirth] = useState(initialBirth ?? "");
   const [gender, setGender] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const sendSecRef = useRef<any>(null);
@@ -3170,7 +3170,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           {/* 保険料シミュレーション */}
           <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-10">
-              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
+              <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
           </div>
           </>)}
