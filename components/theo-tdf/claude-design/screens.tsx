@@ -3026,8 +3026,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
       if (heroBgRef.current) heroBgRef.current.style.transform = "translateY(" + (scrollY * 0.4) + "px)";
       const h = heroRef.current;
       setSolid(scrollY >= (h ? h.offsetHeight - 16 : 220));
-      const sec = sendSecRef.current;
-      if (sec) { const secTop = sec.getBoundingClientRect().top; const contBottom = el.getBoundingClientRect().bottom; setShowSend(secTop < contBottom - 64); }
+      setShowSend(el.scrollHeight - (el.scrollTop + el.clientHeight) <= 200);
     }, { passive: true });
   };
   const birthGenderFields = (
@@ -3255,7 +3254,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             ) : (
               <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
             )}
-            {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+            {!agree && showSend && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
             {agree && (
               <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
                 <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
