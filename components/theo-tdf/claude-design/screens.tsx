@@ -280,7 +280,7 @@ export function ReqBadge() {
 export function ErrText({ children }: { children: React.ReactNode }) {
   return (
     <span className="flex items-start gap-1 font-medium leading-snug" style={{ fontSize: '12px', color: 'var(--color-attention)' }}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 mt-px shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 mt-px shrink-0"><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
       <span>{children}</span>
     </span>
   );
@@ -1583,7 +1583,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
     <>
       <AppBar title="保険" onBack={() => go(backScr)} />
       <div className="flex-1 overflow-y-auto no-sb">
-        <Steps n={3} go={go} />
+        <Steps n={2} go={go} />
         <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
@@ -1781,7 +1781,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
   return (
     <>
       <div className="flex items-center justify-between rounded-xl bg-primary-10 px-4 py-3">
-        <span className="text-caption font-medium text-primary-700">最大給付金額　0年目</span>
+        <span className="text-caption font-medium text-primary-700">最大給付金額</span>
         <span className="text-primary-600">
           <span className="font-en text-h2 font-semibold tabular-nums">{man(maxBenefit)}</span>
           <span className="text-h6"> 万円</span>
@@ -1967,7 +1967,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         {errMode === 'top' && visibleErrs.length > 0 && (
           <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: 'var(--color-attention)', background: '#FFF5F5' }}>
             <div className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-6 h-6 shrink-0" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0" style={{ color: 'var(--color-attention)' }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
               <p className="text-h6 font-bold" style={{ color: 'var(--color-attention)' }}>{visibleErrs.length}件の未入力項目があります</p>
             </div>
             <ul className="mt-3 space-y-2">
@@ -2124,7 +2124,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             className="w-full flex items-center justify-between gap-2 rounded-xl px-4 py-3 fade-in active:scale-[.99] transition-transform"
             style={{ background: 'var(--color-attention)', color: '#fff' }}>
             <span className="flex items-center gap-3 text-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-6 h-6 shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0"><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
               <span className="flex flex-col leading-tight font-bold">
                 <span className="text-caption">未入力の必須項目が</span>
                 <span className="text-h6"><span className="text-h4 tabular-nums">{visibleErrs.length}</span>件あります</span>
@@ -2185,7 +2185,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                 <div className="mt-2 pt-4 border-t border-warm-200 space-y-2">
                   {editErrors.map((e, i) => (
                     <p key={i} className="flex items-start gap-2 text-caption font-bold leading-relaxed" style={{ color: 'var(--color-attention)' }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-attention)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" strokeLinecap="round"/></svg>
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-attention)' }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
                       <span>{e}</span>
                     </p>
                   ))}
@@ -3146,12 +3146,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>{/* /px-6 pt-4 pb-3 */}
         {/* 橋渡しバナー */}
         <div style={{ height: '60px' }} />
-        <div className="px-6 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
+        <div className="px-4 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
           <div className="flex flex-col items-center gap-3">
             <h2 className="text-h3 font-bold text-center" style={{ color: '#1586b2' }}>プランシミュレーション</h2>
           </div>
         </div>
-        <div className="px-6 pt-6 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-6 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* 生年月日・性別 */}
           {!simFirst && birthGenderFields}
           {!simFirst && (<>
