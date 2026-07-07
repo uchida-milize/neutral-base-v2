@@ -32,6 +32,7 @@ const config: StorybookConfig = {
     viteConfig.resolve.alias = {
       ...(viteConfig.resolve.alias as Record<string, string> ?? {}),
       "@": path.resolve(__dirname, ".."),
+      "next/font/google": path.resolve(__dirname, "mocks/next-font-google.ts"),
     };
     return viteConfig;
   },
