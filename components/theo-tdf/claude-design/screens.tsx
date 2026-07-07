@@ -3478,10 +3478,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             {recommendPattern === 'A' && (
               <div className="space-y-6 mt-6">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="flex flex-col items-center text-center gap-2">
+                  <div key={n} className="flex flex-col items-center gap-2">
                     <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
-                    <p className="text-[16px] font-bold text-neutral-800 leading-snug" style={{ width: '260px' }}>ココにお勧めのポイントが入りますタイトルです</p>
-                    <p className="text-[14px] text-neutral-600 leading-relaxed" style={{ width: '260px' }}>あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                    <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left" style={{ width: '260px' }}>ココにお勧めのポイントが入りますタイトルです</p>
+                    <p className="text-[14px] text-neutral-600 leading-relaxed text-left" style={{ width: '260px' }}>あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                   </div>
                 ))}
               </div>
@@ -3490,17 +3490,17 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               <div className="mt-6">
                 <div className="grid grid-cols-2 gap-4">
                   {[1, 2].map((n) => (
-                    <div key={n} className="flex flex-col items-center text-center gap-2">
+                    <div key={n} className="flex flex-col items-center gap-2">
                       <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
-                      <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
-                      <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                      <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left">ココにお勧めのポイントが入りますタイトルです</p>
+                      <p className="text-[14px] text-neutral-600 leading-relaxed text-left">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-col items-center text-center gap-2 mt-6 mx-auto" style={{ maxWidth: '160px' }}>
+                <div className="flex flex-col items-center gap-2 mt-6 mx-auto" style={{ maxWidth: '160px' }}>
                   <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">3</span>
-                  <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
-                  <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                  <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left">ココにお勧めのポイントが入りますタイトルです</p>
+                  <p className="text-[14px] text-neutral-600 leading-relaxed text-left">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                 </div>
               </div>
             )}
