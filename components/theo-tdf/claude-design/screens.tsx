@@ -3468,8 +3468,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           ) : (
           <div>
-            <h3 className="text-h5 font-bold leading-snug" style={{ color: '#1aa5dc' }}>
-              {recommendPattern === 'B' ? <>3つの<br/>オススメポイント</> : '3つのオススメポイント'}
+            <h3 className="text-h4 font-bold leading-snug text-center" style={{ color: '#1aa5dc' }}>
+              {recommendPattern === 'B' ? (
+                <><span className="text-h2">3</span>つの<br/>オススメポイント</>
+              ) : (
+                <><span className="text-h2">3</span>つのオススメポイント</>
+              )}
             </h3>
             {recommendPattern === 'A' && (
               <div className="space-y-6 mt-6">
