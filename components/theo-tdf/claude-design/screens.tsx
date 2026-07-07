@@ -1892,9 +1892,6 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 契約者情報グループ */}
         <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg" className="-mt-6">
-          <div className="px-1 -mt-5 flex items-center gap-2 text-caption text-primary-700">
-            <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
-          </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-6">
             <Field label="姓" placeholder="山田" required />
             <Field label="名" placeholder="太郎" required />
@@ -2977,23 +2974,23 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
           {/* バッジ：中央配置 */}
-          <div className="flex justify-center" style={{ marginTop: '48px' }}>
+          <div className="flex justify-center" style={{ marginTop: '16px' }}>
             <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
           </div>
           {/* ロゴ：中央配置 */}
-          <div className="flex items-center justify-center" style={{ marginTop: '16px' }}>
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[33.6px]" />
+          <div className="flex items-center justify-center" style={{ marginTop: '12px' }}>
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[40px]" />
           </div>
-          <div style={{ paddingTop: '48px', paddingBottom: '16px' }}>
+          <div style={{ paddingTop: '20px', paddingBottom: '16px' }}>
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
               { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
               { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
-              <div key={k} className="flex flex-col items-center text-center gap-1">
-                <img src={f.src} alt="" style={{ width: '40px', height: '40px' }} />
-                <p className="text-[16px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
+              <div key={k} className="flex flex-col items-center text-center gap-2">
+                <img src={f.src} alt="" style={{ width: '56px', height: '56px' }} />
+                <p className="text-[24px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
               </div>
             ))}
           </div>
