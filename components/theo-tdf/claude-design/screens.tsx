@@ -3452,7 +3452,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="flex items-center justify-center" style={{ marginTop: '12px' }}>
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[40px]" />
           </div>
-          <div style={{ paddingTop: '20px', paddingBottom: '16px' }}>
+          <div style={{ paddingTop: (recommendPattern && recommendPattern !== 'none') ? '48px' : '20px', paddingBottom: '16px' }}>
           {(!recommendPattern || recommendPattern === 'none') ? (
           <div className="grid grid-cols-3 gap-2">
             {[
