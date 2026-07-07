@@ -217,6 +217,7 @@ const TWEAK_DEFAULTS = {
   kokuchiPattern: "auto" as string,
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
+  pinPreview: "none" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -253,7 +254,14 @@ export function TheoTdfClaudeDesignShell() {
       <ScreenOverview key="overview" go={go} />
     ),
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />,
-    <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
+    <ScreenPin
+      key={`pin-${tw.pinPreview}`}
+      go={go}
+      onVerified={() => setEmailVerified(true)}
+      backScr={patternB ? 0 : 1}
+      initialPin={tw.pinPreview === "none" ? undefined : "666666"}
+      pinError={tw.pinPreview === "error"}
+    />,
     <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} desktop={isPC} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
     <ScreenCardInput key="card" go={go} />,
@@ -327,6 +335,17 @@ export function TheoTdfClaudeDesignShell() {
               { value: "A",    label: "① 縦積み・中央揃え" },
               { value: "B",    label: "② 2+1 ピラミッド" },
               { value: "C",    label: "③ 縦積み・アイコン左" },
+            ]}
+          />
+          <TweakSection label="PINコード認証" />
+          <TweakSelect
+            label="PINコード表示"
+            value={tw.pinPreview}
+            onChange={(v) => setTweak("pinPreview", v)}
+            options={[
+              { value: "none",  label: "デフォルト（未入力）" },
+              { value: "filled", label: "「666666」入力済み" },
+              { value: "error", label: "PINコード相違エラー" },
             ]}
           />
           <TweakSection label="積立金額・保障期間を選ぶ" />

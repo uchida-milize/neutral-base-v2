@@ -1475,7 +1475,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
     </>
   );
 }
-export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string }) {
+export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string; pinError?: boolean }) {
   const [pin, setPin] = useState(initialPin ?? "");
   const [show, setShow] = useState(false);
   return (
@@ -1499,7 +1499,8 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
               inputMode="numeric"
               placeholder=""
               autoComplete="one-time-code"
-              className="fld w-full h-14 rounded-xl border border-warm-300 bg-white text-center font-en font-semibold text-h3 tracking-[0.2em] text-neutral-800 pr-12"
+              className={`fld w-full h-14 rounded-xl border text-center font-en font-semibold text-h3 tracking-[0.2em] text-neutral-800 pr-12 ${pinError ? "" : "border-warm-300 bg-white"}`}
+              style={pinError ? errInputStyle : undefined}
             />
             <button
               type="button"
@@ -1511,6 +1512,11 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin }: { go: Go;
               }
             </button>
           </div>
+          {pinError && (
+            <div className="mt-2 w-full max-w-[280px]">
+              <ErrText>PINコードが正しくありません</ErrText>
+            </div>
+          )}
 
           <button className="mt-4 text-caption underline underline-offset-2" style={{ color: 'var(--color-link)' }}>PINコードを再送する</button>
         </div>

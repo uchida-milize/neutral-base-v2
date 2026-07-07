@@ -276,6 +276,12 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           viewUrl: "/theo-tdf-view?s=2",
           el: <ScreenPin go={noop} initialPin="666666" />,
         },
+        {
+          key: "pin-error",
+          label: "「666666」入力済・PINコード相違エラー",
+          viewUrl: "/theo-tdf-view?s=2",
+          el: <ScreenPin go={noop} initialPin="666666" pinError />,
+        },
       ],
     },
 
