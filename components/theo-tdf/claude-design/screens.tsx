@@ -286,7 +286,7 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
 export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 py-3 space-y-2 transition-colors duration-300";
+  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300";
   return (
     <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
       style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
@@ -2008,7 +2008,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </button>
         )}
         {!(errMode === 'float' && visibleErrs.length > 0) && (
-        <div className={`rounded-xl border px-4 py-2 transition-colors ${atBottom ? "border-primary-100 bg-white/70" : "border-warm-200 bg-white"}`}>
+        <div className={`rounded-xl py-2 -mx-2 transition-colors ${atBottom ? "bg-white/70" : "bg-white"}`}>
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
             <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium" style={{ color: 'var(--color-link)' }}>
