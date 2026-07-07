@@ -2989,7 +2989,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-2">
-                <img src={f.src} alt="" style={{ width: '56px', height: '56px' }} />
+                <img src={f.src} alt="" style={{ width: '40px', height: '40px' }} />
                 <p className="text-[24px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
               </div>
             ))}
