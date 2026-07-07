@@ -3468,11 +3468,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           ) : (
           <div>
-            <h3 className="text-h4 font-bold leading-snug text-center" style={{ color: '#1aa5dc' }}>
+            <h3 className={`font-bold leading-snug text-center ${recommendPattern === 'B' ? 'text-h3' : 'text-h4'}`} style={{ color: '#1aa5dc' }}>
               {recommendPattern === 'B' ? (
-                <><span className="text-h2">3</span>つの<br/>オススメポイント</>
+                <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポイント</>
               ) : (
-                <><span className="text-h2">3</span>つのオススメポイント</>
+                <><span className={`text-h2 ${inter.className}`}>3</span>つのオススメポイント</>
               )}
             </h3>
             {recommendPattern === 'A' && (
@@ -3505,9 +3505,9 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               </div>
             )}
             {recommendPattern === 'C' && (
-              <div className="space-y-4 mt-6">
+              <div className="space-y-4 mt-6 mx-auto" style={{ width: '310px' }}>
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="flex items-start gap-3">
+                  <div key={n} className="flex items-start gap-3" style={{ width: '310px' }}>
                     <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
                     <div>
                       <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
