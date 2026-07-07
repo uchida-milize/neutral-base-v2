@@ -2974,7 +2974,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
           {/* バッジ：中央配置 */}
-          <div className="flex justify-center" style={{ marginTop: '16px' }}>
+          <div className="flex justify-center" style={{ marginTop: '64px' }}>
             <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
           </div>
           {/* ロゴ：中央配置 */}
