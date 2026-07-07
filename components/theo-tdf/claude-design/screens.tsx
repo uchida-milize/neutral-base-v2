@@ -3476,8 +3476,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 {[1, 2, 3].map((n) => (
                   <div key={n} className="flex flex-col items-center text-center gap-2">
                     <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
-                    <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
-                    <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                    <p className="text-[16px] font-bold text-neutral-800 leading-snug" style={{ width: '260px' }}>ココにお勧めのポイントが入りますタイトルです</p>
+                    <p className="text-[14px] text-neutral-600 leading-relaxed" style={{ width: '260px' }}>あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                   </div>
                 ))}
               </div>
