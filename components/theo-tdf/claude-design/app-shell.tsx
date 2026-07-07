@@ -222,6 +222,11 @@ const TWEAK_DEFAULTS = {
 
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  // PC版表示は顧客にも見えるTweaksからは隠し、確認したいときだけ ?device=pc で切り替える
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("device") === "pc") setTweak("device", "pc");
+  }, [setTweak]);
   const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("cancer_d");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
@@ -315,16 +320,7 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
-          <TweakSection label="デバイス" />
-          <TweakSelect
-            label="表示デバイス"
-            value={tw.device}
-            onChange={(v) => setTweak("device", v)}
-            options={[
-              { value: "mobile", label: "モバイル" },
-              { value: "pc",     label: "PC" },
-            ]}
-          />
+          {/* デバイス（PC版）切り替えは顧客にも見えるため非表示。確認時は URL に ?device=pc を付与 */}
           <TweakSection label="商品概要" />
           <TweakSelect
             label="オススメポイント表示（スマホ版）"

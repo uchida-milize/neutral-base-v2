@@ -1529,7 +1529,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError }:
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
           <div style={{ width: '100%', maxWidth: '260px' }}>
-            <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1}>認証する</Btn>
+            <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
           </div>
         </div>
         {pin.length < 1 && <p className="text-center text-caption text-neutral-400">PINコードを入力してください</p>}
