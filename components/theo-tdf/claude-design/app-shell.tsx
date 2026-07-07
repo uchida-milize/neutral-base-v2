@@ -196,7 +196,18 @@ function Phone({
   );
 }
 
+// PC（デスクトップ）版コンテナ — ベゼルなし、幅1064px（コンテンツ1000px相当）。
+// 固定高さ・内部スクロールは持たず、ページ自体が伸びる。
+function DesktopFrame({ children, narrow }: { children: React.ReactNode; narrow?: boolean }) {
+  return (
+    <div className={`relative w-full ${narrow ? "max-w-[480px]" : "max-w-[1064px]"} mx-auto rounded-2xl bg-white shadow-xl px-8 py-10`}>
+      {children}
+    </div>
+  );
+}
+
 const TWEAK_DEFAULTS = {
+  device: "mobile" as "mobile" | "pc",
   // patternB は常に true（商品概要+プラン選択統合）— UI非表示
   patternB: true,
   simFirst: false,
@@ -205,6 +216,7 @@ const TWEAK_DEFAULTS = {
   benSameAddr: true,
   kokuchiPattern: "auto" as string,
   doneVariant: "done" as string,
+  recommendPattern: "none" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -232,16 +244,17 @@ export function TheoTdfClaudeDesignShell() {
   const external = !!(FLOW[curStep] && FLOW[curStep].ext);
   const curStepNo = STEP_NUMS[curStep];
   const overviewMode = (scr === 0 || scr === 7) || terminated;
+  const isPC = tw.device === "pc";
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
     <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />,
     <ScreenPin key="pin" go={go} onVerified={() => setEmailVerified(true)} backScr={patternB ? 0 : 1} />,
-    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} />,
+    <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} desktop={isPC} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
@@ -253,11 +266,19 @@ export function TheoTdfClaudeDesignShell() {
       <div className="mx-auto max-w-[1400px] px-6 flex items-start gap-4">
         <Rail scr={scr} go={go} />
         <main className="flex-1 py-10 flex flex-col items-center gap-4">
-          <Phone external={external} overviewMode={overviewMode} screenKey={terminated ? -1 : scr}>
-            {terminated
-              ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
-              : screens[scr]}
-          </Phone>
+          {isPC ? (
+            <DesktopFrame narrow={scr === 2}>
+              {terminated
+                ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
+                : screens[scr]}
+            </DesktopFrame>
+          ) : (
+            <Phone external={external} overviewMode={overviewMode} screenKey={terminated ? -1 : scr}>
+              {terminated
+                ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
+                : screens[scr]}
+            </Phone>
+          )}
           {/* prev / next outside the phone */}
           <div className="flex items-center gap-2">
             <button
@@ -286,6 +307,28 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
+          <TweakSection label="デバイス" />
+          <TweakSelect
+            label="表示デバイス"
+            value={tw.device}
+            onChange={(v) => setTweak("device", v)}
+            options={[
+              { value: "mobile", label: "モバイル" },
+              { value: "pc",     label: "PC" },
+            ]}
+          />
+          <TweakSection label="商品概要" />
+          <TweakSelect
+            label="オススメポイント表示（スマホ版）"
+            value={tw.recommendPattern}
+            onChange={(v) => setTweak("recommendPattern", v)}
+            options={[
+              { value: "none", label: "現行（3アイコン）" },
+              { value: "A",    label: "① 縦積み・中央揃え" },
+              { value: "B",    label: "② 2+1 ピラミッド" },
+              { value: "C",    label: "③ 縦積み・アイコン左" },
+            ]}
+          />
           <TweakSection label="積立金額・保障期間を選ぶ" />
           <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
           <TweakSection label="プラン選択" />

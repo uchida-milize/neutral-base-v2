@@ -298,7 +298,7 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
 // 必須マーク（赤字アスタリスク）
 export function ReqBadge() {
   return (
-    <span className="ml-0.5 inline-flex items-center align-middle font-bold leading-none" style={{ color: 'var(--color-attention)' }}>*</span>
+    <span className="ml-0.5 inline-flex items-center align-middle font-bold leading-none text-[14px]" style={{ color: 'var(--color-attention)' }}>*</span>
   );
 }
 
@@ -550,7 +550,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
   );
 }
 
-export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void }) {
+export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel, desktop }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void; desktop?: boolean }) {
   const [askExit, setAskExit] = React.useState(false);
   if (!plan) return null;
   const koRows = koTableFor(plan.id, death);
@@ -562,80 +562,106 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
     );
     qCards.push(<DisclosureQCard key={i} idx={i + 1} row={r} />);
   });
+
+  const header = (
+    <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
+      <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800 min-w-0">
+        <span className="grid place-items-center w-6 h-6 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
+        </span>
+        <span>{plan.name}　死亡保障{death ? 'あり' : 'なし'}の告知項目</span>
+      </h3>
+      <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  );
+  const body = (
+    <div className="space-y-3">
+      <AgreeBlocks blocks={DISCLOSURE_INTRO} />
+      <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
+        <p className="text-caption leading-relaxed" style={{ color: '#1AA5DC' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
+      </div>
+      <div className="space-y-3">
+        <div className="pt-8">
+          <p className="text-h5 font-bold text-neutral-800 leading-snug">告知重要事項</p>
+          <p className="text-caption text-neutral-600 leading-relaxed mt-1">各項目をご確認のうえ、以下の内容にご回答ください。</p>
+        </div>
+        {qCards}
+      </div>
+    </div>
+  );
+  const footer = (
+    <div className="px-6 py-3 border-t border-warm-200">
+      {confirm ? (
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-6">
+            <button onClick={onCancel ? () => setAskExit(true) : onClose}
+              className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold bg-warm-100 text-neutral-600 transition-colors">
+              <span className="flex items-center gap-2 text-h6 font-bold text-neutral-700">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                はい
+              </span>
+              <span className="text-[10px] font-medium leading-tight text-neutral-400">１つでも存在する</span>
+            </button>
+            <button onClick={onConfirm || onClose}
+              style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)" }}
+              className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold text-white transition-colors">
+              <span className="flex items-center gap-2 text-h6 font-bold">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M5 12l5 5L19 7"/></svg>
+                いいえ
+              </span>
+              <span className="text-[10px] font-medium leading-tight text-white/80">すべていいえ</span>
+            </button>
+          </div>
+          <p className="text-center text-[11px] text-neutral-400">すべての項目が「いいえ」の場合に進めます</p>
+        </div>
+      ) : (
+        <Btn kind="button" onClick={onClose}>閉じる</Btn>
+      )}
+    </div>
+  );
+  const exitAlert = askExit && (
+    <div className="fixed inset-0 z-[60] grid place-items-center px-8">
+      <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
+      <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
+        <div className="px-6 pt-6 pb-4 text-center">
+          <p className="text-h6 font-bold text-neutral-800 leading-relaxed">お申し込みが出来ません。<br/>終了してよいですか？</p>
+        </div>
+        <div className="grid grid-cols-2 border-t border-warm-200">
+          <button onClick={() => setAskExit(false)} className="py-3 text-h6 font-medium text-neutral-500 border-r border-warm-200">キャンセル</button>
+          <button onClick={() => { setAskExit(false); onCancel && onCancel(); }} className="py-3 text-h6 font-bold" style={{ color: 'var(--color-link)' }}>OK</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (desktop) {
+    // PC版：画面中央にフロート表示。高さはフリーで、モーダル内部は個別スクロールを持たず
+    // ページ（オーバーレイ全体）が上下スクロールする。
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
+        <div className="relative mx-auto my-16 w-full max-w-[720px] bg-white rounded-2xl shadow-xl">
+          {header}
+          <div className="px-4 py-4">{body}</div>
+          {footer}
+        </div>
+        {exitAlert}
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0 z-50">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
-          <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800 min-w-0">
-            <span className="grid place-items-center w-6 h-6 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
-            </span>
-            <span>{plan.name}　死亡保障{death ? 'あり' : 'なし'}の告知項目</span>
-          </h3>
-          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto no-sb px-4 py-4 space-y-3">
-          <AgreeBlocks blocks={DISCLOSURE_INTRO} />
-          <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
-            <p className="text-caption leading-relaxed" style={{ color: '#1AA5DC' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
-          </div>
-          <div className="space-y-3">
-            <div className="pt-8">
-              <p className="text-h5 font-bold text-neutral-800 leading-snug">告知重要事項</p>
-              <p className="text-caption text-neutral-600 leading-relaxed mt-1">各項目をご確認のうえ、以下の内容にご回答ください。</p>
-            </div>
-            {qCards}
-          </div>
-        </div>
-        <div className="px-6 py-3 border-t border-warm-200">
-          {confirm ? (
-            <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-x-3 gap-y-6">
-                <button onClick={onCancel ? () => setAskExit(true) : onClose}
-                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold bg-warm-100 text-neutral-600 transition-colors">
-                  <span className="flex items-center gap-2 text-h6 font-bold text-neutral-700">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    はい
-                  </span>
-                  <span className="text-[10px] font-medium leading-tight text-neutral-400">１つでも存在する</span>
-                </button>
-                <button onClick={onConfirm || onClose}
-                  style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)" }}
-                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold text-white transition-colors">
-                  <span className="flex items-center gap-2 text-h6 font-bold">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M5 12l5 5L19 7"/></svg>
-                    いいえ
-                  </span>
-                  <span className="text-[10px] font-medium leading-tight text-white/80">すべていいえ</span>
-                </button>
-              </div>
-              <p className="text-center text-[11px] text-neutral-400">すべての項目が「いいえ」の場合に進めます</p>
-            </div>
-          ) : (
-            <Btn kind="button" onClick={onClose}>閉じる</Btn>
-          )}
-        </div>
+        {header}
+        <div className="flex-1 overflow-y-auto no-sb px-4 py-4">{body}</div>
+        {footer}
       </div>
-
-      {/* 終了確認アラート */}
-      {askExit && (
-        <div className="absolute inset-0 z-[60] grid place-items-center px-8">
-          <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
-          <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
-            <div className="px-6 pt-6 pb-4 text-center">
-              <p className="text-h6 font-bold text-neutral-800 leading-relaxed">お申し込みが出来ません。<br/>終了してよいですか？</p>
-            </div>
-            <div className="grid grid-cols-2 border-t border-warm-200">
-              <button onClick={() => setAskExit(false)} className="py-3 text-h6 font-medium text-neutral-500 border-r border-warm-200">キャンセル</button>
-              <button onClick={() => { setAskExit(false); onCancel && onCancel(); }} className="py-3 text-h6 font-bold" style={{ color: 'var(--color-link)' }}>OK</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {exitAlert}
     </div>
   );
 }
@@ -1758,7 +1784,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0, initialKokuchiAgreed }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number; initialKokuchiAgreed?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0, initialKokuchiAgreed, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number; initialKokuchiAgreed?: boolean; desktop?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
   const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
@@ -1834,6 +1860,247 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   const errOf = (id: string) => (errState[id] ? errMap[id] : undefined);
   // 現在のページに表示中で、かつ未入力のエラー項目
   const visibleErrs = showErr ? ERR_DEFS.filter((e) => errState[e.id] && (!formSplit || e.page === formPage)) : [];
+
+  if (desktop) {
+    return (
+      <>
+        <AppBar title="お申込み" onBack={onBack} />
+        <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-8 pt-6 pb-24 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <Steps n={3} go={go} />
+          <h2 className="text-h5 font-bold text-center" style={{ color: "#1AA5DC", marginTop: "16px", marginBottom: "8px" }}>加入手続き</h2>
+
+          {errMode === "top" && visibleErrs.length > 0 && (
+            <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: "var(--color-attention)", background: "#FFF5F5" }}>
+              <div className="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0" style={{ color: "var(--color-attention)" }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z" /></svg>
+                <p className="text-h6 font-bold" style={{ color: "var(--color-attention)" }}>{visibleErrs.length}件の未入力項目があります</p>
+              </div>
+              <ul className="mt-3 space-y-2">
+                {visibleErrs.map((e) => (
+                  <li key={e.id}>
+                    <button onClick={() => scrollToField(e.id)}
+                      className="flex items-center gap-2 text-caption font-medium text-left underline underline-offset-2 decoration-from-font"
+                      style={{ color: "var(--color-attention)" }}>
+                      <Ic.chevR className="w-4 h-4 shrink-0" />
+                      <span>{e.label}：{e.msg}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="grid grid-cols-[1fr_360px] gap-8 items-start">
+            {/* 左カラム：入力フィールド（モバイルと同じ順序） */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-caption text-primary-700">
+                <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
+              </div>
+
+              <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-6">
+                  <Field label="姓" placeholder="山田" required />
+                  <Field label="名" placeholder="太郎" required />
+                  <Field label="セイ" placeholder="ヤマダ" required />
+                  <Field label="メイ" placeholder="タロウ" required />
+                </div>
+                <LockedField label="生年月日" value="1990 / 01 / 01" />
+                <LockedField label="性別" value="男性" />
+                <Field label="郵便番号" placeholder="100-0001" required hint="郵便番号から住所を自動入力します" value={holder.zip} onChange={setH("zip")} />
+                <Select label="都道府県" required value={holder.pref} options={PREFS} hint="郵便番号で自動入力" onChange={setH("pref")} />
+                <Field label="市区町村" placeholder="千代田区" required hint="郵便番号で自動入力" value={holder.city} onChange={setH("city")} />
+                <Field label="町名" placeholder="丸の内１丁目" required value={holder.town} onChange={setH("town")} />
+                <Field label="番地など" placeholder="1丁目1番地1号" required value={holder.addr} onChange={setH("addr")} />
+                <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" value={holder.bldg} onChange={setH("bldg")} />
+                <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf("tel")} errMode={errMode} anchorRef={setFieldRef("tel")} />
+              </GroupCard>
+
+              <GroupCard title="保険金受取人" sub="保険金をお受け取りになる方" iconSrc="/assets/theo-tdf/letter-heart-square.svg">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-6">
+                  <Field label="姓" placeholder="山田" required />
+                  <Field label="名" placeholder="花子" required />
+                  <Field label="セイ" placeholder="ヤマダ" required />
+                  <Field label="メイ" placeholder="ハナコ" required />
+                </div>
+                <div ref={setFieldRef("benBirth")} className="flex flex-col gap-2">
+                  <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
+                  <button type="button" onClick={() => setBenPickerOpen(true)}
+                    style={errState.benBirth ? errInputStyle : undefined}
+                    className={`fld flex items-center justify-between gap-2 h-12 rounded-lg border px-3 text-h6 text-left ${errState.benBirth ? "border-[color:var(--color-attention)]" : "border-warm-300 bg-white"} ${benBirth ? "text-neutral-800" : "text-neutral-400"}`}>
+                    <span className="truncate">{benBirth ? fmtBirth(benBirth) : "選択してください"}</span>
+                    <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
+                  </button>
+                  {errMode === "inline" && errState.benBirth && <ErrText>{errMap.benBirth}</ErrText>}
+                </div>
+                <div ref={setFieldRef("benGender")} className="flex flex-col gap-2">
+                  <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    {["男性", "女性"].map((g) => (
+                      <button key={g} onClick={() => setBenGender(g)}
+                        style={errState.benGender ? errInputStyle : undefined}
+                        className={`h-12 rounded-lg border text-h6 transition-colors ${benGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : errState.benGender ? "border-[color:var(--color-attention)] text-neutral-600" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
+                    ))}
+                  </div>
+                  {errMode === "inline" && errState.benGender && <ErrText>{errMap.benGender}</ErrText>}
+                </div>
+                <button onClick={() => setSame((s) => !s)} className="flex items-center gap-3 w-full text-left pt-1">
+                  <span className={`grid place-items-center w-6 h-6 rounded border-2 shrink-0 ${same ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                    {same && <Ic.check className="w-3 h-3" />}
+                  </span>
+                  <span className="text-caption text-neutral-700">住所は契約者と同じ</span>
+                </button>
+                {!same && (
+                  <div className="space-y-6">
+                    <Field label="郵便番号" placeholder="100-0001" />
+                    <Select label="都道府県" value="都道府県を選択" options={PREFS} />
+                    <Field label="市区町村" placeholder="千代田区" />
+                    <Field label="町名" placeholder="丸の内１丁目" />
+                    <Field label="番地など" placeholder="1丁目1番地1号" />
+                    <Field label="建物名／部屋番号" placeholder="〇〇ビル 101号室" />
+                  </div>
+                )}
+                <Select label="続柄" required value={rel || "続柄を選択"} onChange={(e) => setRel(e.target.value === "続柄を選択" ? "" : e.target.value)} options={["続柄を選択", "配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} error={errOf("rel")} errMode={errMode} anchorRef={setFieldRef("rel")} />
+                <Field label="電話番号" placeholder="090-0000-0000" />
+              </GroupCard>
+
+              <GroupCard title="団体特定コード" icon={Ic.tag}>
+                <Field label="団体特定コード" placeholder="TDF-0000-0000" hint="団体からご案内のコードを入力してください" />
+              </GroupCard>
+            </div>
+
+            {/* 右カラム：告知事項 */}
+            <div className="space-y-6">
+              <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6 space-y-3">
+                <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
+                <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
+                <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
+                  className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+                  <span className="flex items-center gap-3 min-w-0">
+                    <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
+                    <span className="text-h6 font-bold text-neutral-800">告知事項を確認する</span>
+                  </span>
+                  <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
+                </button>
+                <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
+                  onClick={() => setKokuchiAgreed((a) => !a)}>
+                  <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                    {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
+                  </span>
+                  <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ActionBar bg={atBottom ? "#F2FBFE" : undefined}>
+          <div className="max-w-[1000px] mx-auto w-full">
+            {errMode === "float" && visibleErrs.length > 0 && (
+              <button onClick={() => jumpNext(visibleErrs)}
+                className="w-full flex items-center justify-between gap-2 rounded-xl px-4 py-3 fade-in active:scale-[.99] transition-transform"
+                style={{ background: "var(--color-attention)", color: "#fff" }}>
+                <span className="flex items-center gap-3 text-left">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0"><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z" /></svg>
+                  <span className="flex flex-col leading-tight font-bold">
+                    <span className="text-caption">入力エラーが</span>
+                    <span className="text-h6"><span className="text-h4 tabular-nums">{visibleErrs.length}</span>件あります</span>
+                  </span>
+                </span>
+                <span className="flex items-center gap-1 text-caption font-medium whitespace-nowrap rounded-full bg-white/20 px-3 py-1"><span className="font-mono tabular-nums">{errStep % visibleErrs.length + 1}/{visibleErrs.length}</span>&#8194;次の項目へ<Ic.chevR className="w-4 h-4" /></span>
+              </button>
+            )}
+            {!(errMode === "float" && visibleErrs.length > 0) && (
+              <div className={`rounded-xl py-2 -mx-2 transition-colors ${atBottom ? "bg-white/70" : "bg-white"}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
+                  <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium" style={{ color: "var(--color-link)" }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
+                    修正
+                  </button>
+                </div>
+                <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
+                  <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
+                  <span className="text-warm-300">|</span>
+                  <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
+                  <span className="text-warm-300">|</span>
+                  <span className="text-neutral-700 tabular-nums">{y}年</span>
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-center gap-3">
+              <button onClick={onBack} className="text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
+              <div style={{ width: "100%", maxWidth: "260px" }}>
+                <Btn kind="button" onClick={() => go(4)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
+              </div>
+            </div>
+          </div>
+        </ActionBar>
+
+        {editOpen && (
+          <div className="absolute inset-0 z-50">
+            <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setEditOpen(false)} />
+            <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
+              <div className="flex items-center justify-between px-6 pt-4 pb-3">
+                <h3 className="text-h5 font-bold text-neutral-800">積立内容を修正</h3>
+                <button onClick={() => setEditOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <div className="px-6 overflow-y-auto no-sb pb-2">
+                <div className="flex flex-col gap-2 mb-4 pt-1">
+                  <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
+                    <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
+                    <span className="text-[14px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
+                  </span>
+                  <p className="text-caption text-neutral-600 leading-relaxed">保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
+                </div>
+                <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
+                {editErrors.length > 0 ? (
+                  <div className="mt-2 pt-4 border-t border-warm-200 space-y-2">
+                    {editErrors.map((e, i) => (
+                      <p key={i} className="flex items-start gap-2 text-caption font-bold leading-relaxed" style={{ color: "var(--color-attention)" }}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: "var(--color-attention)" }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z" /></svg>
+                        <span>{e}</span>
+                      </p>
+                    ))}
+                  </div>
+                ) : (<>
+                  {plan && (
+                    <div className="mt-2 pt-4 border-t border-warm-200 flex items-center justify-between">
+                      <span className="text-caption font-medium text-neutral-500">初年度の月払保険料</span>
+                      <span className="text-primary-600">
+                        <span className="font-en text-h2 font-semibold tabular-nums">{(parseInt((plan.price || "0").replace(/[^0-9]/g, ""), 10) * 1).toLocaleString("ja-JP")}</span>
+                        <span className="text-h6"> 円</span>
+                      </span>
+                    </div>
+                  )}
+                  <button onClick={() => setSheetRes((o) => !o)}
+                    className="flex items-center justify-between w-full mt-3 pt-3 border-t border-warm-200 text-left">
+                    <span className="text-h6 font-bold text-neutral-800">保険料テーブルをみる</span>
+                    <span className={`grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 transition-transform ${sheetRes ? "rotate-180" : ""}`}>
+                      <Ic.chevR className="w-4 h-4 rotate-90" />
+                    </span>
+                  </button>
+                  <div style={{ maxHeight: sheetRes ? "1600px" : "0px", opacity: sheetRes ? 1 : 0, marginTop: sheetRes ? "16px" : "0px" }}
+                    className="overflow-hidden transition-all duration-300 ease-out">
+                    <BenefitTable m={m} y={y} plan={plan} startAge={formStartAge} />
+                  </div>
+                </>)}
+              </div>
+              <div className="px-6 py-3 border-t border-warm-200">
+                <Btn kind="button" onClick={() => setEditOpen(false)} disabled={editErrors.length > 0}>この内容で更新</Btn>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} desktop />
+        <DateDrumSheet open={benPickerOpen} value={benBirth}
+          onClose={() => setBenPickerOpen(false)}
+          onDone={(v) => { setBenBirth(v); setBenPickerOpen(false); }} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -2880,7 +3147,7 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialBirth, initialSimOpen }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialBirth, initialSimOpen, desktop, recommendPattern }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
@@ -2929,9 +3196,212 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             </div>
           </div>
   );
+
+  if (desktop) {
+    return (
+      <div className="space-y-10">
+        {/* Hero (左) + 引受保険会社/バッジ/3アイコン (右) */}
+        <div className="grid grid-cols-2 gap-10 items-center">
+          <div>
+            <p className="font-en text-caption tracking-[0.18em] uppercase text-primary-600">Embedded Insurance</p>
+            <h1 className="mt-2 font-bold leading-snug text-neutral-800" style={{ fontSize: "36px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
+            <p className="mt-3 text-h6 leading-relaxed text-neutral-600">将来に向けた資産形成のためのほけん</p>
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[48px] mt-6" />
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
+              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+            </div>
+            <div className="flex justify-center">
+              <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "#1aa5dc" }}>XXX のお客様限定</span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 pt-2">
+              {[
+                { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
+                { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
+                { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
+              ].map((f, k) => (
+                <div key={k} className="flex flex-col items-center text-center gap-2">
+                  <img src={f.src} alt="" style={{ width: "40px", height: "40px" }} />
+                  <p className="text-[14px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ステッパー — 2カラムの外（下）に配置することで両カラムの下に来る */}
+        <Steps n={1} go={go} />
+
+        {/* 図版：中央・最大600px */}
+        <div className="overflow-hidden rounded-[16px] border border-warm-200 mx-auto" style={{ maxWidth: "600px" }}>
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
+        </div>
+
+        {/* 保障期間：中央 */}
+        <div className="text-center">
+          <span className="inline-block text-h5 font-bold text-neutral-800">保障期間</span>
+          <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
+          <p className="mt-1 text-caption text-neutral-500 leading-relaxed max-w-[480px] mx-auto">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
+          <div className="flex items-center justify-center gap-6 mt-4">
+            <a className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+              詳細なサービス内容はこちら
+            </a>
+            <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+              ご案内にあたりご確認・同意いただきたいこと
+            </button>
+          </div>
+        </div>
+
+        {/* プランシミュレーション */}
+        <div>
+          <h2 className="text-h3 font-bold text-center" style={{ color: "#1AA5DC" }}>プランシミュレーション</h2>
+
+          {/* 生年月日・性別：横並び */}
+          <div className="grid grid-cols-2 gap-8 mt-8">
+            <div className="flex flex-col gap-2">
+              <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
+              <button type="button" onClick={() => setPickerOpen(true)} style={{ width: "100%" }}
+                className={"fld flex items-center justify-between gap-2 h-12 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
+                <span className="truncate">{birth ? fmtBirth(birth) : "選択してください"}</span>
+                <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
+              <div className="grid grid-cols-2 gap-2">
+                {["男性", "女性"].map((g) => (
+                  <button key={g} onClick={() => setGender(g)}
+                    className={"h-12 rounded-lg border text-h6 transition-colors " + (gender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600")}>{g}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* プランを選ぶ：3カラム */}
+          <div className="mt-10">
+            <h3 className="text-h5 font-bold text-neutral-800">プランを選ぶ</h3>
+            <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              {PLAN_CARDS.map((p) => (
+                <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
+              ))}
+            </div>
+          </div>
+
+          {/* 保険料シミュレーション：スライダー左／概要右、テーブルは全幅 */}
+          <div className="mt-10">
+            <h3 className="text-h5 font-bold text-neutral-800">保険料シミュレーション</h3>
+            <div className="grid grid-cols-2 gap-8 mt-4 items-start">
+              <SimSliders m={m} setM={setM} y={y} setY={setY} />
+              <div className="rounded-2xl border border-warm-200 bg-white p-6">
+                <span className="text-caption font-medium text-neutral-600">保障期間</span>
+                <p className="mt-2 text-h4 font-bold text-primary-600">{y}年</p>
+                <p className="mt-1 text-caption text-neutral-500 leading-relaxed">毎月{m.toLocaleString("ja-JP")}円の積立で、就業不能時も将来の積立金額を保障します。</p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-warm-200 bg-white p-6 mt-6 w-full">
+              <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
+              <BenefitTable m={m} y={y} plan={plan} startAge={ageFromBirth(birth)} />
+            </div>
+          </div>
+        </div>
+
+        {/* 申し込みをする — モバイルと同じく上下に配置 */}
+        <div className="space-y-6">
+          <h2 className="text-h3 font-bold text-neutral-800">申し込みをする</h2>
+          <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
+            <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">お手続きの際に必要となる書類をご準備ください。</p>
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-warm-50 border border-warm-200">
+              <Ic.cardArt className="w-10 h-auto text-primary-500 shrink-0" />
+              <span className="text-caption font-medium text-neutral-700">申込みは本人様名義のクレジットカードが必要です</span>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
+            <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
+            <button onClick={() => setNoticeOpen(true)}
+              className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left">
+              <span className="flex items-center gap-3 min-w-0">
+                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">重要</span>
+                <span className="text-h6 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
+              </span>
+              <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
+            </button>
+            <div className={"flex items-start gap-3 w-full text-left pt-1 transition-opacity " + (agree ? "" : "opacity-40 pointer-events-none")}>
+              <span className={"grid place-items-center w-6 h-6 mt-[2px] rounded border-2 shrink-0 " + (agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white")}>
+                {agree && <Ic.check className="w-3 h-3" />}
+              </span>
+              <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
+            <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
+            <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
+            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="space-y-2 pt-6 border-t border-warm-200 max-w-[400px] mx-auto">
+          {emailVerified ? (
+            <>
+              <div className="flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
+                <Ic.check className="w-4 h-4 text-primary-600 shrink-0" />
+                <span className="text-caption text-primary-700">メールアドレスの認証は完了しています</span>
+              </div>
+              <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
+            </>
+          ) : (
+            <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
+          )}
+          {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+        </div>
+
+        <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
+        <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
+        {noticeOpen && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
+            <div className="relative mx-auto my-16 w-full max-w-[640px] bg-white rounded-2xl shadow-xl">
+              <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+                <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
+                  <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
+                  重要事項・事前同意事項
+                </h3>
+                <button onClick={() => setNoticeOpen(false)} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <div className="px-6 py-4 space-y-6">
+                <p className="text-caption text-neutral-500 leading-relaxed">
+                  お申込み前に、以下の内容を必ずご確認ください。
+                </p>
+                <div className="space-y-6">
+                  <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
+                    <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-[2px] text-[11px] font-bold leading-none">事前同意</span>
+                    事前同意事項
+                  </p>
+                  <NoticeContent />
+                </div>
+              </div>
+              <div className="px-6 py-3 border-t border-warm-200">
+                <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* \u56fa\u5b9a\u30b9\u30c6\u30fc\u30bf\u30b9\u30d0\u30fc\uff08\u30d1\u30e9\u30e9\u30c3\u30af\u30b9\u3068\u4e00\u7dd2\u306b\u52d5\u304b\u306a\u3044\uff09 */}
+      {/* 固定ステータスバー（パララックスと一緒に動かない） */}
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-800 pointer-events-none">
         <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
       </div>
@@ -2983,6 +3453,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[40px]" />
           </div>
           <div style={{ paddingTop: '20px', paddingBottom: '16px' }}>
+          {(!recommendPattern || recommendPattern === 'none') ? (
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
@@ -2995,6 +3466,55 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               </div>
             ))}
           </div>
+          ) : (
+          <div>
+            <h3 className="text-h5 font-bold leading-snug" style={{ color: '#1aa5dc' }}>
+              {recommendPattern === 'B' ? <>3つの<br/>オススメポイント</> : '3つのオススメポイント'}
+            </h3>
+            {recommendPattern === 'A' && (
+              <div className="space-y-6 mt-6">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="flex flex-col items-center text-center gap-2">
+                    <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
+                    <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
+                    <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {recommendPattern === 'B' && (
+              <div className="mt-6">
+                <div className="grid grid-cols-2 gap-4">
+                  {[1, 2].map((n) => (
+                    <div key={n} className="flex flex-col items-center text-center gap-2">
+                      <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
+                      <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
+                      <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col items-center text-center gap-2 mt-6 mx-auto" style={{ maxWidth: '160px' }}>
+                  <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">3</span>
+                  <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
+                  <p className="text-[14px] text-neutral-600 leading-relaxed">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                </div>
+              </div>
+            )}
+            {recommendPattern === 'C' && (
+              <div className="space-y-4 mt-6">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="flex items-start gap-3">
+                    <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
+                    <div>
+                      <p className="text-[16px] font-bold text-neutral-800 leading-snug">ココにお勧めのポイントが入りますタイトルです</p>
+                      <p className="text-[14px] text-neutral-600 leading-relaxed mt-1">あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          )}
           {/* 図版 + 商品概要 */}
           <div style={{ marginTop: '64px' }} className="overflow-hidden rounded-[16px] border border-warm-200">
             <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
