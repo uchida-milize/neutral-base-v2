@@ -604,7 +604,8 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
                   <span className="text-[10px] font-medium leading-tight text-neutral-400">１つでも存在する</span>
                 </button>
                 <button onClick={onConfirm || onClose}
-                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold bg-primary text-white transition-colors">
+                  style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)" }}
+                  className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold text-white transition-colors">
                   <span className="flex items-center gap-2 text-h6 font-bold">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M5 12l5 5L19 7"/></svg>
                     いいえ
