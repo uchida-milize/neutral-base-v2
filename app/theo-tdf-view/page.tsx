@@ -35,6 +35,7 @@ import {
  *   errStep        フローティングエラーの初期ステップ（0–3）
  *   kokuchiPattern 告知パターン（care_d / care_n / cancer_d / ... / tc_n）
  *   disclosure     "1" で告知モーダルを開いた状態で表示
+ *   notice         "1" で重要事項・事前同意事項ボトムシートを開いた状態で表示
  *   kokuchiAgree   "1" で告知事項同意チェック済み状態
  *   editKiyaku     "1" で契約者情報編集展開
  *   editJuushin    "1" で保険金受取人編集展開
@@ -56,6 +57,7 @@ function ViewContent() {
   const errStep      = params.get("errStep") ? parseInt(params.get("errStep")!, 10) : 0;
   const kokuchiPat   = params.get("kokuchiPattern") ?? "auto";
   const disclosure     = params.get("disclosure") === "1";
+  const notice         = params.get("notice") === "1";
   const kokuchiAgree   = params.get("kokuchiAgree") === "1";
   const editKiyaku   = params.get("editKiyaku") === "1";
   const editJuushin  = params.get("editJuushin") === "1";
@@ -78,7 +80,7 @@ function ViewContent() {
     patternB
       ? <ScreenCombined key="0b" go={noop} sel={sel} setSel={noop} deathOpt={deathOpt}
           m={10000} setM={noop} y={15} setY={noop} simFirst={simFirst} planCardStyle={planCardStyle}
-          initialShowSend={showSend} initialAgree={agree} />
+          initialShowSend={showSend} initialAgree={agree} initialNoticeOpen={notice} />
       : <ScreenOverview key="0" go={noop} />,
 
     /* 1 プラン選択 */

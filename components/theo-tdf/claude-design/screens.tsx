@@ -3153,11 +3153,11 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialBirth, initialSimOpen, desktop, recommendPattern }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialNoticeOpen, initialBirth, initialSimOpen, desktop, recommendPattern }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialNoticeOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
-  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
   const [birth, setBirth] = useState(initialBirth ?? "");
   const [gender, setGender] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);

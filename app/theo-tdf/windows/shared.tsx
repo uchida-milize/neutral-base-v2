@@ -195,6 +195,19 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           ),
         },
         {
+          key: "overview-notice",
+          label: "重要事項・事前同意事項ボトムシート",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=0&patternB=1&notice=1",
+          el: (
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialNoticeOpen
+            />
+          ),
+        },
+        {
           key: "overview-tooltip",
           label: "プランツールチップ1つ展開（がん保障型）",
           viewUrl: "/theo-tdf-view?s=0&patternB=1",
