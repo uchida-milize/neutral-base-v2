@@ -11,17 +11,17 @@ export default function Page() {
       <header className="mb-10 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">Components</p>
         <h1 className="mt-2 text-display-3 font-semibold tracking-tight">アイコン</h1>
-        <p className="mt-3 text-body text-muted-foreground">StatusIcon（6状態）/ アイコン画像 / デコレーション SVG。</p>
+        <p className="mt-3 text-body text-muted-foreground">StatusIcon（5状態）/ アイコン画像 / デコレーション SVG。</p>
       </header>
       <div className="mb-14 overflow-x-auto"><StatusSection /></div>
       <Section>
         <SectionHeading eyebrow="Props Reference" title="使い方早見表" description="アイコン系コンポーネントの props 一覧。" audience="developer" />
-        <ComponentSnippet name="StatusIcon" desc="処理結果アイコン（6 状態）"
+        <ComponentSnippet name="StatusIcon" desc="処理結果アイコン（5 状態）"
           props={[
-            { name: "state", type: '"Success" | "Loading" | "Error" | "Maintenance" | "Cancelled" | "Locked"', required: false, default: '"Success"' },
+            { name: "state", type: '"Success" | "Loading" | "Error" | "Cancelled" | "Locked"', required: false, default: '"Success"' },
             { name: "className", type: "string", required: false },
           ]}
-          code={`<StatusIcon state="Success" />\n<StatusIcon state="Loading" />\n<StatusIcon state="Error" />\n<StatusIcon state="Maintenance" />\n<StatusIcon state="Cancelled" />\n<StatusIcon state="Locked" />`} />
+          code={`<StatusIcon state="Success" />\n<StatusIcon state="Loading" />\n<StatusIcon state="Error" />\n<StatusIcon state="Cancelled" />\n<StatusIcon state="Locked" />`} />
       </Section>
     </main>
   );

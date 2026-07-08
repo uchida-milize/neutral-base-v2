@@ -103,3 +103,18 @@
 }
 
 /* theo-tdf は保険商品のため常時ライト固定 (ダークモード上書きは廃止 — 2026-06-17)。 */
+
+/* SliderField (input[type=range]) の未入力側トラックをグレーで明示。
+ * accent-color だけではブラウザ間でトラック地色の見え方が揃わないため、
+ * トラック自体に明示のグレーを指定する（つまみは accent-color の Sky Blue のまま）。
+ * warm-300 (#d6d3d1) は白背景との差が付きにくいため、視認性を上げた専用値を使う。 */
+.theo-tdf-scope input[type="range"]::-webkit-slider-runnable-track {
+  background: #c7c3c0;
+  border-radius: 9999px;
+  height: 6px;
+}
+.theo-tdf-scope input[type="range"]::-moz-range-track {
+  background: #c7c3c0;
+  border-radius: 9999px;
+  height: 6px;
+}

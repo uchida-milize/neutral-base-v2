@@ -57,13 +57,13 @@ export function BrandGradients() {
             className="flex h-12 w-full items-center justify-center rounded-xl text-h6 font-bold text-white"
             style={{ backgroundImage: GRAD_BUTTON }}
           >
-            通常 / 前進 / 申込確定
+            通常 / 前進 / 確定
           </div>
           <div
             className="flex h-12 w-full items-center justify-center rounded-xl text-h6 font-bold text-white"
             style={{ backgroundImage: GRAD_DANGER }}
           >
-            解約・登録開始などの警告操作 (danger)
+            警告操作 (danger)
           </div>
           <dl className="space-y-1 pt-1 text-tiny font-mono text-neutral-500">
             <div>

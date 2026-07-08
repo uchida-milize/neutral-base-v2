@@ -600,7 +600,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
     <div className="space-y-3">
       <AgreeBlocks blocks={DISCLOSURE_INTRO} />
       <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--color-primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
         <p className="text-caption leading-relaxed" style={{ color: '#1AA5DC' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
       </div>
       <div className="space-y-3">
@@ -3788,7 +3788,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
 /* ---- StatusIcon ---- */
 export function StatusIcon({ state = "Success", className }: {
-  state?: "Success" | "Loading" | "Error" | "Maintenance" | "Cancelled" | "Locked";
+  state?: "Success" | "Loading" | "Error" | "Cancelled" | "Locked";
   className?: string;
 }) {
   const base = `relative flex items-center justify-center ${className ?? ""}`;
@@ -3796,13 +3796,6 @@ export function StatusIcon({ state = "Success", className }: {
     return (
       <div className={`${base} size-16`}>
         <img src="/assets/theo-tdf/icon_error.png" alt="エラー" className="w-full h-full object-contain" />
-      </div>
-    );
-  }
-  if (state === "Maintenance") {
-    return (
-      <div className={`${base} size-16`}>
-        <img src="/assets/theo-tdf/icon_maint.png" alt="メンテナンス" className="w-full h-full object-contain" />
       </div>
     );
   }
@@ -3818,8 +3811,8 @@ export function StatusIcon({ state = "Success", className }: {
   }
   if (state === "Cancelled") {
     return (
-      <div className={`${base} size-16`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="#1aa5dc" strokeWidth="2.5" strokeLinecap="round">
+      <div className={`${base} size-16 rounded-full bg-white shadow-sm`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="#1aa5dc" strokeWidth="2.5" strokeLinecap="round">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </div>
@@ -3827,7 +3820,7 @@ export function StatusIcon({ state = "Success", className }: {
   }
   if (state === "Locked") {
     return (
-      <div className={`${base} size-[72px] rounded-[14px] bg-white border border-warm-200`}>
+      <div className={`${base} size-[72px] rounded-[14px] bg-white shadow-sm`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="#1aa5dc" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="5" y="11" width="14" height="10" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" />
@@ -3909,7 +3902,7 @@ export function AgreeCheckbox({ checked, onChange, children }: {
 }) {
   return (
     <label className="flex items-start gap-3 cursor-pointer">
-      <span className="shrink-0 mt-0.5 grid place-items-center w-6 h-6 rounded-[4px] border-2 border-warm-300 bg-white transition-colors" style={checked ? { borderColor: "var(--color-primary)", background: "var(--color-primary)" } : undefined}>
+      <span className="shrink-0 mt-0.5 grid place-items-center w-6 h-6 rounded-[4px] border-2 border-warm-300 bg-white transition-colors" style={checked ? { borderColor: "var(--primary)", background: "var(--primary)" } : undefined}>
         {checked && (
           <svg viewBox="0 0 12 10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-2.5">
             <path d="M1 5l3.5 3.5L11 1" />
@@ -3941,10 +3934,10 @@ export function NumberedStepCard({ heading, steps }: {
           return (
             <div key={i} className="flex gap-3">
               <div className="flex flex-col items-center shrink-0 w-7">
-                <span className="grid place-items-center w-7 h-7 rounded-full shrink-0 text-[13px] font-semibold" style={{ background: "#e9f2fe", color: "#054eba" }}>
+                <span className="grid place-items-center w-7 h-7 rounded-full shrink-0 text-[13px] font-semibold bg-primary-10 text-primary-700">
                   {i + 1}
                 </span>
-                {!isLast && <div className="w-0.5 flex-1 min-h-6 my-1" style={{ background: "#62a0fb" }} />}
+                {!isLast && <div className="w-0.5 flex-1 min-h-6 my-1 bg-neutral-300" />}
               </div>
               <div className={`flex-1 ${isLast ? "" : "pb-4"}`}>
                 <p className="text-h6 font-bold text-neutral-800 leading-snug">{step.title}</p>
@@ -3991,7 +3984,7 @@ export function Logo({ variant = "default", className }: {
 }) {
   const src = variant === "blue"
     ? "/assets/theo-tdf/dammy_logo_cyan.svg"
-    : "/assets/theo-tdf/dammy_logo.svg";
+    : "/assets/theo-tdf/dammy_logo_white.svg";
   return (
     <img src={src} alt="くみこみ安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
   );
@@ -4072,7 +4065,7 @@ export function NumberedSectionHeading({ n, children }: {
     <div className="flex items-center gap-2">
       <span
         className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
-        style={{ backgroundImage: "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)" }}
+        style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)" }}
       >
         {n}
       </span>
@@ -4113,7 +4106,7 @@ export function CardHeader({ title, state = "Plain", onEdit, onSave, onCancel }:
       {state === "Editing" && (
         <div className="flex items-center gap-2">
           <button type="button" onClick={onCancel} className="text-caption text-neutral-500">キャンセル</button>
-          <button type="button" onClick={onSave} className="text-caption font-semibold text-white px-3 py-1 rounded-full" style={{ background: "var(--color-primary)" }}>保存</button>
+          <button type="button" onClick={onSave} className="text-caption font-semibold text-white px-3 py-1 rounded-full" style={{ background: "var(--primary)" }}>保存</button>
         </div>
       )}
     </div>
@@ -4306,7 +4299,7 @@ export function SliderField({ label, value, min, max, step = 1, onChange, format
     <div className="w-full">
       <div className="flex items-baseline justify-between mb-2">
         <span className="text-caption font-medium text-neutral-700">{label}</span>
-        <span className="text-h5 font-bold" style={{ color: "var(--color-primary)" }}>{fv(value)}</span>
+        <span className="text-h5 font-bold" style={{ color: "var(--primary)" }}>{fv(value)}</span>
       </div>
       <input
         type="range"
@@ -4317,7 +4310,7 @@ export function SliderField({ label, value, min, max, step = 1, onChange, format
         onChange={onChange ? (e) => onChange(Number(e.target.value)) : undefined}
         readOnly={!onChange}
         className="w-full h-1 rounded-full appearance-none cursor-pointer"
-        style={{ accentColor: "var(--color-primary)" }}
+        style={{ accentColor: "var(--primary)" }}
       />
       {(minLabel || maxLabel) && (
         <div className="flex justify-between mt-1.5">
@@ -4376,7 +4369,7 @@ export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planTyp
       </div>
       <div className="mt-5 pt-4 border-t border-warm-100 flex items-baseline justify-between">
         <span className="text-caption text-neutral-500">初年度の月払保険料</span>
-        <span className="font-bold leading-none" style={{ color: "var(--color-primary)", fontSize: 28 }}>
+        <span className="font-bold leading-none" style={{ color: "var(--primary)", fontSize: 28 }}>
           {premium.toLocaleString()}<span className="text-h6 font-semibold">円</span>
         </span>
       </div>

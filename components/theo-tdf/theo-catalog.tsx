@@ -111,13 +111,6 @@ export function BrandSection() {
       </Row>
       <SubHead>ロゴ 画像ファイル</SubHead>
       <Row>
-        {/* logo_theo_insurance.svg は白背景だと見えないので EFEFEF */}
-        <AssetCard label="logo_theo_insurance.svg" bg="" style={{ background: "#EFEFEF" }}>
-          <img src="/assets/theo-tdf/logo_theo_insurance.svg" alt="" className="h-8 w-auto" />
-        </AssetCard>
-        <AssetCard label="logo_theo_insurance_blue.svg">
-          <img src="/assets/theo-tdf/logo_theo_insurance_blue.svg" alt="" className="h-8 w-auto" />
-        </AssetCard>
         <AssetCard label="logo_td.png">
           <img src="/assets/theo-tdf/logo_td.png" alt="" className="h-8 w-auto" />
         </AssetCard>
@@ -544,7 +537,7 @@ export function StatusSection() {
     <div className="theo-tdf-cd font-jp">
       <SubHead>StatusIcon</SubHead>
       <Row>
-        {(["Success","Loading","Error","Maintenance","Cancelled","Locked"] as const).map((s) => (
+        {(["Success","Loading","Error","Cancelled","Locked"] as const).map((s) => (
           <Preview key={s} label={s} width={120}>
             <div className="flex justify-center">
               <StatusIcon state={s} />
@@ -565,7 +558,8 @@ export function StatusSection() {
       <Row>
         {[
           "activity-heart-circle","calendar","graduation-cap","hand-holding-heart",
-          "info-circle","letter-heart-square","line-chart-dots-square","person-heart",
+          "info-circle","letter-heart-square","person-heart",
+          "death-coverage-circle","death-coverage-x",
         ].map((name) => (
           <AssetCard key={name} label={name}>
             <img src={`/assets/theo-tdf/${name}.svg`} alt="" className="w-10 h-10" />
