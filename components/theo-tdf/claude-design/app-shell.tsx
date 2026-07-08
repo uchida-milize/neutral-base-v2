@@ -222,6 +222,11 @@ const TWEAK_DEFAULTS = {
 
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  // PC版は作り込み中のためTweaksからは隠しているが、確認したいときは ?device=pc を付与
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("device") === "pc") setTweak("device", "pc");
+  }, [setTweak]);
   const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("cancer_d");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
