@@ -196,11 +196,12 @@ function Phone({
   );
 }
 
-// PC（デスクトップ）版コンテナ — ベゼルなし、幅1064px（コンテンツ1000px相当）。
+// PC（デスクトップ）版コンテナ — ベゼルなし、幅1000px。
+// 内側パディングは持たず、各画面のコンテンツがフレーム端まで隙間なく描画される（Figma仕様）。
 // 固定高さ・内部スクロールは持たず、ページ自体が伸びる。
 function DesktopFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative w-full max-w-[1064px] mx-auto rounded-2xl bg-white shadow-xl px-8 py-10">
+    <div className="relative w-full max-w-[1000px] mx-auto rounded-2xl bg-white shadow-xl">
       {children}
     </div>
   );

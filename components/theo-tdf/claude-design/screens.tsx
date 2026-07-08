@@ -217,7 +217,7 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
 // PC版 共通ヘッダー（headder-pc）— ブランド名＋引受保険会社バッジ＋ステッパー
 export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
   return (
-    <div className="bg-white">
+    <div className="bg-white rounded-t-2xl">
       <div className="flex items-center justify-between px-8 pt-8 pb-4">
         <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
           <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
@@ -306,7 +306,7 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
 export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300";
+  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl";
   return (
     <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
       style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
@@ -3019,7 +3019,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
   if (desktop) {
     return (
       <>
-        <div style={{ background: 'radial-gradient(600px circle at 28% 15%, rgba(255,170,130,0.30), transparent 60%), radial-gradient(700px circle at 78% 55%, rgba(120,200,255,0.35), transparent 60%), radial-gradient(500px circle at 15% 75%, rgba(255,190,170,0.22), transparent 60%), #ffffff' }}>
+        <div className="rounded-t-2xl overflow-hidden" style={{ background: 'radial-gradient(600px circle at 28% 15%, rgba(255,170,130,0.30), transparent 60%), radial-gradient(700px circle at 78% 55%, rgba(120,200,255,0.35), transparent 60%), radial-gradient(500px circle at 15% 75%, rgba(255,190,170,0.22), transparent 60%), #ffffff' }}>
           <div className="flex items-center justify-between px-8 pt-8 pb-4">
             <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
               <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
