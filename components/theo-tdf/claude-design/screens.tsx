@@ -214,6 +214,26 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
   );
 }
 
+// PC版 共通ヘッダー（headder-pc）— ブランド名＋引受保険会社バッジ＋ステッパー
+export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
+  return (
+    <div className="bg-white">
+      <div className="flex items-center justify-between px-8 pt-8 pb-4">
+        <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
+          <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
+          <span className="font-medium text-[16px]">つみたて安心ほけん</span>
+          <span className="font-medium text-[10px]">&lt;XXX&gt;</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
+          <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+        </div>
+      </div>
+      <Steps n={n} go={go} />
+    </div>
+  );
+}
+
 // step progress dots — 既出（到達済み）ステップは押下でその画面へ遷移
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
 export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: Go }) {
@@ -1475,14 +1495,14 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
     </>
   );
 }
-export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string; pinError?: boolean }) {
+export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, desktop }: { go: Go; onVerified?: () => void; backScr?: number; initialPin?: string; pinError?: boolean; desktop?: boolean }) {
   const [pin, setPin] = useState(initialPin ?? "");
   const [show, setShow] = useState(false);
   return (
     <>
-      <AppBar title="保険" onBack={() => go(backScr)} />
+      {desktop ? <DesktopHeader n={2} go={go} /> : <AppBar title="保険" onBack={() => go(backScr)} />}
       <div className="flex-1 overflow-y-auto no-sb">
-        <Steps n={2} go={go} />
+        {!desktop && <Steps n={2} go={go} />}
         <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
@@ -1870,9 +1890,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   if (desktop) {
     return (
       <>
-        <AppBar title="お申込み" onBack={onBack} />
+        <DesktopHeader n={3} go={go} />
         <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-8 pt-6 pb-24 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-          <Steps n={3} go={go} />
           <h2 className="text-h5 font-bold text-center" style={{ color: "#1AA5DC", marginTop: "16px", marginBottom: "8px" }}>加入手続き</h2>
 
           {errMode === "top" && visibleErrs.length > 0 && (
@@ -2546,9 +2565,9 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const agreeNums = agreeItems.map((it, i) => (it.kind === "agree" ? CIRC[i] : null)).filter(Boolean).join("");
   return (
     <>
-      <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
+      {desktop ? <DesktopHeader n={4} go={go} /> : <AppBar title="内容確認・お支払い" onBack={() => go(3)} />}
       <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-        <div className={desktop ? "-mx-8 -mt-6" : "-mx-4 -mt-6"}><Steps n={4} go={go} /></div>
+        {!desktop && <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>}
         <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`} style={{ color: '#1AA5DC' }}>内容確認</h2>
         <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>

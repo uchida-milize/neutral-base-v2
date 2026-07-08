@@ -198,9 +198,9 @@ function Phone({
 
 // PC（デスクトップ）版コンテナ — ベゼルなし、幅1064px（コンテンツ1000px相当）。
 // 固定高さ・内部スクロールは持たず、ページ自体が伸びる。
-function DesktopFrame({ children, narrow }: { children: React.ReactNode; narrow?: boolean }) {
+function DesktopFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`relative w-full ${narrow ? "max-w-[480px]" : "max-w-[1064px]"} mx-auto rounded-2xl bg-white shadow-xl px-8 py-10`}>
+    <div className="relative w-full max-w-[1064px] mx-auto rounded-2xl bg-white shadow-xl px-8 py-10">
       {children}
     </div>
   );
@@ -261,6 +261,7 @@ export function TheoTdfClaudeDesignShell() {
       backScr={patternB ? 0 : 1}
       initialPin={tw.pinPreview === "none" ? undefined : "666666"}
       pinError={tw.pinPreview === "error"}
+      desktop={isPC}
     />,
     <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} desktop={isPC} />,
     <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} desktop={isPC} />,
@@ -275,7 +276,7 @@ export function TheoTdfClaudeDesignShell() {
         <Rail scr={scr} go={go} />
         <main className="flex-1 py-10 flex flex-col items-center gap-4">
           {isPC ? (
-            <DesktopFrame narrow={scr === 2}>
+            <DesktopFrame>
               {terminated
                 ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} desktop />
                 : screens[scr]}
@@ -315,8 +316,7 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
-          <TweakSection label="表示デバイス" />
-          <TweakToggle label="PC版で表示" value={isPC} onChange={(v) => setTweak("device", v ? "pc" : "mobile")} />
+          {/* PC版は作り込み中のため一旦Tweaksから非表示（device自体はTWEAK_DEFAULTSでmobile固定） */}
           <TweakSection label="商品概要" />
           <TweakSelect
             label="オススメポイント表示（スマホ版）"
