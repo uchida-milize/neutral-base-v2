@@ -517,6 +517,20 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
             />
           ),
         },
+        {
+          key: "kokuchi-ask-exit",
+          label: "終了確認ダイアログ（お申し込みが出来ません）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_d&askExit=1",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_d" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="cancer_d"
+              initialDisclosureAskExit={true} onTerminate={noop}
+            />
+          ),
+        },
       ],
     },
 
@@ -560,6 +574,24 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               initialEditKiyaku initialEditJuushin
             />
           ),
+        },
+        {
+          key: "st-pay-terms",
+          label: "クレジットカード支払規定 展開",
+          viewUrl: "/theo-tdf-view?s=4&payIdx=1",
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialPayIdx={1} />,
+        },
+        {
+          key: "st-agree-juuyou",
+          label: "同意項目②重要事項説明の確認 展開",
+          viewUrl: "/theo-tdf-view?s=4&openIdx=1",
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={1} />,
+        },
+        {
+          key: "st-agree-mykiyaku",
+          label: "同意項目③マイページの利用規約 展開",
+          viewUrl: "/theo-tdf-view?s=4&openIdx=2",
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={2} />,
         },
       ],
     },

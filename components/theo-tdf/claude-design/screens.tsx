@@ -570,8 +570,8 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
   );
 }
 
-export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel, desktop }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void; desktop?: boolean }) {
-  const [askExit, setAskExit] = React.useState(false);
+export function DisclosureModal({ plan, death = true, onClose, confirm, onConfirm, onCancel, desktop, initialAskExit }: { plan: Plan | null; death?: boolean; onClose: () => void; confirm?: boolean; onConfirm?: () => void; onCancel?: () => void; desktop?: boolean; initialAskExit?: boolean }) {
+  const [askExit, setAskExit] = React.useState(initialAskExit ?? false);
   if (!plan) return null;
   const koRows = koTableFor(plan.id, death);
   // 1セクション（r）= 1枚のカード
@@ -643,7 +643,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
     </div>
   );
   const exitAlert = askExit && (
-    <div className="fixed inset-0 z-[60] grid place-items-center px-8">
+    <div className="absolute inset-0 z-[60] grid place-items-center px-8">
       <div className="absolute inset-0 bg-black/45 fade-in" onClick={() => setAskExit(false)} />
       <div className="sheet-pop relative w-full max-w-[300px] rounded-2xl bg-white shadow-xl overflow-hidden">
         <div className="px-6 pt-6 pb-4 text-center">
@@ -1810,7 +1810,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 /* ============================================================
    SCREEN 4 — 申込フォーム
    ============================================================ */
-export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialErrStep = 0, initialKokuchiAgreed, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialErrStep?: number; initialKokuchiAgreed?: boolean; desktop?: boolean }) {
+export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initialEditOpen, initialSheetRes, initialSame, backScr = 1, formSplit = false, errMode = 'none', onTerminate, kokuchiPattern = 'auto', initialFormPage = 1, initialDisclosureOpen, initialDisclosureAskExit, initialErrStep = 0, initialKokuchiAgreed, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialEditOpen?: boolean; initialSheetRes?: boolean; initialSame?: boolean; backScr?: number; formSplit?: boolean; errMode?: string; onTerminate?: () => void; kokuchiPattern?: string; initialFormPage?: number; initialDisclosureOpen?: boolean; initialDisclosureAskExit?: boolean; initialErrStep?: number; initialKokuchiAgreed?: boolean; desktop?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   // 告知項目パターン（Tweaks）が指定されていれば、そのプラン×死亡保障で告知モーダルを表示
   const kokuchiPat = KOKUCHI_PATTERNS.find((p: any) => p.key === kokuchiPattern);
@@ -2119,7 +2119,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </div>
         )}
 
-        <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} desktop />
+        <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} initialAskExit={initialDisclosureAskExit} desktop />
         <DateDrumSheet open={benPickerOpen} value={benBirth}
           onClose={() => setBenPickerOpen(false)}
           onDone={(v) => { setBenBirth(v); setBenPickerOpen(false); }} />
@@ -2390,7 +2390,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
       )}
 
       {/* 告知項目モーダル（ページ表示時に選択プランで強制表示） */}
-      <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} />
+      <DisclosureModal plan={infoPlan} death={modalDeath} confirm onClose={() => setInfoPlan(null)} onConfirm={() => setInfoPlan(null)} onCancel={onTerminate} initialAskExit={initialDisclosureAskExit} />
 
       {/* 受取人 生年月日ドラムロール */}
       <DateDrumSheet open={benPickerOpen} value={benBirth}
@@ -2534,11 +2534,11 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; desktop?: boolean }) {
+export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, initialPayIdx, benSameAddr = true, initialEditKiyaku, initialEditJuushin, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; initialPayIdx?: number; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; desktop?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
-  const [payIdx, setPayIdx] = useState(initialAcctOpen ? 0 : -1);
+  const [payIdx, setPayIdx] = useState(initialPayIdx ?? (initialAcctOpen ? 0 : -1));
   const [agreed, setAgreed] = useState(Array.isArray(initialChecks) ? initialChecks.every(Boolean) : false);
   const [ikoAgree, setIkoAgree] = useState(false);
   const [nat, setNat] = useState("jp");
