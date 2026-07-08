@@ -2524,8 +2524,8 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
             className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
         </button>
       </div>
-      <div style={{ maxHeight: open ? "2600px" : "0px", opacity: open ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-        <div className="px-3 pt-3 pb-4 border-t border-warm-200 max-h-80 overflow-y-auto no-sb space-y-3">
+      <div style={{ maxHeight: open ? "4000px" : "0px", opacity: open ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+        <div className="px-3 pt-3 pb-4 border-t border-warm-200 space-y-3">
           <AgreeBlocks blocks={item.blocks} />
           {children}
         </div>

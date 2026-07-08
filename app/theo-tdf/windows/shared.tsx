@@ -547,10 +547,27 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} />,
         },
         {
+          key: "st-edit-both",
+          label: "契約者情報＋保険金受取人 両方編集展開",
+          viewUrl: "/theo-tdf-view?s=4&editKiyaku=1&editJuushin=1",
+          el: (
+            <ScreenStep4
+              go={noop} sel="cancer_d" m={10000} y={15}
+              initialEditKiyaku initialEditJuushin
+            />
+          ),
+        },
+        {
           key: "st-acct",
           label: "お支払い詳細展開",
           viewUrl: "/theo-tdf-view?s=4",
           el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialAcctOpen />,
+        },
+        {
+          key: "st-pay-terms",
+          label: "クレジットカード支払規定 展開",
+          viewUrl: "/theo-tdf-view?s=4&payIdx=1",
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialPayIdx={1} />,
         },
         {
           key: "st-agree",
@@ -563,23 +580,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               initialChecks={[true, true, true, true, true]}
             />
           ),
-        },
-        {
-          key: "st-edit-both",
-          label: "契約者情報＋保険金受取人 両方編集展開",
-          viewUrl: "/theo-tdf-view?s=4&editKiyaku=1&editJuushin=1",
-          el: (
-            <ScreenStep4
-              go={noop} sel="cancer_d" m={10000} y={15}
-              initialEditKiyaku initialEditJuushin
-            />
-          ),
-        },
-        {
-          key: "st-pay-terms",
-          label: "クレジットカード支払規定 展開",
-          viewUrl: "/theo-tdf-view?s=4&payIdx=1",
-          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialPayIdx={1} />,
         },
         {
           key: "st-agree-juuyou",
