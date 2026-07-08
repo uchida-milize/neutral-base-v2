@@ -3217,24 +3217,33 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
   if (desktop) {
     return (
-      <div className="space-y-10">
-        {/* Hero (左) + 引受保険会社/バッジ/3アイコン (右) */}
-        <div className="grid grid-cols-2 gap-10 items-center">
-          <div>
-            <p className="font-en text-caption tracking-[0.18em] uppercase text-primary-600">Embedded Insurance</p>
-            <h1 className="mt-2 font-bold leading-snug text-neutral-800" style={{ fontSize: "36px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
-            <p className="mt-3 text-h6 leading-relaxed text-neutral-600">将来に向けた資産形成のためのほけん</p>
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[48px] mt-6" />
+      <div className="space-y-6">
+        {/* ヒーロー＋ステッパー（Figma PC_01 準拠） */}
+        <div className="rounded-2xl overflow-hidden border border-warm-200">
+          <div style={{ position: "relative", height: "298px", overflow: "hidden" }}>
+            <img src="/assets/theo-tdf/hero_bg_pc.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "34px" }} />
+            <div style={{ position: "absolute", top: "124px", left: "76px", width: "311px" }}>
+              <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ color: "#c2eeff" }}>Embedded Insurance</p>
+              <h1 className="mt-2 font-bold leading-snug text-white" style={{ fontSize: "31px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
+              <p className="mt-2 text-h6 leading-relaxed text-white">将来に向けた資産形成のためのほけん</p>
+            </div>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-end gap-2">
-              <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
-              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+          <Steps n={1} go={go} />
+        </div>
+
+        {/* 引受保険会社／XXXのお客様限定バッジ・ロゴ／3アイコン */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-end gap-2">
+            <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
+            <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+          </div>
+          <div className="max-w-[760px] mx-auto flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "#1aa5dc" }}>XXXのお客様限定</span>
+              <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
             </div>
-            <div className="flex justify-center">
-              <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "#1aa5dc" }}>XXX のお客様限定</span>
-            </div>
-            <div className="grid grid-cols-3 gap-4 pt-2">
+            <div className="grid grid-cols-3 gap-2" style={{ width: "380px" }}>
               {[
                 { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
                 { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
@@ -3242,15 +3251,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               ].map((f, k) => (
                 <div key={k} className="flex flex-col items-center text-center gap-2">
                   <img src={f.src} alt="" style={{ width: "40px", height: "40px" }} />
-                  <p className="text-[14px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
+                  <p className="text-[16px] font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-
-        {/* ステッパー — 2カラムの外（下）に配置することで両カラムの下に来る */}
-        <Steps n={1} go={go} />
 
         {/* 図版：中央・最大600px */}
         <div className="overflow-hidden rounded-[16px] border border-warm-200 mx-auto" style={{ maxWidth: "600px" }}>
