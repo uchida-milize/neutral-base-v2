@@ -527,10 +527,10 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
                 <div className="mt-2 rounded-lg border border-warm-200 overflow-hidden">
                   {p.sub.map((srow: any, sk: number) => (
                     <div key={sk} className={`grid grid-cols-[88px_1fr] ${sk > 0 ? 'border-t border-warm-200' : ''}`}>
-                      <div className="bg-warm-100 px-2 py-2 flex items-center border-r border-warm-200">
+                      <div className="bg-warm-100 px-2 py-1 flex items-center border-r border-warm-200">
                         <span className="text-[11px] font-bold text-neutral-600 leading-snug">{srow[0]}</span>
                       </div>
-                      <div className="px-2 py-2 text-[11px] text-neutral-700 leading-relaxed">{srow[1]}</div>
+                      <div className="px-2 py-1 text-[11px] text-neutral-700 leading-snug">{srow[1]}</div>
                     </div>
                   ))}
                 </div>
@@ -823,7 +823,7 @@ export function StepSection({ label, n, big, className, children }: { label?: st
     );
   }
   return (
-    <section className="space-y-6">
+    <section className={`space-y-6 ${className || ""}`}>
       {label && (
         <div className="flex items-center gap-3">
           {n != null && (
@@ -2515,7 +2515,7 @@ export function AgreeItem({ num, item, open, onToggle, checked, onCheck, childre
   );
 }
 
-export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean }) {
+export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, initialChecks, initialAcctOpen, benSameAddr = true, initialEditKiyaku, initialEditJuushin, desktop }: { go: Go; sel: string; deathOpt?: boolean; m: number; y: number; initialOpenIdx?: number; initialChecks?: boolean[]; initialAcctOpen?: boolean; benSameAddr?: boolean; initialEditKiyaku?: boolean; initialEditJuushin?: boolean; desktop?: boolean }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const yen = (v: number) => (v || 0).toLocaleString("ja-JP");
   const [openIdx, setOpenIdx] = useState(initialOpenIdx ?? -1);
@@ -2547,10 +2547,10 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   return (
     <>
       <AppBar title="内容確認・お支払い" onBack={() => go(3)} />
-      <div className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-        <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>
-        <h2 className="text-h4 font-bold text-center" style={{ color: '#1AA5DC' }}>内容確認</h2>
-        <StepSection>
+      <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className={desktop ? "-mx-8 -mt-6" : "-mx-4 -mt-6"}><Steps n={4} go={go} /></div>
+        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`} style={{ color: '#1AA5DC' }}>内容確認</h2>
+        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
         <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6">
@@ -2692,7 +2692,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection>
+        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2761,7 +2761,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <div className="rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4">
+        <div className={`rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4 ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`}>
           <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-h5 font-bold text-neutral-800">重要事項をご確認ください</span></div>
           <div className="space-y-3">
             {agreeItems.map((it, i) => (
@@ -2806,13 +2806,15 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
         </div>
       </div>
       <ActionBar bg="#F2FBFE">
-        <div className="flex items-center justify-center gap-3">
-          <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-          <div style={{ width: '100%', maxWidth: '260px' }}>
-            <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+        <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
+          <div className="flex items-center justify-center gap-3">
+            <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+            <div style={{ width: '100%', maxWidth: '260px' }}>
+              <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+            </div>
           </div>
+          {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
         </div>
-        {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
       </ActionBar>
     </>
   );
@@ -2916,7 +2918,7 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
    SCREEN 6 — 完了
    ============================================================ */
 /* 完了画面の派生：処理中 / 処理エラー */
-export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
+export function ScreenStatus({ variant, go, desktop }: { variant?: string; go: Go; desktop?: boolean }) {
   const isErr = variant === 'error';
   const isMaint = variant === 'maint';
   const heading = isErr ? "処理エラー" : isMaint ? "メンテナンス中" : "処理中";
@@ -2926,10 +2928,12 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
     ? "ただいまシステムメンテナンスを実施しております。ご迷惑をおかけしますが、しばらく経ってから再度お試しください。"
     : "お手続きを処理しています。\nこのまましばらくお待ちください。";
   return (
-    <div className="screen-fixed-height flex flex-col relative" style={{ flex: '1 1 0%' }}>
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
-        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-      </div>
+    <div className={`flex flex-col relative ${desktop ? "" : "screen-fixed-height"}`} style={{ flex: '1 1 0%' }}>
+      {!desktop && (
+        <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+          <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+        </div>
+      )}
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
       <div className="flex-1 flex flex-col items-center justify-center relative" style={{ zIndex: 1 }}>
@@ -2940,7 +2944,7 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
           ) : isMaint ? (
             <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6 mx-auto block" alt="メンテナンス中" />
           ) : (
-            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin text-primary-600 mx-auto block"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin mx-auto block"><circle cx="12" cy="12" r="9" stroke="#1586b2" strokeWidth="1.5"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#1aa5dc" strokeWidth="1.5" strokeLinecap="round"/></svg>
           )}
           <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line text-center">
@@ -2955,12 +2959,12 @@ export function ScreenStatus({ variant, go }: { variant?: string; go: Go }) {
   );
 }
 
-export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string }) {
+export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?: string; desktop?: boolean }) {
   const doneBgRef = useRef<any>(null);
-  if (variant === 'ended') return <ScreenEnded onRestart={() => go(0)} />;
-  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} />;
+  if (variant === 'ended') return <ScreenEnded onRestart={() => go(0)} desktop={desktop} />;
+  if (variant !== 'done') return <ScreenStatus variant={variant} go={go} desktop={desktop} />;
   const bindDoneScroll = (el: any) => {
-    if (!el || el.__bound) return;
+    if (!el || el.__bound || desktop) return;
     el.__bound = true;
     el.addEventListener("scroll", () => {
       if (doneBgRef.current) {
@@ -2970,22 +2974,26 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
   };
   return (
     <>
-      {/* 固定ステータスバー（パララックスと一緒に動かない） */}
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
-        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-      </div>
+      {/* 固定ステータスバー（パララックスと一緒に動かない）— PC版では不要 */}
+      {!desktop && (
+        <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+          <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+        </div>
+      )}
       <div ref={bindDoneScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ヒーロー（img＋絶対配置・パララックス） */}
-        <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
-          <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
+        <div className={desktop ? "-mx-8 -mt-10" : ""} style={{ position: 'relative', height: desktop ? '360px' : '300px', overflow: 'hidden' }}>
+          <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {/* フェイクステータスバー（プレースホルダー） */}
-          <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
-            <span>9:41</span>
-            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-          </div>
+          {!desktop && (
+            /* フェイクステータスバー（プレースホルダー） */
+            <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
+              <span>9:41</span>
+              <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+            </div>
+          )}
           {/* ヒーローコンテンツ */}
-          <div className="px-5 pt-4 pb-12 text-center">
+          <div className={`px-5 text-center ${desktop ? "pt-10 pb-12" : "pt-4 pb-12"}`}>
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
@@ -3001,7 +3009,7 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
           <Steps n={5} go={go} />
         </div>
 
-        <div className="px-4 py-6 space-y-6">
+        <div className={desktop ? "px-8 py-10 max-w-[736px] mx-auto w-full space-y-6" : "px-4 py-6 space-y-6"}>
           <div className="px-1">
             <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
@@ -3042,7 +3050,9 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
         </div>
       </div>
       <ActionBar bg="#F2FBFE">
-        <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
+        <div className={desktop ? "max-w-[256px] mx-auto w-full" : ""}>
+          <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
+        </div>
       </ActionBar>
     </>
   );
@@ -3051,20 +3061,22 @@ export function ScreenDone({ go, variant = 'done' }: { go: Go; variant?: string 
 /* ============================================================
    SCREEN — 終了しました（申込キャンセル時）
    ============================================================ */
-export function ScreenEnded({ onRestart }: { onRestart: () => void }) {
+export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; desktop?: boolean }) {
   return (
-    <div className="screen-fixed-height flex flex-col relative" style={{ flex: '1 1 0%' }}>
-      {/* 固定ステータスバー */}
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
-        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-      </div>
+    <div className={`flex flex-col relative ${desktop ? "" : "screen-fixed-height"}`} style={{ flex: '1 1 0%' }}>
+      {!desktop && (
+        /* 固定ステータスバー */
+        <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+          <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+        </div>
+      )}
       {/* 背景画像：上下中央揃え */}
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
       <div className="flex-1 flex flex-col overflow-y-auto no-sb" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 py-8 shrink-0">
           <div style={{ width: 300 }} className="text-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 text-neutral-400 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1aa5dc" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを<br/>終了しました</h2>
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
           </div>
@@ -3736,7 +3748,7 @@ export function StatusIcon({ state = "Success", className }: {
     return (
       <div className={`${base} size-16 rounded-full`}>
         <svg viewBox="0 0 64 64" className="absolute inset-0 w-full h-full animate-spin" fill="none">
-          <circle cx="32" cy="32" r="26" stroke="#d6d3d1" strokeWidth="4" />
+          <circle cx="32" cy="32" r="26" stroke="#1586b2" strokeWidth="4" />
           <path d="M32 6 A26 26 0 0 1 58 32" stroke="#1aa5dc" strokeWidth="4" strokeLinecap="round" />
         </svg>
       </div>
@@ -3745,7 +3757,7 @@ export function StatusIcon({ state = "Success", className }: {
   if (state === "Cancelled") {
     return (
       <div className={`${base} size-16`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="#b5b0ab" strokeWidth="2.5" strokeLinecap="round">
+        <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="#1aa5dc" strokeWidth="2.5" strokeLinecap="round">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </div>

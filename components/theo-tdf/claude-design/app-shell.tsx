@@ -222,11 +222,6 @@ const TWEAK_DEFAULTS = {
 
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  // PC版表示は顧客にも見えるTweaksからは隠し、確認したいときだけ ?device=pc で切り替える
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("device") === "pc") setTweak("device", "pc");
-  }, [setTweak]);
   const [scr, setScr] = React.useState(0);
   const [sel, setSel] = React.useState("cancer_d");
   const [simM, setSimM] = React.useState(10000); // 毎月の積立金額（共有）
@@ -268,10 +263,10 @@ export function TheoTdfClaudeDesignShell() {
       pinError={tw.pinPreview === "error"}
     />,
     <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} desktop={isPC} />,
-    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} />,
+    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} desktop={isPC} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
-    <ScreenDone key="done" go={go} variant={tw.doneVariant} />,
+    <ScreenDone key="done" go={go} variant={tw.doneVariant} desktop={isPC} />,
   ];
 
   return (
@@ -282,7 +277,7 @@ export function TheoTdfClaudeDesignShell() {
           {isPC ? (
             <DesktopFrame narrow={scr === 2}>
               {terminated
-                ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} />
+                ? <ScreenEnded onRestart={() => { setTerminated(false); go(0); }} desktop />
                 : screens[scr]}
             </DesktopFrame>
           ) : (
@@ -320,7 +315,8 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
-          {/* デバイス（PC版）切り替えは顧客にも見えるため非表示。確認時は URL に ?device=pc を付与 */}
+          <TweakSection label="表示デバイス" />
+          <TweakToggle label="PC版で表示" value={isPC} onChange={(v) => setTweak("device", v ? "pc" : "mobile")} />
           <TweakSection label="商品概要" />
           <TweakSelect
             label="オススメポイント表示（スマホ版）"
