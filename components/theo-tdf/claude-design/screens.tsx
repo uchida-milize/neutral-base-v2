@@ -3300,11 +3300,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 引受保険会社／XXXのお客様限定バッジ・ロゴ／3アイコン */}
         <div className="space-y-4">
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-2 pr-8">
             <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
-          <div className="max-w-[760px] mx-auto flex items-center justify-center gap-6">
+          <div className="w-[760px] mx-auto flex items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "#1aa5dc" }}>XXXのお客様限定</span>
               <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
@@ -3324,8 +3324,8 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
 
-        {/* 図版：中央・最大600px */}
-        <div className="overflow-hidden rounded-[16px] border border-warm-200 mx-auto" style={{ maxWidth: "600px" }}>
+        {/* 図版：白背景40px余白＋外側に罫線 */}
+        <div className="rounded-2xl border border-warm-200 bg-white p-10 mx-auto" style={{ maxWidth: "680px" }}>
           <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
         </div>
 
@@ -3346,13 +3346,13 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
 
-        {/* プランシミュレーション */}
-        <div>
+        {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
+        <div className="w-[760px] mx-auto">
           <h2 className="text-h3 font-bold text-center" style={{ color: "#1AA5DC" }}>プランシミュレーション</h2>
 
-          {/* 生年月日・性別：横並び */}
-          <div className="grid grid-cols-2 gap-8 mt-8">
-            <div className="flex flex-col gap-2">
+          {/* 生年月日・性別：横並び・各358px */}
+          <div className="flex gap-8 mt-8 justify-center">
+            <div className="flex flex-col gap-2" style={{ width: "358px" }}>
               <span className="text-caption font-medium text-neutral-600">生年月日<ReqBadge /></span>
               <button type="button" onClick={() => setPickerOpen(true)} style={{ width: "100%" }}
                 className={"fld flex items-center justify-between gap-2 h-12 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left " + (birth ? "text-neutral-800" : "text-neutral-400")}>
@@ -3360,7 +3360,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
               </button>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2" style={{ width: "358px" }}>
               <span className="text-caption font-medium text-neutral-600">性別<ReqBadge /></span>
               <div className="grid grid-cols-2 gap-2">
                 {["男性", "女性"].map((g) => (
@@ -3371,57 +3371,47 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             </div>
           </div>
 
-          {/* プランを選ぶ：3カラム */}
+          {/* プランを選ぶ：2カラム・358px カード・32pxギャップ */}
           <div className="mt-10">
             <h3 className="text-h5 font-bold text-neutral-800">プランを選ぶ</h3>
             <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
-            <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="grid mt-4 justify-center" style={{ gridTemplateColumns: "358px 358px", gap: "32px" }}>
               {PLAN_CARDS.map((p) => (
                 <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
               ))}
             </div>
           </div>
 
-          {/* 保険料シミュレーション：スライダー左／概要右、テーブルは全幅 */}
+          {/* 保険料シミュレーション：モバイルと同じ縦積みカード */}
           <div className="mt-10">
             <h3 className="text-h5 font-bold text-neutral-800">保険料シミュレーション</h3>
-            <div className="grid grid-cols-2 gap-8 mt-4 items-start">
-              <SimSliders m={m} setM={setM} y={y} setY={setY} />
-              <div className="rounded-2xl border border-warm-200 bg-white p-6">
-                <span className="text-caption font-medium text-neutral-600">保障期間</span>
-                <p className="mt-2 text-h4 font-bold text-primary-600">{y}年</p>
-                <p className="mt-1 text-caption text-neutral-500 leading-relaxed">毎月{m.toLocaleString("ja-JP")}円の積立で、就業不能時も将来の積立金額を保障します。</p>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-warm-200 bg-white p-6 mt-6 w-full">
-              <p className="text-caption text-neutral-600 leading-relaxed mb-4">選択した内容にもとづく給付予想額です。</p>
-              <BenefitTable m={m} y={y} plan={plan} startAge={ageFromBirth(birth)} />
+            <div className="mt-4">
+              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </div>
           </div>
         </div>
 
-        {/* 申し込みをする — モバイルと同じく上下に配置 */}
-        <div className="space-y-6">
+        {/* 申し込みをする — 幅760px、各カードは説明文＋案内カードの横並び */}
+        <div className="w-[760px] mx-auto space-y-6">
           <h2 className="text-h3 font-bold text-neutral-800">申し込みをする</h2>
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
-            <p className="text-caption text-neutral-600 leading-relaxed">お手続きの際に必要となる書類をご準備ください。</p>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-warm-50 border border-warm-200">
-              <Ic.cardArt className="w-10 h-auto text-primary-500 shrink-0" />
-              <span className="text-caption font-medium text-neutral-700">申込みは本人様名義のクレジットカードが必要です</span>
+            <div className="flex items-center gap-4">
+              <p className="flex-1 text-caption text-neutral-600 leading-relaxed">お手続きの際に必要となる書類をご準備ください。</p>
+              <div className="flex-1 flex items-center gap-3 p-3 rounded-xl bg-warm-50 border border-warm-200">
+                <Ic.cardArt className="w-10 h-auto text-primary-500 shrink-0" />
+                <span className="text-caption font-medium text-neutral-700">申込みは本人様名義のクレジットカードが必要です</span>
+              </div>
             </div>
           </div>
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">事前同意事項のご確認</h3>
-            <p className="text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
-            <button onClick={() => setNoticeOpen(true)}
-              className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left">
-              <span className="flex items-center gap-3 min-w-0">
-                <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">重要</span>
-                <span className="text-h6 font-bold text-neutral-800">重要事項・事前同意事項を確認する</span>
-              </span>
-              <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
-            </button>
+            <div className="flex items-center gap-4">
+              <p className="flex-1 text-caption text-neutral-600 leading-relaxed">お申し込み前に、下記より重要事項・事前同意事項を必ずご確認ください。</p>
+              <div className="flex-1">
+                <AttentionNoticeCard onClick={() => setNoticeOpen(true)} />
+              </div>
+            </div>
             <div className={"flex items-start gap-3 w-full text-left pt-1 transition-opacity " + (agree ? "" : "opacity-40 pointer-events-none")}>
               <span className={"grid place-items-center w-6 h-6 mt-[2px] rounded border-2 shrink-0 " + (agree ? "border-primary bg-primary text-white" : "border-warm-300 bg-white")}>
                 {agree && <Ic.check className="w-3 h-3" />}
