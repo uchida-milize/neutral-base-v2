@@ -60,8 +60,9 @@ function AccessibilityRules() {
               UI コンポーネント (ボタンの外周線、フォームの境界): 3 : 1 以上。
             </p>
             <p>
-              Ink Blue <code>#065fe3</code> on 白 = <strong>5.6 : 1</strong>（本文 AA 4.5:1 をクリア）。
-              通常ボタンは白文字を青系の面・グラデーション上に置くため、ラベルは太字かつ 16px 以上を維持し、申込確定の純赤は面積を絞って使う。
+              Sky Blue <code>#1aa5dc</code> on 白 = <strong>2.8 : 1</strong>（本文 AA 4.5:1 / UI 3:1 とも未達。要確認）。
+              通常ボタンは白文字を青系の面・グラデーション上に置くが、グラデーション終端の <code>#7fd0f0</code> は 1.7 : 1 まで低下する。
+              純赤 (secondary-color-700 系) はアラート・エラー・必須表示専用で、通常ボタンや申込確定には使わない。
             </p>
           </CardContent>
         </Card>
@@ -111,7 +112,7 @@ function AccessibilityRules() {
           <CardContent className="space-y-2 text-body text-muted-foreground">
             <p>
               キーボード操作時のフォーカスリングは必ず表示。
-              focus-visible のリング色は navy ベース、CTA だけ赤系のリングに切替。
+              focus-visible のリング色は navy ベースに統一（CTA も含め、全ボタンで共通）。
             </p>
             <p>
               色だけで状態を伝えない。エラーは color + テキスト + アイコンの 3 重で示す

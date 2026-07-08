@@ -10,16 +10,17 @@ import { Card, CardContent } from "@/components/ui/card";
  * ガイドライン (Buttons セクション) と Components ページの両方から参照する。
  *
  * ※ 値は screens.tsx と一致させること:
- *   - ボタン (cta / button)   : linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)
- *   - ボタン (danger / 申込確定): linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)
- *   - ヘッダー (status+appbar) : linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)
- *   - ステップ番号バッジ        : linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)
+ *   - ボタン (cta / button)     : linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)
+ *   - ボタン (danger / 警告操作) : linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)
+ *     ※ danger はクレジットカード登録開始・解約など「取り消し不可の注意操作」専用。申込確定 (cta) には使わない。
+ *   - ヘッダー (status+appbar)  : linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)
+ *   - ステップ番号バッジ         : linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)
  *   - 中立面 (無効/プラン帯/補償ラベル): #EFEFEF
  */
 
-const GRAD_BUTTON = "linear-gradient(135deg, #075FE3 0%, #64B0F7 100%)";
+const GRAD_BUTTON = "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)";
 const GRAD_DANGER = "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)";
-const GRAD_BADGE = "linear-gradient(135deg, #075FE3 0%, #03CDFE 100%)";
+const GRAD_BADGE = "linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)";
 
 function Swatch({
   title,
@@ -49,24 +50,24 @@ export function BrandGradients() {
       {/* 1. ボタングラデーション */}
       <Swatch
         title="ボタン (グラデーション)"
-        hint="通常 CTA / 申込確定で 2 系統。h-16・角丸 xl・白文字。"
+        hint="通常 / 前進 / 申込確定は同じ Sky Blue。危険操作だけ danger の赤。"
       >
         <div className="space-y-2.5">
           <div
             className="flex h-12 w-full items-center justify-center rounded-xl text-h6 font-bold text-white"
             style={{ backgroundImage: GRAD_BUTTON }}
           >
-            通常 / 前進
+            通常 / 前進 / 申込確定
           </div>
           <div
             className="flex h-12 w-full items-center justify-center rounded-xl text-h6 font-bold text-white"
             style={{ backgroundImage: GRAD_DANGER }}
           >
-            申込確定 (danger)
+            解約・登録開始などの警告操作 (danger)
           </div>
           <dl className="space-y-1 pt-1 text-tiny font-mono text-neutral-500">
             <div>
-              <span className="text-neutral-400">cta / button</span> #075FE3 → #64B0F7
+              <span className="text-neutral-400">cta / button</span> #1aa5dc → #7fd0f0
             </div>
             <div>
               <span className="text-neutral-400">danger</span> #E83A3C → #F66A6C
@@ -100,10 +101,10 @@ export function BrandGradients() {
         />
         <dl className="space-y-1 pt-1 text-tiny font-mono text-neutral-500">
           <div>
-            <span className="text-neutral-400">バッジ</span> #075FE3 → #03CDFE
+            <span className="text-neutral-400">バッジ</span> #1aa5dc → #03CDFE
           </div>
           <div>
-            <span className="text-neutral-400">ヘッダー</span> #075FE3 → #64B0F7
+            <span className="text-neutral-400">ヘッダー</span> #1aa5dc → #7fd0f0
           </div>
         </dl>
       </Swatch>

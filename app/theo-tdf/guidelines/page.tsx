@@ -29,16 +29,16 @@ import { SectionHeading, Section } from "@/components/guidelines/theo-tdf-shared
  * 色トークンは components/theo-tdf/tokens.css を一次ソースとする。
  *
  * カラートークン (anchor):
- *   --primary-color-500   #065fe3 — Ink Blue (ブランド基調 / ヘッダー / ヒーロー)
+ *   --primary-color-500   #1aa5dc — Sky Blue (ブランド基調 / ヘッダー / ヒーロー)
  *   --secondary-color-500 #ff748d — Coral (アクセント / 重要バッジ / リンク)
- *   --button-color-500    #007dff — THEO Blue (通常 filled / 前進。実機は青グラデ #075FE3→#64B0F7)
- *   --cta-color-500       #ff2d2d — 純赤 (申込確定。1 画面 1 つ。danger は赤グラデ #E83A3C→#F66A6C)
+ *   --button-color-500    var(--primary-color-500) — 通常ボタン (前進。実機は青グラデ #1aa5dc→#7fd0f0)
+ *   --cta-color-500       var(--primary-color-500) — 申込確定 (実機は青グラデ #1aa5dc→#7fd0f0)
  *   --warm-50             — premium / featured surface
  *
  * 設計の特徴:
- *   - Primary は Ink Blue。ブランド基調を担う。
- *   - 通常ボタン / 前進は THEO Blue (実機は青グラデーション)。
- *   - 申込確定だけは純赤。装飾には使わない (1 画面 1 つ)。
+ *   - Primary は Sky Blue。ブランド基調を担う。
+ *   - 通常ボタン / 前進 / 申込確定はすべて同じ Sky Blue (button-color・cta-color は primary-color のエイリアス)。
+ *   - 純赤 (secondary-color-700 系) はアラート・エラー・必須表示専用。CTA や通常の装飾には使わない。
  *   - 保険商品のため常時ライト固定 (ダークモードは廃止)。
  * ================================================================= */
 
@@ -98,12 +98,12 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: "信頼 (Trust)",
-    body: "Primary は Ink Blue (#065fe3)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
+    body: "Primary は Sky Blue (#1aa5dc)。揺るぎない情報密度で誤読を防ぎ、保険・金融プロダクトに不可欠な「読み違えゼロ」を最優先する。",
   },
   {
     icon: SparklesIcon,
     title: "誠実 (Sincerity)",
-    body: "誇張・煽り表現は使わない。申込確定の純赤 (#ff2d2d) は申込/前進だけに限定し、ボタン・コピー・配色で過度な訴求をしない。",
+    body: "誇張・煽り表現は使わない。純赤 (secondary-color-700 系) はアラート・エラー・必須表示専用とし、申込確定を含む通常のボタン・コピー・配色では使わない。",
   },
   {
     icon: PaletteIcon,
@@ -156,7 +156,7 @@ const SUBPAGES = [
     href: "/theo-tdf/guidelines/color",
     icon: PaletteIcon,
     title: "カラー",
-    description: "Ink Blue / Coral / THEO Blue / 純赤 CTA の 5 スケールと token → Tailwind 対応表。",
+    description: "Sky Blue (Primary/Button/CTA 共通) / Coral / アラート専用の純赤と、token → Tailwind 対応表。",
   },
   {
     href: "/theo-tdf/guidelines/typography",

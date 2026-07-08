@@ -560,9 +560,6 @@ export function StatusSection() {
         <AssetCard label="icon_error.png">
           <img src="/assets/theo-tdf/icon_error.png" alt="" className="w-12 h-12 object-contain" />
         </AssetCard>
-        <AssetCard label="icon_maint.png">
-          <img src="/assets/theo-tdf/icon_maint.png" alt="" className="w-12 h-12 object-contain" />
-        </AssetCard>
       </Row>
       <SubHead>デコレーション SVG</SubHead>
       <Row>

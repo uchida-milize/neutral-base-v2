@@ -25,7 +25,7 @@ import {
 export const metadata: Metadata = {
   title: "カラー | ガイドライン | THEO × T&Dファイナンシャル 組込",
   description:
-    "Ink Blue / Coral / THEO Blue / 純赤 CTA の 5 カラースケールと token → Tailwind 対応表。",
+    "Sky Blue (Primary/Button/CTA 共通) / Coral / アラート専用の純赤と、token → Tailwind 対応表。",
 };
 
 export default function ColorPage() {
@@ -41,8 +41,8 @@ function ColorRules() {
     <Section id="color">
       <SectionHeading
         eyebrow="Color"
-        title="Ink Blue 基調 + Coral アクセント + THEO Blue 通常ボタン + 純赤 CTA"
-        description="THEO × T&Dファイナンシャル のカラーは 5 つのスケール (primary-color / secondary-color / button-color / cta-color / warm) で構成されます。CTA と通常ボタンを別スケールで分け、申込専用色を明示します。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
+        title="Sky Blue 基調 + Coral アクセント。CTA と通常ボタンは同一の Sky Blue"
+        description="THEO × T&Dファイナンシャル のカラーは primary-color / secondary-color / warm の 3 スケールで構成されます。button-color と cta-color は primary-color のエイリアスで、独自の色は持ちません。純赤 (secondary-color-700 系) はアラート・エラー・必須表示専用で、CTA には使いません。直接 hex を書かず、必ず var(--primary) / var(--ring) 等の semantic 層を経由します。"
         audience="both"
       />
 
@@ -61,12 +61,12 @@ function ColorRules() {
         <AutoColorScale
           prefix="button-color"
           title="button-color"
-          subtitle="通常ボタンカラー · 色面 + 罫線の 2 バリアント"
+          subtitle="通常ボタンカラー · primary-color のエイリアス（独自の値は持たない）"
         />
         <AutoColorScale
           prefix="cta-color"
           title="cta-color"
-          subtitle="CTA 申込ボタンカラー · 申込/前進 専用 (1 画面 1 つ)"
+          subtitle="CTA 申込ボタンカラー · primary-color のエイリアス（独自の値は持たない）"
         />
         <AutoWarmScale subtitle="無彩色 neutral · 背景 / 区切り線。装飾色は持ち込まない" />
       </div>
@@ -95,7 +95,7 @@ function ColorRules() {
                   <TableCell>ブランド主要色 (primary)</TableCell>
                   <TableCell><code className="font-mono">bg-primary</code> / <code className="font-mono">text-primary</code> / <code className="font-mono">ring-primary</code></TableCell>
                   <TableCell className="font-mono text-caption">var(--primary)</TableCell>
-                  <TableCell className="text-right font-mono text-caption">#065fe3 Ink Blue</TableCell>
+                  <TableCell className="text-right font-mono text-caption">#1aa5dc Sky Blue</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>primary 上の文字色</TableCell>
@@ -192,7 +192,7 @@ function ColorRules() {
           />
 
           <SnippetCard
-            label="② CTA 申込ボタン (純赤)"
+            label="② CTA 申込ボタン (Sky Blue, button-color と共通)"
             preview={
               <button
                 type="button"
@@ -290,10 +290,10 @@ function ColorRules() {
       <div className="mt-6 rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors duration-300">
         <h3 className="text-h4 font-semibold">テナント差し替え点</h3>
         <p className="mt-2 text-body text-muted-foreground">
-          顧客企業が変えるのは 4 つのスケール (<code>--primary-color-*</code>、
-          <code>--secondary-color-*</code>、<code>--button-color-*</code>、
-          <code>--cta-color-*</code>) と、ロゴアセット。Semantic 層 (<code>--primary</code> /
-          <code>--accent</code> 等) は自動で追従するので触らないこと。
+          顧客企業が変えるのは <code>--primary-color-*</code> と <code>--secondary-color-*</code> の
+          2 スケールと、ロゴアセット。<code>--button-color-*</code> / <code>--cta-color-*</code> は
+          <code>--primary-color-*</code> のエイリアスなので自動で追従し、直接編集しないこと。Semantic 層
+          (<code>--primary</code> / <code>--accent</code> 等) も同様に自動で追従します。
         </p>
       </div>
     </Section>
