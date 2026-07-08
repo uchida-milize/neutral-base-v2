@@ -2982,8 +2982,88 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
   const doneBgRef = useRef<any>(null);
   if (variant === 'ended') return <ScreenEnded onRestart={() => go(0)} desktop={desktop} />;
   if (variant !== 'done') return <ScreenStatus variant={variant} go={go} desktop={desktop} />;
+
+  const flowCard = (
+    <div className="rounded-2xl border border-warm-200 bg-white p-6">
+      <SectionLabel>このあとの流れ</SectionLabel>
+      <div className="mt-1">
+      {[
+        ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
+        ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
+        ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
+      ].map(([n, t, d], idx, arr) => (
+        <div key={n} className="flex gap-3">
+          {/* 左：丸数字＋接続線 */}
+          <div className="flex flex-col items-center" style={{ width: '28px', flexShrink: 0 }}>
+            <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
+            {idx < arr.length - 1 && (
+              <div style={{ flex: 1, width: '2px', background: '#AAA', minHeight: '24px', margin: '4px 0' }} />
+            )}
+          </div>
+          {/* 右：テキスト */}
+          <div style={{ paddingBottom: idx < arr.length - 1 ? '0' : '4px' }}>
+            <p className="text-h7 font-bold text-neutral-800">{t}</p>
+            <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
+          </div>
+        </div>
+      ))}
+      </div>
+    </div>
+  );
+  const noteBar = (
+    <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed">
+      保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。
+    </div>
+  );
+
+  if (desktop) {
+    return (
+      <>
+        <div style={{ background: 'radial-gradient(600px circle at 28% 15%, rgba(255,170,130,0.30), transparent 60%), radial-gradient(700px circle at 78% 55%, rgba(120,200,255,0.35), transparent 60%), radial-gradient(500px circle at 15% 75%, rgba(255,190,170,0.22), transparent 60%), #ffffff' }}>
+          <div className="flex items-center justify-between px-8 pt-8 pb-4">
+            <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
+              <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
+              <span className="font-medium text-[16px]">つみたて安心ほけん</span>
+              <span className="font-medium text-[10px]">&lt;XXX&gt;</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
+              <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
+            </div>
+          </div>
+          <div className="px-8 pb-12 text-center">
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-10 mx-auto mb-8" />
+            <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
+              <Ic.check className="w-8 h-8 text-primary-600" />
+            </div>
+            <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
+            <p className="mt-2 text-caption text-neutral-500">申込番号　XXX-2026-000001</p>
+          </div>
+        </div>
+        <Steps n={5} go={go} />
+        <div className="px-8 py-10 max-w-[736px] mx-auto w-full space-y-6">
+          <div>
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
+              受付確認メールをご確認ください。<br/>
+              査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
+              ※銀行のお取引状況等によっては、ご加入できない場合がございます。
+            </p>
+          </div>
+          {flowCard}
+          {noteBar}
+        </div>
+        <ActionBar bg="#F2FBFE">
+          <div className="max-w-[256px] mx-auto w-full">
+            <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
+          </div>
+        </ActionBar>
+      </>
+    );
+  }
+
   const bindDoneScroll = (el: any) => {
-    if (!el || el.__bound || desktop) return;
+    if (!el || el.__bound) return;
     el.__bound = true;
     el.addEventListener("scroll", () => {
       if (doneBgRef.current) {
@@ -2993,26 +3073,22 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
   };
   return (
     <>
-      {/* 固定ステータスバー（パララックスと一緒に動かない）— PC版では不要 */}
-      {!desktop && (
-        <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
-          <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-        </div>
-      )}
+      {/* 固定ステータスバー（パララックスと一緒に動かない） */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-neutral-700 pointer-events-none">
+        <span>9:41</span><span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+      </div>
       <div ref={bindDoneScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ヒーロー（img＋絶対配置・パララックス） */}
-        <div className={desktop ? "-mx-8 -mt-10" : ""} style={{ position: 'relative', height: desktop ? '360px' : '300px', overflow: 'hidden' }}>
-          <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
+        <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+          <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {!desktop && (
-            /* フェイクステータスバー（プレースホルダー） */
-            <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
-              <span>9:41</span>
-              <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
-            </div>
-          )}
+          {/* フェイクステータスバー（プレースホルダー） */}
+          <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
+            <span>9:41</span>
+            <span className="flex items-center gap-1"><span>5G</span><span>100%</span></span>
+          </div>
           {/* ヒーローコンテンツ */}
-          <div className={`px-5 text-center ${desktop ? "pt-10 pb-12" : "pt-4 pb-12"}`}>
+          <div className="px-5 pt-4 pb-12 text-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
@@ -3028,7 +3104,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           <Steps n={5} go={go} />
         </div>
 
-        <div className={desktop ? "px-8 py-10 max-w-[736px] mx-auto w-full space-y-6" : "px-4 py-6 space-y-6"}>
+        <div className="px-4 py-6 space-y-6">
           <div className="px-1">
             <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
@@ -3037,41 +3113,12 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
               ※銀行のお取引状況等によっては、ご加入できない場合がございます。
             </p>
           </div>
-
-          <div className="rounded-2xl border border-warm-200 bg-white p-6">
-            <SectionLabel>このあとの流れ</SectionLabel>
-            <div className="mt-1">
-            {[
-              ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
-              ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
-              ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
-            ].map(([n, t, d], idx, arr) => (
-              <div key={n} className="flex gap-3">
-                {/* 左：丸数字＋接続線 */}
-                <div className="flex flex-col items-center" style={{ width: '28px', flexShrink: 0 }}>
-                  <span className="grid place-items-center w-7 h-7 rounded-full bg-primary-10 text-primary-600 font-en font-semibold text-caption shrink-0">{n}</span>
-                  {idx < arr.length - 1 && (
-                    <div style={{ flex: 1, width: '2px', background: '#AAA', minHeight: '24px', margin: '4px 0' }} />
-                  )}
-                </div>
-                {/* 右：テキスト */}
-                <div style={{ paddingBottom: idx < arr.length - 1 ? '0' : '4px' }}>
-                  <p className="text-h7 font-bold text-neutral-800">{t}</p>
-                  <p className="text-caption text-neutral-500 leading-relaxed">{d}</p>
-                </div>
-              </div>
-            ))}
-            </div>
-          </div>
-          <div className="rounded-xl bg-warm-100 p-4 text-caption text-neutral-500 leading-relaxed">
-            保険証券（電子）はマイページからいつでもご確認・ダウンロードいただけます。
-          </div>
+          {flowCard}
+          {noteBar}
         </div>
       </div>
       <ActionBar bg="#F2FBFE">
-        <div className={desktop ? "max-w-[256px] mx-auto w-full" : ""}>
-          <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
-        </div>
+        <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
       </ActionBar>
     </>
   );
