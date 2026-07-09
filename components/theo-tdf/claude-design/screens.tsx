@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い���だ���たいこと
+                    ご案内にあたりご確認・同意い�����だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1241,7 +1241,7 @@ export function NoticeContent() {
         "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
         "個人情報に変更が生じた場合も、同様に取り扱います。",
         "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
-        "個人番号および特定���人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
+        "個人番号および���定���人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
       ],
       bulletLinks: [
         { text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
@@ -1630,7 +1630,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const onM = (val: number) => { setM(val); onInput && onInput(); };
   const onY = (val: number) => { setY(val); onInput && onInput(); };
-  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限��ステップにスナップ）
+  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下�����ステップにスナップ）
   const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
   const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
   const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
@@ -2551,7 +2551,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
-  // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
+  // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr ���初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
@@ -2713,8 +2713,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
           <div>
-            <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカード������支払���について���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
@@ -2738,7 +2738,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                   {[
                     "今後の保険料のお支払は、ご指定いただきましたクレジットカードの発行会社が定める会員規約に基づいて行われます。",
                     "クレジットカード支払につきましては、クレジットカード支払規定に基づいて行いますので、お申し込みの前に必ずご一読ください。",
-                    "クレ��ットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
+                    "クレジットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
                     "クレジットカードの発行会社が保険料相当額をT&Dフィナンシャル生命に入金させ、ご加入者さまの利用口座から保険料相当額のお振り替えをおこなう仕組みになっております。したがって、ご契約の消滅（解約・死亡等）または、T&Dフィナンシャル生命にお払込みが完了された場合でも、翌月以降に保険料相当額の決済（クレジットカードの発行会社によるお振り替え）が発生することがあります。",
                     "保険料相当額の決済日はクレジットカードの発行会社によって異なります。決済日は、直接クレジットカードの発行会社にお問い合わせください。",
                     "ご利用のクレジットカード番号・カード有効期限等が変更された場合、すみやかに保険のマイページより変更ください。（ご指定いただきましたクレジットカードの発行会社によっては、クレジットカードによる保険料のお支払いができなくなる場合があります。）",
@@ -3034,7 +3034,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
             <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
-            <p className="mt-2 text-caption text-neutral-500">申込���号　XXX-2026-000001</p>
+            <p className="mt-2 text-caption text-neutral-500">申込番号　XXX-2026-000001</p>
           </div>
         </div>
         <Steps n={5} go={go} />
@@ -3166,7 +3166,7 @@ export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただき���すが、利用���止をご希望の場合には、当������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させていただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3323,7 +3323,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保���イメージ図" className="w-full block" />
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
@@ -3548,7 +3548,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
               { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
-              { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "も���もの\n備えに" },
+              { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-2">
                 <img src={f.src} alt="" style={{ width: '40px', height: '40px' }} />
@@ -3560,7 +3560,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div>
             <h3 className={`font-bold leading-snug text-center ${recommendPattern === 'B' ? 'text-h3' : 'text-h4'}`} style={{ color: 'var(--theo-tdf-primary)' }}>
               {recommendPattern === 'B' ? (
-                <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポ��ント</>
+                <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポイント</>
               ) : (
                 <><span className={`text-h2 ${inter.className}`}>3</span>つのオススメポイント</>
               )}
@@ -3570,7 +3570,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 {[1, 2, 3].map((n) => (
                   <div key={n} className="flex flex-col items-center gap-2">
                     <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
-                    <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left" style={{ width: '260px' }}>ココにお勧めの��イントが入りますタイトルです</p>
+                    <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left" style={{ width: '260px' }}>ココにお勧めのポイントが入りますタイトルです</p>
                     <p className="text-[14px] text-neutral-600 leading-relaxed text-left" style={{ width: '260px' }}>あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                   </div>
                 ))}
