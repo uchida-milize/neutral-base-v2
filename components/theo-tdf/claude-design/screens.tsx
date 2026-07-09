@@ -238,7 +238,7 @@ export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
 export function Steps({ n, of = 5, go, padY, transparent }: { n: number; of?: number; go?: Go; padY?: number; transparent?: boolean }) {
   return (
-    <div className={`flex justify-center items-center gap-0 px-6 py-2 border-b border-warm-200 ${transparent ? "" : "bg-white"}`} style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
+    <div className={`flex justify-center items-center gap-0 px-6 py-2 ${transparent ? "" : "bg-white border-b border-warm-200"}`} style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -3017,7 +3017,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
   if (variant !== 'done') return <ScreenStatus variant={variant} go={go} desktop={desktop} />;
 
   const flowCard = (
-    <div className="rounded-2xl border border-warm-200 bg-white p-6">
+    <div className={`rounded-2xl bg-white p-6 ${desktop ? "" : "border border-warm-200"}`}>
           <SectionLabel>このあとの流れ</SectionLabel>
       <div className="mt-1">
       {[
@@ -3064,7 +3064,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
               <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
             </div>
           </div>
-          <div className="px-8 pb-12 text-center">
+          <div className="px-8 pb-4 text-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-10 mx-auto mt-[56px] mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
@@ -3318,7 +3318,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
     return (
       <div className="space-y-6">
         {/* ヒーロー＋ステッパー（Figma PC_01 準拠） */}
-        <div className="rounded-2xl overflow-hidden border border-warm-200">
+        <div className="rounded-t-2xl overflow-hidden border border-warm-200">
           <div style={{ position: "relative", height: "298px", overflow: "hidden" }}>
             <img src="/assets/theo-tdf/hero_bg_pc.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "34px" }} />
