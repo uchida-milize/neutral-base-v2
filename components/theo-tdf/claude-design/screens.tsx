@@ -236,9 +236,9 @@ export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
 
 // step progress dots — 既出（到達済み）ステップは押下でその画面へ遷移
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
-export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: Go }) {
+export function Steps({ n, of = 5, go, padY }: { n: number; of?: number; go?: Go; padY?: number }) {
   return (
-    <div className="flex justify-center items-center gap-0 px-6 py-2 bg-white border-b border-warm-200">
+    <div className="flex justify-center items-center gap-0 px-6 py-2 bg-white border-b border-warm-200" style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -295,7 +295,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
   );
 }
 
-// グループ内の小見出し（区切り）
+// グループ���の小見出し（区切り）
 export function SubLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="pt-2 mt-1 border-t border-warm-200">
@@ -2714,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
           <div>
             <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードの���支払���について���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカード������支払���について���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
@@ -3165,9 +3165,9 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
-  { note: "お申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きま��）" },
+  { note: "お申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
   { sec: "3．保険商品のご購入のご検討に際して" },
@@ -3292,7 +3292,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               <p className="mt-2 text-h6 leading-relaxed text-white">将来に向けた資産形成のためのほけん</p>
             </div>
           </div>
-          <Steps n={1} go={go} />
+          <Steps n={1} go={go} padY={16} />
         </div>
 
         {/* 引受保険会社／XXXのお客様限定バッジ・ロゴ／3アイコン */}
@@ -4187,7 +4187,7 @@ export function AccordionDropdown({ title, children, open, onToggle }: {
       </button>
       {open && (
         <div className="px-4 pb-4 text-caption text-neutral-600 leading-relaxed border-t border-warm-100 pt-3">
-          {children ?? <p className="text-neutral-400">コンテン���エリア</p>}
+          {children ?? <p className="text-neutral-400">コンテン���エリ��</p>}
         </div>
       )}
     </div>
