@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い�����だ���たいこと
+                    ご案内にあたりご確認・同意い�������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1507,8 +1507,8 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
           <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
-          <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
-            ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載のPINコードを入力してください。
+          <p className={`mt-3 text-h6 text-neutral-600 leading-relaxed ${desktop ? "text-center" : "text-left"}`}>
+            ご登録のメールアドレスに、認証用のPINコードをお送りしました。<br/>メールに記載のPINコードを入力してください。
           </p>
 
           <div className="mt-8 w-full max-w-[280px] relative">
@@ -1542,13 +1542,13 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
         </div>
       </div>
       <ActionBar>
-        <p className="text-caption text-neutral-500 leading-relaxed px-1">
+        <p className={`text-caption text-neutral-500 leading-relaxed px-1 ${desktop ? "text-center" : ""}`}>
           本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-          <div style={{ width: '100%', maxWidth: '260px' }}>
+          <div style={{ width: '270px' }}>
             <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
           </div>
         </div>
@@ -2016,7 +2016,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         </div>
 
         <ActionBar bg={atBottom ? "var(--warm-50)" : undefined}>
-          <div className="max-w-[1000px] mx-auto w-full">
+          <div className="w-[760px] mx-auto">
             {errMode === "float" && visibleErrs.length > 0 && (
               <button onClick={() => jumpNext(visibleErrs)}
                 className="w-full flex items-center justify-between gap-2 rounded-xl px-4 py-3 fade-in active:scale-[.99] transition-transform"
@@ -2051,7 +2051,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             )}
             <div className="flex items-center justify-center gap-3">
               <button onClick={onBack} className="text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
-              <div style={{ width: "100%", maxWidth: "260px" }}>
+              <div style={{ width: "270px" }}>
                 <Btn kind="button" onClick={() => go(4)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
               </div>
             </div>
@@ -2582,10 +2582,10 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <Row k="保障期間" v={`${y} 年`} strong />
           <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
           <Row k="保険期間" v="1年（自動更新）" strong />
-          {/* ご意向の再確認（プランにより文言が変化） */}
-          <div className="mt-1">
-            <span className="text-caption text-neutral-500">ご意向の確認</span>
-            <p className="text-h6 text-neutral-700 leading-relaxed mt-1">積立期間中における<strong className="font-bold text-neutral-900">{ikoMid}</strong>にそなえたい</p>
+          {/* ご意向の再確認（プランにより文言が変化）：ラベル左・値右 */}
+          <div className="flex items-center justify-between gap-4 py-3">
+            <span className="text-caption text-neutral-500 shrink-0">ご意向の確認</span>
+            <p className="text-h6 text-neutral-700 leading-relaxed text-right">積立期間中における<strong className="font-bold text-neutral-900">{ikoMid}</strong>にそなえたい</p>
           </div>
         </div>
 
@@ -2825,7 +2825,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
         <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
           <div className="flex items-center justify-center gap-3">
             <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-            <div style={{ width: '100%', maxWidth: '260px' }}>
+            <div style={{ width: '270px' }}>
               <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
             </div>
           </div>
@@ -2856,11 +2856,12 @@ export function ScreenCardInput({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
-      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px] space-y-4">
+      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px]">
+        <div className="max-w-[760px] mx-auto space-y-4">
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
-            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情���を入力くださ���
+            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力ください
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
           <Field label="カード名義（半角ローマ字）" placeholder="TARO YAMADA" required />
@@ -2888,10 +2889,15 @@ export function ScreenCardInput({ go }: { go: Go }) {
             ))}
           </ul>
         </div>
+        </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
-        <button onClick={() => go(4)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
+      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3">
+        <div className="max-w-[760px] mx-auto flex flex-col items-center gap-2">
+          <div style={{ width: '270px' }}>
+            <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
+          </div>
+          <button onClick={() => go(4)} className="text-center text-caption text-neutral-500">キャンセルして戻る</button>
+        </div>
       </div>
     </>
   );
@@ -2912,7 +2918,7 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
           </p>
           <div>
             <Row k="カード番号" v="**** **** **** 3456" />
-            <Row k="カー���名義" v="TARO YAMADA" />
+            <Row k="���ー���名義" v="TARO YAMADA" />
             <Row k="有効期限" v="04 / 25" />
             <Row k="お支払い方法" v="一回払い" />
             <Row k="保険金の受取人" v="山田 花子様" />
@@ -3038,10 +3044,10 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           </div>
         </div>
         <Steps n={5} go={go} />
-        <div className="px-8 py-10 max-w-[736px] mx-auto w-full space-y-6">
-          <div>
-            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
+        <div className="px-8 py-10 w-[760px] mx-auto space-y-6">
+          <div className="text-center">
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
               ※銀行のお取引状況等によっては、ご加入できない場合がございます。
@@ -3051,7 +3057,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           {noteBar}
         </div>
         <ActionBar bg="var(--warm-50)">
-          <div className="max-w-[256px] mx-auto w-full">
+          <div style={{ width: '270px' }} className="mx-auto">
             <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
           </div>
         </ActionBar>
@@ -3164,9 +3170,9 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
+  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させていただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させて���ただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3323,7 +3329,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の��立金額を保障するイメージ図" className="w-full block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
