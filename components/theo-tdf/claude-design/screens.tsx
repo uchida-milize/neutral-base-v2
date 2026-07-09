@@ -1915,13 +1915,33 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </div>
           )}
 
-          <div className="grid grid-cols-[1fr_360px] gap-8 items-start">
-            {/* 左カラム：入力フィールド（モバイルと同じ順序） */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-caption text-primary-700">
-                <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
+          <div className="mx-auto w-full max-w-[640px] space-y-6">
+            {/* 告知をする（添付デザイン：最上部） */}
+            <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
+              <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
+              <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
+              <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
+                className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+                <span className="flex items-center gap-3 min-w-0">
+                  <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
+                  <span className="text-h6 font-bold text-neutral-800">告知事項を確認する</span>
+                </span>
+                <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
+              </button>
+              <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
+                onClick={() => setKokuchiAgreed((a) => !a)}>
+                <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                  {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
+                </span>
+                <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
               </div>
+            </div>
 
+            <div className="flex items-center gap-2 text-caption text-primary-700">
+              <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
+            </div>
+
+            <div className="space-y-6">
               <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg">
                 <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                   <Field label="姓" placeholder="山田" required />
@@ -1991,29 +2011,6 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               <GroupCard title="団体特定コード" icon={Ic.tag}>
                 <Field label="団体特定コード" placeholder="TDF-0000-0000" hint="団体からご案内のコードを入力してください" />
               </GroupCard>
-            </div>
-
-            {/* 右カラム：告知事項 */}
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
-                <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
-                <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
-                <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
-                  className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
-                  <span className="flex items-center gap-3 min-w-0">
-                    <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
-                    <span className="text-h6 font-bold text-neutral-800">告知事項を確認する</span>
-                  </span>
-                  <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
-                </button>
-                <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
-                  onClick={() => setKokuchiAgreed((a) => !a)}>
-                  <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
-                    {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
-                  </span>
-                  <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -2716,7 +2713,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
           <div>
-            <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
+            <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
@@ -2741,7 +2738,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                   {[
                     "今後の保険料のお支払は、ご指定いただきましたクレジットカードの発行会社が定める会員規約に基づいて行われます。",
                     "クレジットカード支払につきましては、クレジットカード支払規定に基づいて行いますので、お申し込みの前に必ずご一読ください。",
-                    "クレジットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
+                    "クレ��ットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
                     "クレジットカードの発行会社が保険料相当額をT&Dフィナンシャル生命に入金させ、ご加入者さまの利用口座から保険料相当額のお振り替えをおこなう仕組みになっております。したがって、ご契約の消滅（解約・死亡等）または、T&Dフィナンシャル生命にお払込みが完了された場合でも、翌月以降に保険料相当額の決済（クレジットカードの発行会社によるお振り替え）が発生することがあります。",
                     "保険料相当額の決済日はクレジットカードの発行会社によって異なります。決済日は、直接クレジットカードの発行会社にお問い合わせください。",
                     "ご利用のクレジットカード番号・カード有効期限等が変更された場合、すみやかに保険のマイページより変更ください。（ご指定いただきましたクレジットカードの発行会社によっては、クレジットカードによる保険料のお支払いができなくなる場合があります。）",
@@ -3170,7 +3167,7 @@ export const HEIGAI_BLOCKS = [
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
-  { note: "お申し出窓口：●●　●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
+  { note: "お申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
   { sec: "2．引受保険会社からの情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
   { sec: "3．保険商品のご購入のご検討に際して" },
