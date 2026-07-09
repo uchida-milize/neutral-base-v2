@@ -305,15 +305,15 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
 }
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
-export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl";
+export function ActionBar({ children, solid, bg, noBorder }: { children: React.ReactNode; solid?: boolean; bg?: string; noBorder?: boolean }) {
+  const base = `sticky bottom-0 z-20 backdrop-blur ${noBorder ? "" : "border-t"} px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl`;
   return (
-    <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
-      style={bg ? { background: bg, borderTopColor: "var(--theo-tdf-hairline)" } : undefined}>
-      {children}
-    </div>
+  <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
+  style={bg ? { background: bg, ...(noBorder ? {} : { borderTopColor: "var(--theo-tdf-hairline)" }) } : undefined}>
+  {children}
+  </div>
   );
-}
+  }
 
 // 必須マーク（赤字アスタリスク）
 export function ReqBadge() {
@@ -531,7 +531,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
     <div className="rounded-xl border border-warm-200 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
-          // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）なら全文bold、それ以外は末尾のありますか/ていますか以降をbold
+          // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
           const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
@@ -1098,8 +1098,8 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
-                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わり��も" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
-                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
+                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わり���も" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
+                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n���えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
                     <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--theo-tdf-primary)'}}>{f.svg}</div>
@@ -2309,7 +2309,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
             <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
             <span className="text-warm-300">|</span>
-            <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
+            <span className="text-neutral-700 tabular-nums">{yen(m)}円/���</span>
             <span className="text-warm-300">|</span>
             <span className="text-neutral-700 tabular-nums">{y}年</span>
           </div>
@@ -3165,7 +3165,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
@@ -3342,7 +3342,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
-        <div className="w-[760px] mx-auto">
+        <div className="w-[760px] mx-auto" style={{ marginTop: "80px" }}>
           <h2 className="text-h3 font-bold text-center" style={{ color: "var(--theo-tdf-primary)" }}>プランシミュレーション</h2>
 
           {/* 生年月日・性別：横並び・各358px */}
@@ -3431,7 +3431,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         {/* CTA */}
-        <div className="space-y-2 pt-6 border-t border-warm-200 max-w-[400px] mx-auto">
+        <div className="space-y-2 pt-6 max-w-[400px] mx-auto" style={{ paddingBottom: "32px" }}>
+          <div className="text-center" style={{ marginBottom: "8px" }}>
+            <p style={{ fontSize: "12px", lineHeight: "1.4" }} className="text-neutral-500">保険名称</p>
+            <p style={{ fontSize: "12px", lineHeight: "1.4" }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+          </div>
           {emailVerified ? (
             <>
               <div className="flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
@@ -3720,11 +3724,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
       </div>
-      <ActionBar bg="var(--warm-50)">
-          <div className="fade-in space-y-2">
+      <ActionBar bg="var(--warm-50)" noBorder>
+          <div className="fade-in space-y-2" style={{ paddingBottom: "32px" }}>
             <div style={{ marginBottom: '8px' }}>
-              <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
-              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-500 text-center">保険名称</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700 text-center">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
             {emailVerified ? (
               <>
