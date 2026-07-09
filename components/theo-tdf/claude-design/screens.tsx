@@ -1395,7 +1395,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
             <p className="text-caption text-neutral-600 leading-relaxed">
               ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
             </p>
-            <Field label="メ���ルアドレス" placeholder="samplename@sample.co.jp" required />
+            <Field label="メ�����ルアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
 
           {/* STEP 2 — 事前同意事項のご確認 */}
@@ -1742,7 +1742,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
         </div>
       </div>
       <p className="mt-2 text-[12px] text-neutral-400 leading-relaxed">
-        ※ 表示金額は試算であり、実際の保険料・給付額を保証するものではありません。
+        ※ 表示金額��試算であり、実際の保険料・給付額を保証するものではありません。
       </p>
     </>
   );
@@ -2204,7 +2204,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         {formSplit && (
         <GroupCard title="団体特定コード" icon={Ic.tag}>
           <Field label="団体特定コード" placeholder="1234567891234567" />
-          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力し��ください</span>
+          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入���し��ください</span>
         </GroupCard>
         )}
 
@@ -2714,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
           <div>
             <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
@@ -3165,10 +3165,10 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預��・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "お申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
-  { sec: "2．引受保険会社からの情報提供" },
+  { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
   { sec: "3．保険商品のご購入のご検討に際して" },
   { p: "保険募集に係る当行とお客様とのお取り引きが、当行におけるお客様の他のお取り引きに影響を与えることはありません。" },
@@ -3301,12 +3301,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
-          <div className="w-[760px] mx-auto flex items-center justify-center gap-6">
+          <div className="w-[760px] mx-auto flex flex-col items-center gap-8">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "var(--theo-tdf-primary)" }}>XXXのお客様限定</span>
               <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
             </div>
-            <div className="grid grid-cols-3 gap-2" style={{ width: "380px" }}>
+            <div className="grid grid-cols-3 gap-6" style={{ width: "480px" }}>
               {[
                 { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
                 { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
@@ -3556,7 +3556,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div>
             <h3 className={`font-bold leading-snug text-center ${recommendPattern === 'B' ? 'text-h3' : 'text-h4'}`} style={{ color: 'var(--theo-tdf-primary)' }}>
               {recommendPattern === 'B' ? (
-                <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポイント</>
+                <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポ��ント</>
               ) : (
                 <><span className={`text-h2 ${inter.className}`}>3</span>つのオススメポイント</>
               )}
@@ -4189,7 +4189,7 @@ export function AccordionDropdown({ title, children, open, onToggle }: {
       </button>
       {open && (
         <div className="px-4 pb-4 text-caption text-neutral-600 leading-relaxed border-t border-warm-100 pt-3">
-          {children ?? <p className="text-neutral-400">コンテンツエリア</p>}
+          {children ?? <p className="text-neutral-400">コンテン���エリア</p>}
         </div>
       )}
     </div>
