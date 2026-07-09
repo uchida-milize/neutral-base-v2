@@ -1550,12 +1550,21 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
           本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
-        <div className="relative flex items-center justify-center">
-          <button onClick={() => go(backScr)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-          <div style={{ width: '270px' }}>
-            <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
+        {desktop ? (
+          <div className="relative flex items-center justify-center">
+            <button onClick={() => go(backScr)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+            <div style={{ width: '270px' }}>
+              <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-center gap-3">
+            <button onClick={() => go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+            <div style={{ width: '270px' }}>
+              <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
+            </div>
+          </div>
+        )}
         {pin.length < 1 && <p className="text-center text-caption text-neutral-400">PINコードを入力してください</p>}
       </ActionBar>
     </>
@@ -2829,12 +2838,21 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       </div>
       <ActionBar bg="var(--warm-50)">
         <div className={desktop ? "max-w-[560px] mx-auto w-full space-y-2" : "space-y-2"}>
-          <div className="relative flex items-center justify-center">
-            <button onClick={() => go(3)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-            <div style={{ width: '270px' }}>
-              <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+          {desktop ? (
+            <div className="relative flex items-center justify-center">
+              <button onClick={() => go(3)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+              <div style={{ width: '270px' }}>
+                <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center justify-center gap-3">
+              <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+              <div style={{ width: '270px' }}>
+                <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
+              </div>
+            </div>
+          )}
           {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
         </div>
       </ActionBar>
@@ -2937,9 +2955,11 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3">
-        <div className="max-w-[560px] mx-auto space-y-2">
-          <Btn kind="button" onClick={() => go(7)}>この内容で申込</Btn>
-          <button onClick={() => go(5)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
+        <div className="max-w-[560px] mx-auto flex flex-col items-center gap-2">
+          <div style={{ width: '270px' }}>
+            <Btn kind="button" onClick={() => go(7)}>この内容で申込</Btn>
+          </div>
+          <button onClick={() => go(5)} className="text-center text-caption text-neutral-500">入力内容を修正する</button>
         </div>
       </div>
     </>
@@ -3052,10 +3072,8 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
             <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
             <p className="mt-2 text-caption text-neutral-500">申込番号　XXX-2026-000001</p>
           </div>
-        </div>
-        <Steps n={5} go={go} />
-        <div className="px-8 py-10 w-[560px] mx-auto space-y-6">
-          <div>
+          <Steps n={5} go={go} />
+          <div className="px-8 py-10 w-[560px] mx-auto">
             <p className="text-h7 font-bold text-neutral-800 leading-relaxed text-center">XXX つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
@@ -3063,6 +3081,8 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
               ※銀行のお取引状況等によっては、ご加入できない場合がございます。
             </p>
           </div>
+        </div>
+        <div className="px-8 py-10 w-[560px] mx-auto space-y-6">
           {flowCard}
           {noteBar}
         </div>
