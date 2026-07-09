@@ -223,7 +223,8 @@ const TWEAK_DEFAULTS = {
 
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  // PC版は作り込み中のためTweaksからは隠しているが、確認したいときは ?device=pc を付与
+  // デバイス切替は Tweaks（表示オプション → 表示デバイス）から行う。
+  // 後方互換のため ?device=pc が付いている場合は初期値として PC を採用する。
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("device") === "pc") setTweak("device", "pc");
@@ -322,7 +323,16 @@ export function TheoTdfClaudeDesignShell() {
           </div>
         </main>
         <TweaksSidebar>
-          {/* PC版は作り込み中のため一旦Tweaksから非表示（device自体はTWEAK_DEFAULTSでmobile固定） */}
+          <TweakSection label="表示デバイス" />
+          <TweakSelect
+            label="デバイス"
+            value={tw.device}
+            onChange={(v) => setTweak("device", v)}
+            options={[
+              { value: "mobile", label: "スマホ" },
+              { value: "pc",     label: "PC" },
+            ]}
+          />
           <TweakSection label="商品概要" />
           <TweakSelect
             label="オススメポイント表示（スマホ版）"
