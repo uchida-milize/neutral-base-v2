@@ -1905,7 +1905,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
       <>
         <DesktopHeader n={3} go={go} />
         <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-8 pt-6 pb-24 space-y-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
-          <h2 className="text-h5 font-bold text-center" style={{ color: "var(--theo-tdf-primary)", marginTop: "16px", marginBottom: "8px" }}>加入手続き</h2>
+          <h2 className="text-h5 font-bold text-center" style={{ color: "var(--theo-tdf-primary)", marginTop: "8px", marginBottom: "32px" }}>加入手続き</h2>
 
           {errMode === "top" && visibleErrs.length > 0 && (
             <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: "var(--color-attention)", background: "var(--secondary-color-10)" }}>
@@ -2580,7 +2580,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       {desktop ? <DesktopHeader n={4} go={go} /> : <AppBar title="内容確認・お支払い" onBack={() => go(3)} />}
       <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "var(--theo-tdf-gradient-bg)" }}>
         {!desktop && <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>}
-        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[560px] mx-auto w-full" : ""}`} style={{ color: 'var(--theo-tdf-primary)' }}>内容確認</h2>
+        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[560px] mx-auto w-full" : ""}`} style={desktop ? { color: 'var(--theo-tdf-primary)', marginTop: '8px', marginBottom: '32px' } : { color: 'var(--theo-tdf-primary)' }}>内容確認</h2>
         <StepSection className={desktop ? "max-w-[560px] mx-auto w-full" : undefined}>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
@@ -3065,7 +3065,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
             </div>
           </div>
           <div className="px-8 pb-12 text-center">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-10 mx-auto mb-8" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-10 mx-auto mt-[56px] mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
@@ -3112,7 +3112,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
       </div>
       <div ref={bindDoneScroll} className="flex-1 overflow-y-auto no-sb">
         {/* ヒーロー（img＋絶対配置・パララックス） */}
-        <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', height: '356px', overflow: 'hidden' }}>
           <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
           {/* フェイクステータスバー（プレースホルダー） */}
@@ -3122,7 +3122,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           </div>
           {/* ヒーローコンテンツ */}
           <div className="px-5 pt-4 pb-12 text-center">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mb-8" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mt-[56px] mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
