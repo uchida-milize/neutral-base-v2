@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い�����������だ���たいこと
+                    ご案内にあたりご確認・同意い�������������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1942,7 +1942,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </div>
 
             <div className="space-y-6">
-              <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg">
+              <GroupCard title="契約者情報" sub="ご契約者ご本人さまの��報" iconSrc="/assets/theo-tdf/person-heart.svg">
                 <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                   <Field label="姓" placeholder="山田" required />
                   <Field label="名" placeholder="太郎" required />
@@ -2074,7 +2074,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                     <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
                     <span className="text-[14px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
                   </span>
-                  <p className="text-caption text-neutral-600 leading-relaxed">保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
+                  <p className="text-caption text-neutral-600 leading-relaxed">��障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
                 </div>
                 <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
                 {editErrors.length > 0 ? (
@@ -2200,7 +2200,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
         </GroupCard>
 
-        {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
+        {/* 団体特定コ���ド（パターンB：分割時は契約者情報の後） */}
         {formSplit && (
         <GroupCard title="���体特定コード" icon={Ic.tag}>
           <Field label="団体特定コード" placeholder="1234567891234567" />
@@ -2551,7 +2551,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
-  // 受取人住所：編集中の「契約者と同じ��チ��ック状態（編集開始時に benSameAddr ���初期化）
+  // 受��人住所：編集中の「契約者と同じ��チ��ック状態（編集開始時に benSameAddr ���初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
@@ -2708,7 +2708,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
+        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full mt-8" : "mt-8"}>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2991,7 +2991,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
       <SectionLabel>このあとの流れ</SectionLabel>
       <div className="mt-1">
       {[
-        ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
+        ["1", "受付確認メール送信確認", "ご登録のメ��ルアドレスをご確認ください。"],
         ["2", "査定・引受の確定", "通常1〜3営業���でマイページに反映されます。"],
         ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
       ].map(([n, t, d], idx, arr) => (
@@ -3170,8 +3170,8 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に���り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対��・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(1) 当行はお客さまへの保険���品のご提案にあたり、当行とお客さまとの取引時に���り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約��容に関する情報の他家族構成等に関する情報）を、対��・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させて���ただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
@@ -3432,7 +3432,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
-            <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
+            <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメー��アドレス宛にPINコード送信とご案内URLをお送りします。</p>
             <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
           </div>
@@ -4365,7 +4365,7 @@ export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planTyp
       </p>
       <div className="flex flex-col gap-6">
         <SliderField
-          label="毎月の積立金額"
+          label="毎月の積立���額"
           value={m}
           min={5000}
           max={150000}
