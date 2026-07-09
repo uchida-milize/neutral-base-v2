@@ -531,7 +531,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
     <div className="rounded-xl border border-warm-200 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
-          // 問いかけ文を���字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
+          // 問いかけ文を����字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
           const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
@@ -799,7 +799,7 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
   );
 }
 
-// プランリスト（card / accordion モード���替）
+// プランリスト（card / accordion モ��ド���替）
 export function PlanList({ sel, setSel, mode = 'card', initialTipIdx, initialOpenId }: { sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; mode?: string; initialTipIdx?: number; initialOpenId?: string }) {
   const [openIds, setOpenIds] = React.useState<Set<string>>(() => new Set(initialOpenId ? [initialOpenId] : []));
   const toggleOpen = (id: string) => setOpenIds((prev) => {
@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意いただきたいこと
+                    ご案内にあたりご確認・同意いただ���たいこと
                   </button>
                 </div>
               </div>
@@ -2860,7 +2860,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
-            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力くださ���
+            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情���を入力くださ���
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
           <Field label="カード名義（半角ローマ字）" placeholder="TARO YAMADA" required />
@@ -3166,7 +3166,7 @@ export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当������本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用���止をご希望の場合には、当������本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3301,7 +3301,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
-          <div className="w-[760px] mx-auto flex flex-col items-center gap-8">
+          <div className="w-[760px] mx-auto flex flex-col items-center gap-8 py-12">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "var(--theo-tdf-primary)" }}>XXXのお客様限定</span>
               <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
@@ -3333,7 +3333,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             詳細なサービス内容はこちら
           </a>
           <h3 className="mt-6 text-h5 font-bold text-neutral-800">保障期間</h3>
-          <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
+          <p className="mt-2 text-h6 text-neutral-700">5年～40年（��大）</p>
           <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
           <button onClick={() => setHeigaiOpen(true)} className="mt-4 inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
             <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
@@ -3548,7 +3548,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
               { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
-              { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
+              { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "も���もの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-2">
                 <img src={f.src} alt="" style={{ width: '40px', height: '40px' }} />
