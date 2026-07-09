@@ -531,7 +531,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
     <div className="rounded-xl border border-warm-200 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
-          // 問いかけ文を����字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
+          // 問いかけ文を�����字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
           const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
@@ -799,7 +799,7 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
   );
 }
 
-// プランリスト（card / accordion モ��ド���替）
+// プランリスト（card / accordion ����ド���替）
 export function PlanList({ sel, setSel, mode = 'card', initialTipIdx, initialOpenId }: { sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; mode?: string; initialTipIdx?: number; initialOpenId?: string }) {
   const [openIds, setOpenIds] = React.useState<Set<string>>(() => new Set(initialOpenId ? [initialOpenId] : []));
   const toggleOpen = (id: string) => setOpenIds((prev) => {
@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い�������������だ���たいこと
+                    ご案内にあたりご確認・同意い���������������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1942,7 +1942,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </div>
 
             <div className="space-y-6">
-              <GroupCard title="契約者情報" sub="ご契約者ご本人さまの��報" iconSrc="/assets/theo-tdf/person-heart.svg">
+              <GroupCard title="契約者情報" sub="ご契約者ご本人さ��の��報" iconSrc="/assets/theo-tdf/person-heart.svg">
                 <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                   <Field label="姓" placeholder="山田" required />
                   <Field label="名" placeholder="太郎" required />
@@ -2032,20 +2032,22 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               </button>
             )}
             {!(errMode === "float" && visibleErrs.length > 0) && (
-              <div className={`rounded-xl py-2 -mx-2 transition-colors ${atBottom ? "bg-white/70" : "bg-white"}`}>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
-                  <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium" style={{ color: "var(--color-link)" }}>
+              <div className={`rounded-xl py-2 transition-colors flex justify-center ${atBottom ? "bg-white/70" : "bg-white"}`}>
+                <div className="inline-flex items-center gap-4">
+                  <div>
+                    <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
+                    <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
+                      <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
+                      <span className="text-warm-300">|</span>
+                      <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
+                      <span className="text-warm-300">|</span>
+                      <span className="text-neutral-700 tabular-nums">{y}年</span>
+                    </div>
+                  </div>
+                  <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium shrink-0" style={{ color: "var(--color-link)" }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
                     修正
                   </button>
-                </div>
-                <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
-                  <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
-                  <span className="text-warm-300">|</span>
-                  <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
-                  <span className="text-warm-300">|</span>
-                  <span className="text-neutral-700 tabular-nums">{y}年</span>
                 </div>
               </div>
             )}
@@ -2074,7 +2076,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                     <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
                     <span className="text-[14px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
                   </span>
-                  <p className="text-caption text-neutral-600 leading-relaxed">��障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
+                  <p className="text-caption text-neutral-600 leading-relaxed">����障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。</p>
                 </div>
                 <SimSliders m={m} setM={setM} y={y} setY={setY} onInput={() => setSheetRes(true)} />
                 {editErrors.length > 0 ? (
@@ -2858,7 +2860,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
       <ExtBar url="payment.gmo-pg.com" />
       <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px]">
         <div className="max-w-[760px] mx-auto space-y-4">
-        <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
+        <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（��部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
             <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力ください
@@ -2911,7 +2913,7 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
     <>
       <ExtBar url="payment.gmo-pg.com" />
       <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px] space-y-4">
-        <h2 className="text-h5 font-bold text-neutral-800">お申込み内容の確認（外部リンク）</h2>
+        <h2 className="text-h5 font-bold text-neutral-800">お申込み内��の確認（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
             <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />ご登録内容
@@ -3170,8 +3172,8 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行はお客さまへの保険���品のご提案にあたり、当行とお客さまとの取引時に���り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約��容に関する情報の他家族構成等に関する情報）を、対��・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(1) 当行���お客さまへの保険���品のご提案にあたり、当行とお客さまとの取引時に���り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の�����提案内容やご契約��容に関する情報の他家族構成等に関する情報）を、対��・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させて���ただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
@@ -3557,7 +3559,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="grid grid-cols-3 gap-2">
             {[
               { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
-              { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
+              { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりに��" },
               { src: "/assets/theo-tdf/hand-holding-heart.svg", t: "もしもの\n備えに" },
             ].map((f, k) => (
               <div key={k} className="flex flex-col items-center text-center gap-2">
