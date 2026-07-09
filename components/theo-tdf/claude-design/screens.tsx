@@ -531,7 +531,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
     <div className="rounded-xl border border-warm-200 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
-          // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
+          // 問いかけ文を���字化：文全体が短い問いかけ（改行なし）��ら全文bold、それ以外は末尾のありますか/ていますか以降をbold
           const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
@@ -799,7 +799,7 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
   );
 }
 
-// プランリスト（card / accordion モード切替）
+// プランリスト（card / accordion モード���替）
 export function PlanList({ sel, setSel, mode = 'card', initialTipIdx, initialOpenId }: { sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; mode?: string; initialTipIdx?: number; initialOpenId?: string }) {
   const [openIds, setOpenIds] = React.useState<Set<string>>(() => new Set(initialOpenId ? [initialOpenId] : []));
   const toggleOpen = (id: string) => setOpenIds((prev) => {
@@ -1099,7 +1099,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
                   { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わり���も" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
-                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n���えに" },
+                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの��えに" className="w-12 h-12" />, t: "もしもの\n���えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
                     <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--theo-tdf-primary)'}}>{f.svg}</div>
@@ -1213,7 +1213,7 @@ export function NoticeContent() {
         "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
         "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
-        "保険金受取人は、被保険者から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
+        "保険金受取人は、被保険者から見た続��が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
         "この保険には解約払戻金はありません。",
         "この保険はクーリング・オフ制度の対象外です。",
         "投信口座の解約や積立投資の中止をされた場合、保険契約は解約いただくか、更新できませんのでご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として●●が有します。",
@@ -1325,7 +1325,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
   );
   return (
     <>
-      <AppBar title="��険" onBack={() => go(0)} />
+      <AppBar title="���険" onBack={() => go(0)} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         <div>
           <Steps n={2} go={go} />
@@ -1584,7 +1584,7 @@ export function FeatValue({ v }: { v: string }) {
   );
 }
 
-// divベースのカスタムスライダー（Figmaキャプチャ対応・ネイティブinput[range]の代替）
+// divベースのカスタムスライダ���（Figmaキャプチャ対応・ネイティブinput[range]の代替）
 function DivSlider({ min, max, step, value, onChange }: {
   min: number; max: number; step: number; value: number;
   onChange: (val: number) => void;
@@ -2860,7 +2860,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
-            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力ください
+            <span className="w-2 h-4 bg-[color:var(--success)] rounded-[1px]" />クレジットカード情報を入力くださ���
           </p>
           <Field label="カード番号" placeholder="1234 5678 9012 3456" required />
           <Field label="カード名義（半角ローマ字）" placeholder="TARO YAMADA" required />
@@ -3166,7 +3166,7 @@ export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行���本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当������本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3343,7 +3343,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
         <div className="w-[760px] mx-auto" style={{ marginTop: "80px" }}>
-          <h2 className="text-h3 font-bold text-center" style={{ color: "var(--theo-tdf-primary)", fontSize: "calc(var(--text-h3) * 1.2)" }}>プランシミュレーション</h2>
+          <h2 className="text-h2 font-bold text-center" style={{ color: "var(--theo-tdf-primary)" }}>プランシミュレーション</h2>
 
           {/* 生年月日・性別：横並び・各358px */}
           <div className="flex gap-8 mt-8 justify-center">
