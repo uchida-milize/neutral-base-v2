@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い���������������だ���たいこと
+                    ご案内にあたりご確認・同���い���������������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1238,7 +1238,7 @@ export function NoticeContent() {
     {
       head: "個人情報のお取り扱いについて",
       items: [
-        "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
+        "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関��する業務のために利用し、引受保険会社へ提供します。",
         "個人情報に変更が生じた場合も、同様に取り扱います。",
         "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
         "個人番号および���定���人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
@@ -2710,7 +2710,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full mt-8" : "mt-8"}>
+        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full pt-8" : "pt-8"}>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2990,7 +2990,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
 
   const flowCard = (
     <div className="rounded-2xl border border-warm-200 bg-white p-6">
-      <SectionLabel>このあとの流れ</SectionLabel>
+      <SectionLabel>こ��あとの流れ</SectionLabel>
       <div className="mt-1">
       {[
         ["1", "受付確認メール送信確認", "ご登録のメ��ルアドレスをご確認ください。"],
@@ -3331,7 +3331,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の��立金額を保障するイメージ図" className="w-full block" />
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の��立金額を保障す���イメージ図" className="w-full block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
@@ -4158,7 +4158,7 @@ export function AddressRow({ label = "住所", postalCode, address }: {
     <div className="flex items-start gap-4 py-2.5 border-b border-warm-100 last:border-0">
       <span className="text-caption text-neutral-500 shrink-0" style={{ minWidth: 72 }}>{label}</span>
       <div className="flex-1">
-        <p className="text-caption font-medium text-neutral-800">〒{postalCode}</p>
+        <p className="text-caption font-medium text-neutral-800">���{postalCode}</p>
         <p className="text-caption font-medium text-neutral-800 leading-relaxed mt-0.5">{address}</p>
       </div>
     </div>
