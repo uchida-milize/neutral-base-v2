@@ -163,9 +163,9 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
   // グラデーション: cta / button = ブルー, danger = レッド (TD 組込1.4)
   const gradStyle: React.CSSProperties | undefined =
     (kind === "cta" || kind === "button")
-      ? { backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)" }
+      ? { backgroundImage: "var(--theo-tdf-gradient-primary)" }
       : kind === "danger"
-      ? { backgroundImage: "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)" }
+      ? { backgroundImage: "var(--theo-tdf-gradient-danger)" }
       : undefined;
   const variant = kind === "outline" ? "outline" : kind === "ghost" ? "ghost" : "default";
   return (
@@ -185,7 +185,7 @@ export function Btn({ kind = "button", children, onClick, disabled, full = true 
 // Phone app bar (THEO header)
 // 共有グラデーション: ステータスバー(33px)+ヘッダー(40px) を1枚の連続グラデとして描画
 export const HEADER_GRAD_CSS: React.CSSProperties = {
-  backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)",
+  backgroundImage: "var(--theo-tdf-gradient-primary)",
   backgroundSize: "100% 73px",
   backgroundRepeat: "no-repeat",
 };
@@ -205,7 +205,7 @@ export function AppBar({ title, onBack, brandVisible = true }: { title: string; 
         <span className="w-10 shrink-0" />
         <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${brandVisible ? "opacity-100" : "opacity-0"}`}>
           <span className="font-en font-semibold tracking-[0.1em] text-h6 leading-none">XXX</span>
-          <span className="text-h6 font-medium truncate leading-none">つみたて安心ほけん</span>
+          <span className="font-jp text-h6 font-medium truncate leading-none">つみたて安心ほけん</span>
           <span className="font-en text-[10px] font-medium opacity-75 shrink-0 leading-none">&lt;XXX&gt;</span>
         </div>
         <span className="w-10 shrink-0" />
@@ -219,7 +219,7 @@ export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
   return (
     <div className="bg-white rounded-t-2xl">
       <div className="flex items-center justify-between px-8 pt-8 pb-4">
-        <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
+        <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary)' }}>
           <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
           <span className="font-medium text-[16px]">つみたて安心ほけん</span>
           <span className="font-medium text-[10px]">&lt;XXX&gt;</span>
@@ -250,16 +250,16 @@ export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: Go }) {
             <button type="button" disabled={!clickable}
               onClick={clickable ? () => go(STEP_TO_SCREEN[stepNo]) : undefined}
               aria-label={`STEP ${stepNo}`}
-              className={`grid place-items-center w-8 h-8 rounded-full border-2 shrink-0 font-en text-[10px] font-bold transition-colors ${
-                active ? "border-primary bg-primary text-white" : 
-                filled ? "border-primary bg-white text-primary" : 
+              className={`grid place-items-center w-6 h-6 rounded-full border shrink-0 font-en text-[14px] font-bold transition-colors ${
+                active ? "border-primary bg-primary text-white" :
+                filled ? "border-primary bg-white text-primary" :
                 "border-warm-300 bg-white text-neutral-400"
               } ${clickable ? "cursor-pointer hover:shadow-md" : "cursor-default"}`}>
               {stepNo}
             </button>
             {/* Line between circles */}
             {i < of - 1 && (
-              <div className={`w-8 h-[2px] transition-colors ${
+              <div className={`w-3 h-px transition-colors ${
                 i + 1 < n ? "bg-primary" : "bg-warm-200"
               }`} />
             )}
@@ -309,7 +309,7 @@ export function ActionBar({ children, solid, bg }: { children: React.ReactNode; 
   const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl";
   return (
     <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
-      style={bg ? { background: bg, borderTopColor: "rgba(15,23,42,0.06)" } : undefined}>
+      style={bg ? { background: bg, borderTopColor: "var(--theo-tdf-hairline)" } : undefined}>
       {children}
     </div>
   );
@@ -334,7 +334,7 @@ export function ErrText({ children }: { children: React.ReactNode }) {
 
 // エラー状態の入力枠スタイル（border赤＋薄赤背景。レイアウトずれ防止に border幅は1pxのまま）
 export const ERR_INPUT_CLS = "text-neutral-800";
-export const errInputStyle = { borderColor: 'var(--color-attention)', background: '#FFF5F5', boxShadow: '0 0 0 1px var(--color-attention)' };
+export const errInputStyle = { borderColor: 'var(--color-attention)', background: 'var(--secondary-color-10)', boxShadow: '0 0 0 1px var(--color-attention)' };
 
 // Wireframe form field
 export function Field({ label, placeholder, required, hint, value, onChange, disabled, error, errMode, anchorRef }: { label: string; placeholder?: string; required?: boolean; hint?: string; value?: string; onChange?: React.ChangeEventHandler<HTMLInputElement>; disabled?: boolean; error?: string; errMode?: string; anchorRef?: any }) {
@@ -396,7 +396,7 @@ export function Select({ label, required, hint, value, onChange, options = [], d
       <div className="relative">
         <select defaultValue={value} onChange={onChange} disabled={disabled}
           style={invalid ? errInputStyle : undefined}
-          className={`fld appearance-none w-full h-12 rounded-lg border px-3 pr-10 text-h6 ${disabled ? "border-warm-200 bg-[#EFEFEF] text-neutral-400 cursor-not-allowed" : invalid ? `border-[color:var(--color-attention)] ${ERR_INPUT_CLS}` : "border-warm-300 bg-white text-neutral-800"}`}>
+          className={`fld appearance-none w-full h-12 rounded-lg border px-3 pr-10 text-h6 ${disabled ? "border-warm-200 bg-[var(--theo-tdf-surface-neutral)] text-neutral-400 cursor-not-allowed" : invalid ? `border-[color:var(--color-attention)] ${ERR_INPUT_CLS}` : "border-warm-300 bg-white text-neutral-800"}`}>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><path d="M6 9l6 6 6-6"/></svg>
@@ -426,7 +426,7 @@ export function ScreenIntro({ go }: { go: Go }) {
           <div className="mt-4"><Badge>重要</Badge></div>
         </div>
 
-        <div className="px-4 py-6 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 py-6 space-y-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
           {/* hook card */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 mb-2">
@@ -502,7 +502,7 @@ export function KoTable({ rows }: { rows: any[] }) {
                   {p.sub.map((row: any, k: number) => (
                     <div key={k} className={`grid grid-cols-[88px_1fr] ${k > 0 ? "border-t border-warm-200" : ""}`}>
                       <div className="bg-warm-100 px-2 py-2 flex items-center border-r border-warm-200">
-                        <span className="text-[11px] font-bold text-neutral-600 leading-snug">{row[0]}</span>
+                        <span className="text-[14px] font-bold text-neutral-600 leading-snug">{row[0]}</span>
                       </div>
                       <div className="px-2 py-2 text-[11px] text-neutral-700 leading-relaxed">{row[1]}</div>
                     </div>
@@ -548,7 +548,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
                   {p.sub.map((srow: any, sk: number) => (
                     <div key={sk} className={`grid grid-cols-[88px_1fr] ${sk > 0 ? 'border-t border-warm-200' : ''}`}>
                       <div className="bg-warm-100 px-2 py-1 flex items-center border-r border-warm-200">
-                        <span className="text-[11px] font-bold text-neutral-600 leading-snug">{srow[0]}</span>
+                        <span className="text-[14px] font-bold text-neutral-600 leading-snug">{srow[0]}</span>
                       </div>
                       <div className="px-2 py-1 text-[11px] text-neutral-700 leading-snug">{srow[1]}</div>
                     </div>
@@ -578,7 +578,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
   const qCards: React.ReactNode[] = [];
   koRows.forEach((r, i) => {
     qCards.push(
-      <p key={`h-${r.k}`} className="text-[11px] font-bold text-neutral-500 pt-1 pb-[2px] border-b border-warm-200">{r.k}</p>
+      <p key={`h-${r.k}`} className="text-[14px] font-bold text-neutral-500 pt-1 pb-[2px] border-b border-warm-200">{r.k}</p>
     );
     qCards.push(<DisclosureQCard key={i} idx={i + 1} row={r} />);
   });
@@ -599,9 +599,9 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
   const body = (
     <div className="space-y-3">
       <AgreeBlocks blocks={DISCLOSURE_INTRO} />
-      <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: '#F0F7FF', border: '1px solid #C8DCFA' }}>
+      <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: 'var(--theo-tdf-info-bg)', border: '1px solid var(--theo-tdf-info-border)' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4 shrink-0 mt-[2px]" style={{ color: 'var(--primary)' }}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
-        <p className="text-caption leading-relaxed" style={{ color: '#1AA5DC' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
+        <p className="text-caption leading-relaxed" style={{ color: 'var(--theo-tdf-primary)' }}>各質問に対して<strong>「はい」に当てはまる場合はお申し込みいただけません。</strong></p>
       </div>
       <div className="space-y-3">
         <div className="pt-8">
@@ -626,7 +626,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
               <span className="text-[10px] font-medium leading-tight text-neutral-400">１つでも存在する</span>
             </button>
             <button onClick={onConfirm || onClose}
-              style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)" }}
+              style={{ backgroundImage: "var(--theo-tdf-gradient-primary)" }}
               className="flex flex-col items-center justify-center gap-[2px] rounded-xl py-2 font-bold text-white transition-colors">
               <span className="flex items-center gap-2 text-h6 font-bold">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4"><path d="M5 12l5 5L19 7"/></svg>
@@ -690,8 +690,8 @@ export function PlanCard({ p, selected, onSelect, initialTtOpen }: { p: Plan; se
   const death = p.death;
   const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
   return (
-    <div onClick={onSelect} role="button" style={{ boxShadow: '0 0 8px rgba(27,49,87,0.08)' }} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
-      <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-[#EFEFEF] border-warm-200"}`}>
+    <div onClick={onSelect} role="button" style={{ boxShadow: 'var(--theo-tdf-shadow-card)' }} className={`w-full text-left rounded-2xl border bg-white overflow-hidden transition cursor-pointer ${selected ? "border-primary-300" : "border-warm-200"}`}>
+      <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b transition-colors ${selected ? "bg-primary-10 border-primary-100" : "bg-[var(--theo-tdf-surface-neutral)] border-warm-200"}`}>
         <div className="flex items-center gap-2">
           <span className={`grid place-items-center w-6 h-6 rounded-full border-2 shrink-0 ${selected ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
             {selected && <Ic.check className="w-3 h-3" />}
@@ -738,9 +738,9 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
   const death = p.death;
   const [ttOpen, setTtOpen] = React.useState(initialTtOpen ?? false);
   return (
-    <div className={`w-full rounded-2xl border bg-white overflow-hidden transition ${selected ? "border-primary-300" : "border-warm-200"}`} style={{ boxShadow: '0 0 8px rgba(27,49,87,0.08)' }}>
+    <div className={`w-full rounded-2xl border bg-white overflow-hidden transition ${selected ? "border-primary-300" : "border-warm-200"}`} style={{ boxShadow: 'var(--theo-tdf-shadow-card)' }}>
       {/* ヘッダー：タップでアコーディオン開閉 */}
-      <div onClick={onToggle} role="button" className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${selected ? "bg-primary-10" : "bg-[#EFEFEF]"}`}>
+      <div onClick={onToggle} role="button" className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${selected ? "bg-primary-10" : "bg-[var(--theo-tdf-surface-neutral)]"}`}>
         <span
           role="radio"
           aria-checked={selected}
@@ -1064,7 +1064,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           {/* テキスト：絶対配置 */}
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
-            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
+            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "32px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
             <p className="mt-2 text-h7 leading-relaxed" style={{ color: '#fff' }}>将来に向けた資産形成のためのほけん</p>
           </div>
           </div>{/* /absolute overlay */}
@@ -1078,7 +1078,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
           <Steps n={1} go={go} />
         </div>
 
-        <div className="px-5 pt-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-5 pt-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
           {/* hook card */}
           <div className="space-y-6">
             <div className="-mx-1">
@@ -1089,7 +1089,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="inline-flex items-center px-4 py-2 rounded-full font-bold text-white" style={{ backgroundColor: '#1aa5dc', fontSize: '0.82rem' }}>
+                <div className="inline-flex items-center px-4 py-2 rounded-full font-bold text-white" style={{ backgroundColor: 'var(--theo-tdf-primary)', fontSize: '0.82rem' }}>
                   XXX のお客様限定
                 </div>
               </div>
@@ -1102,7 +1102,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                   { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
-                    <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#065FE3'}}>{f.svg}</div>
+                    <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--theo-tdf-primary)'}}>{f.svg}</div>
                     <p className="text-caption font-bold text-neutral-700 leading-snug whitespace-pre-line">{f.t}</p>
                   </div>
                 ))}
@@ -1330,7 +1330,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div>
           <Steps n={2} go={go} />
         </div>
-        <div className="px-6 pt-6 pb-12 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-6 pt-6 pb-12 space-y-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
           {/* ---- お客様情報（生年月日・性別） ---- */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-caption text-primary-700 px-1">
@@ -1387,7 +1387,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </div>
 
         {/* ---- 申し込みをする（2ステップ） ---- */}
-        <div className="-mx-6 px-6 py-6" style={{ background: "#e7edf7" }}>
+        <div className="-mx-6 px-6 py-6" style={{ background: "var(--theo-tdf-highlight-bg)" }}>
         <StepSection label="申し込みをする" n={3} big className="mt-8">
           {/* STEP 1 — メールアドレスのご入力 */}
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
@@ -1422,7 +1422,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         </div>
       </div>
 
-      <ActionBar bg={showSend ? "#e7edf7" : undefined}>
+      <ActionBar bg={showSend ? "var(--theo-tdf-highlight-bg)" : undefined}>
         <div className="flex items-start gap-2 px-1 text-caption text-neutral-600 leading-relaxed">
           <Ic.doc className="w-4 h-4 mt-[2px] text-neutral-400 shrink-0" />
           申込みには、ご本人様名義のクレジットカードが必要です
@@ -1503,7 +1503,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
       {desktop ? <DesktopHeader n={2} go={go} /> : <AppBar title="保険" onBack={() => go(backScr)} />}
       <div className="flex-1 overflow-y-auto no-sb">
         {!desktop && <Steps n={2} go={go} />}
-        <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
           <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
@@ -1756,7 +1756,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
     <div className="rounded-2xl border border-warm-200 bg-white p-6">
       <div className="flex flex-col gap-2 mb-6">
         {shouldShowLabel && (
-          <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
+          <span className="inline-flex flex-col rounded-lg bg-[var(--theo-tdf-surface-neutral)] px-3 py-2 leading-tight self-start">
             <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
             <span className="text-[14px] font-bold text-primary-600 mt-1">{planName}</span>
           </span>
@@ -1891,11 +1891,11 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
     return (
       <>
         <DesktopHeader n={3} go={go} />
-        <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-8 pt-6 pb-24 space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
-          <h2 className="text-h5 font-bold text-center" style={{ color: "#1AA5DC", marginTop: "16px", marginBottom: "8px" }}>加入手続き</h2>
+        <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-8 pt-6 pb-24 space-y-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
+          <h2 className="text-h5 font-bold text-center" style={{ color: "var(--theo-tdf-primary)", marginTop: "16px", marginBottom: "8px" }}>加入手続き</h2>
 
           {errMode === "top" && visibleErrs.length > 0 && (
-            <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: "var(--color-attention)", background: "#FFF5F5" }}>
+            <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: "var(--color-attention)", background: "var(--secondary-color-10)" }}>
               <div className="flex items-center gap-2">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0" style={{ color: "var(--color-attention)" }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z" /></svg>
                 <p className="text-h6 font-bold" style={{ color: "var(--color-attention)" }}>{visibleErrs.length}件の未入力項目があります</p>
@@ -1995,7 +1995,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
             {/* 右カラム：告知事項 */}
             <div className="space-y-6">
-              <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6 space-y-3">
+              <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
                 <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
                 <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
                 <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
@@ -2018,7 +2018,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           </div>
         </div>
 
-        <ActionBar bg={atBottom ? "#F2FBFE" : undefined}>
+        <ActionBar bg={atBottom ? "var(--warm-50)" : undefined}>
           <div className="max-w-[1000px] mx-auto w-full">
             {errMode === "float" && visibleErrs.length > 0 && (
               <button onClick={() => jumpNext(visibleErrs)}
@@ -2073,7 +2073,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               </div>
               <div className="px-6 overflow-y-auto no-sb pb-2">
                 <div className="flex flex-col gap-2 mb-4 pt-1">
-                  <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
+                  <span className="inline-flex flex-col rounded-lg bg-[var(--theo-tdf-surface-neutral)] px-3 py-2 leading-tight self-start">
                     <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
                     <span className="text-[14px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
                   </span>
@@ -2130,12 +2130,12 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   return (
     <>
       <AppBar title={formSplit && formPage === 2 ? "お申込み (2/2)" : "お申込み"} onBack={onBack} />
-      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-6" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div key={formPage} ref={bindScroll} className="flex-1 overflow-y-auto no-sb px-4 pt-6 pb-[72px] space-y-6" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
         <div className="-mx-4 -mt-6"><Steps n={3} go={go} /></div>
 
         {/* ② 上部サマリー：クリックで該当入力へスクロール */}
         {errMode === 'top' && visibleErrs.length > 0 && (
-          <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: 'var(--color-attention)', background: '#FFF5F5' }}>
+          <div className="rounded-xl border-2 px-4 py-4 fade-in" style={{ borderColor: 'var(--color-attention)', background: 'var(--secondary-color-10)' }}>
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0" style={{ color: 'var(--color-attention)' }}><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12C1.25 6.072 6.072 1.25 12 1.25C17.928 1.25 22.75 6.072 22.75 12C22.75 17.928 17.928 22.75 12 22.75ZM12 2.75C6.899 2.75 2.75 6.899 2.75 12C2.75 17.101 6.899 21.25 12 21.25C17.101 21.25 21.25 17.101 21.25 12C21.25 6.899 17.101 2.75 12 2.75ZM12.75 16.5V11.929C12.75 11.515 12.414 11.179 12 11.179C11.586 11.179 11.25 11.515 11.25 11.929V16.5C11.25 16.914 11.586 17.25 12 17.25C12.414 17.25 12.75 16.914 12.75 16.5ZM13.02 8.5C13.02 7.948 12.573 7.5 12.02 7.5H12.01C11.458 7.5 11.0149 7.948 11.0149 8.5C11.0149 9.052 11.468 9.5 12.02 9.5C12.572 9.5 13.02 9.052 13.02 8.5Z"/></svg>
               <p className="text-h6 font-bold" style={{ color: 'var(--color-attention)' }}>{visibleErrs.length}件の未入力項目があります</p>
@@ -2156,10 +2156,10 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         )}
 
         {(!formSplit || formPage === 1) && (<>
-        <h2 className="text-h5 font-bold text-center" style={{ color: '#1AA5DC', marginTop: '32px', marginBottom: '32px' }}>加入手続き</h2>
+        <h2 className="text-h5 font-bold text-center" style={{ color: 'var(--theo-tdf-primary)', marginTop: '32px', marginBottom: '32px' }}>加入手続き</h2>
 
         {/* 告知をする */}
-        <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6 space-y-3 mb-6">
+        <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3 mb-6">
           <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
           <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
           <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
@@ -2284,7 +2284,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
       </div>
 
-      <ActionBar bg={atBottom ? "#F2FBFE" : undefined}>
+      <ActionBar bg={atBottom ? "var(--warm-50)" : undefined}>
         {/* ③ 下部フローティング（提案）：未入力の必須項目数を親指元に表示し、順にジャンプ */}
         {errMode === 'float' && visibleErrs.length > 0 && (
           <button onClick={() => jumpNext(visibleErrs)}
@@ -2341,7 +2341,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             <div className="px-6 overflow-y-auto no-sb pb-2">
               {/* 選択プラン＋説明 */}
               <div className="flex flex-col gap-2 mb-4 pt-1">
-                <span className="inline-flex flex-col rounded-lg bg-[#EFEFEF] px-3 py-2 leading-tight self-start">
+                <span className="inline-flex flex-col rounded-lg bg-[var(--theo-tdf-surface-neutral)] px-3 py-2 leading-tight self-start">
                   <span className="text-[14px] font-bold text-neutral-800">選択プラン</span>
                   <span className="text-[14px] font-bold text-primary-600 mt-1">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
                 </span>
@@ -2566,13 +2566,13 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   return (
     <>
       {desktop ? <DesktopHeader n={4} go={go} /> : <AppBar title="内容確認・お支払い" onBack={() => go(3)} />}
-      <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+      <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "var(--theo-tdf-gradient-bg)" }}>
         {!desktop && <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>}
-        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`} style={{ color: '#1AA5DC' }}>内容確認</h2>
+        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`} style={{ color: 'var(--theo-tdf-primary)' }}>内容確認</h2>
         <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
-        <div className="rounded-2xl border border-warm-200 bg-[#EFEFEF] p-6">
+        <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6">
           <div className="flex items-center justify-between gap-2 mb-2">
             <p className="font-mono text-caption tracking-[0.14em] uppercase text-neutral-900">積立内容</p>
             <span className="inline-flex items-center gap-1 rounded-full bg-warm-200 px-2 py-[2px] text-[10px] font-medium text-neutral-500">
@@ -2824,7 +2824,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           </button>
         </div>
       </div>
-      <ActionBar bg="#F2FBFE">
+      <ActionBar bg="var(--warm-50)">
         <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
           <div className="flex items-center justify-center gap-3">
             <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
@@ -2963,7 +2963,7 @@ export function ScreenStatus({ variant, go, desktop }: { variant?: string; go: G
           ) : isMaint ? (
             <img src="/assets/theo-tdf/icon_maint.png" className="w-16 h-16 mb-6 mx-auto block" alt="メンテナンス中" />
           ) : (
-            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin mx-auto block"><circle cx="12" cy="12" r="9" stroke="#1586b2" strokeWidth="1.5"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#1aa5dc" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 mb-6 animate-spin mx-auto block"><circle cx="12" cy="12" r="9" stroke="var(--theo-tdf-primary-hover)" strokeWidth="1.5"/><path d="M21 12a9 9 0 0 0-9-9" stroke="var(--theo-tdf-primary)" strokeWidth="1.5" strokeLinecap="round"/></svg>
           )}
           <h2 className="text-h4 font-bold text-neutral-800">{heading}</h2>
           <p className="mt-3 text-caption text-neutral-500 leading-relaxed whitespace-pre-line text-center">
@@ -2971,7 +2971,7 @@ export function ScreenStatus({ variant, go, desktop }: { variant?: string; go: G
           </p>
         </div>
       </div>
-      <ActionBar bg="#F2FBFE">
+      <ActionBar bg="var(--warm-50)">
         <Btn kind="button" onClick={() => go(isErr ? 5 : 6)}>戻る</Btn>
       </ActionBar>
     </div>
@@ -3021,7 +3021,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
       <>
         <div className="rounded-t-2xl overflow-hidden" style={{ background: 'radial-gradient(600px circle at 28% 15%, rgba(255,170,130,0.30), transparent 60%), radial-gradient(700px circle at 78% 55%, rgba(120,200,255,0.35), transparent 60%), radial-gradient(500px circle at 15% 75%, rgba(255,190,170,0.22), transparent 60%), #ffffff' }}>
           <div className="flex items-center justify-between px-8 pt-8 pb-4">
-            <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary, #1aa5dc)' }}>
+            <div className="flex items-center gap-2 whitespace-nowrap" style={{ color: 'var(--theo-tdf-primary)' }}>
               <span className="font-bold text-[16px] tracking-[1.6px]">XXX</span>
               <span className="font-medium text-[16px]">つみたて安心ほけん</span>
               <span className="font-medium text-[10px]">&lt;XXX&gt;</span>
@@ -3053,7 +3053,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           {flowCard}
           {noteBar}
         </div>
-        <ActionBar bg="#F2FBFE">
+        <ActionBar bg="var(--warm-50)">
           <div className="max-w-[256px] mx-auto w-full">
             <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
           </div>
@@ -3117,7 +3117,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           {noteBar}
         </div>
       </div>
-      <ActionBar bg="#F2FBFE">
+      <ActionBar bg="var(--warm-50)">
         <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
       </ActionBar>
     </>
@@ -3142,7 +3142,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
         <div className="flex-1 flex flex-col items-center justify-center px-8 py-8 shrink-0">
           <div style={{ width: 300 }} className="text-center">
             <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1aa5dc" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--theo-tdf-primary)" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを<br/>終了しました</h2>
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
           </div>
@@ -3153,7 +3153,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
           </div>
         </div>
       </div>
-      <ActionBar bg="#F2FBFE">
+      <ActionBar bg="var(--warm-50)">
         <Btn kind="button" onClick={onRestart}>はじめの画面に戻る</Btn>
       </ActionBar>
     </div>
@@ -3291,7 +3291,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "34px" }} />
             <div style={{ position: "absolute", top: "124px", left: "76px", width: "311px" }}>
               <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ color: "#c2eeff" }}>Embedded Insurance</p>
-              <h1 className="mt-2 font-bold leading-snug text-white" style={{ fontSize: "31px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
+              <h1 className="mt-2 font-bold leading-snug text-white" style={{ fontSize: "32px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
               <p className="mt-2 text-h6 leading-relaxed text-white">将来に向けた資産形成のためのほけん</p>
             </div>
           </div>
@@ -3306,7 +3306,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           <div className="w-[760px] mx-auto flex items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "#1aa5dc" }}>XXXのお客様限定</span>
+              <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "var(--theo-tdf-primary)" }}>XXXのお客様限定</span>
               <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
             </div>
             <div className="grid grid-cols-3 gap-2" style={{ width: "380px" }}>
@@ -3348,7 +3348,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
         <div className="w-[760px] mx-auto">
-          <h2 className="text-h3 font-bold text-center" style={{ color: "#1AA5DC" }}>プランシミュレーション</h2>
+          <h2 className="text-h3 font-bold text-center" style={{ color: "var(--theo-tdf-primary)" }}>プランシミュレーション</h2>
 
           {/* 生年月日・性別：横並び・各358px */}
           <div className="flex gap-8 mt-8 justify-center">
@@ -3509,7 +3509,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             style={{ position: 'absolute', top: '48px', left: '18px', height: '1.52rem' }} />
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
-            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "31px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
+            <h1 className="mt-1 font-bold leading-snug" style={{ fontSize: "32px", lineHeight: 1.3, marginLeft: '-2px', color: '#fff' }}>つみたてながら、<br/>もしもに備える。</h1>
             <p className="mt-2 text-h7 leading-relaxed" style={{ color: '#fff' }}>将来に向けた資産形成のためのほけん</p>
           </div>
           </div>{/* /absolute overlay */}
@@ -3526,7 +3526,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           {/* バッジ：中央配置 */}
           <div className="flex justify-center" style={{ marginTop: '64px' }}>
-            <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: '#1aa5dc' }}>XXX のお客様限定</span>
+            <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: 'var(--theo-tdf-primary)' }}>XXX のお客様限定</span>
           </div>
           {/* ロゴ：中央配置 */}
           <div className="flex items-center justify-center" style={{ marginTop: '12px' }}>
@@ -3548,7 +3548,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           ) : (
           <div>
-            <h3 className={`font-bold leading-snug text-center ${recommendPattern === 'B' ? 'text-h3' : 'text-h4'}`} style={{ color: '#1aa5dc' }}>
+            <h3 className={`font-bold leading-snug text-center ${recommendPattern === 'B' ? 'text-h3' : 'text-h4'}`} style={{ color: 'var(--theo-tdf-primary)' }}>
               {recommendPattern === 'B' ? (
                 <><span className={`text-h1 ${inter.className}`}>3</span>つの<br/>オススメポイント</>
               ) : (
@@ -3628,10 +3628,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div style={{ height: '60px' }} />
         <div className="px-4 pt-6 pb-4" style={{ background: "#FFFFFF", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
           <div className="flex flex-col items-center gap-3">
-            <h2 className="text-h3 font-bold text-center" style={{ color: '#1AA5DC' }}>プランシミュレーション</h2>
+            <h2 className="text-h3 font-bold text-center" style={{ color: 'var(--theo-tdf-primary)' }}>プランシミュレーション</h2>
           </div>
         </div>
-        <div className="px-4 pt-6 pb-12 space-y-8" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
+        <div className="px-4 pt-6 pb-12 space-y-8" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
           {/* 生年月日・性別 */}
           {!simFirst && birthGenderFields}
           {!simFirst && (<>
@@ -3643,7 +3643,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </div>
           {/* 保険料シミュレーション */}
-          <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className="-mx-4 px-4 pt-6 pb-14 relative" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
             <StepSection label="保険料シミュレーション" n={2} big className="mt-10">
               <Simulator m={m} setM={setM} y={y} setY={setY} initialSimOpen={initialSimOpen} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </StepSection>
@@ -3660,7 +3660,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </div>
           {/* プランを選ぶ */}
-          <div className="-mx-4 px-4 py-6 relative" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className="-mx-4 px-4 py-6 relative" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
             <StepSection label="プランを選ぶ" n={2} big className="mt-10">
               <p className="text-caption text-neutral-500">ご希望の保障プランをご選択ください</p>
               <PlanList sel={sel} setSel={setSel} mode={planCardStyle} initialTipIdx={initialTipIdx} initialOpenId={initialPlanOpenId} />
@@ -3675,7 +3675,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </StepSection>
           </>)}
           {/* 申し込みをする */}
-          <div className={`-mx-4 px-4 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F2FBFE 100%)" }}>
+          <div className={`-mx-4 px-4 py-6 ${!simFirst ? '-mt-8' : ''}`} style={{ background: "var(--theo-tdf-gradient-bg)" }}>
             <StepSection label="申し込みをする" n={simFirst ? 4 : 3} big className="mt-10">
               {/* 必要書類のご確認 */}
               <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
@@ -3716,7 +3716,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
       </div>
-      <ActionBar bg="#F2FBFE">
+      <ActionBar bg="var(--warm-50)">
           <div className="fade-in space-y-2">
             <div style={{ marginBottom: '8px' }}>
               <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
@@ -3803,8 +3803,8 @@ export function StatusIcon({ state = "Success", className }: {
     return (
       <div className={`${base} size-16 rounded-full`}>
         <svg viewBox="0 0 64 64" className="absolute inset-0 w-full h-full animate-spin" fill="none">
-          <circle cx="32" cy="32" r="26" stroke="#1586b2" strokeWidth="4" />
-          <path d="M32 6 A26 26 0 0 1 58 32" stroke="#1aa5dc" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="32" cy="32" r="26" stroke="var(--theo-tdf-primary-hover)" strokeWidth="4" />
+          <path d="M32 6 A26 26 0 0 1 58 32" stroke="var(--theo-tdf-primary)" strokeWidth="4" strokeLinecap="round" />
         </svg>
       </div>
     );
@@ -3812,7 +3812,7 @@ export function StatusIcon({ state = "Success", className }: {
   if (state === "Cancelled") {
     return (
       <div className={`${base} size-16 rounded-full bg-white shadow-sm`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="#1aa5dc" strokeWidth="2.5" strokeLinecap="round">
+        <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="var(--theo-tdf-primary)" strokeWidth="2.5" strokeLinecap="round">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </div>
@@ -3821,17 +3821,17 @@ export function StatusIcon({ state = "Success", className }: {
   if (state === "Locked") {
     return (
       <div className={`${base} size-[72px] rounded-[14px] bg-white shadow-sm`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="#1aa5dc" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="var(--theo-tdf-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="5" y="11" width="14" height="10" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-          <circle cx="12" cy="16" r="1" fill="#1aa5dc" stroke="none" />
+          <circle cx="12" cy="16" r="1" fill="var(--theo-tdf-primary)" stroke="none" />
         </svg>
       </div>
     );
   }
   return (
     <div className={`${base} size-16 rounded-full bg-white shadow-sm`}>
-      <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="#1aa5dc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="var(--theo-tdf-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M5 13l4 4L19 7" />
       </svg>
     </div>
@@ -3848,9 +3848,9 @@ export function AttentionNoticeCard({ label, onClick }: {
       type="button"
       onClick={onClick}
       className="w-full flex items-center gap-3 px-4 py-4 rounded-[14px] border-2 text-left transition-opacity hover:opacity-80"
-      style={{ background: "#fff4f6", borderColor: "#ffaebd" }}
+      style={{ background: "var(--secondary-color-10)", borderColor: "var(--secondary-color-200)" }}
     >
-      <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: "#ff3156" }}>重要</span>
+      <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: "var(--secondary-color-600)" }}>重要</span>
       <span className="flex-1 text-h6 font-bold text-neutral-800 leading-snug">
         {label ?? "重要事項・事前同意事項を確認する"}
       </span>
@@ -3879,12 +3879,12 @@ export function SegmentedToggle({ options, value, onChange, error }: {
             onClick={() => onChange(opt)}
             className={`flex-1 h-12 rounded-[10px] border text-h6 transition-colors ${
               error
-                ? "border-[#d70027] bg-[#fff5f5] text-neutral-600"
+                ? "border-[var(--secondary-color-700)] bg-[var(--secondary-color-10)] text-neutral-600"
                 : selected
                   ? "border-primary bg-primary-10 text-primary-700 font-bold"
                   : "border-warm-300 bg-white text-neutral-600"
             }`}
-            style={error ? { boxShadow: "0 0 0 1px #d70027" } : undefined}
+            style={error ? { boxShadow: "0 0 0 1px var(--secondary-color-700)" } : undefined}
           >
             {opt}
           </button>
@@ -4042,7 +4042,7 @@ export function DatePicker({ label, required, error, errMode = "inline", disable
       </label>
       <div className={[
         "flex items-center h-[52px] rounded-[10px] border bg-white px-3.5 gap-2 transition-colors",
-        hasError ? "border-[#d70027] shadow-[0_0_0_1px_#d70027]" : "border-warm-300",
+        hasError ? "border-[var(--secondary-color-700)] shadow-[0_0_0_1px_var(--secondary-color-700)]" : "border-warm-300",
         disabled ? "bg-warm-50 opacity-60 pointer-events-none" : "",
       ].join(" ")}>
         <span className="flex-1 text-h6 text-neutral-400">選択してください</span>
@@ -4065,7 +4065,7 @@ export function NumberedSectionHeading({ n, children }: {
     <div className="flex items-center gap-2">
       <span
         className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-white shrink-0"
-        style={{ backgroundImage: "linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)" }}
+        style={{ backgroundImage: "var(--theo-tdf-gradient-badge)" }}
       >
         {n}
       </span>
@@ -4207,7 +4207,7 @@ export function NumberedDisclosureItem({ n, title, children, open, onToggle }: {
       >
         <span
           className="grid place-items-center w-6 h-6 rounded-full text-[13px] font-bold text-neutral-700 shrink-0"
-          style={{ background: "#cccccc" }}
+          style={{ background: "var(--theo-tdf-badge-disabled)" }}
         >
           {n}
         </span>

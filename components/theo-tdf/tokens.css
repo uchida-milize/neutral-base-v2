@@ -100,6 +100,22 @@
   --theo-tdf-secondary:         var(--secondary-color-500);
   --theo-tdf-secondary-foreground: #ffffff;
   --theo-tdf-warm:              var(--warm-50);
+
+  /* ---- 7. gradients — CTA/button 塗り・画面背景で使い回す共通トークン ---- */
+  /* danger は単独の赤色相を廃止し、secondary (Coral) スケールに統一 (Figma: danger/500,200 → secondary/600,400) */
+  --theo-tdf-gradient-primary: linear-gradient(135deg, var(--primary-color-500) 0%, var(--primary-color-200) 100%);
+  --theo-tdf-gradient-danger:  linear-gradient(135deg, var(--secondary-color-600) 0%, var(--secondary-color-400) 100%);
+  --theo-tdf-gradient-badge:   linear-gradient(135deg, var(--primary-color-500) 0%, #03cdfe 100%); /* ステップ番号バッジ専用 — button/header とは意図的に別グラデーション */
+  --theo-tdf-gradient-bg:      linear-gradient(to bottom, #ffffff 0%, var(--warm-50) 100%);
+
+  /* ---- 8. screens.tsx のハードコード解消用 追加サーフェス/シャドウ ---- */
+  --theo-tdf-surface-neutral: #efefef;   /* 無効フィールド・プラン選択帯・補償ラベルの中立面 */
+  --theo-tdf-info-bg:         #f0f7ff;   /* 情報コールアウト背景 */
+  --theo-tdf-info-border:     #c8dcfa;   /* 情報コールアウト枠線 */
+  --theo-tdf-highlight-bg:    #e7edf7;   /* 申込セクションのハイライト背景 */
+  --theo-tdf-badge-disabled:  #cccccc;   /* 折りたたみ済みアコーディオンの番号バッジ */
+  --theo-tdf-shadow-card:     0 0 8px rgba(27, 49, 87, 0.08);  /* プランカードの影 */
+  --theo-tdf-hairline:        rgba(15, 23, 42, 0.06);          /* ActionBar 上端の極薄境界線 */
 }
 
 /* theo-tdf は保険商品のため常時ライト固定 (ダークモード上書きは廃止 — 2026-06-17)。 */

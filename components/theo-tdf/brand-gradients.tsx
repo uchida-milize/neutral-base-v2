@@ -6,21 +6,20 @@ import { Card, CardContent } from "@/components/ui/card";
  * theo-tdf (TD 組込1.4) のグラデーション & 新中立面の仕様ショーケース。
  *
  * プロトタイプ (components/theo-tdf/claude-design/screens.tsx) で実際に使われている
- * インライン・グラデーション値と中立面をそのまま再掲する「生きた仕様」。
+ * グラデーションと中立面をそのまま再掲する「生きた仕様」。
  * ガイドライン (Buttons セクション) と Components ページの両方から参照する。
  *
- * ※ 値は screens.tsx と一致させること:
- *   - ボタン (cta / button)     : linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)
- *   - ボタン (danger / 警告操作) : linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)
+ * 値は components/theo-tdf/tokens.css の CSS 変数が単一の情報源 (screens.tsx も同じ変数を参照):
+ *   - ボタン (cta / button) / ヘッダー(status+appbar) : --theo-tdf-gradient-primary
+ *   - ボタン (danger / 警告操作)                        : --theo-tdf-gradient-danger
  *     ※ danger はクレジットカード登録開始・解約など「取り消し不可の注意操作」専用。申込確定 (cta) には使わない。
- *   - ヘッダー (status+appbar)  : linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)
- *   - ステップ番号バッジ         : linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)
- *   - 中立面 (無効/プラン帯/補償ラベル): #EFEFEF
+ *   - ステップ番号バッジ                                : --theo-tdf-gradient-badge (button/header とは意図的に別グラデーション)
+ *   - 中立面 (無効/プラン帯/補償ラベル)                  : #EFEFEF
  */
 
-const GRAD_BUTTON = "linear-gradient(135deg, #1aa5dc 0%, #7fd0f0 100%)";
-const GRAD_DANGER = "linear-gradient(135deg, #E83A3C 0%, #F66A6C 100%)";
-const GRAD_BADGE = "linear-gradient(135deg, #1aa5dc 0%, #03CDFE 100%)";
+const GRAD_BUTTON = "var(--theo-tdf-gradient-primary)";
+const GRAD_DANGER = "var(--theo-tdf-gradient-danger)";
+const GRAD_BADGE = "var(--theo-tdf-gradient-badge)";
 
 function Swatch({
   title,
