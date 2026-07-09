@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意いただ���たいこと
+                    ご案内にあたりご確認・同意い���だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1241,7 +1241,7 @@ export function NoticeContent() {
         "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
         "個人情報に変更が生じた場合も、同様に取り扱います。",
         "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
-        "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
+        "個人番号および特定���人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
       ],
       bulletLinks: [
         { text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
@@ -1630,7 +1630,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const onM = (val: number) => { setM(val); onInput && onInput(); };
   const onY = (val: number) => { setY(val); onInput && onInput(); };
-  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限・ステップにスナップ）
+  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限��ステップにスナップ）
   const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
   const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
   const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
@@ -2202,7 +2202,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 
         {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
         {formSplit && (
-        <GroupCard title="団体特定コード" icon={Ic.tag}>
+        <GroupCard title="���体特定コード" icon={Ic.tag}>
           <Field label="団体特定コード" placeholder="1234567891234567" />
           <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入���し��ください</span>
         </GroupCard>
@@ -2912,7 +2912,7 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
           </p>
           <div>
             <Row k="カード番号" v="**** **** **** 3456" />
-            <Row k="カード名義" v="TARO YAMADA" />
+            <Row k="カー���名義" v="TARO YAMADA" />
             <Row k="有効期限" v="04 / 25" />
             <Row k="お支払い方法" v="一回払い" />
             <Row k="保険金の受取人" v="山田 花子様" />
@@ -3166,7 +3166,7 @@ export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用���止をご希望の場合には、当������本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただき���すが、利用���止をご希望の場合には、当������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3323,7 +3323,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保���イメージ図" className="w-full block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
@@ -3333,7 +3333,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             詳細なサービス内容はこちら
           </a>
           <h3 className="mt-6 text-h5 font-bold text-neutral-800">保障期間</h3>
-          <p className="mt-2 text-h6 text-neutral-700">5年～40年（��大）</p>
+          <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
           <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
           <button onClick={() => setHeigaiOpen(true)} className="mt-4 inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
             <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
