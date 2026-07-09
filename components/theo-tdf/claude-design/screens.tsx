@@ -1122,7 +1122,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
                 <div className="text-left">
                   <span className="inline-block text-h6 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
-                  <p className="mt-2 text-h7 text-neutral-700">5年〜40年（最大）</p>
+                  <p className="mt-2 text-h7 text-neutral-700">5���〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
                 </div>
                 <div className="text-left">
@@ -1829,7 +1829,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   const editErrors = simErrors(m, y, formStartAge);
 
   // ===== 入力エラー表示デモ =====================================
-  // 「確認する」を押した時点で必須項目が未入力だった想定��errMode（Tweaks）で表示方法を切替。
+  // 「確認��る」を押した時点で必須項目が未入力だった想定��errMode（Tweaks）で表示方法を切替。
   const showErr = errMode && errMode !== 'none';
   const scrollerRef = useRef<any>(null);
   const fieldRefs = useRef<Record<string, any>>({});
@@ -2659,7 +2659,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Field label="生年月日" value="1992 / 05 / 15" />
               <Field label="性別" value="女性" />
               <Field label="続柄" value="配偶者" />
-              {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
+              {/* 住所：「契約者と同じ���チェック。外すと住所入力欄が出現 */}
               <div className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">住所</span>
                 <button type="button" onClick={() => setBenEditSame((s) => !s)} className="flex items-center gap-3 text-left">
@@ -3166,7 +3166,7 @@ export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
   { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓���へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
@@ -3393,11 +3393,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         {/* 申し込みをする — 幅760px、各カードは説明文＋案内カードの横並び */}
-        <div className="w-[760px] mx-auto space-y-6">
+        <div className="w-[760px] mx-auto mt-10">
           <div className="flex items-center gap-3">
             <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">3</span>
             <h2 className="text-h4 font-bold text-neutral-800">申し込みをする</h2>
           </div>
+          <div className="mt-4 space-y-6">
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
             <div className="flex items-center gap-4">
@@ -3427,6 +3428,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <h3 className="text-h6 font-bold text-neutral-800">メールアドレスのご入力</h3>
             <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
             <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+          </div>
           </div>
         </div>
 
