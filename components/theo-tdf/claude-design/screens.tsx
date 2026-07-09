@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い���������だ���たいこと
+                    ご案内にあたりご確認・同意い�����������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -1212,7 +1212,7 @@ export function NoticeContent() {
         "お申込・告知内容は、必ず被保険者ご本人様が���入力ください。",
         "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-        "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
+        "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけませ��。",
         "保険金受取人は、被保険者から見た続��が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
         "この保険には解約払戻金はありません。",
         "この保険はクーリング・オフ制度の対象外です。",
@@ -1546,8 +1546,8 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
           本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
-        <div className="flex items-center justify-center gap-3">
-          <button onClick={() => go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+        <div className="relative flex items-center justify-center">
+          <button onClick={() => go(backScr)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
           <div style={{ width: '270px' }}>
             <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
           </div>
@@ -2049,8 +2049,8 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                 </div>
               </div>
             )}
-            <div className="flex items-center justify-center gap-3">
-              <button onClick={onBack} className="text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
+            <div className="relative flex items-center justify-center">
+              <button onClick={onBack} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
               <div style={{ width: "270px" }}>
                 <Btn kind="button" onClick={() => go(4)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
               </div>
@@ -2551,7 +2551,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
-  // 受取人住所：編集中の「契約者と同じ」チ��ック状態（編集開始時に benSameAddr ���初期化）
+  // 受取人住所：編集中の「契約者と同じ��チ��ック状態（編集開始時に benSameAddr ���初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
@@ -2823,8 +2823,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       </div>
       <ActionBar bg="var(--warm-50)">
         <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
-          <div className="flex items-center justify-center gap-3">
-            <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+          <div className="relative flex items-center justify-center">
+            <button onClick={() => go(3)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
             <div style={{ width: '270px' }}>
               <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
             </div>
@@ -3170,8 +3170,8 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に���り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対��・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させて���ただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
@@ -3450,10 +3450,14 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <Ic.check className="w-4 h-4 text-primary-600 shrink-0" />
                 <span className="text-caption text-primary-700">メールアドレスの認証は完了しています</span>
               </div>
-              <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
+              <div style={{ width: '270px' }} className="mx-auto">
+                <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
+              </div>
             </>
           ) : (
-            <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
+            <div style={{ width: '270px' }} className="mx-auto">
+              <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
+            </div>
           )}
           {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
         </div>
