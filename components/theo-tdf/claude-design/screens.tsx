@@ -1395,7 +1395,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
             <p className="text-caption text-neutral-600 leading-relaxed">
               ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
             </p>
-            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+            <Field label="メ���ルアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
 
           {/* STEP 2 — 事前同意事項のご確認 */}
@@ -2204,7 +2204,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         {formSplit && (
         <GroupCard title="団体特定コード" icon={Ic.tag}>
           <Field label="団体特定コード" placeholder="1234567891234567" />
-          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
+          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力し��ください</span>
         </GroupCard>
         )}
 
@@ -2555,7 +2555,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
-  const BEN_ADDR = { zip: "150-0002", pref: "東京都", city: "渋谷区", town: "渋谷２丁目", addr: "2-1", bldg: "渋谷フラット 305", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
+  const BEN_ADDR = { zip: "150-0002", pref: "東��都", city: "渋谷区", town: "渋谷２丁目", addr: "2-1", bldg: "渋谷フラット 305", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
   const agreeItems = AGREE_ITEMS;
   const CIRC = "①②③④⑤⑥⑦⑧⑨";
   const confirmNums = agreeItems.map((it, i) => (it.kind === "agree" ? null : CIRC[i])).filter(Boolean).join("");
@@ -2714,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
           <div>
             <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
@@ -3370,8 +3370,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
           {/* プランを選ぶ：2カラム・358px カード・32pxギャップ */}
           <div className="mt-10">
-            <h3 className="text-h5 font-bold text-neutral-800">プランを選ぶ</h3>
-            <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
+            <div className="flex items-center gap-3">
+              <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">1</span>
+              <h3 className="text-h4 font-bold text-neutral-800">プランを選ぶ</h3>
+            </div>
+            <p className="text-caption text-neutral-500 mt-2">ご希望の保障プランをご選択ください</p>
             <div className="grid mt-4 justify-center" style={{ gridTemplateColumns: "358px 358px", gap: "32px" }}>
               {PLAN_CARDS.map((p) => (
                 <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
@@ -3381,7 +3384,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
           {/* 保険料シミュレーション：モバイルと同じ縦積みカード */}
           <div className="mt-10">
-            <h3 className="text-h5 font-bold text-neutral-800">保険料シミュレーション</h3>
+            <div className="flex items-center gap-3">
+              <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">2</span>
+              <h3 className="text-h4 font-bold text-neutral-800">保険料シミュレーション</h3>
+            </div>
             <div className="mt-4">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
             </div>
@@ -3390,7 +3396,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 申し込みをする — 幅760px、各カードは説明文＋案内カードの横並び */}
         <div className="w-[760px] mx-auto space-y-6">
-          <h2 className="text-h3 font-bold text-neutral-800">申し込みをする</h2>
+          <div className="flex items-center gap-3">
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">3</span>
+            <h2 className="text-h4 font-bold text-neutral-800">申し込みをする</h2>
+          </div>
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
             <div className="flex items-center gap-4">
@@ -3557,7 +3566,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 {[1, 2, 3].map((n) => (
                   <div key={n} className="flex flex-col items-center gap-2">
                     <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">{n}</span>
-                    <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left" style={{ width: '260px' }}>ココにお勧めのポイントが入りますタイトルです</p>
+                    <p className="text-[16px] font-bold text-neutral-800 leading-snug text-left" style={{ width: '260px' }}>ココにお勧めの��イントが入りますタイトルです</p>
                     <p className="text-[14px] text-neutral-600 leading-relaxed text-left" style={{ width: '260px' }}>あいうえおかきくえこいうえおかきくえこえおかきくえこ</p>
                   </div>
                 ))}
