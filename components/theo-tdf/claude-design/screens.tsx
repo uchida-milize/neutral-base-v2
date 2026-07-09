@@ -1919,7 +1919,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </div>
           )}
 
-          <div className="mx-auto w-full max-w-[640px] space-y-6">
+          <div className="mx-auto w-full max-w-[560px] space-y-6">
             {/* 告知をする（添付デザイン：最上部） */}
             <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
               <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
@@ -2020,7 +2020,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
         </div>
 
         <ActionBar bg={atBottom ? "var(--warm-50)" : undefined}>
-          <div className="w-[760px] mx-auto">
+          <div className="w-[560px] mx-auto">
             {errMode === "float" && visibleErrs.length > 0 && (
               <button onClick={() => jumpNext(visibleErrs)}
                 className="w-full flex items-center justify-between gap-2 rounded-xl px-4 py-3 fade-in active:scale-[.99] transition-transform"
@@ -2571,8 +2571,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       {desktop ? <DesktopHeader n={4} go={go} /> : <AppBar title="内容確認・お支払い" onBack={() => go(3)} />}
       <div className={`flex-1 overflow-y-auto no-sb pt-6 space-y-8 ${desktop ? "px-8 pb-24" : "px-4 pb-[72px]"}`} style={{ background: "var(--theo-tdf-gradient-bg)" }}>
         {!desktop && <div className="-mx-4 -mt-6"><Steps n={4} go={go} /></div>}
-        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`} style={{ color: 'var(--theo-tdf-primary)' }}>内容確認</h2>
-        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
+        <h2 className={`text-h4 font-bold text-center ${desktop ? "max-w-[560px] mx-auto w-full" : ""}`} style={{ color: 'var(--theo-tdf-primary)' }}>内容確認</h2>
+        <StepSection className={desktop ? "max-w-[560px] mx-auto w-full" : undefined}>
         <h2 className="text-h4 font-bold text-neutral-800">お申込み内容</h2>
 
         <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6">
@@ -2714,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full pt-8" : "pt-8"}>
+        <StepSection className={desktop ? "max-w-[560px] mx-auto w-full pt-8" : "pt-8"}>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2783,7 +2783,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <div className={`rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4 ${desktop ? "max-w-[736px] mx-auto w-full" : ""}`}>
+        <div className={`rounded-2xl border border-[color:var(--secondary-color-100)] bg-[color:var(--secondary-color-10)] p-4 ${desktop ? "max-w-[560px] mx-auto w-full" : ""}`}>
           <div className="flex items-center gap-2 mb-3"><Badge>重要</Badge><span className="text-h5 font-bold text-neutral-800">重要事項をご確認ください</span></div>
           <div className="space-y-3">
             {agreeItems.map((it, i) => (
@@ -2828,7 +2828,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
         </div>
       </div>
       <ActionBar bg="var(--warm-50)">
-        <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
+        <div className={desktop ? "max-w-[560px] mx-auto w-full space-y-2" : "space-y-2"}>
           <div className="relative flex items-center justify-center">
             <button onClick={() => go(3)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
             <div style={{ width: '270px' }}>
@@ -2863,7 +2863,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
     <>
       <ExtBar url="payment.gmo-pg.com" />
       <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px]">
-        <div className="max-w-[760px] mx-auto space-y-4">
+        <div className="max-w-[560px] mx-auto space-y-4">
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
@@ -2898,7 +2898,7 @@ export function ScreenCardInput({ go }: { go: Go }) {
         </div>
       </div>
       <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3">
-        <div className="max-w-[760px] mx-auto flex flex-col items-center gap-2">
+        <div className="max-w-[560px] mx-auto flex flex-col items-center gap-2">
           <div style={{ width: '270px' }}>
             <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
           </div>
@@ -2916,7 +2916,8 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
-      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px] space-y-4">
+      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px]">
+        <div className="max-w-[560px] mx-auto space-y-4">
         <h2 className="text-h5 font-bold text-neutral-800">お申込み内容の確認（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
@@ -2933,10 +2934,13 @@ export function ScreenCardConfirm({ go }: { go: Go }) {
             上記の内容で申込します。「この内容で申込」を押すと、お申込みが確定し、初回のお支払い手続きが行われます。
           </p>
         </div>
+        </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(7)}>この内容で申込</Btn>
-        <button onClick={() => go(5)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
+      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3">
+        <div className="max-w-[560px] mx-auto space-y-2">
+          <Btn kind="button" onClick={() => go(7)}>この内容で申込</Btn>
+          <button onClick={() => go(5)} className="w-full text-center text-caption text-neutral-500">入力内容を修正する</button>
+        </div>
       </div>
     </>
   );
@@ -3050,9 +3054,9 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           </div>
         </div>
         <Steps n={5} go={go} />
-        <div className="px-8 py-10 w-[760px] mx-auto space-y-6">
-          <div className="text-center">
-            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX つみたて安心ほけんのお申込が完了しました。</p>
+        <div className="px-8 py-10 w-[560px] mx-auto space-y-6">
+          <div>
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed text-center">XXX つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
