@@ -1508,7 +1508,11 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
           <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
-            ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載のPINコードを入力してください。
+            {desktop ? (
+              <>ご登録のメールアドレスに、認証用のPINコードをお送りしました。<br />メールに記載のPINコードを入力してください。</>
+            ) : (
+              "ご登録のメールアドレスに、認証用のPINコードをお送りしました。メールに記載のPINコードを入力してください。"
+            )}
           </p>
 
           <div className="mt-8 w-full max-w-[280px] relative">
@@ -1695,7 +1699,7 @@ export function simErrors(m: number, y: number, startAge: number) {
 }
 
 // 給付予想額テーブル（m, y から算出）
-export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: number; plan: Plan | undefined; startAge?: number }) {
+export function BenefitTable({ m, y, plan, startAge = 30, desktop }: { m: number; y: number; plan: Plan | undefined; startAge?: number; desktop?: boolean }) {
   const man = (v: number) => Math.round(v / 10000).toLocaleString("ja-JP");
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const annual = m * 12;
@@ -1718,7 +1722,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
         </span>
       </div>
       <div className="mt-3 rounded-xl border border-warm-200 overflow-hidden">
-        <div className="max-h-72 overflow-y-auto no-sb">
+        <div className={`${desktop ? "max-h-[432px]" : "max-h-72"} overflow-y-auto no-sb`}>
           <table className="w-full text-caption tabular-nums">
             <thead className="sticky top-0 bg-warm-100 text-neutral-500">
               <tr>
@@ -1748,7 +1752,7 @@ export function BenefitTable({ m, y, plan, startAge = 30 }: { m: number; y: numb
   );
 }
 
-export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan, startAge = 30 }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number }) {
+export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName, plan, startAge = 30, desktop }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialSimOpen?: boolean; infoSlot?: React.ReactNode; planName?: string | null; plan: Plan | undefined; startAge?: number; desktop?: boolean }) {
   const [open, setOpen] = useState(initialSimOpen ?? false);
   const shouldShowLabel = !!planName;
   const errors = simErrors(m, y, startAge);
@@ -1800,7 +1804,7 @@ export function Simulator({ m, setM, y, setY, initialSimOpen, infoSlot, planName
 
       <div style={{ maxHeight: open ? "1600px" : "0px", opacity: open ? 1 : 0, marginTop: open ? "16px" : "0px" }}
         className="overflow-hidden transition-all duration-300 ease-out">
-        <BenefitTable m={m} y={y} plan={plan} startAge={startAge} />
+        <BenefitTable m={m} y={y} plan={plan} startAge={startAge} desktop={desktop} />
       </div>
       </>)}
     </div>
@@ -3386,7 +3390,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="mt-10">
             <h3 className="text-h5 font-bold text-neutral-800">保険料シミュレーション</h3>
             <div className="mt-4">
-              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} />
+              <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} desktop />
             </div>
           </div>
         </div>
@@ -3427,7 +3431,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         {/* CTA */}
-        <div className="space-y-2 pt-6 border-t border-warm-200 max-w-[400px] mx-auto">
+        <div className="space-y-2 pt-6 pb-8 border-t border-warm-200 max-w-[400px] mx-auto">
           {emailVerified ? (
             <>
               <div className="flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
