@@ -223,7 +223,8 @@ const TWEAK_DEFAULTS = {
 
 export function TheoTdfClaudeDesignShell() {
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  // ?device=pc で直リンク時にもPC表示を開けるようにする（Tweaksパネルの「デバイス」でも切替可）
+  // デバイス切替は Tweaks（表示オプション → 表示デバイス）から行う。
+  // 後方互換のため ?device=pc が付いている場合は初期値として PC を採用する。
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("device") === "pc") setTweak("device", "pc");

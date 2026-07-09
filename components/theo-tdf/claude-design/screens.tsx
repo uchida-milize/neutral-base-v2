@@ -236,9 +236,9 @@ export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
 
 // step progress dots — 既出（到達済み）ステップは押下でその画面へ遷移
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
-export function Steps({ n, of = 5, go }: { n: number; of?: number; go?: Go }) {
+export function Steps({ n, of = 5, go, padY }: { n: number; of?: number; go?: Go; padY?: number }) {
   return (
-    <div className="flex justify-center items-center gap-0 px-6 py-2 bg-white border-b border-warm-200">
+    <div className="flex justify-center items-center gap-0 px-6 py-2 bg-white border-b border-warm-200" style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -295,7 +295,7 @@ export function GroupCard({ title, sub, icon: Icon, children, className, iconSrc
   );
 }
 
-// グループ内の小見出し（区切り）
+  // グループ内の小見出し（区切り）
 export function SubLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="pt-2 mt-1 border-t border-warm-200">
@@ -305,15 +305,15 @@ export function SubLabel({ children }: { children: React.ReactNode }) {
 }
 
 // Bottom sticky action bar — `solid` turns the bar the same blue as the guidance band
-export function ActionBar({ children, solid, bg }: { children: React.ReactNode; solid?: boolean; bg?: string }) {
-  const base = "sticky bottom-0 z-20 backdrop-blur border-t px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl";
+export function ActionBar({ children, solid, bg, noBorder }: { children: React.ReactNode; solid?: boolean; bg?: string; noBorder?: boolean }) {
+  const base = `sticky bottom-0 z-20 backdrop-blur ${noBorder ? "" : "border-t"} px-6 pt-2 pb-3 space-y-2 transition-colors duration-300 rounded-b-2xl`;
   return (
-    <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
-      style={bg ? { background: bg, borderTopColor: "var(--theo-tdf-hairline)" } : undefined}>
-      {children}
-    </div>
+  <div className={`${base} ${bg ? "" : (solid ? "bg-primary-10 border-primary-100" : "bg-white/95 border-warm-200")}`}
+  style={bg ? { background: bg, ...(noBorder ? {} : { borderTopColor: "var(--theo-tdf-hairline)" }) } : undefined}>
+  {children}
+  </div>
   );
-}
+  }
 
 // 必須マーク（赤字アスタリスク）
 export function ReqBadge() {
@@ -531,7 +531,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
     <div className="rounded-xl border border-warm-200 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-3 space-y-2">
         {row.paras.map((p: any, j: number) => {
-          // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）なら全文bold、それ以外は末尾のありますか/ていますか以降をbold
+  // 問いかけ文を太字化：文全体が短い問いかけ（改行なし）なら全文bold、それ以外は末尾のありますか/ていますか以降をbold
           const isShortQ = /(?:ありますか|ていますか)[。。。]?(?:（[^（）]*）|\([^()]*\))?[。。。]?\s*$/.test(p.t) && !p.t.includes('\n');
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
@@ -799,7 +799,7 @@ export function PlanCardAccordion({ p, selected, onSelect, open, onToggle, initi
   );
 }
 
-// プランリスト（card / accordion モード切替）
+  // プランリスト（card / accordion モード切替）
 export function PlanList({ sel, setSel, mode = 'card', initialTipIdx, initialOpenId }: { sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; mode?: string; initialTipIdx?: number; initialOpenId?: string }) {
   const [openIds, setOpenIds] = React.useState<Set<string>>(() => new Set(initialOpenId ? [initialOpenId] : []));
   const toggleOpen = (id: string) => setOpenIds((prev) => {
@@ -1098,8 +1098,8 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
-                  { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
-                  { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
+        { svg: <img src="/assets/theo-tdf/graduation-cap.svg" alt="学資保険の代わりにも" className="w-12 h-12" />, t: "学資保険の\n代わりにも" },
+        { svg: <img src="/assets/theo-tdf/hand-holding-heart.svg" alt="もしもの備えに" className="w-12 h-12" />, t: "もしもの\n備えに" },
                 ].map((f, k) => (
                   <div key={k} className="flex flex-col items-center text-center gap-2">
                     <div className="text-primary" style={{width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--theo-tdf-primary)'}}>{f.svg}</div>
@@ -1122,13 +1122,13 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
                 <div className="text-left">
                   <span className="inline-block text-h6 font-bold text-neutral-800 py-0.5 rounded">保障期間</span>
-                  <p className="mt-2 text-h7 text-neutral-700">5年〜40年（最大）</p>
+          <p className="mt-2 text-h7 text-neutral-700">5年〜40年（最大）</p>
                   <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から1年であり、保障期間満了まで1年ごとの更新となります。</p>
                 </div>
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意いただきたいこと
+                  ご案内にあたりご確認・同意いただきたいこと
                   </button>
                 </div>
               </div>
@@ -1209,11 +1209,11 @@ export function NoticeContent() {
     {
       head: "お申込みにあたっての注意事項",
       items: [
-        "お申込・告知内容は、必ず被保険者ご本人様がご入力ください。",
+                "お申込・告知内容は、必ず被保険者ご本人様がご入力ください。",
         "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-        "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
-        "保険金受取人は、被保険者から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
+                "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
+                "保険金受取人は、被保険者から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
         "この保険には解約払戻金はありません。",
         "この保険はクーリング・オフ制度の対象外です。",
         "投信口座の解約や積立投資の中止をされた場合、保険契約は解約いただくか、更新できませんのでご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として●●が有します。",
@@ -1238,10 +1238,10 @@ export function NoticeContent() {
     {
       head: "個人情報のお取り扱いについて",
       items: [
-        "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
+                "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
         "個人情報に変更が生じた場合も、同様に取り扱います。",
         "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
-        "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
+                "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
       ],
       bulletLinks: [
         { text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
@@ -1325,7 +1325,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
   );
   return (
     <>
-      <AppBar title="保険" onBack={() => go(0)} />
+            <AppBar title="保険" onBack={() => go(0)} />
       <div ref={bindScroll} className="flex-1 overflow-y-auto no-sb">
         <div>
           <Steps n={2} go={go} />
@@ -1395,7 +1395,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
             <p className="text-caption text-neutral-600 leading-relaxed">
               ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。メールアドレスをご入力ください。
             </p>
-            <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
+              <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
 
           {/* STEP 2 — 事前同意事項のご確認 */}
@@ -1507,7 +1507,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
           <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
-          <p className="mt-3 text-h6 text-neutral-600 leading-relaxed text-left">
+          <p className={`mt-3 text-h6 text-neutral-600 leading-relaxed ${desktop ? "text-center" : "text-left"}`}>
             {desktop ? (
               <>ご登録のメールアドレスに、認証用のPINコードをお送りしました。<br />メールに記載のPINコードを入力してください。</>
             ) : (
@@ -1546,13 +1546,13 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
         </div>
       </div>
       <ActionBar>
-        <p className="text-caption text-neutral-500 leading-relaxed px-1">
+        <p className={`text-caption text-neutral-500 leading-relaxed px-1 ${desktop ? "text-center" : ""}`}>
           本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
-        <div className="flex items-center justify-center gap-3">
-          <button onClick={() => go(backScr)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-          <div style={{ width: '100%', maxWidth: '260px' }}>
+        <div className="relative flex items-center justify-center">
+          <button onClick={() => go(backScr)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+          <div style={{ width: '270px' }}>
             <Btn kind="cta" onClick={() => { if(onVerified) onVerified(); go(3); }} disabled={pin.length < 1 || pinError}>認証する</Btn>
           </div>
         </div>
@@ -1588,7 +1588,7 @@ export function FeatValue({ v }: { v: string }) {
   );
 }
 
-// divベースのカスタムスライダー（Figmaキャプチャ対応・ネイティブinput[range]の代替）
+  // divベースのカスタムスライダー（Figmaキャプチャ対応・ネイティブinput[range]の代替）
 function DivSlider({ min, max, step, value, onChange }: {
   min: number; max: number; step: number; value: number;
   onChange: (val: number) => void;
@@ -1634,7 +1634,7 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
   const yen = (v: number) => v.toLocaleString("ja-JP");
   const onM = (val: number) => { setM(val); onInput && onInput(); };
   const onY = (val: number) => { setY(val); onInput && onInput(); };
-  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下限・ステップにスナップ）
+  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下最寄りのステップにスナップ）
   const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
   const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
   const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
@@ -1919,14 +1919,34 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
             </div>
           )}
 
-          <div className="grid grid-cols-[1fr_360px] gap-8 items-start">
-            {/* 左カラム：入力フィールド（モバイルと同じ順序） */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-caption text-primary-700">
-                <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
+          <div className="mx-auto w-full max-w-[640px] space-y-6">
+            {/* 告知をする（添付デザイン：最上部） */}
+            <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
+              <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
+              <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
+              <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
+                className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
+                <span className="flex items-center gap-3 min-w-0">
+                  <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
+                  <span className="text-h6 font-bold text-neutral-800">告知事項を確認する</span>
+                </span>
+                <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
+              </button>
+              <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
+                onClick={() => setKokuchiAgreed((a) => !a)}>
+                <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
+                  {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
+                </span>
+                <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
               </div>
+            </div>
 
-              <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg">
+            <div className="flex items-center gap-2 text-caption text-primary-700">
+              <Ic.shield className="w-4 h-4 shrink-0 text-primary" />XXX 口座情報の一部を自動入力しています。
+            </div>
+
+            <div className="space-y-6">
+            <GroupCard title="契約者情報" sub="ご契約者ご本人さまの情報" iconSrc="/assets/theo-tdf/person-heart.svg">
                 <div className="grid grid-cols-2 gap-x-3 gap-y-6">
                   <Field label="姓" placeholder="山田" required />
                   <Field label="名" placeholder="太郎" required />
@@ -1996,34 +2016,11 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
                 <Field label="団体特定コード" placeholder="TDF-0000-0000" hint="団体からご案内のコードを入力してください" />
               </GroupCard>
             </div>
-
-            {/* 右カラム：告知事項 */}
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-warm-200 bg-[var(--theo-tdf-surface-neutral)] p-6 space-y-3">
-                <h3 className="text-h6 font-bold text-neutral-800">告知をする</h3>
-                <p className="text-caption text-neutral-600 leading-relaxed">お申し込みにあたり、現在の健康状態などについてご告知いただく必要があります。下記ボタンより告知事項をご確認ください。</p>
-                <button onClick={() => { setInfoPlan(modalPlan); setKokuchiAgreed(true); }}
-                  className="flex items-center justify-between w-full rounded-xl border-2 border-[color:var(--secondary-color-200)] bg-[color:var(--secondary-color-10)] px-4 py-4 text-left transition hover:border-[color:var(--secondary-color-300)]">
-                  <span className="flex items-center gap-3 min-w-0">
-                    <span className="rounded-full bg-[color:var(--secondary-color-600)] text-white px-2 py-[2px] text-[11px] font-bold leading-none shrink-0">告知</span>
-                    <span className="text-h6 font-bold text-neutral-800">告知事項を確認する</span>
-                  </span>
-                  <Ic.chevR className="w-6 h-6 text-[color:var(--secondary-color-600)] shrink-0" />
-                </button>
-                <div className="flex items-start gap-3 w-full text-left pt-1 cursor-pointer"
-                  onClick={() => setKokuchiAgreed((a) => !a)}>
-                  <span className={`grid place-items-center w-5 h-5 mt-0.5 rounded border-2 shrink-0 ${kokuchiAgreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
-                    {kokuchiAgreed && <Ic.check className="w-3 h-3" />}
-                  </span>
-                  <span className="text-caption text-neutral-700 leading-relaxed">上記の事前同意事項を確認し、同意します</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         <ActionBar bg={atBottom ? "var(--warm-50)" : undefined}>
-          <div className="max-w-[1000px] mx-auto w-full">
+          <div className="w-[760px] mx-auto">
             {errMode === "float" && visibleErrs.length > 0 && (
               <button onClick={() => jumpNext(visibleErrs)}
                 className="w-full flex items-center justify-between gap-2 rounded-xl px-4 py-3 fade-in active:scale-[.99] transition-transform"
@@ -2039,26 +2036,28 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
               </button>
             )}
             {!(errMode === "float" && visibleErrs.length > 0) && (
-              <div className={`rounded-xl py-2 -mx-2 transition-colors ${atBottom ? "bg-white/70" : "bg-white"}`}>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
-                  <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium" style={{ color: "var(--color-link)" }}>
+              <div className={`rounded-xl py-2 transition-colors flex justify-center ${atBottom ? "bg-white/70" : "bg-white"}`}>
+                <div className="inline-flex items-center gap-4">
+                  <div>
+                    <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-neutral-400">保険内容</span>
+                    <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
+                      <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
+                      <span className="text-warm-300">|</span>
+                      <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
+                      <span className="text-warm-300">|</span>
+                      <span className="text-neutral-700 tabular-nums">{y}年</span>
+                    </div>
+                  </div>
+                  <button onClick={() => setEditOpen(true)} className="flex items-center gap-1 text-caption font-medium shrink-0" style={{ color: "var(--color-link)" }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
                     修正
                   </button>
                 </div>
-                <div className="mt-[2px] flex items-center flex-wrap gap-x-2 gap-y-[2px] text-caption">
-                  <span className="font-bold text-neutral-800">{PLAN_CARDS.find((p) => p.id === sel)?.name || plan.name}</span>
-                  <span className="text-warm-300">|</span>
-                  <span className="text-neutral-700 tabular-nums">{yen(m)}円/月</span>
-                  <span className="text-warm-300">|</span>
-                  <span className="text-neutral-700 tabular-nums">{y}年</span>
-                </div>
               </div>
             )}
-            <div className="flex items-center justify-center gap-3">
-              <button onClick={onBack} className="text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
-              <div style={{ width: "100%", maxWidth: "260px" }}>
+            <div className="relative flex items-center justify-center">
+              <button onClick={onBack} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: "var(--color-link)" }}>← 戻る</button>
+              <div style={{ width: "270px" }}>
                 <Btn kind="button" onClick={() => go(4)}>入力内容を確認する<Ic.chevR className="w-4 h-4" /></Btn>
               </div>
             </div>
@@ -2207,11 +2206,11 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
           <Field label="電話番号" placeholder="090-0000-0000" required value={tel} onChange={(e) => setTel(e.target.value)} error={errOf('tel')} errMode={errMode} anchorRef={setFieldRef('tel')} />
         </GroupCard>
 
-        {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
+          {/* 団体特定コード（パターンB：分割時は契約者情報の後） */}
         {formSplit && (
-        <GroupCard title="団体特定コード" icon={Ic.tag}>
+          <GroupCard title="団体特定コード" icon={Ic.tag}>
           <Field label="団体特定コード" placeholder="1234567891234567" />
-          <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
+              <span className="text-caption text-neutral-400">任意コード：0000000000000000<br/>団体からご案内のコードを入力してください</span>
         </GroupCard>
         )}
 
@@ -2589,10 +2588,10 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           <Row k="保障期間" v={`${y} 年`} strong />
           <Row k="保険料（月額）" v={`${plan.price.replace("¥", "")} 円 / 月`} strong />
           <Row k="保険期間" v="1年（自動更新）" strong />
-          {/* ご意向の再確認（プランにより文言が変化） */}
-          <div className="mt-1">
-            <span className="text-caption text-neutral-500">ご意向の確認</span>
-            <p className="text-h6 text-neutral-700 leading-relaxed mt-1">積立期間中における<strong className="font-bold text-neutral-900">{ikoMid}</strong>にそなえたい</p>
+          {/* ご意向の再確認（プランにより文言が変化）：ラベル左・値右 */}
+          <div className="flex items-center justify-between gap-4 py-3">
+            <span className="text-caption text-neutral-500 shrink-0">ご意向の確認</span>
+            <p className="text-h6 text-neutral-700 leading-relaxed text-right">積立期間中における<strong className="font-bold text-neutral-900">{ikoMid}</strong>にそなえたい</p>
           </div>
         </div>
 
@@ -2633,9 +2632,9 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Row k="フリガナ" v="ヤマダ タロウ" />
               <Row k="生年月日" v="1990 / 01 / 01" />
               <Row k="性別" v="男性" />
-              <div className="flex flex-col gap-[2px] py-3 border-b border-warm-200">
-                <span className="text-caption text-neutral-500">住所</span>
-                <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
+              <div className="flex items-center justify-between gap-4 py-3 border-b border-warm-200">
+                <span className="text-caption text-neutral-500 shrink-0">住所</span>
+                <span className="text-h6 text-neutral-700 leading-relaxed text-right">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
               </div>
               <Row k="電話番号" v="090-0000-0000" />
               <Row k="メールアドレス" v="samplename@sample.co.jp" />
@@ -2666,7 +2665,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Field label="生年月日" value="1992 / 05 / 15" />
               <Field label="性別" value="女性" />
               <Field label="続柄" value="配偶者" />
-              {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
+          {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
               <div className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">住所</span>
                 <button type="button" onClick={() => setBenEditSame((s) => !s)} className="flex items-center gap-3 text-left">
@@ -2715,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
         </StepSection>
 
-        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full" : undefined}>
+        <StepSection className={desktop ? "max-w-[736px] mx-auto w-full pt-8" : "pt-8"}>
           <h2 className="text-h4 font-bold text-neutral-800">保険料のお支払いについて</h2>
           <p className="text-caption text-neutral-600 leading-relaxed">クレジットカードによる保険料払込における各種注意点を確認のうえ、お手続きください。</p>
 
@@ -2830,9 +2829,9 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
       </div>
       <ActionBar bg="var(--warm-50)">
         <div className={desktop ? "max-w-[1000px] mx-auto w-full space-y-2" : "space-y-2"}>
-          <div className="flex items-center justify-center gap-3">
-            <button onClick={() => go(3)} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
-            <div style={{ width: '100%', maxWidth: '260px' }}>
+          <div className="relative flex items-center justify-center">
+            <button onClick={() => go(3)} className="absolute left-0 text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>← 戻る</button>
+            <div style={{ width: '270px' }}>
               <Btn kind="danger" onClick={() => go(5)} disabled={!agreed}>クレジットカード登録開始<Ic.chevR className="w-4 h-4" /></Btn>
             </div>
           </div>
@@ -2863,7 +2862,8 @@ export function ScreenCardInput({ go }: { go: Go }) {
   return (
     <>
       <ExtBar url="payment.gmo-pg.com" />
-      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px] space-y-4">
+      <div className="flex-1 overflow-y-auto no-sb bg-neutral-100 px-4 pt-6 pb-[72px]">
+        <div className="max-w-[760px] mx-auto space-y-4">
         <h2 className="text-h5 font-bold text-neutral-800">クレジットカード設定（外部リンク）</h2>
         <div className="rounded-xl bg-white border border-neutral-200 p-4 space-y-4">
           <p className="flex items-center gap-2 text-h6 font-bold text-neutral-800">
@@ -2895,10 +2895,15 @@ export function ScreenCardInput({ go }: { go: Go }) {
             ))}
           </ul>
         </div>
+        </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3 space-y-2">
-        <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
-        <button onClick={() => go(4)} className="w-full text-center text-caption text-neutral-500">キャンセルして戻る</button>
+      <div className="sticky bottom-0 z-20 bg-neutral-100 border-t border-neutral-300 px-4 py-3">
+        <div className="max-w-[760px] mx-auto flex flex-col items-center gap-2">
+          <div style={{ width: '270px' }}>
+            <Btn kind="button" onClick={() => go(6)}>確認画面へ進む<Ic.chevR className="w-4 h-4" /></Btn>
+          </div>
+          <button onClick={() => go(4)} className="text-center text-caption text-neutral-500">キャンセルして戻る</button>
+        </div>
       </div>
     </>
   );
@@ -2989,11 +2994,11 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
 
   const flowCard = (
     <div className="rounded-2xl border border-warm-200 bg-white p-6">
-      <SectionLabel>このあとの流れ</SectionLabel>
+          <SectionLabel>このあとの流れ</SectionLabel>
       <div className="mt-1">
       {[
         ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
-        ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
+            ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
         ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
       ].map(([n, t, d], idx, arr) => (
         <div key={n} className="flex gap-3">
@@ -3045,10 +3050,10 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           </div>
         </div>
         <Steps n={5} go={go} />
-        <div className="px-8 py-10 max-w-[736px] mx-auto w-full space-y-6">
-          <div>
-            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
+        <div className="px-8 py-10 w-[760px] mx-auto space-y-6">
+          <div className="text-center">
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX つみたて安心ほけんのお申込が完了しました。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
               ※銀行のお取引状況等によっては、ご加入できない場合がございます。
@@ -3058,7 +3063,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           {noteBar}
         </div>
         <ActionBar bg="var(--warm-50)">
-          <div className="max-w-[256px] mx-auto w-full">
+          <div style={{ width: '270px' }} className="mx-auto">
             <Btn kind="button" onClick={() => go(0)}>マイページに戻る</Btn>
           </div>
         </ActionBar>
@@ -3171,10 +3176,10 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
-  { note: "お申し出窓口：●●　●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
+  { p: "(1) 当行がお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品の提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用中止をご希望の場合には、当行本支店窓口にお申し出いただくか、以下の窓口までご連絡ください。" },
+  { note: "お申し出窓口：●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
   { sec: "2．引受保険会社からの情報提供" },
   { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
   { sec: "3．保険商品のご購入のご検討に際して" },
@@ -3299,7 +3304,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               <p className="mt-2 text-h6 leading-relaxed text-white">将来に向けた資産形成のためのほけん</p>
             </div>
           </div>
-          <Steps n={1} go={go} />
+          <Steps n={1} go={go} padY={16} />
         </div>
 
         {/* 引受保険会社／XXXのお客様限定バッジ・ロゴ／3アイコン */}
@@ -3308,12 +3313,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <span className="text-[10px] text-neutral-400 whitespace-nowrap">引受保険会社</span>
             <img src="/assets/theo-tdf/logo_td.png" alt="T&Dフィナンシャル生命" className="h-4" />
           </div>
-          <div className="w-[760px] mx-auto flex items-center justify-center gap-6">
+          <div className="w-[760px] mx-auto flex flex-col items-center gap-8 py-12">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "var(--theo-tdf-primary)" }}>XXXのお客様限定</span>
               <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
             </div>
-            <div className="grid grid-cols-3 gap-2" style={{ width: "380px" }}>
+            <div className="grid grid-cols-3 gap-6" style={{ width: "480px" }}>
               {[
                 { src: "/assets/theo-tdf/activity-heart-circle.svg", t: "積立も\nあんしんに" },
                 { src: "/assets/theo-tdf/graduation-cap.svg", t: "学資保険の\n代わりにも" },
@@ -3328,31 +3333,29 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
 
-        {/* 図版：白背景40px余白＋外側に罫線 */}
-        <div className="rounded-2xl border border-warm-200 bg-white p-10 mx-auto" style={{ maxWidth: "680px" }}>
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
+        {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
+        <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
+          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
         </div>
 
-        {/* 保障期間：中央 */}
-        <div className="text-center">
-          <span className="inline-block text-h5 font-bold text-neutral-800">保障期間</span>
+        {/* 保障期間：760px・左揃え（PC_01準拠） */}
+        <div className="w-[760px] mx-auto">
+          <a className="inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+            <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+            詳細なサービス内容はこちら
+          </a>
+          <h3 className="mt-6 text-h5 font-bold text-neutral-800">保障期間</h3>
           <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
-          <p className="mt-1 text-caption text-neutral-500 leading-relaxed max-w-[480px] mx-auto">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
-          <div className="flex items-center justify-center gap-6 mt-4">
-            <a className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
-              詳細なサービス内容はこちら
-            </a>
-            <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
-              ご案内にあたりご確認・同意いただきたいこと
-            </button>
-          </div>
+          <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
+          <button onClick={() => setHeigaiOpen(true)} className="mt-4 inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+            <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+            ご案内にあたりご確認・同意いただきたいこと
+          </button>
         </div>
 
         {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
-        <div className="w-[760px] mx-auto">
-          <h2 className="text-h3 font-bold text-center" style={{ color: "var(--theo-tdf-primary)" }}>プランシミュレーション</h2>
+        <div className="w-[760px] mx-auto" style={{ marginTop: "80px" }}>
+          <h2 className="text-h2 font-bold text-center" style={{ color: "var(--theo-tdf-primary)" }}>プランシミュレーション</h2>
 
           {/* 生年月日・性別：横並び・各358px */}
           <div className="flex gap-8 mt-8 justify-center">
@@ -3377,8 +3380,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
           {/* プランを選ぶ：2カラム・358px カード・32pxギャップ */}
           <div className="mt-10">
-            <h3 className="text-h5 font-bold text-neutral-800">プランを選ぶ</h3>
-            <p className="text-caption text-neutral-500 mt-1">ご希望の保障プランをご選択ください</p>
+            <div className="flex items-center gap-3">
+              <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">1</span>
+              <h3 className="text-h4 font-bold text-neutral-800">プランを選ぶ</h3>
+            </div>
+            <p className="text-caption text-neutral-500 mt-2">ご希望の保障プランをご選択ください</p>
             <div className="grid mt-4 justify-center" style={{ gridTemplateColumns: "358px 358px", gap: "32px" }}>
               {PLAN_CARDS.map((p) => (
                 <PlanCard key={p.id} p={p} selected={sel === p.id} onSelect={() => setSel(p.id)} />
@@ -3388,7 +3394,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
           {/* 保険料シミュレーション：モバイルと同じ縦積みカード */}
           <div className="mt-10">
-            <h3 className="text-h5 font-bold text-neutral-800">保険料シミュレーション</h3>
+            <div className="flex items-center gap-3">
+              <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">2</span>
+              <h3 className="text-h4 font-bold text-neutral-800">保険料シミュレーション</h3>
+            </div>
             <div className="mt-4">
               <Simulator m={m} setM={setM} y={y} setY={setY} planName={sel ? PLAN_CARDS.find((p) => p.id === sel)?.name : null} plan={plan} startAge={ageFromBirth(birth)} desktop />
             </div>
@@ -3396,8 +3405,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         {/* 申し込みをする — 幅760px、各カードは説明文＋案内カードの横並び */}
-        <div className="w-[760px] mx-auto space-y-6">
-          <h2 className="text-h3 font-bold text-neutral-800">申し込みをする</h2>
+        <div className="w-[760px] mx-auto mt-10">
+          <div className="flex items-center gap-3">
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary text-white font-en text-h5 font-bold shrink-0">3</span>
+            <h2 className="text-h4 font-bold text-neutral-800">申し込みをする</h2>
+          </div>
+          <div className="mt-4 space-y-6">
           <div className="rounded-2xl border border-warm-200 bg-white p-6 space-y-4">
             <h3 className="text-h6 font-bold text-neutral-800">必要書類のご確認</h3>
             <div className="flex items-center gap-4">
@@ -3428,20 +3441,29 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             <p className="text-caption text-neutral-600 leading-relaxed">ご入力されたメールアドレス宛にPINコード送信とご案内URLをお送りします。</p>
             <Field label="メールアドレス" placeholder="samplename@sample.co.jp" required />
           </div>
+          </div>
         </div>
 
         {/* CTA */}
-        <div className="space-y-2 pt-6 pb-8 border-t border-warm-200 max-w-[400px] mx-auto">
+        <div className="space-y-2 pt-6 pb-8 max-w-[400px] mx-auto">
+          <div className="text-center" style={{ marginBottom: "8px" }}>
+            <p style={{ fontSize: "12px", lineHeight: "1.4" }} className="text-neutral-500">保険名称</p>
+            <p style={{ fontSize: "12px", lineHeight: "1.4" }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+          </div>
           {emailVerified ? (
             <>
               <div className="flex items-center gap-2 rounded-xl bg-primary-10 border border-primary-100 px-4 py-3">
                 <Ic.check className="w-4 h-4 text-primary-600 shrink-0" />
                 <span className="text-caption text-primary-700">メールアドレスの認証は完了しています</span>
               </div>
-              <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
+              <div style={{ width: '270px' }} className="mx-auto">
+                <Btn kind="cta" onClick={() => go(3)} disabled={!agree}>申込フォームへ進む<Ic.chevR className="w-4 h-4" /></Btn>
+              </div>
             </>
           ) : (
-            <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
+            <div style={{ width: '270px' }} className="mx-auto">
+              <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
+            </div>
           )}
           {!agree && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
         </div>
@@ -3720,11 +3742,11 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
       </div>
-      <ActionBar bg="var(--warm-50)">
-          <div className="fade-in space-y-2">
+      <ActionBar bg="var(--warm-50)" noBorder>
+          <div className="fade-in space-y-2" style={{ paddingBottom: "32px" }}>
             <div style={{ marginBottom: '8px' }}>
-              <p style={{ fontSize: '12px', lineHeight: '1.2', color: '#9ca3af' }} className="font-mono tracking-[0.14em] uppercase">保険名称</p>
-              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700">無配当特定疾病障害介護保障保険（団体型）</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-500 text-center">保険名称</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700 text-center">無配当特定疾病障害介護保障保険（団体型）</p>
             </div>
             {emailVerified ? (
               <>
@@ -3737,7 +3759,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
             ) : (
               <Btn kind="cta" onClick={() => go(2)} disabled={!agree}>PINコードを送信</Btn>
             )}
-            {!agree && showSend && <p className="text-center text-caption text-neutral-400">同意いただくと送信できます</p>}
+            {!agree && showSend && <p className="text-center text-caption text-neutral-400" style={{ marginBottom: "32px" }}>同意いただくと送信できます</p>}
             {agree && (
               <div className="flex justify-end" style={{ marginTop: "24px", marginBottom: "16px" }}>
                 <a href="https://faq-moneydesign.tdf-life.co.jp/" target="_blank" rel="noopener" className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
@@ -4187,7 +4209,7 @@ export function AccordionDropdown({ title, children, open, onToggle }: {
       </button>
       {open && (
         <div className="px-4 pb-4 text-caption text-neutral-600 leading-relaxed border-t border-warm-100 pt-3">
-          {children ?? <p className="text-neutral-400">コンテンツエリア</p>}
+      {children ?? <p className="text-neutral-400">コンテンツエリア</p>}
         </div>
       )}
     </div>
@@ -4349,7 +4371,7 @@ export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planTyp
       </p>
       <div className="flex flex-col gap-6">
         <SliderField
-          label="毎月の積立金額"
+              label="毎月の積立金額"
           value={m}
           min={5000}
           max={150000}
