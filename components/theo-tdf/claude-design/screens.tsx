@@ -1128,7 +1128,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 <div className="text-left">
                   <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-start gap-1.5 font-bold text-h7 cursor-pointer underline-offset-2 hover:underline text-left" style={{ color: "var(--color-link)", fontSize: "14px" }}>
                     <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" style={{ paddingTop: '4px' }} />
-                    ご案内にあたりご確認・同意い�������だ���たいこと
+                    ご案内にあたりご確認・同意い���������だ���たいこと
                   </button>
                 </div>
               </div>
@@ -2551,7 +2551,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   const ikoMid = ((IKO as Record<string, any>)[planIdFromSel(sel)] || IKO.cancer)[deathOpt ? "d" : "n"];
   const [editKiyaku, setEditKiyaku] = useState(initialEditKiyaku ?? false);
   const [editJuushin, setEditJuushin] = useState(initialEditJuushin ?? false);
-  // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr ���初期化）
+  // 受取人住所：編集中の「契約者と同じ」チ��ック状態（編集開始時に benSameAddr ���初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
@@ -2626,9 +2626,9 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Row k="フリガナ" v="ヤマダ タロウ" />
               <Row k="生年月日" v="1990 / 01 / 01" />
               <Row k="性別" v="男性" />
-              <div className="flex flex-col gap-[2px] py-3 border-b border-warm-200">
-                <span className="text-caption text-neutral-500">住所</span>
-                <span className="text-h6 text-neutral-700 leading-relaxed">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
+              <div className="flex items-center justify-between gap-4 py-3 border-b border-warm-200">
+                <span className="text-caption text-neutral-500 shrink-0">住所</span>
+                <span className="text-h6 text-neutral-700 leading-relaxed text-right">〒100-0001<br/>東京都千代田区丸の内１丁目 丸の内ビル 10F</span>
               </div>
               <Row k="電話番号" v="090-0000-0000" />
               <Row k="メールアドレス" v="samplename@sample.co.jp" />
@@ -2992,7 +2992,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
       <div className="mt-1">
       {[
         ["1", "受付確認メール送信確認", "ご登録のメールアドレスをご確認ください。"],
-        ["2", "査定・引受の確定", "通常1〜3営業日でマイページに反映されます。"],
+        ["2", "査定・引受の確定", "通常1〜3営業���でマイページに反映されます。"],
         ["3", "初回保険料の引落し・保険開始", "翌月以降、XXX のご登録口座より。"],
       ].map(([n, t, d], idx, arr) => (
         <div key={n} className="flex gap-3">
@@ -3171,7 +3171,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのた��に利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商��の���提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便���電話���インターネ��ト等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り���用させて���ただき���すが、利用���止をご希望の場合には、当�������本支店窓�����お申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "��申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業��を除きま��）" },
   { sec: "2．引受保険会社か���の情報提供" },
