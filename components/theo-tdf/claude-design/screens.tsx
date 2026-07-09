@@ -1209,7 +1209,7 @@ export function NoticeContent() {
     {
       head: "お申込みにあたっての注意事項",
       items: [
-        "お申込・告知内容は、必ず被保険者ご本人様がご入力ください。",
+        "お申込・告知内容は、必ず被保険者ご本人様が���入力ください。",
         "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
         "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
@@ -1838,7 +1838,7 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
   // どのページに出るか（2ページ分割時のフィルタ用）
   const ERR_DEFS = [
     { id: 'tel',       page: 1, label: '契約者 電話番号', msg: '電話番号を入力してください' },
-    { id: 'benBirth',  page: 2, label: '受取人 生年月日', msg: '生年月日を選択してください' },
+    { id: 'benBirth',  page: 2, label: '受取人 生年月日', msg: '生年月日を選択してく��さい' },
     { id: 'benGender', page: 2, label: '受取人 性別',     msg: '性別を選択してください' },
     { id: 'rel',       page: 2, label: '受取人 続柄',     msg: '続柄を選択してください' },
   ];
@@ -2714,7 +2714,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
           <div>
             <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の���要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払���について���を確認���ただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
           {/* accordion ⑥ クレジットカードのお支払いについて */}
@@ -3034,7 +3034,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
             <h2 className="text-h3 font-bold text-neutral-800">お申込が完了しました</h2>
-            <p className="mt-2 text-caption text-neutral-500">申込番号　XXX-2026-000001</p>
+            <p className="mt-2 text-caption text-neutral-500">申込���号　XXX-2026-000001</p>
           </div>
         </div>
         <Steps n={5} go={go} />
@@ -3165,7 +3165,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 export const HEIGAI_BLOCKS = [
   { sec: "1．お客さまに関する情報のお取扱いについて" },
   { p: "(1) 当行はお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預��・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品のご提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預��・為替・融資等のお取引、金融商��のご案内、各種サービスのご提供等の業務に利用することがございます。" },
   { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、当行の本支店窓口へお申し出いただくか、以下の窓口までご連絡ください。" },
   { note: "お申し出窓口：●●���●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
   { sec: "2．引受保険会社か���の情報提供" },
@@ -3326,21 +3326,19 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
         </div>
 
-        {/* 保障期間：中央 */}
-        <div className="text-center">
-          <span className="inline-block text-h5 font-bold text-neutral-800">保障期間</span>
+        {/* 保障期間：760px・左揃え（PC_01準拠） */}
+        <div className="w-[760px] mx-auto">
+          <a className="inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+            <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+            詳細なサービス内容はこちら
+          </a>
+          <h3 className="mt-6 text-h5 font-bold text-neutral-800">保障期間</h3>
           <p className="mt-2 text-h6 text-neutral-700">5年～40年（最大）</p>
-          <p className="mt-1 text-caption text-neutral-500 leading-relaxed max-w-[480px] mx-auto">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
-          <div className="flex items-center justify-center gap-6 mt-4">
-            <a className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
-              詳細なサービス内容はこちら
-            </a>
-            <button onClick={() => setHeigaiOpen(true)} className="inline-flex items-center gap-2 font-bold text-h6 cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
-              <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
-              ご案内にあたりご確認・同意いただきたいこと
-            </button>
-          </div>
+          <p className="mt-1 text-caption text-neutral-500 leading-relaxed">*保険期間は契約日（更新日）から１年であり、保障期間満了まで１年ごとの更新となります。</p>
+          <button onClick={() => setHeigaiOpen(true)} className="mt-4 inline-flex items-center gap-2 font-bold cursor-pointer underline-offset-2 hover:underline" style={{ color: "var(--color-link)", fontSize: "14px" }}>
+            <img src="/assets/theo-tdf/info-circle.svg" alt="" className="w-3.5 h-3.5" />
+            ご案内にあたりご確認・同意いただきたいこと
+          </button>
         </div>
 
         {/* プランシミュレーション（見出し〜申し込みまで幅760pxで統一） */}
