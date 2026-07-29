@@ -38,9 +38,9 @@ export default function Home() {
       </div>
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+        <TenantsSection />
         <OverviewSection />
         <CoreSection />
-        <TenantsSection />
       </main>
     </div>
   );
@@ -54,10 +54,6 @@ function Hero() {
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-colors duration-300">
       {/* かなり薄いブルー → 微かに薄いブルー のグラデーション (左下 → 右上) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top_right,#bfdbfe,#f0f9ff)] dark:bg-[linear-gradient(to_top_right,rgba(96,165,250,0.18),rgba(96,165,250,0.04))]"
-      />
       {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
       <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
         <Badge variant="secondary" className="gap-1.5">
@@ -174,7 +170,7 @@ function TenantsSection() {
           Tenants
         </p>
         <h2 className="mt-2 text-h2 font-semibold tracking-tight">
-          ブランド別の運用
+          テナント別の運用
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
           各テナント (顧客企業) には、共通システムを土台にしたうえで primary / secondary / button / cta の 4 スケールを上書きした「専用ツリー」を用意します。
