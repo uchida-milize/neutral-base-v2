@@ -155,15 +155,6 @@ function CoreCard({
 
 const TENANT_CARDS: TenantCardData[] = [
   {
-    id: "td-financial",
-    label: "T&Dファイナンシャル生命",
-    title: "T&Dファイナンシャル生命 ガイドライン",
-    description:
-      "コーポレートカラー Navy + Red を 4 スケール (primary / secondary / button / cta) に展開した本番テナント。組込ページ向け デザイン資料 (ガイドライン / コンポーネント / プロトタイプ / スクリーン)。",
-    href: "/td-financial/guidelines",
-    path: "/td-financial/guidelines",
-  },
-  {
     id: "theo-tdf",
     label: "THEO × T&Dファイナンシャル",
     title: "THEO「つみたて安心ほけん」",
@@ -171,33 +162,6 @@ const TENANT_CARDS: TenantCardData[] = [
       "THEO Blue を primary、Coral を secondary、純赤を CTA に置いた組込申込フロー (LP → 情報入力 → シミュレーション → メアド → カード → 注意事項 → 完了)。",
     href: "/theo-tdf",
     path: "/theo-tdf/",
-  },
-  {
-    id: "xxx",
-    label: "XXX",
-    title: "XXX社 (サンプル架空企業)",
-    description:
-      "Teal / Cyan / Amber の 4 スケール構成。新規テナントの雛形として `./scripts/new-tenant.sh` がこのツリーを複製する。",
-    href: "/xxx",
-    path: "/xxx/",
-  },
-  {
-    id: "aaa",
-    label: "AAA",
-    title: "AAA (デモテナント)",
-    description:
-      "`/new-tenant` スキルの動作確認用デモテナント。色は XXX と同じ。削除可能。",
-    href: "/aaa",
-    path: "/aaa/",
-  },
-  {
-    id: "acme",
-    label: "ACME Corp",
-    title: "ACME Corp ガイドライン",
-    description:
-      "tokens.css の 4 スケール (primary / secondary / button / cta) で構成される ACME Corp 専用テナント。色は自動反映。",
-    href: "/acme/guidelines",
-    path: "/acme/guidelines",
   },
   // 新規テナントはここに追加 (new-tenant.sh で自動挿入)
 ];
