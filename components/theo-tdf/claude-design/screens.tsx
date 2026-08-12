@@ -584,7 +584,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
   });
 
   const header = (
-    <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
+    <div className="shrink-0 flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)] rounded-t-2xl">
       <h3 className="flex items-center gap-2 text-h6 font-bold text-neutral-800 min-w-0">
         <span className="grid place-items-center w-6 h-6 rounded-full shrink-0 text-white" style={{ background: 'var(--color-attention)' }}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-3 h-3"><path d="M12 6v8"/><path d="M12 18v.01"/></svg>
@@ -613,7 +613,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
     </div>
   );
   const footer = (
-    <div className="px-6 py-3 border-t border-warm-200">
+    <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white">
       {confirm ? (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-x-3 gap-y-6">
@@ -658,14 +658,14 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
   );
 
   if (desktop) {
-    // PC版：画面中央にフロート表示。高さはフリーで、モーダル内部は個別スクロールを持たず
-    // ページ（オーバーレイ全体）が上下スクロールする。
+    // PC版：画面中央にフロート表示。本文が長いためモーダル内部を個別スクロールにし、
+    // ヘッダーと回答ボタン（フッター）は常に見える位置に固定する。
     return (
-      <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
-        <div className="relative mx-auto my-16 w-full max-w-[720px] bg-white rounded-2xl shadow-xl">
+        <div className="relative w-full max-w-[720px] max-h-[88vh] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden">
           {header}
-          <div className="px-4 py-4">{body}</div>
+          <div className="flex-1 min-h-0 overflow-y-auto sb-thin px-4 py-4">{body}</div>
           {footer}
         </div>
         {exitAlert}
@@ -678,7 +678,7 @@ export function DisclosureModal({ plan, death = true, onClose, confirm, onConfir
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
         {header}
-        <div className="flex-1 overflow-y-auto no-sb px-4 py-4">{body}</div>
+        <div className="flex-1 min-h-0 overflow-y-auto sb-thin px-4 py-4">{body}</div>
         {footer}
       </div>
       {exitAlert}
@@ -1188,41 +1188,84 @@ export function NoticeUl({ items }: { items: string[] }) {
   );
 }
 
-/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通） */
-export function NoticeContent() {
-  const sections = [
+/* 重要事項・事前同意事項モーダルの本文（プラン選択／TOP統合案で共通）
+
+   文言は【別紙】掲載文面 ステップ1「重要事項・事前同意事項」の修正後版。
+   旧「申込に関する注意事項」は削除され、本セクションに集約されている。
+
+   variant で保険契約者（加入勧奨者）ごとの差分を切り替える:
+     - "bank"  : 地銀汎用版（既定）
+     - "daiwa" : 大和コネクト証券版
+   差分は「この保険について」「当初のご意向」「お申込にあたっての注意事項」の
+   最終項目、および個人情報お問合せフォームの form_name のみ。他セクションは
+   別紙で「同左」とされているため共通。 */
+export type NoticeVariant = "bank" | "daiwa";
+
+type NoticeSection = {
+  head: string;
+  items: string[];
+  bulletLinks?: { text: string; url: string }[];
+};
+
+function noticeSections(variant: NoticeVariant): NoticeSection[] {
+  const daiwa = variant === "daiwa";
+  return [
     {
       head: "この保険について",
       items: [
-        "この保険は、●●を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて投資信託の毎月同額つみたて契約の利用者を被保険者とする団体保険です。",
-        "保険期間中に被保険者が所定の状態に該当した場合、または死亡した場合、給付金等が支払われます。給付金額は、保険対象積立金額（毎月の積立金額×12）に基づき計算され、加入時の保険対象積立金額が基準となります。なお、保険料は毎年更新されます。",
+        daiwa
+          ? "この保険は、大和コネクト証券株式会社を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて証券口座保有者を被保険者とする団体保険です。"
+          : "この保険は、●●銀行を保険契約者（加入勧奨者）とし、保険契約者の総合取引口座にて投資信託の毎月同額つみたて契約の利用者を被保険者とする団体保険です。",
+        "保険期間中に被保険者が所定の状態に該当した場合または死亡した場合、給付金等が支払われます。給付金額は、保険対象積立金額（毎月の積立金額×12）に基づき計算され、加入時の保険対象積立金額が基準となります。なお、保険料は毎年更新されます。",
       ],
+    },
+    {
+      head: "当初のご意向",
+      items: daiwa
+        ? [
+            "基本プラン：特定の病気、障害・介護状態に備えたい。",
+            "充実プラン：特定の病気、障害・介護状態に備えたい。万が一の場合に備えたい。",
+          ]
+        : [
+            "がん保障型：がん治療に備えたい。",
+            "がん保障型（死亡あり）：がん治療に備えたい。万が一に備えたい。",
+            "三大疾病保障型：特定の病気に備えたい。",
+            "三大疾病保障型（死亡あり）：特定の病気に備えたい。万が一に備えたい。",
+            "障害介護保障型：障害・介護状態に備えたい。",
+            "障害介護保障型（死亡あり）：障害・介護状態に備えたい。万が一に備えたい。",
+            "がん・障害介護保障型：がん治療、障害・介護状態に備えたい。",
+            "がん・障害介護保障型（死亡あり）：がん治療、障害・介護状態に備えたい。万が一に備えたい。",
+            "三大疾病・障害介護保障型：特定の病気、障害・介護状態に備えたい。",
+            "三大疾病・障害介護保障型（死亡保障あり）：特定の病気、障害・介護状態に備えたい。万が一の場合に備えたい。",
+          ],
     },
     {
       head: "保障内容および給付について",
       items: [
         "がん給付金は、加入者ごとの責任開始日から、その日を含めて91日目より保障を開始します。責任開始日から一定期間は保障がありませんのでご注意ください。",
         "被保険者が所定の状態に該当し給付金等をお支払いした場合、その後、別の所定の状態に該当しても給付金等のお支払いはありません。",
-        "つみたてシミュレーションにおける目標金額や運用利益は保証されません。また、運用による損失を補填するものではありません。",
+        "本保険は投資信託の運用成果を保証するものではなく、運用による損失を補填するものでもありません。",
       ],
     },
     {
-      head: "お申込みにあたっての注意事項",
+      head: "お申込にあたっての注意事項",
       items: [
-                "お申込・告知内容は、必ず被保険者ご本人様がご入力ください。",
-        "お申込みは、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
+        "お申込・告知内容は、必ず被保険者（加入者）ご本人さまがご入力ください。",
+        "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件です。死亡保険金受取人についても同様の条件となります。",
         "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-                "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込みいただけません。",
-                "保険金受取人は、被保険者から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
+        "ご加入には健康告知が必要です。告知事項に該当する場合は、お申込いただけません。",
+        "保険金受取人は、被保険者（加入者）から見た続柄が「配偶者および2親等内の血族」まで指定できます。内縁、婚約者、同性パートナー等、法律上の血縁関係にない方は指定できません。",
         "この保険には解約払戻金はありません。",
         "この保険はクーリング・オフ制度の対象外です。",
-        "投信口座の解約や積立投資の中止をされた場合、保険契約は解約いただくか、更新できませんのでご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として●●が有します。",
+        daiwa
+          ? "証券口座を解約された場合、保険契約も解約となりますので、ご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として大和コネクト証券株式会社が有します。"
+          : "投信口座の解約や積立投資の中止をされた場合、保険契約も解約となりますので、更新できませんのでご注意ください。また、保険証券を請求する権利および保険契約を解約する権利は、原則として●●が有します。",
       ],
     },
     {
       head: "保障開始および更新について",
       items: [
-        "この契約は、申込み日の翌々月の1日（午前0時）より保障が開始されます。",
+        "この契約は、申込日の翌々月の1日より保障が開始されます。",
         "満期日までにご加入者から更新しない旨のお申出がない場合、団体の取り決めにより、原則として自動更新されます。",
       ],
     },
@@ -1230,25 +1273,32 @@ export function NoticeContent() {
       head: "電子交付の承諾について",
       items: [
         "当社は、保険業法施行規則第234条第4項に基づき、同条第1項第8号および第9号に定める書面に代えて、当該書面に記載すべき事項を電磁的方法により提供します。",
-        "お客様には、当社Webサイト上で内容をご確認いただき、電磁的方法による提供にご同意いただきます。",
-        "提供された内容は、お申込み手続完了後も、当社ホームページまたはマイページ等で閲覧・ダウンロードできます。",
+        "お客さまには、当社Webサイト上で内容をご確認いただき、電磁的方法による提供にご同意いただきます。",
+        "提供された内容は、お申込手続完了後も、当社ホームページまたはマイページ等で閲覧・ダウンロードできます。",
         "電磁的方法による提供に同意されない場合は、お問合せフォームよりご連絡ください。",
       ],
     },
     {
       head: "個人情報のお取り扱いについて",
       items: [
-                "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
+        "保険契約者（団体）は、加入対象者（被保険者）の個人情報（氏名、性別、生年月日、健康状態等）を、本保険の引受け、維持・管理、保険金・給付金のお支払い、その他保険に関連する業務のために利用し、引受保険会社へ提供します。",
         "個人情報に変更が生じた場合も、同様に取り扱います。",
         "保健医療等の機微（センシティブ）情報は、保険業法その他関係法令に基づき、適切に取り扱います。",
-                "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
+        "個人番号および特定個人情報は、法令で定められた目的のみに利用します。その範囲を超えて利用または第三者提供は行いません。",
       ],
       bulletLinks: [
-        { text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。", url: "https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php" },
+        {
+          text: "個人情報の開示、訂正、利用停止等のお申し出、その他のお問い合わせは、以下よりご連絡ください。",
+          url: `https://is.tdf-life.co.jp/www7/kumikomi_hoken/form1-entry.php?form_name=${daiwa ? "0003" : "0004"}`,
+        },
         { text: "最新の内容は、T&Dフィナンシャル生命ホームページにてご確認ください。", url: "https://www.tdf-life.co.jp" },
       ],
     },
-  ] as { head: string; items: string[]; bulletLinks?: { text: string; url: string }[] }[];
+  ];
+}
+
+export function NoticeContent({ variant = "bank" }: { variant?: NoticeVariant }) {
+  const sections = noticeSections(variant);
   return (
     <div className="space-y-6">
       {sections.map((sec, si) => (
@@ -1464,7 +1514,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+            <div className="shrink-0 flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)] rounded-t-2xl">
               <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -1473,7 +1523,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-6 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="flex-1 min-h-0 px-6 py-4 overflow-y-auto sb-thin space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -1486,7 +1536,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-6 py-3 border-t border-warm-200">
+            <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>
@@ -2622,8 +2672,12 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           </div>
           {editKiyaku ? (
             <div className="space-y-3 mt-1">
-              <Field label="氏名" value="山田 太郎" />
-              <Field label="フリガナ" value="ヤマダ タロウ" />
+              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+                <Field label="姓" value="山田" required />
+                <Field label="名" value="太郎" required />
+                <Field label="セイ" value="ヤマダ" required />
+                <Field label="メイ" value="タロウ" required />
+              </div>
               <LockedField label="生年月日" value="1990 / 01 / 01" />
               <LockedField label="性別" value="男性" />
               <Field label="郵便番号" value="100-0001" hint="郵便番号から住所を自動入力します" />
@@ -2669,8 +2723,12 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           </div>
           {editJuushin ? (
             <div className="space-y-3 mt-1">
-              <Field label="氏名" value="山田 花子" />
-              <Field label="フリガナ" value="ヤマダ ハナコ" />
+              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+                <Field label="姓" value="山田" required />
+                <Field label="名" value="花子" required />
+                <Field label="セイ" value="ヤマダ" required />
+                <Field label="メイ" value="ハナコ" required />
+              </div>
               <Field label="生年月日" value="1992 / 05 / 15" />
               <Field label="性別" value="女性" />
               <Field label="続柄" value="配偶者" />
@@ -3495,10 +3553,10 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
         <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
         {noticeOpen && (
-          <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
-            <div className="relative mx-auto my-16 w-full max-w-[640px] bg-white rounded-2xl shadow-xl">
-              <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+            <div className="relative w-full max-w-[640px] max-h-[88vh] bg-white rounded-2xl shadow-xl flex flex-col">
+              <div className="shrink-0 flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)] rounded-t-2xl">
                 <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
                   <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
                   重要事項・事前同意事項
@@ -3507,7 +3565,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12" /></svg>
                 </button>
               </div>
-              <div className="px-6 py-4 space-y-6">
+              <div className="flex-1 min-h-0 px-6 py-4 space-y-6 overflow-y-auto sb-thin">
                 <p className="text-caption text-neutral-500 leading-relaxed">
                   お申込み前に、以下の内容を必ずご確認ください。
                 </p>
@@ -3519,7 +3577,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                   <NoticeContent />
                 </div>
               </div>
-              <div className="px-6 py-3 border-t border-warm-200">
+              <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white rounded-b-2xl">
                 <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
               </div>
             </div>
@@ -3800,7 +3858,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div className="absolute inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
           <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-            <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200">
+            <div className="shrink-0 flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)] rounded-t-2xl">
               <h3 className="flex items-center gap-2 text-h5 font-bold text-neutral-800">
                 <span className="rounded-full bg-[color:var(--secondary-color-10)] text-[color:var(--secondary-color-700)] px-2 py-[2px] text-[11px] font-bold leading-none">重要</span>
                 重要事項・事前同意事項
@@ -3809,7 +3867,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="px-6 py-4 overflow-y-auto no-sb space-y-6">
+            <div className="flex-1 min-h-0 px-6 py-4 overflow-y-auto sb-thin space-y-6">
               <p className="text-caption text-neutral-500 leading-relaxed">
                 お申込み前に、以下の内容を必ずご確認ください。
               </p>
@@ -3822,7 +3880,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                 <NoticeContent />
               </div>
             </div>
-            <div className="px-6 py-3 border-t border-warm-200">
+            <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white">
               <Btn kind="button" onClick={() => { setAgree(true); setNoticeOpen(false); }}>確認同意しました</Btn>
             </div>
           </div>

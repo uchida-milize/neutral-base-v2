@@ -149,6 +149,32 @@ function Rail({ scr, go }: { scr: number; go: (n: number) => void }) {
   );
 }
 
+/* スマホ枠のフィット縮小
+   枠は 390×820 固定なので、サイトヘッダー＋余白を足すと下端が約 917px になる。
+   ノートPC の一般的なブラウザ高さ (680〜800px) では下端が画面外に出てしまい、
+   モーダルのボタン (はい/いいえ・確認同意しました) までスクロールが必要になる。
+   設計値は変えず、枠ごと scale で縮めて常に全体が見えるようにする。 */
+const PHONE_W = 390;
+const PHONE_H = 820;
+/** 枠の上に乗るサイトヘッダー + 上下余白の実測ぶん (px) */
+const PHONE_CHROME = 120;
+/** これ以上小さくすると文字が読めないため下限を設ける */
+const PHONE_MIN_SCALE = 0.5;
+
+function usePhoneFitScale() {
+  const [scale, setScale] = React.useState(1);
+  React.useEffect(() => {
+    const fit = () => {
+      const raw = (window.innerHeight - PHONE_CHROME) / PHONE_H;
+      setScale(Math.max(PHONE_MIN_SCALE, Math.min(1, raw)));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
+  return scale;
+}
+
 function Phone({
   children,
   external,
@@ -160,6 +186,7 @@ function Phone({
   overviewMode?: boolean;
   screenKey?: number;
 }) {
+  const scale = usePhoneFitScale();
   const bezel = external ? "bg-neutral-400" : "bg-neutral-900";
   const notch = external ? "bg-neutral-500" : "bg-neutral-900";
   const status = external
@@ -170,8 +197,13 @@ function Phone({
   // ステータスバーは AppBar と連続する1枚グラデの上段 (TD 組込1.4)
   const statusStyle = (!external && !overviewMode) ? HEADER_GRAD_STATUS : undefined;
   return (
-    <div className="relative">
-      <div className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}>
+    // 外側は縮小後の実寸をレイアウトに伝える（scale は箱のサイズを変えないため）
+    <div style={{ width: PHONE_W * scale, height: PHONE_H * scale }}>
+      <div
+        className="relative"
+        style={{ width: PHONE_W, height: PHONE_H, transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
+        <div className={`w-[390px] h-[820px] rounded-[44px] ${bezel} p-3 shadow-2xl transition-colors duration-300`}>
         <div className="relative w-full h-full rounded-[34px] overflow-hidden flex flex-col" style={{ background: "linear-gradient(to bottom, #FFFFFF 0%, #F2FBFE 100%)" }}>
           {/* Notch pill — always visible */}
           <div className={`absolute left-1/2 -translate-x-1/2 top-2 w-28 h-6 rounded-full ${notch} z-30 pointer-events-none`} />
@@ -187,11 +219,12 @@ function Phone({
           </div>
         </div>
       </div>
-      {external && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-neutral-700 text-white text-[10px] font-mono tracking-wide px-3 py-1 shadow-md whitespace-nowrap">
-          外部サイト（GMO ペイメント）
-        </div>
-      )}
+        {external && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-neutral-700 text-white text-[10px] font-mono tracking-wide px-3 py-1 shadow-md whitespace-nowrap">
+            外部サイト（GMO ペイメント）
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -778,6 +778,23 @@
   .no-sb::-webkit-scrollbar { width: 0; height: 0; }
   .no-sb { scrollbar-width: none; }
 
+  /* sb-thin: 長文モーダル（重要事項・事前同意事項）で、スクロール可能なことを
+     明示するために細いスクロールバーを見せる。色は warm スケールから取り、
+     トーンを画面全体と揃える（no-sb と対になる utility）。 */
+  .sb-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--warm-300, #d6d3d1) transparent;
+  }
+  .sb-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .sb-thin::-webkit-scrollbar-track { background: transparent; }
+  .sb-thin::-webkit-scrollbar-thumb {
+    background-color: var(--warm-300, #d6d3d1);
+    border-radius: 9999px;
+  }
+  .sb-thin::-webkit-scrollbar-thumb:hover {
+    background-color: var(--warm-400, #a8a29e);
+  }
+
   /* screen-flat: /theo-tdf/windows でページ内スクロールなし・コンテンツ全展開 */
   .screen-flat .overflow-y-auto { overflow-y: visible !important; }
   .screen-flat .flex-1 { flex: none !important; }
