@@ -38,57 +38,9 @@ function next(): Response {
   return new Response(null, { headers: { "x-middleware-next": "1" } });
 }
 
-export function middleware(req: Request) {
-  // ローカル開発はバイパス
-  if (process.env.NODE_ENV === "development") {
-    return next();
-  }
-
-  // 静的アセットはバイパス
-  const pathname = new URL(req.url).pathname;
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return next();
-  }
-
-  const expectedUser = process.env.BASIC_AUTH_USER;
-  const expectedPass = process.env.BASIC_AUTH_PASS;
-
-  // env 未設定なら fail closed (誤って全公開しないため)
-  if (!expectedUser || !expectedPass) {
-    return new Response(
-      "Basic Auth credentials are not configured on this deployment. " +
-        "Set BASIC_AUTH_USER and BASIC_AUTH_PASS in Vercel project environment variables.",
-      { status: 500 },
-    );
-  }
-
-  // リクエストヘッダーの Authorization を検証
-  const auth = req.headers.get("authorization");
-  if (auth?.startsWith("Basic ")) {
-    try {
-      const encoded = auth.slice("Basic ".length);
-      // Edge Runtime は atob/btoa を Web 標準として提供
-      const decoded = atob(encoded);
-      const sepIdx = decoded.indexOf(":");
-      if (sepIdx >= 0) {
-        const user = decoded.slice(0, sepIdx);
-        const pass = decoded.slice(sepIdx + 1);
-        if (user === expectedUser && pass === expectedPass) {
-          return next();
-        }
-      }
-    } catch {
-      // base64 decode 失敗 → 401 にフォールスルー
-    }
-  }
-
-  // 認証チャレンジ
-  return new Response("Authentication required", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": `Basic realm="${REALM}", charset="UTF-8"`,
-    },
-  });
+export function middleware(_req: Request) {
+  // neutral-base-v2: 認証なしで全公開
+  return next();
 }
 
 /**
