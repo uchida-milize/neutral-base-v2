@@ -39,8 +39,8 @@ import {
    - scr 5-6: クレジットカード承認 (外部 GMO、番号なし)
    - scr 7: 完了 (STEP5)
 
-   tweaks: patternB (商品概要+プラン選択統合) / simFirst (積立金額・保障期間をプランより先に) / formSplit (フォーム2ページ分割)
-           / errMode (入力エラー表示方式: none/inline/top/float) / benSameAddr (受取人住所: same/diff)
+   tweaks: patternB (商品概要+プラン選択統合) / formSplit (フォーム2ページ分割)
+           / errMode (入力エラー表示方式: none/inline/top/float)
    ============================================================ */
 
 type FlowEntry = {
@@ -244,10 +244,8 @@ const TWEAK_DEFAULTS = {
   device: "mobile" as "mobile" | "pc",
   // patternB は常に true（商品概要+プラン選択統合）— UI非表示
   patternB: true,
-  simFirst: false,
   planCardStyle: "card" as string,
   errMode: "inline" as string,
-  benSameAddr: true,
   kokuchiPattern: "auto" as string,
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
@@ -289,11 +287,11 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} simFirst={tw.simFirst} planCardStyle={tw.planCardStyle} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} />,
     <ScreenPin
       key={`pin-${tw.pinPreview}`}
       go={go}
@@ -304,7 +302,7 @@ export function TheoTdfClaudeDesignShell() {
       desktop={isPC}
     />,
     <ScreenForm key="form" go={go} sel={sel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} backScr={emailVerified ? (patternB ? 0 : 1) : 2} errMode={tw.errMode} onTerminate={() => setTerminated(true)} kokuchiPattern={tw.kokuchiPattern} desktop={isPC} />,
-    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} benSameAddr={tw.benSameAddr} desktop={isPC} />,
+    <ScreenStep4 key="step4" go={go} sel={sel} deathOpt={deathOpt} m={simM} y={simY} desktop={isPC} />,
     <ScreenCardInput key="card" go={go} />,
     <ScreenCardConfirm key="cardconf" go={go} />,
     <ScreenDone key="done" go={go} variant={tw.doneVariant} desktop={isPC} />,
@@ -389,8 +387,6 @@ export function TheoTdfClaudeDesignShell() {
               { value: "error", label: "PINコード相違エラー" },
             ]}
           />
-          <TweakSection label="積立金額・保障期間を選ぶ" />
-          <TweakToggle label="積立金額・保障期間をプランより先に" value={tw.simFirst} onChange={(v) => setTweak("simFirst", v)} />
           <TweakSection label="プラン選択" />
           <TweakSelect
             label="プランカード表示"
@@ -429,16 +425,6 @@ export function TheoTdfClaudeDesignShell() {
               { value: "three_n",  label: "⑧ 三大疾病プラン" },
               { value: "tc_d",     label: "⑨ 三大疾病・障害介護プラン（死亡あり）" },
               { value: "tc_n",     label: "⑩ 三大疾病・障害介護プラン" },
-            ]}
-          />
-          <TweakSection label="内容確認画面" />
-          <TweakSelect
-            label="保険金受取人の住所"
-            value={tw.benSameAddr ? "same" : "diff"}
-            onChange={(v) => setTweak("benSameAddr", v === "same")}
-            options={[
-              { value: "same", label: "契約者と同じ（チェック）" },
-              { value: "diff", label: "別住所を入力" },
             ]}
           />
           <TweakSection label="完了画面" />
