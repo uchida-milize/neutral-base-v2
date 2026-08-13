@@ -16,6 +16,7 @@ import {
   ScreenEnded,
   HEADER_GRAD_STATUS,
   deathFromSel,
+  type NoticeVariant,
 } from "@/components/theo-tdf/claude-design/screens";
 import {
   useTweaks,
@@ -40,7 +41,7 @@ import {
    - scr 7: 完了 (STEP5)
 
    tweaks: patternB (商品概要+プラン選択統合) / formSplit (フォーム2ページ分割)
-           / errMode (入力エラー表示方式: none/inline/top/float)
+           / errMode (入力エラー表示方式: none/inline/top/float) / noticeVariant (重要事項・事前同意事項: bank/daiwa)
    ============================================================ */
 
 type FlowEntry = {
@@ -246,6 +247,7 @@ const TWEAK_DEFAULTS = {
   patternB: true,
   planCardStyle: "card" as string,
   errMode: "inline" as string,
+  noticeVariant: "bank" as NoticeVariant,
   kokuchiPattern: "auto" as string,
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
@@ -287,11 +289,11 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} noticeVariant={tw.noticeVariant} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
-    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} />,
+    <ScreenStep2 key="step2" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} noticeVariant={tw.noticeVariant} />,
     <ScreenPin
       key={`pin-${tw.pinPreview}`}
       go={go}
@@ -385,6 +387,16 @@ export function TheoTdfClaudeDesignShell() {
               { value: "none",  label: "デフォルト（未入力）" },
               { value: "filled", label: "「666666」入力済み" },
               { value: "error", label: "PINコード相違エラー" },
+            ]}
+          />
+          <TweakSection label="重要事項・事前同意事項" />
+          <TweakSelect
+            label="保険契約者（加入勧奨者）"
+            value={tw.noticeVariant}
+            onChange={(v) => setTweak("noticeVariant", v)}
+            options={[
+              { value: "bank",  label: "地銀汎用（現行）" },
+              { value: "daiwa", label: "大和コネクト証券（追加）" },
             ]}
           />
           <TweakSection label="プラン選択" />

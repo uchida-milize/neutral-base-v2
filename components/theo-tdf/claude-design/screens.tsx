@@ -1327,7 +1327,7 @@ export function NoticeContent({ variant = "bank" }: { variant?: NoticeVariant })
   );
 }
 
-export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst, planCardStyle = "card", initialPlanOpenId }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialPlanOpenId?: string }) {
+export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY, initialNoticeOpen, initialAgree, initialSimOpen, initialShowSend, initialTipIdx, initialBirth, emailVerified, simFirst, planCardStyle = "card", initialPlanOpenId, noticeVariant }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; initialNoticeOpen?: boolean; initialAgree?: boolean; initialSimOpen?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialBirth?: string; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialPlanOpenId?: string; noticeVariant?: NoticeVariant }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -1533,7 +1533,7 @@ export function ScreenStep2({ go, sel, setSel, deathOpt = true, m, setM, y, setY
                   <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-[2px] text-[11px] font-bold leading-none">事前同意</span>
                   事前同意事項
                 </p>
-                <NoticeContent />
+                <NoticeContent variant={noticeVariant} />
               </div>
             </div>
             <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white">
@@ -3376,7 +3376,7 @@ export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialNoticeOpen, initialBirth, initialSimOpen, desktop, recommendPattern }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialNoticeOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialNoticeOpen, initialBirth, initialSimOpen, desktop, recommendPattern, noticeVariant }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialNoticeOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string; noticeVariant?: NoticeVariant }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
@@ -3628,7 +3628,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                     <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-[2px] text-[11px] font-bold leading-none">事前同意</span>
                     事前同意事項
                   </p>
-                  <NoticeContent />
+                  <NoticeContent variant={noticeVariant} />
                 </div>
               </div>
               <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white rounded-b-2xl">
@@ -3931,7 +3931,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
                   <span className="rounded-full bg-primary-10 text-primary-700 px-2 py-[2px] text-[11px] font-bold leading-none">事前同意</span>
                   事前同意事項
                 </p>
-                <NoticeContent />
+                <NoticeContent variant={noticeVariant} />
               </div>
             </div>
             <div className="shrink-0 px-6 py-3 border-t border-warm-200 bg-white">
