@@ -37,6 +37,7 @@ import {
  *   disclosure     "1" で告知モーダルを開いた状態で表示
  *   askExit        "1" で告知モーダルの終了確認ダイアログを開いた状態で表示
  *   notice         "1" で重要事項・事前同意事項ボトムシートを開いた状態で表示
+ *   noticeVariant  "bank" | "daiwa"（重要事項・事前同意事項の文言バリアント）
  *   kokuchiAgree   "1" で告知事項同意チェック済み状態
  *   editKiyaku     "1" で契約者情報編集展開
  *   editJuushin    "1" で保険金受取人編集展開
@@ -62,6 +63,7 @@ function ViewContent() {
   const disclosure     = params.get("disclosure") === "1";
   const askExit        = params.get("askExit") === "1";
   const notice         = params.get("notice") === "1";
+  const noticeVariant  = (params.get("noticeVariant") ?? "bank") as "bank" | "daiwa";
   const kokuchiAgree   = params.get("kokuchiAgree") === "1";
   const editKiyaku   = params.get("editKiyaku") === "1";
   const editJuushin  = params.get("editJuushin") === "1";
@@ -86,7 +88,7 @@ function ViewContent() {
     patternB
       ? <ScreenCombined key="0b" go={noop} sel={sel} setSel={noop} deathOpt={deathOpt}
           m={10000} setM={noop} y={15} setY={noop} simFirst={simFirst} planCardStyle={planCardStyle}
-          initialShowSend={showSend} initialAgree={agree} initialNoticeOpen={notice} />
+          initialShowSend={showSend} initialAgree={agree} initialNoticeOpen={notice} noticeVariant={noticeVariant} />
       : <ScreenOverview key="0" go={noop} />,
 
     /* 1 プラン選択 */
@@ -97,6 +99,7 @@ function ViewContent() {
       planCardStyle={planCardStyle}
       simFirst={simFirst}
       initialPlanOpenId={planOpenId}
+      noticeVariant={noticeVariant}
     />,
 
     /* 2 PINコード認証 */
