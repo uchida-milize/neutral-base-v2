@@ -1689,15 +1689,24 @@ export function toHalfWidthDigits(s: string) {
   return s.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
 }
 
+/* 積立金額の範囲と加算ボタンの刻み。
+   高齢者の操作を考慮し、スライダー（金額バー）ではなく加算ボタンで指定する。
+   最小刻みが 100 円なので、直接入力の blur スナップも 100 円単位に揃えている。 */
+export const SIM_M_MIN = 5000;
+export const SIM_M_MAX = 150000;
+export const SIM_M_STEPS = [100, 1000, 5000, 10000];
+
 export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; onInput?: () => void }) {
   const yen = (v: number) => v.toLocaleString("ja-JP");
-  const onM = (val: number) => { setM(val); onInput && onInput(); };
   const onY = (val: number) => { setY(val); onInput && onInput(); };
-  // 数字直接入力（スライダーと連動。入力中は自由、blurで上下最寄りのステップにスナップ）
+  // 数字直接入力（入力中は自由、blurで100円単位にスナップして範囲内に丸める）
   const onMText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setM(d === "" ? 0 : +d); onInput && onInput(); };
-  const onMBlur = () => { let v = Math.round((m || 0) / 1000) * 1000; v = Math.min(150000, Math.max(5000, v || 5000)); setM(v); };
+  const onMBlur = () => { let v = Math.round((m || 0) / 100) * 100; v = Math.min(SIM_M_MAX, Math.max(SIM_M_MIN, v || SIM_M_MIN)); setM(v); };
   const onYText = (e: React.ChangeEvent<HTMLInputElement>) => { const d = toHalfWidthDigits(e.target.value).replace(/[^0-9]/g, ""); setY(d === "" ? 0 : +d); onInput && onInput(); };
   const onYBlur = () => { const v = Math.min(30, Math.max(5, Math.round(y || 0) || 5)); setY(v); };
+  const addM = (step: number) => { setM((prev) => Math.min(SIM_M_MAX, (prev || 0) + step)); onInput && onInput(); };
+  const resetM = () => { setM(SIM_M_MIN); onInput && onInput(); };
+  const atMax = m >= SIM_M_MAX;
   return (
     <>
       <div className="mb-6">
@@ -1709,10 +1718,27 @@ export function SimSliders({ m, setM, y, setY, onInput }: { m: number; setM: Rea
             <span className="text-caption"> 円</span>
           </span>
         </div>
-        <DivSlider min={5000} max={150000} step={1000} value={m} onChange={onM} />
-        <div className="flex justify-between font-mono text-[12px] text-neutral-400 mt-1">
-          <span>5,000円</span><span>150,000円</span>
+        {/* 金額加算ボタン（スライダー置き換え） */}
+        <div className="grid grid-cols-4 gap-2 mt-3">
+          {SIM_M_STEPS.map((s) => (
+            <button key={s} type="button" onClick={() => addM(s)} disabled={atMax}
+              aria-label={`積立金額を${yen(s)}円ふやす`}
+              className={`h-12 rounded-lg border border-warm-300 bg-warm-50 text-neutral-700 tabular-nums transition-colors hover:border-primary-300 hover:bg-primary-10 hover:text-primary-700 active:bg-primary-50 disabled:opacity-40 disabled:pointer-events-none ${inter.className}`}>
+              <span className="text-[13px] font-semibold">+{yen(s)}</span><span className="text-[10px] font-medium">円</span>
+            </button>
+          ))}
         </div>
+        <div className="flex items-center justify-between gap-2 mt-2">
+          <span className="font-mono text-[12px] text-neutral-400">{yen(SIM_M_MIN)}円 〜 {yen(SIM_M_MAX)}円</span>
+          <button type="button" onClick={resetM} disabled={m === SIM_M_MIN}
+            className="text-[12px] font-medium underline underline-offset-2 transition-opacity disabled:opacity-40 disabled:pointer-events-none"
+            style={{ color: "var(--color-link)" }}>
+            リセット
+          </button>
+        </div>
+        {atMax && (
+          <p className="mt-2 text-[12px] text-neutral-500 leading-relaxed">上限の{yen(SIM_M_MAX)}円です。減らす場合は金額欄を直接ご入力いただくか、リセットしてください。</p>
+        )}
       </div>
 
       <div className="mb-1">
@@ -2612,6 +2638,11 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
   // 受取人住所：編集中の「契約者と同じ」チェック状態（編集開始時に benSameAddr で初期化）
   const [benEditSame, setBenEditSame] = useState(benSameAddr);
   const openJuushinEdit = () => { setBenEditSame(benSameAddr); setEditJuushin(true); };
+  /* 受取人 生年月日：商品概要・申込フォームと同じドラムロール（DateDrumSheet）で選択する。
+     値は "YYYY-MM-DD" で保持し、表示はこのカード内の他項目に合わせて "YYYY / MM / DD"。 */
+  const [benEditBirth, setBenEditBirth] = useState("1992-05-15");
+  const [benBirthPickerOpen, setBenBirthPickerOpen] = useState(false);
+  const fmtBirthSlash = (v: string) => { if (!v) return ""; const [yy, mm, dd] = v.split("-"); return `${yy} / ${mm} / ${dd}`; };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
   const BEN_ADDR = { zip: "150-0002", pref: "東京都", city: "渋谷区", town: "渋谷２丁目", addr: "2-1", bldg: "渋谷フラット 305", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
   const agreeItems = AGREE_ITEMS;
@@ -2722,7 +2753,14 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                 <Field label="セイ" value="ヤマダ" required />
                 <Field label="メイ" value="ハナコ" required />
               </div>
-              <Field label="生年月日" value="1992 / 05 / 15" />
+              <div className="flex flex-col gap-2">
+                <span className="text-caption font-medium text-neutral-600">生年月日</span>
+                <button type="button" onClick={() => setBenBirthPickerOpen(true)}
+                  className={`fld flex items-center justify-between gap-2 h-12 rounded-lg border border-warm-300 bg-white px-3 text-h6 text-left ${benEditBirth ? "text-neutral-800" : "text-neutral-400"}`}>
+                  <span className="truncate">{benEditBirth ? fmtBirthSlash(benEditBirth) : "選択してください"}</span>
+                  <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
+                </button>
+              </div>
               <Field label="性別" value="女性" />
               <Field label="続柄" value="配偶者" />
           {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
@@ -2751,7 +2789,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             <>
               <Row k="氏名" v="山田 花子" />
               <Row k="フリガナ" v="ヤマダ ハナコ" />
-              <Row k="生年月日" v="1992 / 05 / 15" />
+              <Row k="生年月日" v={fmtBirthSlash(benEditBirth)} />
               <Row k="性別" v="女性" />
               <Row k="続柄" v="配偶者" />
               {benSameAddr ? (
@@ -2916,6 +2954,10 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
           {!agreed && <p className="text-center text-caption text-neutral-400">上記に確認・同意すると進めます</p>}
         </div>
       </ActionBar>
+      {/* 受取人 生年月日ドラムロール（商品概要・申込フォームと同じ下から出るハーフモーダル） */}
+      <DateDrumSheet open={benBirthPickerOpen} value={benEditBirth}
+        onClose={() => setBenBirthPickerOpen(false)}
+        onDone={(v) => { setBenEditBirth(v); setBenBirthPickerOpen(false); }} />
     </>
   );
 }
@@ -3258,62 +3300,72 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
 // (a single missing binding throws and blanks the entire UI).
 
 
-export const HEIGAI_BLOCKS = [
-  { sec: "1．お客さまに関する情報のお取扱いについて" },
-  { p: "(1) 当行がお客さまへの保険商品のご提案にあたり、当行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報（預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等）を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
-  { p: "(2) 保険商品の取扱いにあたり、お客さまのご契約内容等知り得た情報（保険商品の提案内容やご契約内容に関する情報の他家族構成等に関する情報）を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
-  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用中止をご希望の場合には、当行本支店窓口にお申し出いただくか、以下の窓口までご連絡ください。" },
-  { note: "お申し出窓口：●●●●-●●-●●\n受付時間：9:00〜17:30（但し、銀行休業日を除きます）" },
-  { sec: "2．引受保険会社からの情報提供" },
-  { p: "お客様の保険契約に関し、今回お申し込みいただく保険会社から提供を受けた契約の維持・管理の為に有するご契約情報（契約者の情報、保険金額、保険料などの保険契約の情報および積立金・配当・解約金などの保険契約に関連付随する情報【健康・医療情報を除く】）を当行がお客様に提供させていただく各種サービス（預金、他の金融商品のご案内等）に利用することがあります。" },
-  { sec: "3．保険商品のご購入のご検討に際して" },
-  { p: "保険募集に係る当行とお客様とのお取り引きが、当行におけるお客様の他のお取り引きに影響を与えることはありません。" },
-  { p: "保険商品は保険会社を引受とする保険商品であり預金とは異なります。したがって、預金と違い元本保証はありません。また預金保険制度の対象外です。" },
-  { p: "保険契約はお客様と保険会社の間で締結されます。当行は、生命保険契約について契約締結の媒介を行っており、保険契約の代理権はありません。したがって、契約の成立は保険会社による承諾後となります。" },
-  { p: "保険商品にお申込みいただいても、引受保険会社による審査や法令等により、お引き受けできない場合があります。" },
-  { p: "既にご契約いただいている保険契約を今回見直される場合、新規契約の承諾や保障開始日（がん保険であれば90日経過後）を確認のうえ、旧契約の解約を行っていただきますよう、ご留意ください。" },
-  { p: "当行が保険の募集を行う場合、当該保険募集を株式会社FFGほけんサービスと共同で行います。" },
-  { p: "この場合当該保険募集を通じて知りえた情報（お客様のご契約内容、申込書記載事項等）および当行とのお取り引きに関する情報を株式会社FFGほけんサービスに提供し、当行ならびに株式会社FFGほけんサービスが共同で保険契約の募集・維持・管理に活用させていただきます。" },
-  { note: "代理店名 ●●●●\n所在地 ●●●●●●\n電話番号 ●●●●-●●-●●" },
-  { sec: "4．保険募集制限先等の確認について" },
-  { p: "当行取扱いの保険商品（除く、個人年金保険・長期火災保険・個人契約の一時払終身保険）の募集にあたって、お客さまが以下に該当される方である場合には、法令等の定めによってご契約のお申込みをいただけない場合がございます。誠に恐れ入りますが、この点につきまして予めご了承いただきますよう、お願い申しあげます。" },
-  { p: "① 当行の事業資金のご融資先である法人・その代表者および個人事業主の方" },
-  { p: "② 当行の事業性資金のご融資先である法人（代表者に対するご融資を含みます）および個人事業主のうち、従業員数が50名以下の事業所に常時勤務されている従業員および役員（代表者除く）の方" },
-  { note: "※パート・アルバイト等の方で、2ヶ月を超えて勤務されており、かつ正社員と概ね同等の勤務形態の場合は「従業員」とします。" },
-  { p: "③ 現在、当行に事業資金融資をお申込みいただいている期間中である" },
-  { sec: "5．ご確認いただきたいこと" },
-  { sub: "1．当行の「特定関係法人※1」に該当する企業・団体に勤務されているお客さまへ" },
-  { p: "当行の「特定関係法人※1」に該当する企業・団体に勤務されているお客さまに対しては、当行は医療保険・がん保険・傷害保険に限り募集を行うことができます。" },
-  { sub: "2．当行に事業性資金等のご融資を申込み中のお客さまへ" },
-  { p: "お客さま※2が当行に事業性資金等のご融資※3をお申込み中の間は、当行はお客さまに対して、医療保険、その他一部の保険商品の募集を行いません。" },
-  { sub: "3．法人代表者、個人事業主のお客さまへ" },
-  { p: "当行が事業性資金等のご融資※3を行っているお客さまに対して、医療保険、その他一部の保険商品の募集は原則として行いません。" },
-  { sub: "4．会社役員（代表者を除きます）、従業員のお客さまへ" },
-  { p: "当行が事業性資金等のご融資を行っている、常時使用する従業員数※4が50名以下の事業者にお勤めのお客さまに対して、医療保険、その他一部の保険商品の募集は原則として行いません。" },
-  { note: "※1 「特定関係法人」とは、当行の関連会社・団体をはじめとする出資関係か人的関係等により、当行と密接な関係がある法人を指します。「特定関係法人」に勤務されているお客さまは、当行では医療保険・がん保険に限りお申込いただけます。\n※2 お客さまが法人の代表者である場合の当該法人、またはお客さまが法人である場合の当該法人の代表者を含みます。\n※3 「事業性資金等のご融資」には事業に必要なご資金のほか、事業として賃貸しているアパート・マンションの建築資金のご融資を含みます。\n※4 通常の従業員と概ね同様な勤務形態で、2ヶ月を超えて勤務されているパート、アルバイト、派遣社員の方を含みます。" },
+/* 弊害防止措置（案内前確認同意事項）の本文
+   文言は【別紙】掲載文面 A2:D7 ステップ1「案内前確認同意事項（弊害防止措置）」。
+   地銀汎用のみで、大和コネクト証券は「表示不要」。銀行名は「●●銀行」表記のまま。 */
+export const HEIGAI_LEAD = [
+  "こちらは団体保険お申込ページです。",
+  "ご案内にあたり、以下の内容をご確認・同意ください。",
 ];
 
+export const HEIGAI_BLOCKS = [
+  { sec: "1．お客さまに関する情報のお取扱いについて" },
+  { p: "(1) ●●銀行はお客さまへの保険商品のご提案にあたり、●●銀行とお客さまとの取引時に知り得た、また今後知り得るお客さまの取引に関する情報(預金の残高・入出金・満期、融資の使途・残高、為替・金融商品取引等の内容や運用・検討状況に関する情報等、資産・収支・業務の状況等)を、対面・郵便・電話・インターネット等を用いたコンサルティングのために利用することがございます。" },
+  { p: "(2) 保険商品の取扱いにあたり、お客さまのご加入内容等知り得た情報(保険商品のご提案内容やご加入内容に関する情報の他家族構成等に関する情報)を、対面・郵便・電話・インターネット等を用いて預金・為替・融資等のお取引、金融商品のご案内、各種サービスのご提供等の業務に利用することがございます。" },
+  { p: "(3) 上記お客さまの情報については、お客さまから特段のお申し出がない限り利用させていただきますが、利用停止をご希望の場合には、●●銀行の本支店窓口までご連絡ください。" },
+  { sec: "2．引受保険会社からの情報提供" },
+  { p: "お客さまの保険契約に関し、今回お申込いただく保険会社から提供を受けた契約の維持・管理の為に有するご加入情報(加入者の情報、給付金等の金額、保険料などの保険契約の情報および保険契約に関連付随する情報（健康・医療情報を除く）)を●●銀行がお客さまに提供させていただく各種サービス(預金、他の金融商品のご案内等)に利用することがあります。" },
+  { sec: "3．保険加入のご検討に際して" },
+  { p: "保険の加入勧奨に係る●●銀行とお客さまとのお取り引きが、●●銀行におけるお客さまの他のお取り引きに影響を与えることはありません。" },
+  { p: "保険商品は保険会社を引受とする保険商品であり預金とは異なります。したがって、預金と違い元本保証はありません。また預金保険制度の対象外です。" },
+  { p: "本保険は、●●銀行を保険契約者とする団体保険です。お客さまは被保険者（加入者）としてご加入いただきます。●●銀行は、生命保険契約について加入勧奨を行っておりますが、保険契約の引受は保険会社が行います。ご加入のお申込みは保険会社による承諾をもって成立します。" },
+  { p: "保険商品にお申込いただいても、引受保険会社による審査や法令等により、お引き受けできない場合があります。" },
+  { p: "既にご契約いただいている保険契約を今回見直される場合、新規契約の承諾や保障開始日(がん保険であれば90日経過後)を確認のうえ、旧契約の解約を行っていただきますよう、ご留意ください。" },
+  { sec: "4．保険募集制限先等の確認について" },
+  { p: "本商品はお客さまが以下に該当される方である場合には、ご加入のお申込をいただけない場合がございます。誠に恐れ入りますが、この点につきまして、あらかじめご了承いただきますよう、お願い申しあげます。" },
+  { p: "① ●●銀行の事業資金のご融資先である法人・その代表者および個人事業主の方" },
+  { p: "② ●●銀行の事業性資金のご融資先である法人(代表者に対するご融資を含みます)および個人事業主のうち、従業員数が50名以下の事業所に常時勤務されている従業員および役員(代表者除く)の方" },
+  { note: "※パート・アルバイト等の方で、2ヶ月を超えて勤務されており、かつ正社員と概ね同等の勤務形態の場合は「従業員」とします。" },
+  { p: "③ 現在、●●銀行に事業資金融資をお申込みいただいている期間中の方" },
+  { sec: "5．ご確認いただきたいこと" },
+  { sub: "① ●●銀行に事業性資金等のご融資をお申込中のお客さまへ" },
+  { p: "お客さま（※1）が●●銀行に事業性資金等のご融資（※2）をお申込中の間は、●●銀行はお客さまに対して、本保険商品の加入勧奨を行いません。" },
+  { sub: "② 法人代表者、個人事業主のお客さまへ" },
+  { p: "●●銀行が事業性資金等のご融資（※2）を行っているお客さまに対して、本保険商品の加入勧奨は原則として行いません。" },
+  { sub: "③ 会社役員(代表者を除きます)、従業員のお客さまへ" },
+  { p: "●●銀行が事業性資金等のご融資を行っている、常時使用する従業員数（※3）が50名以下の事業者にお勤めのお客さまに対して、本保険商品の加入勧奨は原則として行いません。" },
+  { note: "※1 お客さまが法人の代表者である場合の当該法人、またはお客さまが法人である場合の当該法人の代表者を含みます。\n※2 「事業性資金等のご融資」には事業に必要なご資金のほか、事業として賃貸しているアパート・マンションの建築資金のご融資を含みます。\n※3 通常の従業員と概ね同様な勤務形態で、2ヶ月を超えて勤務されているパート、アルバイト、派遣社員の方を含みます。" },
+];
+
+/* 弊害防止措置モーダル — 画面中央の小窓（ボトムシートではない）
+
+   組込み先によってはトップページ表示と同時に自動で開くため、下から大きく出る
+   ハーフモーダルだとユーザーを驚かせてしまう。上下左右に半透明の背景が見える
+   小窓にすることで、裏にページがあることが分かり安心感が出る。
+   pt-24 でロゴの高さぶんを確保し、モーダルがロゴに被らないようにしている。 */
 export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose: () => void; onAgree?: () => void }) {
   if (!open) return null;
   return (
-    <div className="absolute inset-0 z-50">
+    <div className="absolute inset-0 z-50 flex items-center justify-center px-6 pt-24 pb-6">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
-      <div className="sheet-up absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-xl max-h-[88%] flex flex-col">
-        <div className="flex items-center justify-between gap-2 px-6 pt-4 pb-3 border-b border-warm-200">
-          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">ご案内にあたりご確認・同意いただきたいこと</h3>
-          <button onClick={onClose} className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
+      <div className="sheet-pop relative w-full max-w-[320px] max-h-[420px] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden">
+        <div className="shrink-0 flex items-start justify-between gap-2 px-4 pt-3.5 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)]">
+          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">{HEIGAI_LEAD[0]}</h3>
+          <button onClick={onClose} aria-label="閉じる" className="grid place-items-center w-7 h-7 rounded-full bg-white text-neutral-500 shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto no-sb px-4 py-4 space-y-3">
+        {/* 文章が長いためスクロールバーを表示。フッターは flex 兄弟なので常に見える */}
+        <div className="flex-1 min-h-0 overflow-y-auto sb-thin px-4 py-3 space-y-2.5">
+          <p className="text-caption text-neutral-700 leading-relaxed">{HEIGAI_LEAD[1]}</p>
           {(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (
-            b.sec ? <p key={i} className="text-h6 font-bold text-neutral-800 pt-2">{b.sec}</p>
-            : b.sub ? <p key={i} className="text-caption font-bold text-neutral-800 pt-1">{b.sub}</p>
+            b.sec ? <p key={i} className="text-caption font-bold text-neutral-800 pt-2">{b.sec}</p>
+            : b.sub ? <p key={i} className="text-caption font-bold text-neutral-700 pt-1">{b.sub}</p>
             : b.note ? <p key={i} className="text-[11px] text-neutral-500 leading-relaxed whitespace-pre-line">{b.note}</p>
             : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
           ))}
         </div>
-        <div className="px-6 py-3 border-t border-warm-200">
+        <div className="shrink-0 px-4 py-3 border-t border-warm-200 bg-white">
           <div className="flex gap-3 items-center">
             <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
             <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>

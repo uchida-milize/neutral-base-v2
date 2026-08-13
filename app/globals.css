@@ -842,8 +842,16 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+/* 画面中央に出る小窓モーダル用。下から出るボトムシート (theoTdfSheetUp) と対になる。
+   ページ表示と同時に自動で開くケースがあるため、驚かせない控えめなポップインにする。 */
+@keyframes theoTdfSheetPop {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
 @layer utilities {
   .sheet-up { animation: theoTdfSheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  /* 中央小窓モーダル。既存コードで .sheet-pop が使われていたが CSS 未定義だったため定義を追加 */
+  .sheet-pop { animation: theoTdfSheetPop 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
   .fade-in  { animation: theoTdfFadeIn 0.22s ease-out; }
   /* TD 組込1.4 — 画面切替時のフェードイン (Phone 内 screenKey 変化で再生) */
   .screen-enter { animation: theoTdfScreenFadeIn 0.28s ease-out forwards; }
