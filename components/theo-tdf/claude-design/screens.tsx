@@ -2465,20 +2465,12 @@ export function ScreenForm({ go, sel, deathOpt = true, m, setM, y, setY, initial
 /* ============================================================
    SCREEN 5 — 内容確認
    ============================================================ */
-// 重要事項（3項目に簡略化）
+/* 重要事項（確認 + 同意）
+   【別紙】掲載文面 A17:E17 により「申込に関する注意事項」は両団体とも削除。
+   内容は重要事項・事前同意事項（NoticeContent）に集約済み。
+   kind: "agree" を付けた項目は「同意する」対象として扱われ、チェック文言の
+   採番（confirmNums / agreeNums）に反映される。 */
 export const AGREE_ITEMS: AgreeItemData[] = [
-  {
-    id: "kiyaku",
-    t: "申込に関する注意事項の確認",
-    blocks: [
-      { ul: [
-        "お申し込み・告知内容は必ず被保険者ご本人さまがご入力ください。",
-        "お申込は、日本国内に在住し、ご自身で日本語の契約内容を理解できることが条件となります。",
-        "T&Dフィナンシャル生命のシステム上登録できない字体については、登録可能な漢字かカタカナでの登録となることをご了承ください。（保障内容やご契約後の諸手続き等に影響はありません）",
-        "ご加入の成立には審査があります。審査の結果、ご加入をお引き受けできない場合があります。",
-      ] },
-    ],
-  },
   {
     id: "juuyou",
     t: "重要事項説明の確認",
@@ -2489,6 +2481,7 @@ export const AGREE_ITEMS: AgreeItemData[] = [
   },
   {
     id: "mykiyaku",
+    kind: "agree",
     t: "マイページの利用規約",
     blocks: [
       { p: "マイページのご利用にあたっては、以下の利用規約をご確認ください。" },
@@ -2787,34 +2780,35 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
 
           <div>
             <h3 className="text-h6 font-bold text-neutral-800">クレジットカード払の重要事項の確認</h3>
-            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払いについて」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
+            <p className="mt-2 text-caption text-neutral-600 leading-relaxed">「クレジットカードのお支払について」を確認いただいたうえで、カード番号や有効期限などを入力いただきます。</p>
           </div>
 
-          {/* accordion ⑥ クレジットカードのお支払いについて */}
+          {/* accordion ⑥ クレジットカードのお支払について（文言は【別紙】掲載文面 C15、大和コネクトも同左） */}
           <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
-            <button onClick={() => setPayIdx((o) => (o === 0 ? -1 : 0))} className="flex items-center justify-between w-full px-4 py-4 text-left">
-              <h4 className="text-h6 font-bold text-neutral-800">クレジットカードのお支払いについて</h4>
+            <button onClick={() => setPayIdx((o) => (o === 0 ? -1 : 0))} className="flex items-center justify-between w-full px-4 py-4 text-left bg-[color:var(--warm-50)]">
+              <h4 className="text-h6 font-bold text-neutral-800">クレジットカードのお支払について</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 0 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div style={{ maxHeight: payIdx === 0 ? "2000px" : "0px", opacity: payIdx === 0 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-              <div className="px-4 pb-4 border-t border-warm-200 pt-3 space-y-3">
+              {/* 文章が長いため本文側で高さを制限し、スクロールバーを見せる */}
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3 space-y-3 max-h-[360px] overflow-y-auto sb-thin">
                 <ul className="space-y-3">
-                  <li className="flex gap-2 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>カード名義人は被保険者さま本人名義に限ります。</span></li>
+                  <li className="flex gap-2 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>カード名義人は被保険者（加入者）さまご本人名義に限ります。</span></li>
                   <li className="text-caption text-neutral-600 leading-relaxed">
                     <span className="flex gap-2"><span className="text-neutral-400 shrink-0">・</span><span>以下のマークのあるクレジットカードをご指定いただけます。</span></span>
                     <div className="flex flex-wrap gap-2 mt-2 ml-4">
-                      {["VISA", "Mastercard", "JCB", "AMEX", "Diners"].map((c) => (
+                      {["VISA", "MasterCard", "JCB", "American Express", "Diners Club International"].map((c) => (
                         <span key={c} className="rounded border border-warm-300 bg-white px-2 py-1 text-[10px] font-en font-semibold tracking-wide text-neutral-600">{c}</span>
                       ))}
                     </div>
                   </li>
                   {[
                     "今後の保険料のお支払は、ご指定いただきましたクレジットカードの発行会社が定める会員規約に基づいて行われます。",
-                    "クレジットカード支払につきましては、クレジットカード支払規定に基づいて行いますので、お申し込みの前に必ずご一読ください。",
-                    "クレジットカード支払のお取扱い金額は、1契約1回あたり、10万円以下となっております。",
-                    "クレジットカードの発行会社が保険料相当額をT&Dフィナンシャル生命に入金させ、ご加入者さまの利用口座から保険料相当額のお振り替えをおこなう仕組みになっております。したがって、ご契約の消滅（解約・死亡等）または、T&Dフィナンシャル生命にお払込みが完了された場合でも、翌月以降に保険料相当額の決済（クレジットカードの発行会社によるお振り替え）が発生することがあります。",
+                    "クレジットカード支払につきましては、クレジットカード支払規定に基づいて行いますので、お申込の前に必ずご一読ください。",
+                    "クレジットカード支払のお取扱金額は、1契約1回あたり、10万円以下となっております。",
+                    "クレジットカードの発行会社が保険料相当額をT&Dフィナンシャル生命に入金した後、被保険者（加入者）さまの利用口座から保険料相当額のお振替を行う仕組みになっております。したがって、ご契約の消滅（解約・死亡等）または、T&Dフィナンシャル生命における払込みが完了された場合でも、翌月以降に保険料相当額の決済（クレジットカードの発行会社によるお振替）が発生することがあります。",
                     "保険料相当額の決済日はクレジットカードの発行会社によって異なります。決済日は、直接クレジットカードの発行会社にお問い合わせください。",
-                    "ご利用のクレジットカード番号・カード有効期限等が変更された場合、すみやかに保険のマイページより変更ください。（ご指定いただきましたクレジットカードの発行会社によっては、クレジットカードによる保険料のお支払いができなくなる場合があります。）",
+                    "ご利用のクレジットカード番号・カード有効期限等が変更された場合、すみやかに保険のマイページより変更ください。（ご指定いただきましたクレジットカードの発行会社によっては、クレジットカードによる保険料のお支払ができなくなる場合があります。）",
                   ].map((t, i) => (
                     <li key={i} className="flex gap-2 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>{t}</span></li>
                   ))}
@@ -2823,25 +2817,33 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             </div>
           </div>
 
-          {/* accordion ⑦ クレジットカード支払規定 */}
+          {/* accordion ⑦ クレジットカード支払規定（文言は【別紙】掲載文面 C16、大和コネクトも同左） */}
           <div className="rounded-2xl border border-warm-200 bg-white overflow-hidden">
-            <button onClick={() => setPayIdx((o) => (o === 1 ? -1 : 1))} className="flex items-center justify-between w-full px-4 py-4 text-left">
+            <button onClick={() => setPayIdx((o) => (o === 1 ? -1 : 1))} className="flex items-center justify-between w-full px-4 py-4 text-left bg-[color:var(--warm-50)]">
               <h4 className="text-h6 font-bold text-neutral-800">クレジットカード支払規定</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 1 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div style={{ maxHeight: payIdx === 1 ? "2000px" : "0px", opacity: payIdx === 1 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-              <div className="px-4 pb-4 border-t border-warm-200 pt-3">
+              {/* 文章が長いため本文側で高さを制限し、スクロールバーを見せる */}
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3 max-h-[360px] overflow-y-auto sb-thin">
                 <ul className="space-y-3">
                   {[
-                    "私がT&Dフィナンシャル生命保険株式会社（以下「T&Dフィナンシャル生命」といいます。）と締結した生命保険契約の保険料は、私が指定する私名義のクレジットカード（以下「指定カード」といいます。）で指定カード発行会社の会員規約に基づいて支払います。",
-                    "私がT&Dフィナンシャル生命に対し申し出をしない限り、保険料を前項と同様に指定カード発行会社の会員規約に基づいて、継続して支払います。",
-                    "私は指定カード発行会社により、私が届け出た会員番号・有効期限が更新された場合であっても、保険料を異議なく支払います。",
-                    "会員資格喪失等により、指定カード発行会社から指定カードによる保険料の支払いを停止されても異議はありません。",
-                    "指定カードの会員番号や有効期限が変更となった場合、私に事前に通知することなく、新しい会員番号や有効期限が指定カード発行会社よりT&Dフィナンシャル生命に通知されても、異議はありません。",
-                    "私は指定カードの会員番号や有効期限が変更となった場合、すみやかにT&Dフィナンシャル生命に通知します。",
-                    "指定カードで支払った保険料については領収証は請求いたしません。",
-                  ].map((t, i) => (
-                    <li key={i} className="flex gap-2 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>{t}</span></li>
+                    { h: "保険料のお支払い", t: "加入者は、T&Dフィナンシャル生命保険株式会社（以下「当社」といいます。）との生命保険契約に係る保険料を、加入者本人名義のクレジットカード（以下「指定カード」といいます。）により、指定カード発行会社の会員規約等に基づいて支払うものとします。" },
+                    { h: "保険料のお支払いの継続", t: "加入者から当社に別段の申出がない限り、保険料は前項と同様の方法により継続して支払うものとします。" },
+                    { h: "カード情報の更新", t: "指定カード発行会社により指定カードの会員番号または有効期限が更新された場合、当社は更新後のカード情報を利用して保険料を請求することがあります。" },
+                    { h: "カード決済ができない場合", t: "会員資格の喪失、利用停止その他の事由により、指定カード発行会社が指定カードによる決済を承認しない場合は、当該カードによる保険料の払込みはできません。" },
+                    { h: "カード情報の提供", t: "指定カードの継続利用のため、指定カード発行会社から当社に対し、更新後の会員番号、有効期限その他保険料の収納に必要な情報が提供される場合があります。" },
+                    { h: "カード情報変更時のお手続き", t: "加入者は、指定カードの会員番号、有効期限その他登録内容に変更があった場合は、速やかに当社へ届け出るものとします。" },
+                    { h: "領収証の発行", t: "当社は、指定カードにより支払われた保険料について、原則として領収証を発行しません。" },
+                    { h: "保険料の精算", t: "保険料収納後に、生命保険契約の消滅（解約、死亡その他の事由を含みます。）またはクレジットカード決済の取消し等が発生した場合は、保険料の返金または再請求等の精算を行うことがあります。" },
+                  ].map((it, i) => (
+                    <li key={i} className="flex gap-2 text-caption text-neutral-600 leading-relaxed">
+                      <span className="text-neutral-400 shrink-0">・</span>
+                      <span>
+                        <strong className="font-bold text-neutral-800">{it.h}</strong><br />
+                        {it.t}
+                      </span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -2890,7 +2892,7 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
             <span className={`grid place-items-center w-6 h-6 mt-[2px] rounded border-2 shrink-0 ${agreed ? "border-primary bg-primary text-white" : "border-warm-300 bg-white"}`}>
               {agreed && <Ic.check className="w-3 h-3" />}
             </span>
-            <span className="text-h7 text-neutral-700 leading-relaxed">①②を確認し、③の内容に同意する</span>
+            <span className="text-h7 text-neutral-700 leading-relaxed">{confirmNums}を確認し、{agreeNums}の内容に同意する</span>
           </button>
         </div>
       </div>

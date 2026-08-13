@@ -575,7 +575,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
         },
         {
           key: "st-agree",
-          label: "同意項目①展開＋全チェック・CTA活性",
+          label: "全チェック・CTA活性（同意項目①展開）",
           viewUrl: "/theo-tdf-view?s=4",
           fullSheet: true,
           el: (
@@ -588,17 +588,17 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
         },
         {
           key: "st-agree-juuyou",
-          label: "同意項目②重要事項説明の確認 展開",
-          viewUrl: "/theo-tdf-view?s=4&openIdx=1",
+          label: "同意項目①重要事項説明の確認 展開",
+          viewUrl: "/theo-tdf-view?s=4&openIdx=0",
           fullSheet: true,
-          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={1} />,
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={0} />,
         },
         {
           key: "st-agree-mykiyaku",
-          label: "同意項目③マイページの利用規約 展開",
-          viewUrl: "/theo-tdf-view?s=4&openIdx=2",
+          label: "同意項目②マイページの利用規約 展開",
+          viewUrl: "/theo-tdf-view?s=4&openIdx=1",
           fullSheet: true,
-          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={2} />,
+          el: <ScreenStep4 go={noop} sel="cancer_d" m={10000} y={15} initialOpenIdx={1} />,
         },
       ],
     },

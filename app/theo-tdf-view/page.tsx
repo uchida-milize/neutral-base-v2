@@ -41,7 +41,7 @@ import {
  *   editKiyaku     "1" で契約者情報編集展開
  *   editJuushin    "1" で保険金受取人編集展開
  *   benSameAddr    "0" で受取人住所を個別入力
- *   openIdx        内容確認画面の重要事項アコーディオン初期展開インデックス（0-2）
+ *   openIdx        内容確認画面の重要事項アコーディオン初期展開インデックス（0-1）
  *   payIdx         内容確認画面の支払い関連アコーディオン初期展開インデックス（0-1）
  *   doneVariant    "done" | "processing" | "error" | "maint"
  */
