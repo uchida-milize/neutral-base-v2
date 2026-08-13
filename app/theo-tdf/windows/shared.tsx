@@ -75,12 +75,13 @@ export function StaticScreen({
     const el = contentRef.current;
 
     const measure = () => {
-      // モーダルの外枠 (dimmer + sheet-up を包む absolute inset-0 の層)
+      // モーダルの外枠 (dimmer + sheet-up/sheet-pop を包む absolute inset-0 の層)
+      // sheet-up = 下から出るボトムシート、sheet-pop = 中央に出る小窓モーダル（弊害防止措置モーダル等）
       const modalWrap = Array.from(el.querySelectorAll<HTMLElement>('[class*="absolute"][class*="inset-0"]'))
-        .find((node) => node.querySelector(".sheet-up"));
-      const sheet = el.querySelector<HTMLElement>(".sheet-up");
+        .find((node) => node.querySelector(".sheet-up, .sheet-pop"));
+      const sheet = el.querySelector<HTMLElement>(".sheet-up, .sheet-pop");
       if (!modalWrap || !sheet) return;
-      // 高さ制約 (max-h-[88%] 等) は縮小後のコンテナ比率で再計算されクランプされてしまうため撤廃し、内容を完全展開する
+      // 高さ制約 (max-h-[88%] / max-h-[420px] 等) は縮小後のコンテナ比率で再計算されクランプされてしまうため撤廃し、内容を完全展開する
       sheet.style.maxHeight = "none";
       const sheetHeight = sheet.getBoundingClientRect().height;
       const total = MODAL_CROP_LEAD_IN + sheetHeight;
@@ -98,7 +99,7 @@ export function StaticScreen({
     };
 
     measure();
-    const sheet = el.querySelector<HTMLElement>(".sheet-up");
+    const sheet = el.querySelector<HTMLElement>(".sheet-up, .sheet-pop");
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     if (sheet) ro.observe(sheet);
