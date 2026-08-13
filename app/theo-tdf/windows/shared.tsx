@@ -284,18 +284,6 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           ),
         },
         {
-          key: "overview-accordion",
-          label: "アコーディオン表示（がんプラン＋死亡保障 展開）",
-          viewUrl: "/theo-tdf-view?s=0&patternB=1&planCardStyle=accordion&planOpenId=cancer_d",
-          el: (
-            <ScreenCombined
-              go={noop} sel="cancer_d" setSel={noop}
-              m={10000} setM={noop} y={15} setY={noop}
-              planCardStyle="accordion" initialPlanOpenId="cancer_d"
-            />
-          ),
-        },
-        {
           key: "overview-err-amount",
           label: "シミュレーション上限エラー（保障金額）",
           viewUrl: "/theo-tdf-view?s=0&patternB=1",
