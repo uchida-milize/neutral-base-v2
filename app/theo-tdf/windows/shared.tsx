@@ -23,8 +23,10 @@ export type ScreenDef = {
   el: React.ReactNode;
   /** @deprecated 固定高さ廃止 */
   height?: number;
-  /** absolute 配置のモーダル等を完全表示するため overflow-visible にする */
+  /** absolute 配置のモーダル等を完全表示するため overflow-visible にする（高さ制約を撤廃し全文展開） */
   fullSheet?: boolean;
+  /** モーダルを実際のCSS高さ（max-h等）のまま、背景プレビュー付きで表示する（プロトタイプと同じ見た目・高さ） */
+  compactSheet?: boolean;
   /** このパターン専用の /theo-tdf-view URL（省略時はリンクなし） */
   viewUrl?: string;
 };
@@ -58,20 +60,23 @@ const MODAL_CROP_LEAD_IN = 200;
 export function StaticScreen({
   label,
   fullSheet,
+  compactSheet,
   viewUrl,
   children,
 }: {
   label: string;
   height?: number;
   fullSheet?: boolean;
+  compactSheet?: boolean;
   viewUrl?: string;
   children: React.ReactNode;
 }) {
+  const cropped = fullSheet || compactSheet;
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [cropHeight, setCropHeight] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    if (!fullSheet || !contentRef.current) return;
+    if (!cropped || !contentRef.current) return;
     const el = contentRef.current;
 
     const measure = () => {
@@ -81,8 +86,27 @@ export function StaticScreen({
         .find((node) => node.querySelector(".sheet-up, .sheet-pop"));
       const sheet = el.querySelector<HTMLElement>(".sheet-up, .sheet-pop");
       if (!modalWrap || !sheet) return;
-      // 高さ制約 (max-h-[88%] / max-h-[420px] 等) は縮小後のコンテナ比率で再計算されクランプされてしまうため撤廃し、内容を完全展開する
-      sheet.style.maxHeight = "none";
+      // fullSheet: 高さ制約 (max-h-[88%] / max-h-[420px] 等) を撤廃し、内容を完全展開する
+      // compactSheet: 高さ制約はそのまま（プロトタイプと同じ実寸）にし、周囲の背景プレビュー分だけコンテナを確保する
+      if (fullSheet) {
+        sheet.style.maxHeight = "none";
+      } else if (compactSheet) {
+        // screen-flat 用グローバルCSSが overflow-y-auto→visible / flex-1→none を無効化しているため、
+        // 本体（header/body/footer の中央のスクロール領域）の高さを明示指定して枠内に収める
+        const kids = Array.from(sheet.children) as HTMLElement[];
+        if (kids.length >= 2) {
+          const footer = kids.length >= 3 ? kids[kids.length - 1] : null;
+          const header = kids[0];
+          const bodyKids = kids.slice(1, footer ? -1 : undefined);
+          const fixedHeight = header.getBoundingClientRect().height + (footer ? footer.getBoundingClientRect().height : 0);
+          const sheetCap = sheet.getBoundingClientRect().height;
+          const bodyHeight = Math.max(0, sheetCap - fixedHeight) / bodyKids.length;
+          bodyKids.forEach((k) => {
+            k.style.height = `${bodyHeight}px`;
+            k.style.overflow = "hidden";
+          });
+        }
+      }
       const sheetHeight = sheet.getBoundingClientRect().height;
       const total = MODAL_CROP_LEAD_IN + sheetHeight;
       // 背景プレビュー(Y0〜200)の直後にモーダルが来るよう、モーダル外枠自体を Y0起点・高さ固定で再配置する
@@ -104,7 +128,7 @@ export function StaticScreen({
     ro.observe(el);
     if (sheet) ro.observe(sheet);
     return () => ro.disconnect();
-  }, [fullSheet]);
+  }, [fullSheet, compactSheet, cropped]);
 
   return (
     <figure className="flex flex-col items-start gap-2" style={{ width: 390 }}>
@@ -124,7 +148,7 @@ export function StaticScreen({
       {/* screen-flat: overflow-y-auto → visible / flex-1 → none / sticky → static */}
       <div
         className="theo-tdf-cd font-jp screen-flat relative rounded-2xl border border-warm-200 bg-warm-50 shadow-sm overflow-hidden"
-        style={{ width: 390, minHeight: fullSheet ? undefined : 693, height: fullSheet ? (cropHeight ?? undefined) : undefined }}
+        style={{ width: 390, minHeight: cropped ? undefined : 693, height: cropped ? (cropHeight ?? undefined) : undefined }}
       >
         <div ref={contentRef} className="flex flex-col">
           {children}
@@ -152,7 +176,7 @@ export function ScreenGroupSection({ group }: { group: ScreenGroupDef }) {
       </div>
       <div className="flex items-start gap-6">
         {group.screens.map((s) => (
-          <StaticScreen key={s.key} label={s.label} fullSheet={s.fullSheet} viewUrl={s.viewUrl}>
+          <StaticScreen key={s.key} label={s.label} fullSheet={s.fullSheet} compactSheet={s.compactSheet} viewUrl={s.viewUrl}>
             {s.el}
           </StaticScreen>
         ))}
@@ -186,6 +210,19 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           key: "overview-heigai",
           label: "同意事項モーダル（全文表示）",
           fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=0&patternB=1",
+          el: (
+            <ScreenCombined
+              go={noop} sel="cancer_d" setSel={noop}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialHeigaiOpen
+            />
+          ),
+        },
+        {
+          key: "overview-heigai-compact",
+          label: "同意事項モーダル（小窓表示・プロトタイプと同じ高さ）",
+          compactSheet: true,
           viewUrl: "/theo-tdf-view?s=0&patternB=1",
           el: (
             <ScreenCombined
