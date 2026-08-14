@@ -2642,6 +2642,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
      値は "YYYY-MM-DD" で保持し、表示はこのカード内の他項目に合わせて "YYYY / MM / DD"。 */
   const [benEditBirth, setBenEditBirth] = useState("1992-05-15");
   const [benBirthPickerOpen, setBenBirthPickerOpen] = useState(false);
+  const [benEditGender, setBenEditGender] = useState("女性");
+  const [benEditRel, setBenEditRel] = useState("配偶者");
   const fmtBirthSlash = (v: string) => { if (!v) return ""; const [yy, mm, dd] = v.split("-"); return `${yy} / ${mm} / ${dd}`; };
   // 受取人固有の住所（「契約者と異なる」場合に表示）
   const BEN_ADDR = { zip: "150-0002", pref: "東京都", city: "渋谷区", town: "渋谷２丁目", addr: "2-1", bldg: "渋谷フラット 305", line1: "東京都渋谷区渋谷２丁目", line2: "渋谷フラット 305" };
@@ -2761,8 +2763,16 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
                   <img src="/assets/theo-tdf/calendar.svg" alt="" className="w-6 h-6 shrink-0" />
                 </button>
               </div>
-              <Field label="性別" value="女性" />
-              <Field label="続柄" value="配偶者" />
+              <div className="flex flex-col gap-2">
+                <span className="text-caption font-medium text-neutral-600">性別</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {["男性", "女性"].map((g) => (
+                    <button key={g} type="button" onClick={() => setBenEditGender(g)}
+                      className={`h-12 rounded-lg border text-h6 transition-colors ${benEditGender === g ? "border-primary bg-primary-10 text-primary-700 font-bold" : "border-warm-300 bg-white text-neutral-600"}`}>{g}</button>
+                  ))}
+                </div>
+              </div>
+              <Select label="続柄" value={benEditRel} onChange={(e) => setBenEditRel(e.target.value)} options={["配偶者", "子", "父母", "兄弟姉妹", "孫", "祖父母"]} />
           {/* 住所：「契約者と同じ」チェック。外すと住所入力欄が出現 */}
               <div className="flex flex-col gap-2">
                 <span className="text-caption font-medium text-neutral-600">住所</span>
@@ -2790,8 +2800,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <Row k="氏名" v="山田 花子" />
               <Row k="フリガナ" v="ヤマダ ハナコ" />
               <Row k="生年月日" v={fmtBirthSlash(benEditBirth)} />
-              <Row k="性別" v="女性" />
-              <Row k="続柄" v="配偶者" />
+              <Row k="性別" v={benEditGender} />
+              <Row k="続柄" v={benEditRel} />
               {benSameAddr ? (
                 <Row k="住所" v="契約者と同じ" />
               ) : (
@@ -4520,9 +4530,9 @@ export function SliderField({ label, value, min, max, step = 1, onChange, format
 /* ---- PremiumSimulationCard ---- */
 export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planType, deathCoverage }: {
   m: number;
-  setM: (v: number) => void;
+  setM: React.Dispatch<React.SetStateAction<number>>;
   y: number;
-  setY: (v: number) => void;
+  setY: React.Dispatch<React.SetStateAction<number>>;
   premium?: number;
   planType?: string;
   deathCoverage?: boolean;
@@ -4538,30 +4548,7 @@ export function PremiumSimulationCard({ m, setM, y, setY, premium = 980, planTyp
       <p className="text-caption text-neutral-500 mb-5 leading-relaxed">
         保障する積立金額や保障期間を選択して、毎月の保険料を確認してみましょう。
       </p>
-      <div className="flex flex-col gap-6">
-        <SliderField
-              label="毎月の積立金額"
-          value={m}
-          min={5000}
-          max={150000}
-          step={1000}
-          onChange={setM}
-          formatValue={(v) => `${v.toLocaleString()}円`}
-          minLabel="5,000円"
-          maxLabel="150,000円"
-        />
-        <SliderField
-          label="保障期間"
-          value={y}
-          min={5}
-          max={30}
-          step={1}
-          onChange={setY}
-          formatValue={(v) => `${v}年`}
-          minLabel="5年"
-          maxLabel="30年"
-        />
-      </div>
+      <SimSliders m={m} setM={setM} y={y} setY={setY} />
       <div className="mt-5 pt-4 border-t border-warm-100 flex items-baseline justify-between">
         <span className="text-caption text-neutral-500">初年度の月払保険料</span>
         <span className="font-bold leading-none" style={{ color: "var(--primary)", fontSize: 28 }}>
