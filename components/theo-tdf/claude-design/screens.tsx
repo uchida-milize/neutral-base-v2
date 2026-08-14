@@ -3343,34 +3343,67 @@ export const HEIGAI_BLOCKS = [
    ハーフモーダルだとユーザーを驚かせてしまう。上下左右に半透明の背景が見える
    小窓にすることで、裏にページがあることが分かり安心感が出る。
    pt-24 でロゴの高さぶんを確保し、モーダルがロゴに被らないようにしている。 */
-export function HeigaiModal({ open, onClose, onAgree }: { open: boolean; onClose: () => void; onAgree?: () => void }) {
+export function HeigaiModal({ open, onClose, onAgree, desktop }: { open: boolean; onClose: () => void; onAgree?: () => void; desktop?: boolean }) {
   if (!open) return null;
+
+  const header = desktop ? (
+    <div className="shrink-0 flex items-center justify-between px-6 pt-4 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)] rounded-t-2xl">
+      <h3 className="text-h5 font-bold text-neutral-800 leading-snug">{HEIGAI_LEAD[0]}</h3>
+      <button onClick={onClose} aria-label="閉じる" className="grid place-items-center w-8 h-8 rounded-full bg-warm-100 text-neutral-500 shrink-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  ) : (
+    <div className="shrink-0 flex items-start justify-between gap-2 px-4 pt-3.5 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)]">
+      <h3 className="text-h6 font-bold text-neutral-800 leading-snug">{HEIGAI_LEAD[0]}</h3>
+      <button onClick={onClose} aria-label="閉じる" className="grid place-items-center w-7 h-7 rounded-full bg-white text-neutral-500 shrink-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  );
+
+  {/* 文章が長いためスクロールバーを表示。フッターは flex 兄弟なので常に見える */}
+  const body = (
+    <div className={desktop ? "flex-1 min-h-0 overflow-y-auto sb-thin px-6 py-4 space-y-2.5" : "flex-1 min-h-0 overflow-y-auto sb-thin px-4 py-3 space-y-2.5"}>
+      <p className="text-caption text-neutral-700 leading-relaxed">{HEIGAI_LEAD[1]}</p>
+      {(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (
+        b.sec ? <p key={i} className="text-caption font-bold text-neutral-800 pt-2">{b.sec}</p>
+        : b.sub ? <p key={i} className="text-caption font-bold text-neutral-700 pt-1">{b.sub}</p>
+        : b.note ? <p key={i} className="text-[11px] text-neutral-500 leading-relaxed whitespace-pre-line">{b.note}</p>
+        : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
+      ))}
+    </div>
+  );
+
+  const footer = (
+    <div className={desktop ? "shrink-0 px-6 py-3 border-t border-warm-200 bg-white rounded-b-2xl" : "shrink-0 px-4 py-3 border-t border-warm-200 bg-white"}>
+      <div className="flex gap-3 items-center">
+        <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
+        <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>
+      </div>
+    </div>
+  );
+
+  if (desktop) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
+        <div className="relative w-full max-w-[640px] max-h-[88vh] bg-white rounded-2xl shadow-xl flex flex-col">
+          {header}
+          {body}
+          {footer}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center px-6 pt-24 pb-6">
       <div className="absolute inset-0 bg-black/40 fade-in" onClick={onClose} />
       <div className="sheet-pop relative w-full max-w-[320px] max-h-[420px] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden">
-        <div className="shrink-0 flex items-start justify-between gap-2 px-4 pt-3.5 pb-3 border-b border-warm-200 bg-[color:var(--warm-50)]">
-          <h3 className="text-h6 font-bold text-neutral-800 leading-snug">{HEIGAI_LEAD[0]}</h3>
-          <button onClick={onClose} aria-label="閉じる" className="grid place-items-center w-7 h-7 rounded-full bg-white text-neutral-500 shrink-0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        {/* 文章が長いためスクロールバーを表示。フッターは flex 兄弟なので常に見える */}
-        <div className="flex-1 min-h-0 overflow-y-auto sb-thin px-4 py-3 space-y-2.5">
-          <p className="text-caption text-neutral-700 leading-relaxed">{HEIGAI_LEAD[1]}</p>
-          {(HEIGAI_BLOCKS as any[]).map((b: any, i: number) => (
-            b.sec ? <p key={i} className="text-caption font-bold text-neutral-800 pt-2">{b.sec}</p>
-            : b.sub ? <p key={i} className="text-caption font-bold text-neutral-700 pt-1">{b.sub}</p>
-            : b.note ? <p key={i} className="text-[11px] text-neutral-500 leading-relaxed whitespace-pre-line">{b.note}</p>
-            : <p key={i} className="text-caption text-neutral-600 leading-relaxed">{b.p}</p>
-          ))}
-        </div>
-        <div className="shrink-0 px-4 py-3 border-t border-warm-200 bg-white">
-          <div className="flex gap-3 items-center">
-            <button onClick={onClose} className="text-caption font-medium shrink-0 px-1" style={{ color: 'var(--color-link)' }}>キャンセル</button>
-            <div className="flex-1"><Btn kind="button" onClick={onAgree || onClose}>確認して同意します</Btn></div>
-          </div>
-        </div>
+        {header}
+        {body}
+        {footer}
       </div>
     </div>
   );
@@ -3605,7 +3638,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
 
         <DateDrumSheet open={pickerOpen} value={birth} onClose={() => setPickerOpen(false)} onDone={(v) => { setBirth(v); setPickerOpen(false); }} />
-        <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} />
+        <HeigaiModal open={heigaiOpen} onClose={() => setHeigaiOpen(false)} onAgree={() => setHeigaiOpen(false)} desktop />
         {noticeOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40 fade-in" onClick={() => setNoticeOpen(false)} />
