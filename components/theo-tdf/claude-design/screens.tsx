@@ -444,7 +444,7 @@ export function ScreenIntro({ go }: { go: Go }) {
               就業不能時に、毎月の積立額を保険金として給付。資産形成の歩みを止めません。
             </p>
             <div className="mt-4 rounded-lg border border-warm-200 overflow-hidden bg-white">
-              <img src="/assets/theo-tdf/hero-chart.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+              <img src="/assets/theo-tdf/hero-chart.svg" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
             </div>
           </div>
 
@@ -1109,7 +1109,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
               </div>
               <div className="mt-6 overflow-hidden rounded-[16px] border border-warm-200">
-                <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+                <img src="/assets/theo-tdf/chart_savings.svg" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
               </div>
 
               {/* 商品概要（図版の下） */}
@@ -3471,7 +3471,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：白背景40px余白＋外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-white p-10">
-          <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
+          <img src="/assets/theo-tdf/chart_savings.svg" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
@@ -3763,7 +3763,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           )}
           {/* 図版 + 商品概要 */}
           <div style={{ marginTop: '64px' }} className="overflow-hidden rounded-[16px] border border-warm-200">
-            <img src="/assets/theo-tdf/chart_savings.png" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
+            <img src="/assets/theo-tdf/chart_savings.svg" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
           </div>
           <div className="space-y-4 mt-4">
             <div className="text-right">
