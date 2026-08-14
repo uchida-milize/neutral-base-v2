@@ -1094,7 +1094,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
               </div>
               <div className="mt-4 flex flex-col items-center gap-4">
-                <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[42px]" />
+                <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[36px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
@@ -3692,7 +3692,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           {/* ロゴ：中央配置 */}
           <div className="flex items-center justify-center" style={{ marginTop: '12px' }}>
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[40px]" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[36px]" />
           </div>
           <div style={{ paddingTop: (recommendPattern && recommendPattern !== 'none') ? '48px' : '20px', paddingBottom: '16px' }}>
           {(!recommendPattern || recommendPattern === 'none') ? (
