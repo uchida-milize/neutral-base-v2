@@ -143,13 +143,9 @@
       }
 
       .st23 {
-        fill: url(#_名称未設定グラデーション);
+        fill: #f3f9fe;
       }
     </style>
-    <linearGradient id="_名称未設定グラデーション" data-name="名称未設定グラデーション" x1="417.9" y1="713.9" x2="418.3" y2="712.9" gradientTransform="translate(-467742 720956.8) scale(1120 -1010)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#f3f9fe"/>
-      <stop offset="1" stop-color="#e2effa"/>
-    </linearGradient>
   </defs>
   <g id="background">
     <rect class="st23" y="0" width="1120" height="1010"/>
