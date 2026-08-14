@@ -3433,7 +3433,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div className="rounded-t-2xl overflow-hidden border border-warm-200">
           <div style={{ position: "relative", height: "298px", overflow: "hidden" }}>
             <img src="/assets/theo-tdf/hero_bg_pc.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-            <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "34px" }} />
+            <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "22.67px" }} />
             <div style={{ position: "absolute", top: "124px", left: "76px", width: "311px" }}>
               <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ color: "#c2eeff" }}>Embedded Insurance</p>
               <h1 className="mt-2 font-bold leading-snug text-white" style={{ fontSize: "32px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
