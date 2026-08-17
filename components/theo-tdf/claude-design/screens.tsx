@@ -419,7 +419,7 @@ export function ScreenIntro({ go }: { go: Go }) {
       <div className="flex-1 overflow-y-auto no-sb">
         {/* hero */}
         <div className="px-6 pt-6 pb-8" style={{ backgroundImage: "url('/assets/theo-tdf/hero_bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
+          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-8 mb-6" />
           <p className="font-en text-caption tracking-[0.18em] uppercase text-neutral-500">Embedded Insurance</p>
           <h1 className="mt-2 text-h2 font-bold leading-snug text-neutral-800">信頼を、もっと<br/>触れる距離に。</h1>
           <p className="mt-3 text-h6 leading-relaxed text-neutral-700">XXX の資産運用に、<br/>もしものときの備えをひとつに。</p>
@@ -1053,13 +1053,13 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
               <span className="w-10 shrink-0" />
               <div className={`flex items-center gap-2 min-w-0 transition-opacity duration-200 ${solid ? "opacity-100" : "opacity-0"}`}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
-                <span className="text-h6 font-medium truncate text-white">くみこみ安心ほけん</span>
+                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
               </div>
               <span className="w-10 shrink-0" />
             </div>
           </div>
           {/* ロゴ：絶対配置（上左・ステータスバー直下） */}
-          <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん"
+          <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="つみたて安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '18px', height: '1.52rem' }} />
           {/* テキスト：絶対配置 */}
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
@@ -1094,7 +1094,7 @@ export function ScreenOverview({ go, initialHeigaiOpen }: { go: Go; initialHeiga
                 </div>
               </div>
               <div className="mt-4 flex flex-col items-center gap-4">
-                <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[36px]" />
+                <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-[36px]" />
                 <div className="w-full grid grid-cols-3 gap-3">
                 {[
                   { svg: <img src="/assets/theo-tdf/activity-heart-circle.svg" alt="積立もあんしんに" className="w-12 h-12" />, t: "積立も\nあんしんに" },
@@ -1554,7 +1554,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
       <div className="flex-1 overflow-y-auto no-sb">
         {!desktop && <Steps n={2} go={go} />}
         <div className="px-6 pt-10 pb-[88px] flex flex-col items-center text-center" style={{ background: "var(--theo-tdf-gradient-bg)" }}>
-          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-6" />
+          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-8 mb-6" />
           <img src="/assets/theo-tdf/icon_lock.svg" alt="ロック" className="w-16 h-16 mb-6" />
           <h1 className="text-h3 font-bold text-neutral-800">PINコード認証</h1>
           <p className={`mt-3 text-h6 text-neutral-600 leading-relaxed ${desktop ? "text-center" : "text-left"}`}>
@@ -1597,7 +1597,7 @@ export function ScreenPin({ go, onVerified, backScr = 1, initialPin, pinError, d
       </div>
       <ActionBar>
         <p className={`text-caption text-neutral-500 leading-relaxed px-1 ${desktop ? "text-center" : ""}`}>
-          本お手続きは「XXX くみこみ安心ほけん」のお申し込みです。<br/>
+          本お手続きは「XXX つみたて安心ほけん」のお申し込みです。<br/>
           <span className="text-[10px] text-neutral-400">引受保険会社：T&Dフィナンシャル生命保険株式会社</span>
         </p>
         {desktop ? (
@@ -3100,7 +3100,7 @@ export function ScreenStatus({ variant, go, desktop }: { variant?: string; go: G
       <img src="/assets/theo-tdf/status_bg.png" alt="" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full pointer-events-none select-none" style={{ zIndex: 0 }} />
       <div className="flex-1 flex flex-col items-center justify-center relative" style={{ zIndex: 1 }}>
         <div style={{ width: 300 }} className="text-center">
-          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
+          <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
           {isErr ? (
             <img src="/assets/theo-tdf/icon_error.png" className="w-16 h-16 mb-6 mx-auto block" alt="エラー" />
           ) : isMaint ? (
@@ -3175,7 +3175,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
             </div>
           </div>
           <div className="px-8 pb-4 text-center">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-10 mx-auto mt-[56px] mb-8" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-10 mx-auto mt-[56px] mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
@@ -3234,7 +3234,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
           </div>
           {/* ヒーローコンテンツ */}
           <div className="px-5 pt-4 pb-12 text-center">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mx-auto mt-[56px] mb-8" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-8 mx-auto mt-[56px] mb-8" />
             <div className="mx-auto grid place-items-center w-16 h-16 rounded-full bg-white mb-6 shadow-sm">
               <Ic.check className="w-8 h-8 text-primary-600" />
             </div>
@@ -3251,7 +3251,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
 
         <div className="px-4 py-6 space-y-6">
           <div className="px-1">
-            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX くみこみ安心ほけんのお申込が完了しました。</p>
+            <p className="text-h7 font-bold text-neutral-800 leading-relaxed">XXX つみたて安心ほけんのお申込が完了しました。</p>
             <p className="mt-2 text-caption text-neutral-600 leading-relaxed text-left">
               受付確認メールをご確認ください。<br/>
               査定結果は●日以内に再度ご登録のメールアドレス宛に連絡いたします。<br/>
@@ -3286,7 +3286,7 @@ export function ScreenEnded({ onRestart, desktop }: { onRestart: () => void; des
       <div className="flex-1 flex flex-col overflow-y-auto no-sb" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 py-8 shrink-0">
           <div style={{ width: 300 }} className="text-center">
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-8 mb-10 mx-auto block" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-8 mb-10 mx-auto block" />
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--theo-tdf-primary)" strokeWidth="1.8" strokeLinecap="round" className="w-16 h-16 mb-6 mx-auto block"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <h2 className="text-h4 font-bold text-neutral-800">お申し込みを<br/>終了しました</h2>
             <p className="mt-3 text-caption text-neutral-500 leading-relaxed text-center">今回のお申し込みは受付されていません。再度お申し込みいただく場合は、はじめからやり直してください。</p>
@@ -3476,7 +3476,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         <div className="rounded-t-2xl overflow-hidden border border-warm-200">
           <div style={{ position: "relative", height: "298px", overflow: "hidden" }}>
             <img src="/assets/theo-tdf/hero_bg_pc.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-            <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "22.67px" }} />
+            <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="つみたて安心ほけん" style={{ position: "absolute", top: "35px", left: "76px", height: "22.67px" }} />
             <div style={{ position: "absolute", top: "124px", left: "76px", width: "311px" }}>
               <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ color: "#c2eeff" }}>Embedded Insurance</p>
               <h1 className="mt-2 font-bold leading-snug text-white" style={{ fontSize: "32px", lineHeight: 1.3 }}>つみたてながら、<br />もしもに備える。</h1>
@@ -3495,7 +3495,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           <div className="w-[760px] mx-auto flex flex-col items-center gap-8 py-12">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[14px] font-bold text-white px-3 py-1 rounded-full" style={{ backgroundColor: "var(--theo-tdf-primary)" }}>XXXのお客様限定</span>
-              <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[56px]" />
+              <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-[56px]" />
             </div>
             <div className="grid grid-cols-3 gap-6" style={{ width: "480px" }}>
               {[
@@ -3705,12 +3705,12 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
               <span className="w-10 shrink-0" />
               <div className={"flex items-center gap-2 min-w-0 transition-opacity duration-200 " + (solid ? "opacity-100" : "opacity-0")}>
                 <span className="font-en font-semibold tracking-[0.1em] text-h6 text-white">XXX</span>
-                <span className="text-h6 font-medium truncate text-white">くみこみ安心ほけん</span>
+                <span className="text-h6 font-medium truncate text-white">つみたて安心ほけん</span>
               </div>
               <span className="w-10 shrink-0" />
             </div>
           </div>
-          <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="くみこみ安心ほけん"
+          <img src="/assets/theo-tdf/dammy_logo_white.svg" alt="つみたて安心ほけん"
             style={{ position: 'absolute', top: '48px', left: '18px', height: '1.52rem' }} />
           <div style={{ position: 'absolute', top: '440px', left: '20px', right: '20px' }}>
             <p className="font-en text-caption tracking-[0.18em] uppercase" style={{ marginLeft: '4px', color: '#fff' }}>Embedded Insurance</p>
@@ -3735,7 +3735,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
           {/* ロゴ：中央配置 */}
           <div className="flex items-center justify-center" style={{ marginTop: '12px' }}>
-            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="くみこみ安心ほけん" className="h-[36px]" />
+            <img src="/assets/theo-tdf/dammy_logo_cyan.svg" alt="つみたて安心ほけん" className="h-[36px]" />
           </div>
           <div style={{ paddingTop: (recommendPattern && recommendPattern !== 'none') ? '48px' : '20px', paddingBottom: '16px' }}>
           {(!recommendPattern || recommendPattern === 'none') ? (
@@ -4191,7 +4191,7 @@ export function Logo({ variant = "default", className }: {
     ? "/assets/theo-tdf/dammy_logo_cyan.svg"
     : "/assets/theo-tdf/dammy_logo_white.svg";
   return (
-    <img src={src} alt="くみこみ安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
+    <img src={src} alt="つみたて安心ほけん" className={`h-8 w-auto ${className ?? ""}`} />
   );
 }
 

@@ -1,6 +1,6 @@
 export const APP_BRAND = "XXX";
 export const APP_PRODUCT_LONG = "つみたて安心ほけん";
-export const APP_PRODUCT_KUMIKOMI = "くみこみ安心ほけん";
+export const APP_PRODUCT_KUMIKOMI = "つみたて安心ほけん";
 export const INSURER_NAME = "T&Dフィナンシャル生命";
 export const ASSET_BASE = "/assets/theo-tdf/";
 export const DEMO_CONTRACT_NO = "XXX-2026-000001";
