@@ -428,47 +428,8 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
       viewS: 3,
       screens: [
         {
-          key: "kokuchi-care_d",
-          label: "① 障害・介護プラン（死亡あり）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_d",
-          el: (
-            <ScreenForm
-              go={noop} sel="care_d" deathOpt={true}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="care_d"
-            />
-          ),
-        },
-        {
-          key: "kokuchi-care_n",
-          label: "② 障害・介護プラン（死亡なし）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_n",
-          el: (
-            <ScreenForm
-              go={noop} sel="care_n" deathOpt={false}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="care_n"
-            />
-          ),
-        },
-        {
-          key: "kokuchi-cancer_d",
-          label: "③ がんプラン（死亡あり）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_d",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_d" deathOpt={true}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="cancer_d"
-            />
-          ),
-        },
-        {
           key: "kokuchi-cancer_n",
-          label: "④ がんプラン（死亡なし）",
+          label: "① がんプラン（死亡なし）",
           fullSheet: true,
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_n",
           el: (
@@ -480,47 +441,21 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           ),
         },
         {
-          key: "kokuchi-cc_d",
-          label: "⑤ がん・障害介護プラン（死亡あり）",
+          key: "kokuchi-cancer_d",
+          label: "② がんプラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cancer_d",
           el: (
             <ScreenForm
-              go={noop} sel="cancer_care_d" deathOpt={true}
+              go={noop} sel="cancer_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="cc_d"
-            />
-          ),
-        },
-        {
-          key: "kokuchi-cc_n",
-          label: "⑥ がん・障害介護プラン（死亡なし）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_n",
-          el: (
-            <ScreenForm
-              go={noop} sel="cancer_care_n" deathOpt={false}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="cc_n"
-            />
-          ),
-        },
-        {
-          key: "kokuchi-three_d",
-          label: "⑦ 三大疾病プラン（死亡あり）",
-          fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_d",
-          el: (
-            <ScreenForm
-              go={noop} sel="three_d" deathOpt={true}
-              m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="three_d"
+              initialDisclosureOpen={true} kokuchiPattern="cancer_d"
             />
           ),
         },
         {
           key: "kokuchi-three_n",
-          label: "⑧ 三大疾病プラン（死亡なし）",
+          label: "③ 三大疾病プラン（死亡なし）",
           fullSheet: true,
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_n",
           el: (
@@ -532,21 +467,73 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
           ),
         },
         {
-          key: "kokuchi-tc_d",
-          label: "⑨ 三大疾病・障害介護プラン（死亡あり）",
+          key: "kokuchi-three_d",
+          label: "④ 三大疾病プラン（死亡あり）",
           fullSheet: true,
-          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_d",
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=three_d",
           el: (
             <ScreenForm
-              go={noop} sel="three_care_d" deathOpt={true}
+              go={noop} sel="three_d" deathOpt={true}
               m={10000} setM={noop} y={15} setY={noop}
-              initialDisclosureOpen={true} kokuchiPattern="tc_d"
+              initialDisclosureOpen={true} kokuchiPattern="three_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-care_n",
+          label: "⑤ 障害・介護プラン（死亡なし）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_n",
+          el: (
+            <ScreenForm
+              go={noop} sel="care_n" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="care_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-care_d",
+          label: "⑥ 障害・介護プラン（死亡あり）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=care_d",
+          el: (
+            <ScreenForm
+              go={noop} sel="care_d" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="care_d"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cc_n",
+          label: "⑦ がん・障害介護プラン（死亡なし）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_n",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_care_n" deathOpt={false}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="cc_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-cc_d",
+          label: "⑧ がん・障害介護プラン（死亡あり）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=cc_d",
+          el: (
+            <ScreenForm
+              go={noop} sel="cancer_care_d" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="cc_d"
             />
           ),
         },
         {
           key: "kokuchi-tc_n",
-          label: "⑩ 三大疾病・障害介護プラン（死亡なし）",
+          label: "⑨ 三大疾病・障害介護プラン（死亡なし）",
           fullSheet: true,
           viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_n",
           el: (
@@ -554,6 +541,19 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="three_care_n" deathOpt={false}
               m={10000} setM={noop} y={15} setY={noop}
               initialDisclosureOpen={true} kokuchiPattern="tc_n"
+            />
+          ),
+        },
+        {
+          key: "kokuchi-tc_d",
+          label: "⑩ 三大疾病・障害介護プラン（死亡あり）",
+          fullSheet: true,
+          viewUrl: "/theo-tdf-view?s=3&disclosure=1&kokuchiPattern=tc_d",
+          el: (
+            <ScreenForm
+              go={noop} sel="three_care_d" deathOpt={true}
+              m={10000} setM={noop} y={15} setY={noop}
+              initialDisclosureOpen={true} kokuchiPattern="tc_d"
             />
           ),
         },

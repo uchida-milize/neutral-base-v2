@@ -105,14 +105,14 @@ export function koTableFor(planId: string, death: boolean) {
 
 // 告知項目プレビュー用パターン（プラン×死亡保障の全10通り）— Tweaks「告知項目パターン」で切替
 export const KOKUCHI_PATTERNS = [
-  { key: 'care_d',   plan: 'care',        death: true,  label: '① 障害・介護プラン（死亡あり）' },
-  { key: 'care_n',   plan: 'care',        death: false, label: '② 障害・介護プラン' },
-  { key: 'cancer_d', plan: 'cancer',      death: true,  label: '③ がんプラン（死亡あり）' },
-  { key: 'cancer_n', plan: 'cancer',      death: false, label: '④ がんプラン' },
-  { key: 'cc_d',     plan: 'cancer_care', death: true,  label: '⑤ がん・障害介護プラン（死亡あり）' },
-  { key: 'cc_n',     plan: 'cancer_care', death: false, label: '⑥ がん・障害介護プラン' },
-  { key: 'three_d',  plan: 'three',       death: true,  label: '⑦ 三大疾病プラン（死亡あり）' },
-  { key: 'three_n',  plan: 'three',       death: false, label: '⑧ 三大疾病プラン' },
-  { key: 'tc_d',     plan: 'three_care',  death: true,  label: '⑨ 三大疾病・障害介護プラン（死亡あり）' },
-  { key: 'tc_n',     plan: 'three_care',  death: false, label: '⑩ 三大疾病・障害介護プラン' },
+  { key: 'cancer_n', plan: 'cancer',      death: false, label: '① がんプラン' },
+  { key: 'cancer_d', plan: 'cancer',      death: true,  label: '② がんプラン（死亡あり）' },
+  { key: 'three_n',  plan: 'three',       death: false, label: '③ 三大疾病プラン' },
+  { key: 'three_d',  plan: 'three',       death: true,  label: '④ 三大疾病プラン（死亡あり）' },
+  { key: 'care_n',   plan: 'care',        death: false, label: '⑤ 障害・介護プラン' },
+  { key: 'care_d',   plan: 'care',        death: true,  label: '⑥ 障害・介護プラン（死亡あり）' },
+  { key: 'cc_n',     plan: 'cancer_care', death: false, label: '⑦ がん・障害介護プラン' },
+  { key: 'cc_d',     plan: 'cancer_care', death: true,  label: '⑧ がん・障害介護プラン（死亡あり）' },
+  { key: 'tc_n',     plan: 'three_care',  death: false, label: '⑨ 三大疾病・障害介護プラン' },
+  { key: 'tc_d',     plan: 'three_care',  death: true,  label: '⑩ 三大疾病・障害介護プラン（死亡あり）' },
 ];
