@@ -3224,6 +3224,8 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
         {/* ヒーロー（img＋絶対配置・パララックス） */}
         <div style={{ position: 'relative', height: '356px', overflow: 'hidden' }}>
           <img ref={doneBgRef} src="/assets/theo-tdf/hero_bg_done.png" alt="" style={{ width: '100%', display: 'block', willChange: 'transform', transformOrigin: 'top center' }} />
+          {/* 画像下端の淡いブルーが白背景と馴染むよう、境界を白へフェード */}
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '64px', background: 'linear-gradient(to bottom, transparent, #ffffff)', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
           {/* フェイクステータスバー（プレースホルダー） */}
           <div className="flex items-center justify-between px-6 pt-3 pb-1 text-caption font-en font-medium text-transparent" aria-hidden="true">
