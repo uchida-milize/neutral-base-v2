@@ -2837,9 +2837,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <h4 className="text-h6 font-bold text-neutral-800">クレジットカードのお支払について</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 0 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
-            <div style={{ maxHeight: payIdx === 0 ? "2000px" : "0px", opacity: payIdx === 0 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-              {/* 文章が長いため本文側で高さを制限し、スクロールバーを見せる */}
-              <div className="px-4 pb-4 border-t border-warm-200 pt-3 space-y-3 max-h-[360px] overflow-y-auto sb-thin">
+            <div style={{ maxHeight: payIdx === 0 ? "4000px" : "0px", opacity: payIdx === 0 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3 space-y-3">
                 <ul className="space-y-3">
                   <li className="flex gap-2 text-caption text-neutral-600 leading-relaxed"><span className="text-neutral-400 shrink-0">・</span><span>カード名義人は被保険者（加入者）さまご本人名義に限ります。</span></li>
                   <li className="text-caption text-neutral-600 leading-relaxed">
@@ -2871,9 +2870,8 @@ export function ScreenStep4({ go, sel, deathOpt = true, m, y, initialOpenIdx, in
               <h4 className="text-h6 font-bold text-neutral-800">クレジットカード支払規定</h4>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 text-primary shrink-0 transition-transform duration-300 ${payIdx === 1 ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6"/></svg>
             </button>
-            <div style={{ maxHeight: payIdx === 1 ? "2000px" : "0px", opacity: payIdx === 1 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
-              {/* 文章が長いため本文側で高さを制限し、スクロールバーを見せる */}
-              <div className="px-4 pb-4 border-t border-warm-200 pt-3 max-h-[360px] overflow-y-auto sb-thin">
+            <div style={{ maxHeight: payIdx === 1 ? "4000px" : "0px", opacity: payIdx === 1 ? 1 : 0 }} className="overflow-hidden transition-all duration-300 ease-out">
+              <div className="px-4 pb-4 border-t border-warm-200 pt-3">
                 <ul className="space-y-3">
                   {[
                     { h: "保険料のお支払い", t: "加入者は、T&Dフィナンシャル生命保険株式会社（以下「当社」といいます。）との生命保険契約に係る保険料を、加入者本人名義のクレジットカード（以下「指定カード」といいます。）により、指定カード発行会社の会員規約等に基づいて支払うものとします。" },
