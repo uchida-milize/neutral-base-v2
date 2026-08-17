@@ -536,7 +536,7 @@ export function DisclosureQCard({ row, idx }: { row: any; idx: number }) {
           const parts = isShortQ ? [p.t] : p.t.split(/((?:ありますか|ていますか)[。。。][^\n]*)/);
           return (
             <div key={j}>
-              <p className="text-caption leading-relaxed text-neutral-700">
+              <p className="text-caption leading-relaxed text-neutral-700 whitespace-pre-line">
                 {parts.map((seg: string, k: number) =>
                   isShortQ || /(?:ありますか|ていますか)/.test(seg)
                     ? <strong key={k} className="font-bold text-neutral-900 text-[14px]">{seg}</strong>
