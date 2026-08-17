@@ -236,9 +236,9 @@ export function DesktopHeader({ n, go }: { n: number; go?: Go }) {
 
 // step progress dots — 既出（到達済み）ステップは押下でその画面へ遷移
 export const STEP_TO_SCREEN: Record<number, number> = { 1: 0, 2: 1, 3: 3, 4: 4, 5: 7 };
-export function Steps({ n, of = 5, go, padY, transparent }: { n: number; of?: number; go?: Go; padY?: number; transparent?: boolean }) {
+export function Steps({ n, of = 5, go, padY, transparent, hideBorder }: { n: number; of?: number; go?: Go; padY?: number; transparent?: boolean; hideBorder?: boolean }) {
   return (
-    <div className={`flex justify-center items-center gap-0 px-6 py-2 ${transparent ? "" : "bg-white border-b border-warm-200"}`} style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
+    <div className={`flex justify-center items-center gap-0 px-6 py-2 ${transparent ? "" : hideBorder ? "bg-white" : "bg-white border-b border-warm-200"}`} style={padY != null ? { paddingTop: padY, paddingBottom: padY } : undefined}>
       {Array.from({ length: of }).map((_, i) => {
         const stepNo = i + 1;
         const filled = i < n;
@@ -3244,7 +3244,7 @@ export function ScreenDone({ go, variant = 'done', desktop }: { go: Go; variant?
 
         {/* progress — sticks to top once the blue hero scrolls out of view */}
         <div className="sticky top-0 z-30">
-          <Steps n={5} go={go} />
+          <Steps n={5} go={go} hideBorder />
         </div>
 
         <div className="px-4 py-6 space-y-6">
