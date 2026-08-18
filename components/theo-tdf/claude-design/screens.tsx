@@ -3922,7 +3922,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
         </div>
       </div>
       <ActionBar bg="var(--warm-50)" noBorder>
-          <div className="fade-in space-y-2" style={{ paddingBottom: "32px" }}>
+          <div className="fade-in space-y-2" style={{ paddingBottom: "12px" }}>
             <div style={{ marginBottom: '8px' }}>
               <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-500 text-center">保険名称</p>
               <p style={{ fontSize: '12px', lineHeight: '1.2' }} className="text-neutral-700 text-center">無配当特定疾病障害介護保障保険（団体型）</p>
