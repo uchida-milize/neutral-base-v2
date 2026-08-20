@@ -1,11 +1,11 @@
 <svg width="1120" height="1010" viewBox="0 0 1120 1010" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="1120" height="1010" fill="#F4F4F4"/>
 <g id="SavingsChart">
-<rect x="-2359.75" y="-19.75" width="3499.5" height="1049.5" rx="4.75" fill="#EFEFEF" fill-opacity="0.7"/>
-<rect x="-2359.75" y="-19.75" width="3499.5" height="1049.5" rx="4.75" stroke="black" stroke-width="0.5" stroke-dasharray="10 5"/>
+<rect x="-2359.75" y="-19.75" width="4669.5" height="1049.5" rx="4.75" fill="#EFEFEF" fill-opacity="0.7"/>
+<rect x="-2359.75" y="-19.75" width="4669.5" height="1049.5" rx="4.75" stroke="black" stroke-width="0.5" stroke-dasharray="10 5"/>
 <g id="state=Default" clip-path="url(#clip0_2115_1076)">
 <g id="background">
-<path id="Vector" d="M1119.94 0.0188313H0V1009.96H1119.94V0.0188313Z" fill="#F3F9FE" fill-opacity="0.01"/>
+<path id="Vector" d="M1119.94 0.0188313H0V1009.96H1119.94V0.0188313Z" fill="#F3F9FE"/>
 </g>
 <g id="area">
 <g id="Group 3">
