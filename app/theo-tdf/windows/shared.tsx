@@ -268,6 +268,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialTipIdx={0}
+              savingsChartVariant="area"
             />
           ),
         },
