@@ -252,6 +252,7 @@ const TWEAK_DEFAULTS = {
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
   pinPreview: "none" as string,
+  savingsChartVariant: "fukidashi" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -289,7 +290,7 @@ export function TheoTdfClaudeDesignShell() {
 
   const screens = [
     patternB ? (
-      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} noticeVariant={tw.noticeVariant} />
+      <ScreenCombined key="combined" go={go} sel={sel} setSel={setSel} deathOpt={deathOpt} m={simM} setM={setSimM} y={simY} setY={setSimY} emailVerified={emailVerified} planCardStyle={tw.planCardStyle} desktop={isPC} recommendPattern={tw.recommendPattern} noticeVariant={tw.noticeVariant} savingsChartVariant={tw.savingsChartVariant} />
     ) : (
       <ScreenOverview key="overview" go={go} />
     ),
@@ -376,6 +377,15 @@ export function TheoTdfClaudeDesignShell() {
               { value: "A",    label: "① 縦積み・中央揃え" },
               { value: "B",    label: "② 2+1 ピラミッド" },
               { value: "C",    label: "③ 縦積み・アイコン左" },
+            ]}
+          />
+          <TweakSelect
+            label="積立シミュレーショングラフ"
+            value={tw.savingsChartVariant}
+            onChange={(v) => setTweak("savingsChartVariant", v)}
+            options={[
+              { value: "fukidashi", label: "吹き出し（現行）" },
+              { value: "area",      label: "エリア（追加）" },
             ]}
           />
           <TweakSection label="PINコード認証" />

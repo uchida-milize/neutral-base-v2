@@ -3419,8 +3419,9 @@ export function HeigaiModal({ open, onClose, onAgree, desktop }: { open: boolean
   );
 }
 
-export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialNoticeOpen, initialBirth, initialSimOpen, desktop, recommendPattern, noticeVariant }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialNoticeOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string; noticeVariant?: NoticeVariant }) {
+export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, setY, emailVerified, simFirst, planCardStyle = "card", initialAgree, initialShowSend, initialTipIdx, initialPlanOpenId, initialHeigaiOpen, initialNoticeOpen, initialBirth, initialSimOpen, desktop, recommendPattern, noticeVariant, savingsChartVariant = "fukidashi" }: { go: Go; sel: string; setSel: React.Dispatch<React.SetStateAction<string>>; deathOpt?: boolean; m: number; setM: React.Dispatch<React.SetStateAction<number>>; y: number; setY: React.Dispatch<React.SetStateAction<number>>; emailVerified?: boolean; simFirst?: boolean; planCardStyle?: string; initialAgree?: boolean; initialShowSend?: boolean; initialTipIdx?: number; initialPlanOpenId?: string; initialHeigaiOpen?: boolean; initialNoticeOpen?: boolean; initialBirth?: string; initialSimOpen?: boolean; desktop?: boolean; recommendPattern?: string; noticeVariant?: NoticeVariant; savingsChartVariant?: string }) {
   const plan = PLANS.find((p) => p.id === planIdFromSel(sel)) || PLANS[0];
+  const savingsChartSrc = savingsChartVariant === "area" ? "/assets/theo-tdf/chart_savings_area.svg" : "/assets/theo-tdf/chart_savings.svg";
   const [agree, setAgree] = useState(initialAgree ?? false);
   const [heigaiOpen, setHeigaiOpen] = useState(initialHeigaiOpen ?? false);
   const [noticeOpen, setNoticeOpen] = useState(initialNoticeOpen ?? false);
@@ -3514,7 +3515,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
 
         {/* 図版：グラフ背景色(#F3F9FE)を40px余白まで敷き、外側に罫線（コンテンツ幅760pxに統一、グラフ自体は2/3サイズに縮小） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-[#F3F9FE] p-10">
-          <img src="/assets/theo-tdf/chart_savings.svg" alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-2/3 mx-auto block" />
+          <img src={savingsChartSrc} alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-2/3 mx-auto block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
@@ -3806,7 +3807,7 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           )}
           {/* 図版 + 商品概要 */}
           <div style={{ marginTop: '64px' }} className="overflow-hidden rounded-[16px] border border-warm-200">
-            <img src="/assets/theo-tdf/chart_savings.svg" alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
+            <img src={savingsChartSrc} alt="就業不能時も将来の積立金額を保障イメージ図" className="w-full block" />
           </div>
           <div className="space-y-4 mt-4">
             <div className="text-right">
