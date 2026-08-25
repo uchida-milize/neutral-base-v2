@@ -130,7 +130,6 @@ export function BrandSection() {
           { file: "status_bg.png", label: "status_bg.png" },
           { file: "chart_savings.svg", label: "chart_savings.svg（fukidashi）" },
           { file: "chart_savings_area.svg", label: "chart_savings_area.svg（area）" },
-          { file: "hero-background.png", label: "hero-background.png（HeroBackground）" },
         ].map(({ file, label }) => (
           <AssetCard key={file} label={label} bg="bg-warm-100">
             <img src={`/assets/theo-tdf/${file}`} alt="" className="h-20 w-auto rounded-lg object-cover" />
@@ -140,6 +139,28 @@ export function BrandSection() {
         <AssetCard label="hero-notch.svg" bg="" style={{ background: "#EFEFEF" }}>
           <img src="/assets/theo-tdf/hero-notch.svg" alt="" className="h-8 w-auto" />
         </AssetCard>
+      </Row>
+      <SubHead>HeroBackground（Figmaコンポーネント・ブランドバリエーション）</SubHead>
+      <Row>
+        {[
+          { file: "hero-background-theo-tdf-short.png", label: "theo-tdf / Short / sp" },
+          { file: "hero-background-theo-tdf-tall.png", label: "theo-tdf / Tall / sp（hero_bg.png相当）" },
+          { file: "hero-background-theo-tdf-status.png", label: "theo-tdf / Status / sp" },
+          { file: "hero-background-mypage-sp.png", label: "mypage / Tall / sp" },
+          { file: "hero-background-mypage-pc.png", label: "mypage / Tall / pc" },
+          { file: "hero-background-daiwa-connect-01-sp.png", label: "daiwa-connect-01 / Tall / sp" },
+          { file: "hero-background-daiwa-connect-01-pc.png", label: "daiwa-connect-01 / Tall / pc" },
+          { file: "hero-background-daiwa-connect-02-sp.png", label: "daiwa-connect-02 / Tall / sp" },
+          { file: "hero-background-daiwa-connect-02-pc.png", label: "daiwa-connect-02 / Tall / pc" },
+          { file: "hero-background-generic-dark-sp.png", label: "generic-dark / Tall / sp" },
+          { file: "hero-background-generic-dark-pc.png", label: "generic-dark / Tall / pc" },
+          { file: "hero-background-generic-light-sp.png", label: "generic-light / Tall / sp" },
+          { file: "hero-background-generic-light-pc.png", label: "generic-light / Tall / pc" },
+        ].map(({ file, label }) => (
+          <AssetCard key={file} label={label} bg="bg-warm-100">
+            <img src={`/assets/theo-tdf/${file}`} alt="" className="h-20 w-auto rounded-lg object-cover" />
+          </AssetCard>
+        ))}
       </Row>
       <SubHead>AppBar</SubHead>
       <Row>
