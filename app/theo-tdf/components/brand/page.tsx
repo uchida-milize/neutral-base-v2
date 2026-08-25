@@ -17,7 +17,7 @@ export default function Page() {
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">Components</p>
         <h1 className="mt-2 text-display-3 font-semibold tracking-tight">ブランドアセット</h1>
         <p className="mt-3 text-body text-muted-foreground">
-          Logo コンポーネント・ロゴ画像・背景ヒーロー画像・アイコン・デコレーション SVG・Phone UI Chrome の一覧。
+          Logo コンポーネント・AppBar・ロゴ画像・背景ヒーロー画像・アイコン・デコレーション SVG・Phone UI Chrome の一覧。
         </p>
       </header>
       <div className="overflow-x-auto">

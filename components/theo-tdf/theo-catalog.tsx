@@ -13,6 +13,7 @@ import {
   AccordionDropdown, NumberedDisclosureItem,
   StatusIcon, ActionBar,
   Logo, PhoneStatusBar, HomeIndicator,
+  AgreeItem, AGREE_ITEMS,
 } from "@/components/theo-tdf/claude-design/screens";
 
 const PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
@@ -488,6 +489,8 @@ export function DisclosureSection() {
   const noop = () => {};
   const [disclosureOpen, setDisclosureOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [agreeOpen, setAgreeOpen] = React.useState(false);
+  const [agreeChecked, setAgreeChecked] = React.useState(false);
   return (
     <div className="theo-tdf-cd font-jp">
       <SubHead>AccordionDropdown</SubHead>
@@ -522,6 +525,16 @@ export function DisclosureSection() {
             open={disclosureOpen} onToggle={() => setDisclosureOpen(!disclosureOpen)}>
             申込に関する注意事項の詳細内容がここに表示されます。
           </NumberedDisclosureItem>
+        </Preview>
+      </Row>
+      <SubHead>AgreeItem</SubHead>
+      <Row>
+        <Preview label="Closed（チェック付き）" width={390}>
+          <AgreeItem num="①" item={AGREE_ITEMS[0]} open={false} onToggle={noop} checked={false} onCheck={noop} />
+        </Preview>
+        <Preview label="インタラクティブ" width={390}>
+          <AgreeItem num="②" item={AGREE_ITEMS[1]} open={agreeOpen} onToggle={() => setAgreeOpen(!agreeOpen)}
+            checked={agreeChecked} onCheck={() => setAgreeChecked(!agreeChecked)} />
         </Preview>
       </Row>
     </div>
@@ -585,7 +598,7 @@ export function TheoCatalog() {
       <CatSection title="フォーム入力" sub="Field / DatePicker / LockedField / Select / SegmentedToggle / GenderField / AgreeCheckbox"><FormsSection /></CatSection>
       <CatSection title="セクション" sub="NumberedSectionHeading / CardHeader / StepSection"><CardsSection /></CatSection>
       <CatSection title="カード・プラン選択" sub="GroupCard / ConfirmCard / PremiumSimulationCard / PlanCard など"><PlanSection /></CatSection>
-      <CatSection title="開示・折り畳み" sub="AccordionDropdown / NumberedDisclosureItem"><DisclosureSection /></CatSection>
+      <CatSection title="開示・折り畳み" sub="AccordionDropdown / NumberedDisclosureItem / AgreeItem"><DisclosureSection /></CatSection>
       <CatSection title="アイコン" sub="StatusIcon / アイコン画像 / デコレーション SVG"><StatusSection /></CatSection>
       
     </div>

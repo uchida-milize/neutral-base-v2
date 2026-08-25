@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 };
 
 const CATEGORIES = [
-  { slug: "brand",       icon: ImageIcon,      title: "ブランドアセット",   desc: "Logo / 背景画像 / アイコン / デコレーション SVG / Phone UI Chrome" },
+  { slug: "brand",       icon: ImageIcon,      title: "ブランドアセット",   desc: "Logo / AppBar / 背景画像 / アイコン / デコレーション SVG / Phone UI Chrome" },
   { slug: "navigation",  icon: LayoutTemplate, title: "ナビゲーション",     desc: "AppBar / Steps / Btn / ActionBar" },
   { slug: "labels",      icon: Tag,            title: "ラベル・バッジ",      desc: "Badge / ReqBadge / ErrText / SelectedPlanBadge" },
   { slug: "forms",       icon: FormInput,      title: "フォーム入力",       desc: "Field / DatePicker / LockedField / Select / SegmentedToggle / GenderField / AgreeCheckbox" },
   { slug: "cards",       icon: LayoutGrid,     title: "セクション",          desc: "NumberedSectionHeading / CardHeader / StepSection" },
   { slug: "plan",        icon: CreditCard,     title: "カード・プラン選択", desc: "GroupCard / ConfirmCard / PremiumSimulationCard / PlanCard など" },
-  { slug: "disclosure",  icon: ChevronDown,    title: "開示・折り畳み",     desc: "AccordionDropdown / NumberedDisclosureItem" },
+  { slug: "disclosure",  icon: ChevronDown,    title: "開示・折り畳み",     desc: "AccordionDropdown / NumberedDisclosureItem / AgreeItem" },
   { slug: "status",      icon: CircleCheck,    title: "アイコン",           desc: "StatusIcon / アイコン画像 / デコレーション SVG" },
 ];
 

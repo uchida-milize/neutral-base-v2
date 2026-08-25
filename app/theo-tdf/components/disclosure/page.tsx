@@ -11,7 +11,7 @@ export default function Page() {
       <header className="mb-10 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">Components</p>
         <h1 className="mt-2 text-display-3 font-semibold tracking-tight">開示・折り畳み</h1>
-        <p className="mt-3 text-body text-muted-foreground">AccordionDropdown / NumberedDisclosureItem。右端は実際に開閉できるインタラクティブ版。</p>
+        <p className="mt-3 text-body text-muted-foreground">AccordionDropdown / NumberedDisclosureItem / AgreeItem。右端は実際に開閉できるインタラクティブ版。</p>
       </header>
       <div className="mb-14 overflow-x-auto"><DisclosureSection /></div>
       <Section>
@@ -34,6 +34,17 @@ export default function Page() {
               { name: "children", type: "ReactNode", required: false },
             ]}
             code={`<NumberedDisclosureItem n={1} title="申込に関する注意事項の確認"\n  open={open} onToggle={toggle}>\n  注意事項の内容\n</NumberedDisclosureItem>`} />
+          <ComponentSnippet name="AgreeItem" desc="重要事項・事前同意事項の確認項目（チェック＋開閉、item.blocks を自動描画）"
+            props={[
+              { name: "num",     type: "string",         required: true },
+              { name: "item",    type: "AgreeItemData",  required: true },
+              { name: "open",    type: "boolean",        required: false },
+              { name: "onToggle", type: "() => void",    required: false },
+              { name: "checked", type: "boolean",        required: false },
+              { name: "onCheck", type: "() => void",     required: false },
+              { name: "children", type: "ReactNode",     required: false },
+            ]}
+            code={`<AgreeItem num="①" item={AGREE_ITEMS[0]}\n  open={open} onToggle={toggle}\n  checked={checked} onCheck={() => setChecked(!checked)} />`} />
         </div>
       </Section>
     </main>
