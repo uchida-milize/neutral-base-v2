@@ -128,8 +128,9 @@ export function BrandSection() {
           { file: "hero_bg.png", label: "hero_bg.png" },
           { file: "hero_bg_done.png", label: "hero_bg_done.png" },
           { file: "status_bg.png", label: "status_bg.png" },
-          { file: "chart_savings.svg", label: "chart_savings.svg" },
-          { file: "hero-chart.svg", label: "hero-chart.svg" },
+          { file: "chart_savings.svg", label: "chart_savings.svg（fukidashi）" },
+          { file: "chart_savings_area.svg", label: "chart_savings_area.svg（area）" },
+          { file: "hero-background.png", label: "hero-background.png（HeroBackground）" },
         ].map(({ file, label }) => (
           <AssetCard key={file} label={label} bg="bg-warm-100">
             <img src={`/assets/theo-tdf/${file}`} alt="" className="h-20 w-auto rounded-lg object-cover" />
