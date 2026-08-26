@@ -252,7 +252,7 @@ const TWEAK_DEFAULTS = {
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
   pinPreview: "none" as string,
-  savingsChartVariant: "fukidashi" as string,
+  savingsChartVariant: "area" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -384,8 +384,8 @@ export function TheoTdfClaudeDesignShell() {
             value={tw.savingsChartVariant}
             onChange={(v) => setTweak("savingsChartVariant", v)}
             options={[
-              { value: "fukidashi", label: "吹き出し（現行）" },
-              { value: "area",      label: "エリア（追加）" },
+              { value: "area",      label: "積立サポートイメージ（デフォルト）" },
+              { value: "fukidashi", label: "積立保障イメージ" },
             ]}
           />
           <TweakSection label="PINコード認証" />
