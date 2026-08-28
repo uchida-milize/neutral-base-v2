@@ -3513,9 +3513,9 @@ export function ScreenCombined({ go, sel, setSel, deathOpt = true, m, setM, y, s
           </div>
         </div>
 
-        {/* 図版：グラフ背景色(#F3F9FE)を40px余白まで敷き、外側に罫線（コンテンツ幅760pxに統一、グラフ自体は2/3サイズに縮小） */}
+        {/* 図版：グラフ背景色(#F3F9FE)を40px余白まで敷き、外側に罫線（コンテンツ幅760pxに統一） */}
         <div className="w-[760px] mx-auto rounded-2xl border border-warm-200 bg-[#F3F9FE] p-10">
-          <img src={savingsChartSrc} alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-2/3 mx-auto block" />
+          <img src={savingsChartSrc} alt="就業不能時も将来の積立金額を保障するイメージ図" className="w-full mx-auto block" />
         </div>
 
         {/* 保障期間：760px・左揃え（PC_01準拠） */}
