@@ -252,7 +252,7 @@ const TWEAK_DEFAULTS = {
   doneVariant: "done" as string,
   recommendPattern: "none" as string,
   pinPreview: "none" as string,
-  savingsChartVariant: "積立サポートイメージ" as string,
+  savingsChartVariant: "積立サポートイメージA" as string,
 };
 
 export function TheoTdfClaudeDesignShell() {
@@ -384,8 +384,10 @@ export function TheoTdfClaudeDesignShell() {
             value={tw.savingsChartVariant}
             onChange={(v) => setTweak("savingsChartVariant", v)}
             options={[
-              { value: "積立サポートイメージ", label: "積立サポートイメージ（デフォルト）" },
-              { value: "積立保障イメージ",     label: "積立保障イメージ" },
+              { value: "積立サポートイメージA", label: "積立サポートイメージA（デフォルト）" },
+              { value: "積立保障イメージA",     label: "積立保障イメージA" },
+              { value: "積立サポートイメージB", label: "積立サポートイメージB" },
+              { value: "積立保障イメージB",     label: "積立保障イメージB" },
             ]}
           />
           <TweakSection label="PINコード認証" />

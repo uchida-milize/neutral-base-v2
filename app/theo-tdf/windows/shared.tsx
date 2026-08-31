@@ -268,7 +268,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               initialTipIdx={0}
-              savingsChartVariant="積立保障イメージ"
+              savingsChartVariant="積立保障イメージA"
             />
           ),
         },
@@ -281,6 +281,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d" setSel={noop}
               m={10000} setM={noop} y={15} setY={noop}
               simFirst
+              savingsChartVariant="積立サポートイメージB"
             />
           ),
         },
@@ -293,6 +294,7 @@ export function makeGroups(noop: () => void): ScreenGroupDef[] {
               go={noop} sel="cancer_d" setSel={noop}
               m={150000} setM={noop} y={25} setY={noop}
               initialSimOpen
+              savingsChartVariant="積立保障イメージB"
             />
           ),
         },
