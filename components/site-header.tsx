@@ -3,8 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * サイト共通ヘッダー — テナント (会社) ごとにナビセットを切替。
@@ -274,19 +281,35 @@ function BrandInner({ tenant }: { tenant: Tenant }) {
 function GenericHeader({ tenant, pathname }: { tenant: Tenant; pathname: string }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
-      <div className="mx-auto flex h-12 max-w-[1400px] items-center gap-6 px-4 sm:px-6">
-        <Link
-          href={tenant.brandHref}
-          className="flex shrink-0 items-center gap-2.5 text-foreground transition-opacity hover:opacity-80"
-        >
-          <span className="grid size-6 place-items-center rounded-md bg-primary text-primary-foreground text-[11px] font-semibold">
-            {tenant.brandInitial}
-          </span>
+      <div className="flex h-12 w-full items-center gap-4 px-4 sm:px-6">
+        {/* 左: ドロップダウン (D'マーク) + タイトル */}
+        <div className="flex shrink-0 items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-1 rounded-md bg-foreground px-2 py-1 text-caption font-semibold text-background transition-opacity hover:opacity-80"
+              >
+                {tenant.brandInitial}
+                <ChevronDown className="size-3.5" aria-hidden />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {tenant.items.map((item) => (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href}>{item.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <span className="h-4 w-px bg-border" aria-hidden />
-          <span className="text-caption font-medium text-muted-foreground">
+          <Link
+            href={tenant.brandHref}
+            className="text-caption font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
             {tenant.brandLabel}
-          </span>
-        </Link>
+          </Link>
+        </div>
 
         {/* ナビ + テーマトグルを右端に寄せる */}
         <nav className="flex flex-1 items-center justify-end gap-5">

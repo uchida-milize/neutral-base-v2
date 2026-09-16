@@ -4,7 +4,6 @@ import {
   LayoutGrid,
   BookOpen,
   ArrowRight,
-  FileTextIcon,
   LayersIcon,
 } from "lucide-react";
 
@@ -38,9 +37,9 @@ export default function Home() {
       </div>
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+        <CoreSection />
         <TenantsSection />
         <OverviewSection />
-        <CoreSection />
       </main>
     </div>
   );
@@ -85,7 +84,7 @@ function CoreSection() {
           Pages
         </p>
         <h2 className="mt-2 text-h2 font-semibold tracking-tight">
-          汎用システムの 2 ページ
+          汎用システム
         </h2>
         <p className="mt-3 text-body text-muted-foreground">
           ブランド固有色を載せる前の「ニュートラルな」デザインシステム本体。
@@ -170,45 +169,30 @@ function TenantsSection() {
           Tenants
         </p>
         <h2 className="mt-2 text-h2 font-semibold tracking-tight">
-          テナント別の運用
+          テナント
         </h2>
-        <p className="mt-3 text-body text-muted-foreground">
-          各テナント (顧客企業) には、共通システムを土台にしたうえで primary / secondary / button / cta の 4 スケールを上書きした「専用ツリー」を用意します。
-          顧客には{" "}
-          <code className="text-foreground">/&lt;テナント名&gt;/</code>{" "}
-          の URL だけを案内します。各カードの色見本と hex は tokens.css から自動取得しています。
-        </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        {TENANT_CARDS.map((card) => (
-          <AutoTenantCard key={card.id} {...card} />
-        ))}
-
-        {/* HANDOFF.md への導線 — テナント追加手順 */}
-        <a
-          href="https://github.com/uchida-milize/neutral-base/blob/main/HANDOFF.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block rounded-lg border border-dashed border-border p-6 text-muted-foreground transition-colors duration-300 hover:border-primary hover:text-foreground"
-        >
-          <div className="flex items-center justify-between">
-            <Badge variant="outline" className="gap-1.5">
-              <FileTextIcon className="size-3" />
-              HANDOFF.md
-            </Badge>
-            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-          </div>
-          <h3 className="mt-3 text-h4 font-semibold text-foreground">
-            他社テナントの追加方法
-          </h3>
-          <p className="mt-2 text-body">
-            <code>./scripts/new-tenant.sh &lt;name&gt;</code> でテナントを 1 コマンド作成。
-            この TenantsSection への追加も自動で行われます。詳細は HANDOFF.md を参照。
-          </p>
-          <p className="mt-3 font-mono text-caption text-primary">
-            github.com/.../HANDOFF.md
-          </p>
-        </a>
+        {TENANT_CARDS.map((card) =>
+          card.id === "theo-tdf" ? (
+            <Link
+              key={card.id}
+              href={card.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-center rounded-lg border border-border bg-card p-6 transition-colors duration-300 hover:border-primary"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/theo-tdf/logo_td_financial.png"
+                alt={card.label}
+                className="h-10 w-auto"
+              />
+            </Link>
+          ) : (
+            <AutoTenantCard key={card.id} {...card} />
+          ),
+        )}
       </div>
     </section>
   );
