@@ -153,7 +153,7 @@ const TENANTS: Tenant[] = [
 /** 汎用エリア (テナント配下でない URL) の nav 設定。 */
 const GENERIC: Tenant = {
   pathPrefix: "/",
-  brandLabel: "Design System",
+  brandLabel: "デザインガイドライン",
   brandInitial: "D",
   brandHref: "/",
   items: [
@@ -266,6 +266,65 @@ function BrandInner({ tenant }: { tenant: Tenant }) {
 /**
  * 内部本体。useSearchParams を使うため Suspense でラップする (SiteHeader 側)。
  */
+/**
+ * 汎用エリア (テナント配下でない URL) 専用ヘッダー。
+ * https://milize-design-flow.vercel.app/ と同様の外観 (白背景・細いボーダー・
+ * 左に小さいバッジ+区切り線+タイトル、右端にナビとMILIZEロゴ) に合わせている。
+ */
+function GenericHeader({ tenant, pathname }: { tenant: Tenant; pathname: string }) {
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+      <div className="mx-auto flex h-12 max-w-[1400px] items-center gap-6 px-4 sm:px-6">
+        <Link
+          href={tenant.brandHref}
+          className="flex shrink-0 items-center gap-2.5 text-foreground transition-opacity hover:opacity-80"
+        >
+          <span className="grid size-6 place-items-center rounded-md bg-primary text-primary-foreground text-[11px] font-semibold">
+            {tenant.brandInitial}
+          </span>
+          <span className="h-4 w-px bg-border" aria-hidden />
+          <span className="text-caption font-medium text-muted-foreground">
+            {tenant.brandLabel}
+          </span>
+        </Link>
+
+        {/* ナビ + テーマトグルを右端に寄せる */}
+        <nav className="flex flex-1 items-center justify-end gap-5">
+          {tenant.items.map((item) => {
+            const active = isActive(item, pathname);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={[
+                  "border-b-2 py-1 text-caption font-medium transition-colors",
+                  active
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
+                ].join(" ")}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <ThemeToggle />
+        </nav>
+
+        {/* MILIZEロゴ — ヘッダー一番端 */}
+        <div className="flex shrink-0 items-center border-l border-border pl-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/logo_milize_yoko_color.svg"
+            alt="MILIZE"
+            className="h-5 w-auto"
+          />
+        </div>
+      </div>
+    </header>
+  );
+}
+
 function SiteHeaderInner() {
   const pathname = usePathname() ?? "/";
   const searchParams = useSearchParams();
@@ -274,6 +333,10 @@ function SiteHeaderInner() {
   // - ブランドロゴはクリック不可 (顧客に画面遷移させないため)
   const focusMode = searchParams?.get("focus") === "1";
   const tenant = resolveTenant(pathname);
+
+  if (tenant === GENERIC) {
+    return <GenericHeader tenant={tenant} pathname={pathname} />;
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
