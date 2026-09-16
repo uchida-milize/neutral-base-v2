@@ -33,6 +33,17 @@ const PUBLIC_PATHS = [
   "/sitemap.xml",
 ];
 
+// 汎用エリア (テナント配下でないページ) — Basic Auth 対象外。
+// テナントページ (/xxx, /aaa, /td-financial, /theo-tdf, /acme 等) だけを保護する。
+const GENERIC_PATHS = ["/guidelines", "/components"];
+
+function isGenericPath(pathname: string): boolean {
+  if (pathname === "/") return true;
+  return GENERIC_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
+}
+
 /** pass-through レスポンス。NextResponse.next() と等価。 */
 function next(): Response {
   return new Response(null, { headers: { "x-middleware-next": "1" } });
@@ -47,6 +58,11 @@ export function proxy(req: Request) {
   // 静的アセットはバイパス
   const pathname = new URL(req.url).pathname;
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    return next();
+  }
+
+  // 汎用エリアはバイパス (Basic Auth はテナントページのみに適用)
+  if (isGenericPath(pathname)) {
     return next();
   }
 
