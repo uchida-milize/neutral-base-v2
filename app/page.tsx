@@ -9,8 +9,6 @@ import {
 
 import { SiteHeader } from "@/components/site-header";
 import { OverviewSection } from "@/components/overview-section";
-import { Badge } from "@/components/ui/badge";
-import { JpText } from "@/components/jp-text";
 import { AutoTenantCard, type TenantCardData } from "@/components/auto-tenant-card";
 
 export const metadata: Metadata = {
@@ -31,12 +29,7 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 ease-out">
       <SiteHeader />
 
-      {/* Hero: 全幅 banner (site-header と同じ max-w-[1400px]) */}
-      <div className="mx-auto max-w-[1400px] px-4 pt-10 sm:px-6 lg:pt-14">
-        <Hero />
-      </div>
-
-      <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
         <CoreSection />
         <TenantsSection />
         <OverviewSection />
@@ -46,39 +39,12 @@ export default function Home() {
 }
 
 /* ---------------------------------------------------------------- */
-/* Hero                                                              */
-/* ---------------------------------------------------------------- */
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-colors duration-300">
-      {/* かなり薄いブルー → 微かに薄いブルー のグラデーション (左下 → 右上) */}
-      {/* 内側コンテンツは max-w-5xl 中央揃え (= h2 以降と左端を揃える) */}
-      <div className="mx-auto relative max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
-        <Badge variant="secondary" className="gap-1.5">
-          <LayersIcon className="size-3" />
-          Common Design System
-        </Badge>
-        <h1 className="mt-4 text-display-2 font-semibold leading-tight tracking-tight sm:text-display-1">
-          <JpText>どのブランドにも先に通すべき、共通の土台。</JpText>
-        </h1>
-        <p className="mt-4 max-w-[940px] text-body leading-[1.8] text-muted-foreground sm:text-body-lg">
-          <JpText>
-            色とロゴを差し替えるだけで、顧客ごとの UI/UX を同じ品質で立ち上げられる、保険・金融プロダクト向けの共通基盤です。デザイナーと開発者が同じトークンを見ながら設計から実装まで歩調を合わせ、ワイヤーフレームから顧客レビュー用 URL までを最短数日で繋ぎます。アクセシビリティと運用ルールを土台に組み込んであるので、ブランドが増えても判断のブレが生まれません。
-          </JpText>
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------------- */
 /* 汎用 3 ページへの導線                                              */
 /* ---------------------------------------------------------------- */
 
 function CoreSection() {
   return (
-    <section className="mt-30">
+    <section>
       <div className="mb-6 max-w-3xl">
         <p className="text-caption font-medium uppercase tracking-[0.18em] text-primary">
           Pages
