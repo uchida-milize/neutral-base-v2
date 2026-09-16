@@ -291,31 +291,42 @@ const GLOBAL_MENU_ITEMS = [
 function GenericHeader({ tenant, pathname }: { tenant: Tenant; pathname: string }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
-      <div className="flex h-12 w-full items-center gap-4 px-4 sm:px-6">
-        {/* 左: ドロップダウン (D'マーク) + タイトル */}
+      <div className="flex h-[62px] w-full items-center gap-4 px-6">
+        {/* 左: ドロップダウン (D'マーク) + タイトル — milize-design-flow.vercel.app と1px単位で揃える */}
         <div className="flex shrink-0 items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="flex items-center gap-1 rounded-md bg-foreground px-2 py-1 text-caption font-semibold text-background transition-opacity hover:opacity-80"
-              >
-                {tenant.brandInitial}
-                <ChevronDown className="size-3.5" aria-hidden />
+              <button type="button" className="flex items-center gap-1.5">
+                <span
+                  className="grid h-[30px] w-[30px] place-items-center rounded-[8px] bg-[#111827] text-[15px] font-bold text-white"
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                >
+                  D&apos;
+                </span>
+                <ChevronDown className="size-4" aria-hidden />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent
+              align="start"
+              sideOffset={10}
+              className="w-[230px] rounded-[10px] border-[#E5E7EB] p-0 shadow-[0_12px_32px_0_rgba(0,0,0,0.1)]"
+            >
               {GLOBAL_MENU_ITEMS.map((item) => (
-                <DropdownMenuItem key={item.href} asChild>
+                <DropdownMenuItem key={item.href} asChild className="rounded-none px-3.5 py-[11px] text-[13px] font-medium text-gray-700 focus:bg-gray-50">
                   <a href={item.href}>{item.label}</a>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <span className="h-4 w-px bg-border" aria-hidden />
+          <span
+            className="inline-block h-6 text-[16px] leading-6 text-gray-200"
+            aria-hidden
+          >
+            |
+          </span>
           <Link
             href={tenant.brandHref}
-            className="text-caption font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             {tenant.brandLabel}
           </Link>
