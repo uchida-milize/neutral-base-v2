@@ -195,6 +195,10 @@ function Pipeline() {
           sample: "color/primary-color-500 = #003388",
         },
       ],
+      files: [
+        { path: "Figma Variables", desc: "色・サイズ・効果の一次定義" },
+        { path: "components/<tenant>/tokens.css", desc: "テナント別のブランドカラー上書き" },
+      ],
     },
     {
       icon: "🤝",
@@ -212,6 +216,10 @@ function Pipeline() {
           sample: "bg-primary, text-primary-foreground, ring-ring",
         },
       ],
+      files: [
+        { path: "app/globals.css", desc: "汎用 162 色 + 13 サイズの基盤" },
+        { path: "components/ui/*", desc: "shadcn primitive (29 個、両者の共通言語)" },
+      ],
     },
     {
       icon: "💻",
@@ -223,6 +231,11 @@ function Pipeline() {
           desc: "開発者は className に utility を書くだけ。生 hex は触らないため、Figma 側の色変更が即座に全コンポーネントへ波及する。",
           sample: '<button className="bg-primary text-primary-foreground">',
         },
+      ],
+      files: [
+        { path: "app/<tenant>/*/page.tsx", desc: "画面実装。Tailwind utility 中心" },
+        { path: "components/<tenant>/", desc: "テナント固有の React component" },
+        { path: "scripts/, middleware.ts", desc: "テナント生成、Basic Auth 等の運用" },
       ],
     },
   ];
@@ -269,6 +282,7 @@ type PipelineGroup = {
   who: string;
   title: string;
   tasks: { title: string; desc: string; sample: string }[];
+  files: { path: string; desc: string }[];
 };
 
 function PipelineGroupCard({ group }: { group: PipelineGroup }) {
@@ -303,6 +317,21 @@ function PipelineGroupCard({ group }: { group: PipelineGroup }) {
             </pre>
           </div>
         ))}
+      </div>
+
+      {/* 触るファイル一覧 (旧 TOP の OverviewSection から統合) */}
+      <div className="mt-4">
+        <p className="text-tiny font-medium uppercase tracking-wider text-muted-foreground">
+          触るファイル
+        </p>
+        <ul className="mt-2 space-y-2">
+          {group.files.map((f) => (
+            <li key={f.path}>
+              <p className="font-mono text-caption text-primary">{f.path}</p>
+              <p className="text-caption text-muted-foreground">{f.desc}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

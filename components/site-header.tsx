@@ -342,7 +342,7 @@ function GenericHeader({ tenant, pathname }: { tenant: Tenant; pathname: string 
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={[
-                  "border-b-2 py-1 text-caption font-medium transition-colors",
+                  "border-b-2 py-1 text-xs font-medium transition-colors",
                   active
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground",
