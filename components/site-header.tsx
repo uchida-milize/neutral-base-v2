@@ -271,6 +271,16 @@ function BrandInner({ tenant }: { tenant: Tenant }) {
 }
 
 /**
+ * グローバルメニュー — MILIZE の各ツール間を横断するリンク集。
+ * https://milize-design-flow.vercel.app/ の左上ドロップダウンと同じ文言・リンク先。
+ */
+const GLOBAL_MENU_ITEMS = [
+  { href: "https://milize-design-flow.vercel.app/", label: "クライアント別アセット管理" },
+  { href: "https://milize-pptx-web.vercel.app/", label: "提案書ジェネレーター" },
+  { href: "https://neutral-base-v2.vercel.app/", label: "デザインガイドライン" },
+];
+
+/**
  * 内部本体。useSearchParams を使うため Suspense でラップする (SiteHeader 側)。
  */
 /**
@@ -295,9 +305,9 @@ function GenericHeader({ tenant, pathname }: { tenant: Tenant; pathname: string 
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              {tenant.items.map((item) => (
+              {GLOBAL_MENU_ITEMS.map((item) => (
                 <DropdownMenuItem key={item.href} asChild>
-                  <Link href={item.href}>{item.label}</Link>
+                  <a href={item.href}>{item.label}</a>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
