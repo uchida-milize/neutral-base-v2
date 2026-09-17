@@ -1,10 +1,10 @@
 /**
  * Basic Authentication proxy
  *
- * neutral-base はプレビュー用のサイト (顧客レビュー Space) なので、
- * 公開検索エンジン等にインデックスされたくない・URL を知っている人だけに
+ * /theo-tdf 配下のページのみ、顧客レビュー用に URL を知っている人だけに
  * 見せたい。Vercel Hobby プランでは Deployment Protection (Pro 限定機能)
  * が使えないため、Next.js Proxy で Basic Auth を被せる。
+ * それ以外のパスは全て認証なしで公開する。
  *
  * 認証情報の設定 (Vercel 側):
  *   1. https://vercel.com/ → neutral-base-v2 プロジェクト
@@ -33,13 +33,11 @@ const PUBLIC_PATHS = [
   "/sitemap.xml",
 ];
 
-// 汎用エリア (テナント配下でないページ) — Basic Auth 対象外。
-// テナントページ (/xxx, /aaa, /td-financial, /theo-tdf, /acme 等) だけを保護する。
-const GENERIC_PATHS = ["/guidelines", "/components"];
+// Basic Auth を適用するパス。これ以外は認証なしで公開する。
+const PROTECTED_PATHS = ["/theo-tdf"];
 
-function isGenericPath(pathname: string): boolean {
-  if (pathname === "/") return true;
-  return GENERIC_PATHS.some(
+function isProtectedPath(pathname: string): boolean {
+  return PROTECTED_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
   );
 }
@@ -61,8 +59,8 @@ export function proxy(req: Request) {
     return next();
   }
 
-  // 汎用エリアはバイパス (Basic Auth はテナントページのみに適用)
-  if (isGenericPath(pathname)) {
+  // 保護対象パス以外はバイパス (Basic Auth は /theo-tdf 配下のみに適用)
+  if (!isProtectedPath(pathname)) {
     return next();
   }
 
@@ -116,7 +114,7 @@ export function proxy(req: Request) {
  *   - favicon.ico     — ブラウザ自動取得分
  *   - robots.txt, sitemap.xml — SEO 用 (空にしておくのが安全)
  *
- * 上記以外のすべてのパス (アプリページ、API、_next/data など) に Basic Auth を適用。
+ * 上記以外のすべてのパスで proxy を発火させ、その中で /theo-tdf 配下かどうかを判定する。
  */
 export const config = {
   matcher: [
